@@ -1,0 +1,44 @@
+#GEOMETRIA
+##POINT_COORD
+point1 = 0 0 0
+point2 = 400 0 0
+point3 = 400 200 0
+point4 = 0 200 0
+
+##LINE_CONEC
+line1 = 1 2
+line2 = 2 3
+line3 = 3 4
+line4 = 4 1
+
+##PLANE_CONEC
+plane1 = 1 2 3 4
+
+#PROP_GEOMETRIA
+##GEO_NEW
+prop_geo1 = 1 1 1 1 1
+
+##GEO_BIB
+
+#COMP_MATERIAL
+mat_cfg = linear_elt isotrp planestre
+
+#PROP_MATERIAL
+prop_mat1 = 200E3 0.3 100E3 0 0 0 7800
+
+#TIPO_ELEMENTO
+elm_cfg1 = shell plane42
+
+#OPCAO_MALHA
+mesh_cfg1 = quad4node sizelength 10 facemap
+
+#CARGA_CONDCONT
+##CARGA
+force_cfg1 = forceedge fx -5 edgex 400 999 0
+
+##COND_CONT
+bc_typ1 = fixed	all edgex 0 999 0
+
+#SOLVER_DEF
+solver_typ1 = scipy_sparse
+

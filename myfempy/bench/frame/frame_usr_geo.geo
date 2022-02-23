@@ -1,0 +1,19 @@
+// GMSH GEOMETRY FILE FROM MYFEMPY
+Point(1) = {0,0,0};
+Point(2) = {5,0,0};
+Point(3) = {0,2,0};
+Point(4) = {5,2,0};
+Point(5) = {0,4,0};
+Point(6) = {5,4,0};
+Point(7) = {0,6,0};
+Point(8) = {5,6,0};
+Line(1) = {1,3};
+Line(2) = {2,4};
+Line(3) = {3,4};
+Line(4) = {3,5};
+Line(5) = {4,6};
+Line(6) = {5,6};
+Line(7) = {5,7};
+Line(8) = {6,8};
+Line(9) = {7,8};
+Transfinite Curve {1,2,3,4,5,6,7,8,9} = 11 Using Progression 1;

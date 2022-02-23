@@ -1,0 +1,55 @@
+#-----------------------------------------------------------------------------#
+~~~~~~                 3D EASYCAE @ VINIICUS CAMPOS, 2021               ~~~~~~~
+~~~~~~    Mechanical studY Finite Element Method in PYthon - MYFEMPY    ~~~~~~~
+~~~~~~ MODULO DE SIMULACAO ESTRUTURAL PELO METODO DOS ELEMENTOS FINITOS ~~~~~~~
+~~~~~~                 ARQUIVO DE CONFIGURACAO DA ANALISE               ~~~~~~~
+#-----------------------------------------------------------------------------#
+#SOLVER_CFG
+solver_typ = modal solver_eigval mode_step 0 2 1
+
+#IMPORT_GEO
+
+#NEW_GEO
+##POINT_COORD
+point1 = 0 0 0
+point2 = 1 0 0
+
+##LINE_CONEC
+line1 = 1 2
+
+##PLANE_CONEC
+
+#PROP_GEOMETRIA
+##GEO_INP
+
+##GEO_BIB
+prop_geo1 = spring 0 0 0 0
+
+#PROP_MATERIAL
+prop_mat1 = linear_elt lumped spring_linear
+
+##MAT_CFG
+mat_cfg1 = 1000 0 999 999 999 999 10
+
+#SOLUTION_CFG
+sol_cfg1 = beam spring20
+
+#MESH_CFG
+mesh_cfg1 = line2node numbernodes 2 facemap
+
+#MODEL_FISIC
+##LOADS
+force_cfg1 = forcenode fx 10 pointxyz 1 0 0 1
+force_cfg1 = forcenode springadd 1000 pointxyz 1 0 0 1
+
+##BOND_COND
+bc_typ1 = fixed	full pointxyz 0 0 0
+bc_typ2 = fixed	uy edgey 999 0 0
+
+#OUTPUT_CFG
+outp_cfg = prev_sol_true graph_out_true save_fig_true
+
+#GRAPH_OUT
+graph_out = mode
+
+

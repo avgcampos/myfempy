@@ -1,0 +1,44 @@
+#GEOMETRIA
+##POINT_COORD
+point1 = 0 0 0
+point2 = 800 0 0
+point3 = 800 600 0
+point4 = 0 600 0
+
+##LINE_CONEC
+line1 = 1 2
+line2 = 2 3
+line3 = 3 4
+line4 = 4 1
+
+##PLANE_CONEC
+plane1 = 1 2 3 4
+
+#PROP_GEOMETRIA
+##GEO_NEW
+prop_geo1 = 1 1 1 1 200
+
+##GEO_BIB
+
+#COMP_MATERIAL
+mat_cfg1 = linear_elt isotrp threaxial
+
+#PROP_MATERIAL
+prop_mat1 = 200E3 0.3 100E3 0 0 0 7800
+
+#TIPO_ELEMENTO
+elm_cfg1 = solid solid83
+
+#OPCAO_MALHA
+mesh_cfg1 = hexa8node sizelength 20 extrude
+
+#CARGA_CONDCONT
+##CARGA
+force_cfg1 = forcenode fz -1000 surfyz 800 999 999
+
+##COND_CONT
+bc_typ1 = fixed	all surfyz 0 999 999
+
+#SOLVER_DEF
+solver_typ1 = scipy_sparse
+

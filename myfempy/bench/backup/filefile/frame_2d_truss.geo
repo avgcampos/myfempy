@@ -1,0 +1,21 @@
+// Gmsh project created on Tue May 12 20:42:50 2020
+SetFactory("OpenCASCADE");
+Point(1) = {0, 0, 0};
+Point(2) = {4000, 2000, 0};
+Point(3) = {8000, 4000, 0};
+Point(4) = {8000, 0, 0};
+Point(5) = {12000, 2000, 0};
+Point(6) = {16000, 0, 0};
+Line(1) = {1, 2};
+Line(2) = {1, 4};
+Line(3) = {2, 4};
+Line(4) = {2, 3};
+Line(5) = {3, 4};
+Line(6) = {3, 5};
+Line(7) = {4, 5};
+Line(8) = {4, 6};
+Line(9) = {5, 6};
+//Transfinite Curve {1,2,3,4,5,6,7,8,9} = 11 Using Progression 1;
+Characteristic Length {1,2,3,4,5,6,7,8,9} = 50;
+Mesh 1;
+//Save "mesh_from_GMSH_ex3.msh1";

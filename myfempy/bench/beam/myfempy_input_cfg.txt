@@ -1,0 +1,53 @@
+#-----------------------------------------------------------------------------#
+~~~~~~                 3D EASYCAE @ VINIICUS CAMPOS, 2021               ~~~~~~~
+~~~~~~    Mechanical studY Finite Element Method in PYthon - MYFEMPY    ~~~~~~~
+~~~~~~ MODULO DE SIMULACAO ESTRUTURAL PELO METODO DOS ELEMENTOS FINITOS ~~~~~~~
+~~~~~~                 ARQUIVO DE CONFIGURACAO DA ANALISE               ~~~~~~~
+#-----------------------------------------------------------------------------#
+#SOLVER_CFG
+solver_typ = dynsteadystt harnmodal mode 0 5 1
+
+#IMPORT_GEO
+
+#NEW_GEO
+##POINT_COORD
+point1 = 0 0 0
+point2 = 1 0 0
+
+##LINE_CONEC
+line1 = 1 2
+
+##PLANE_CONEC
+
+#PROP_GEOMETRIA
+##GEO_INP
+
+##GEO_BIB
+prop_geo1 = circle 0.05 0.10 0.1 0.1
+
+#PROP_MATERIAL
+prop_mat1 = linear_elt isotrp uniaxial
+
+##MAT_CFG
+mat_cfg1 = 200E3 0.33 40E3 0 0 0 7850
+
+#SOLUTION_CFG
+sol_cfg1 = beam beam21
+
+#MESH_CFG
+mesh_cfg1 = line2node numbernodes 101 facemap
+
+#MODEL_FISIC
+##LOADS
+force_cfg1 = forcenode fy -100 point 0.5 0 0 1
+
+##BOND_COND
+bc_typ1 = fixed	full point 0 0 0
+
+#OUTPUT_CFG
+outp_cfg = prev_sol_true graph_out_true save_fig_true
+
+#GRAPH_OUT
+graph_out = scale{10} mode
+
+

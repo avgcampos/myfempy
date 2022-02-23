@@ -1,0 +1,80 @@
+/myfempy_vX.X.X
+|	installer.py
+.
+.
+.
+|
+|--/docs
+|	manual_users.pdf		
+.	
+.
+.
+|
+|--/myfempy
+|	|--/bench
+|	|
+|	|
+.	|
+.	|--/bin
+.	|	welcome.py
+	|	preproc.py
+	|
+	|
+	|--/felib
+	|	|--/fluid
+	|	|
+	|	|
+	|	|
+	|	|--/fsi
+	|	|
+	|	|
+	|	|
+	|	|--/struct
+	|		beam21.py
+	|		frame22.py
+	|		frame23.py
+	|		plane32.py
+	|		plane42.py
+	|		solid83.py
+	|		spring20.py
+	|		truss22.py
+	|		.py
+	|		.py
+	|		.py
+	|
+	|	integrat.py
+	|	material.py
+	|	postproc.py
+	|
+	|--/help
+	|
+	|
+	|
+	|--/io
+	|
+	|
+	|
+	|--/mesh
+	|
+	|
+	|
+	|--/solver
+	|		assembly.py
+	|		bcloads.py
+	|		plotter.py
+	|		setups.py
+	|		static.py
+	|		vibra.py
+	|
+.	
+.
+.
+|
+|--/tests
+|	
+.
+.
+.
+|
+|--/
+|

@@ -1,0 +1,67 @@
+#-----------------------------------------------------------------------------#
+~~~~~~                 3D EASYCAE @ VINIICUS CAMPOS, 2021               ~~~~~~~
+~~~~~~    Mechanical studY Finite Element Method in PYthon - MYFEMPY    ~~~~~~~
+~~~~~~ MODULO DE SIMULACAO ESTRUTURAL PELO METODO DOS ELEMENTOS FINITOS ~~~~~~~
+~~~~~~                 ARQUIVO DE CONFIGURACAO DA ANALISE               ~~~~~~~
+#-----------------------------------------------------------------------------#
+#SOLVER_CFG
+solver_typ = staticlinear linear step 0 5 1
+
+#IMPORT_GEO
+
+#NEW_GEO
+##POINT_COORD
+point1 = 0 0 0
+point2 = 200 0 0
+point3 = 200 100 0
+point4 = 0 100 0
+
+##LINE_CONEC
+line1 = 1 2
+line2 = 2 3
+line3 = 3 4a
+line4 = 4 1
+
+##PLANE_CONEC
+plane1 = 1 2 3 4
+
+#PROP_GEOMETRIA
+##GEO_INP
+prop_geo1 = 1 1 1 1 5
+
+##GEO_BIB
+
+#PROP_MATERIAL
+prop_mat = linear_elt isotrp planestre
+
+##MAT_CFG
+mat_cfg = 210E3 0.33 100E3 0 0 0 7850
+
+#MODEL_CFG
+sol_cfg = plate plane42
+
+#MESH_CFG
+mesh_cfg = quad4node sizeelement 2 facemap
+
+#SOLUTION_CFG
+##LOADS
+fc_typ1 = forceedge fy -10 edgey 999 100 0 1
+fc_typ1 = forceedge fy -20 edgey 999 100 0 2
+fc_typ1 = forceedge fy -40 edgey 999 100 0 3
+fc_typ1 = forceedge fy -80 edgey 999 100 0 4
+fc_typ1 = forceedge fy -160 edgey 999 100 0 5
+
+##BOND_COND
+bc_typ1 = fixed	ux edgex 0 999 0
+bc_typ1 = fixed	full point 200 0 0
+
+#VIEWSOLUTION_CFG
+outp_cfg = prev_sol_true plot_res_true save_fig_true
+
+#GRAPH_OUT
+graph_out = scale{1} displ{mag} stress_node{svm} steptracker point{0,0,0}
+
+#FILE_OUT
+file_out = getnum_node getnum_elem node_list elem_list mat_list geo_list result_list
+
+
