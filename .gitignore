@@ -1,7 +1,9 @@
 ### myfempy ###
 desktop.ini
+requirements.txt
 docs/manual_dev/
 tests/
+test*
 
 
 ### Python ###
@@ -9,6 +11,7 @@ tests/
 __pycache__/
 *.py[cod]
 *$py.class
+*.bak
 
 # C extensions
 *.so
