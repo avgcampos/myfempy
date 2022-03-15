@@ -7,8 +7,8 @@ Welcome to myfempy's web documentation!
 =======================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :hidden:
+   :maxdepth: 3
 
 
 
