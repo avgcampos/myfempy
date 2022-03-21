@@ -56,11 +56,11 @@ Myfempy is known to work on various flavors of recent Linux, MacOS and Windows. 
 
 
 ## >> Documentation
-### The main webpage documentation is available here: [myfempy web doc](https://myfempy.readthedocs.io/).
+The main webpage documentation is available here: [myfempy web doc](https://myfempy.readthedocs.io/).
 
-### The **User's Manual** is available here: [myfempy/docs](https://github.com/easycae-3d/myfempy/blob/main/docs/Users_Manual.pdf).
+The **User's Manual** is available here: [myfempy/docs](https://github.com/easycae-3d/myfempy/blob/main/docs/Users_Manual.pdf).
 
-### Examples may be downloaded from: [myfempy/examples](https://github.com/easycae-3d/myfempy/tree/main/examples).
+Examples may be downloaded from: [myfempy/examples](https://github.com/easycae-3d/myfempy/tree/main/examples).
 
 ## >> Features
 
