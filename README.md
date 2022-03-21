@@ -68,8 +68,8 @@ Examples may be downloaded from: [myfempy/examples](https://github.com/easycae-3
 
 ## >> Features
 
-{google_docs}https://docs.google.com/spreadsheets/d/1k9kiXk2PPuUvcsiukAni005zQc-IOCmP2r-Z6B02304/edit?usp=sharing{/google_docs}
-
+<a> href='https://docs.google.com/spreadsheets/d/e/2PACX-1vT6A8eHMQs52aGhN-xiZLelxcCXbY0C1f9zDqw7AQEM-SmKRSROhwMwQqNeXPWOXlDjytduQGMl8Gsk/pubhtml'>Sources List
+</a>
 
 ## >> Release
 
