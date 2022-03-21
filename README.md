@@ -32,17 +32,6 @@ pip install .
 
 *Note: is recommend to creating a new virtual environment previously the installation of myfempy and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/)* 
 
-<details>
-<summary>additional installation details <i>[click to expand]</i> </summary>
-
-- To install updated dependencies, use the  ```pip install``` from packs, as follows
-
-```
-pip install numpy, scipy, matplotlib, vedo
-```
-
-</details>
-
 ## >> Requirements
 
 Myfempy is known to work on various flavors of recent Linux, MacOS and Windows. Myfempy requires Python 3.
@@ -57,9 +46,12 @@ Myfempy is known to work on various flavors of recent Linux, MacOS and Windows. 
 ### Python packages required for using myfempy:
 - [numpy](https://numpy.org/) - The fundamental package for scientific computing with Python
 - [scipy](https://scipy.org/) - Fundamental algorithms for scientific computing in Python
-- [matplotlib](https://matplotlib.org/) - Matplotlib is a comprehensive library for creating static, animated, and interactive visualizations in Python
 - [vedo](https://vedo.embl.es/) - A python module for scientific analysis and visualization of эd objects
 
+
+```
+pip install numpy, scipy, vedo
+```
 
 ## >> Documentation
 The main webpage documentation is available here: [myfempy web doc](https://myfempy.readthedocs.io/).
