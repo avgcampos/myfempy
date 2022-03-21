@@ -30,11 +30,11 @@ Copyright © Vinicius Campos and 3D EasyCAE, 2022
 pip install .
 ```
 
-*Note: is recommend to creating a new virtual environment previously the installation of myfempy and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/)* 
+*Note: is recommend to create a new virtual environment previously the installation of myfempy and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/)* 
 
 ## >> Requirements
 
-Myfempy is known to work on various flavors of recent Linux, MacOS and Windows. Myfempy requires Python 3.
+Myfempy can be used in systems based on Linux, MacOS and Windows. Myfempy requires Python 3.
 
 ### Installation prerequisites, required to build myfempy:
 - [Python 3.x](https://www.python.org/) - *Python is a programming language that lets you work quickly and integrate systems more effectively.*
