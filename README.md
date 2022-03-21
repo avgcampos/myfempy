@@ -34,14 +34,14 @@ pip install .
 - To install updated dependencies, use the  ```pip install``` from packs, as follows
 
 ```
-pip install numpy, scipy, matplotlib, vedo, colorama
+pip install numpy, scipy, matplotlib, vedo
 ```
 
 </details>
 
 ## >> Requirements
 
-Myfempy is known to work on various flavors of recent Linux, Intel-based MacOS and Windows. Myfempy requires Python 3.
+Myfempy is known to work on various flavors of recent Linux, MacOS and Windows. Myfempy requires Python 3.
 
 ### Installation prerequisites, required to build myfempy:
 - [gmsh]() - Gmsh is an open source 3D finite element mesh generator with a built-in CAD engine and post-processor. *Note: needed install manually*
