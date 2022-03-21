@@ -66,8 +66,6 @@ Examples may be downloaded from: [myfempy/examples](https://github.com/easycae-3
 
 ## >> Realease
 
-## >> Citing
-
 ## >> License
 
 **myfempy** is published under the [GPLv3 license](https://en.wikipedia.org/wiki/GNU_General_Public_License)
@@ -78,3 +76,7 @@ Examples may be downloaded from: [myfempy/examples](https://github.com/easycae-3
 - [Myfempy](https://myfempy.readthedocs.io/) - *A python package for scientific analysis based on finite element method.* 
 
 - [FEM](https://en.wikipedia.org/wiki/Finite_element_method) - *The finite element method (FEM) is a popular method for numerically solving differential equations arising in engineering and mathematical modeling.*
+
+## >> Acknowledgment
+
+## >> Citing
