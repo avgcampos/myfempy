@@ -95,7 +95,8 @@ Citing
 
 Have you found this software useful for your research? Star the project and cite it as:
 
-@software{myfempy,
+- BibTeX::
+@software{campos_2022,
   author       = {Antonio Vinicius Garcia Campos,
                   },
   title        = {myfempy: 1.0.0 dev},
@@ -125,12 +126,9 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+* :ref:`documentation`
+* :ref:`basic_tutorial`
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
-
-About <self>
-documentation
-development
-examples/gallery
+   :hidden:
