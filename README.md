@@ -64,7 +64,7 @@ Examples may be downloaded from: [myfempy/examples](https://github.com/easycae-3
 
 ## >> Features
 
-## >> Realease
+## >> Release
 
 ## >> License
 
