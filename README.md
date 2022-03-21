@@ -15,7 +15,8 @@
 
 **Myfempy** uses command lines to solve simulations.
 
-- Author: Vinicius Campos
+- Author: Vinicius Campos [GitHub page](https://github.com/antonio-vinicius-garcia-campos)
+- Version: 1.0.0 dev/ mar 2022
 
 Copyright © Vinicius Campos and 3D EasyCAE, 2022
 
