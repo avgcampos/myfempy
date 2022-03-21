@@ -13,7 +13,7 @@
 ## >> About
 **Myfempy** is a python package based on finite element method for scientific analysis. The code is open source and *intended for educational and scientific purposes only, not recommended to commercial use*. You can help us by contributing with a donation on the main project page, read the support options. **If you use myfempy in your research, the  developers would be grateful if you could cite in your work.**
 
-Myfempy uses command lines to solve simulations.
+**Myfempy** uses command lines to solve simulations.
 
 - Author: Vinicius Campos
 
@@ -32,20 +32,20 @@ Copyright © Vinicius Campos and 3D EasyCAE, 2022
 pip install .
 ```
 
-*Note: is recommend to create a new virtual environment previously the installation of myfempy and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/)* 
+*Note: is recommend to create a new virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/)* 
 
 ## >> Requirements
 
-Myfempy can be used in systems based on Linux, MacOS and Windows. Myfempy requires Python 3.
+**Myfempy** can be used in systems based on Linux, MacOS and Windows. **Myfempy** requires Python 3.
 
-### Installation prerequisites, required to build myfempy:
+### Installation prerequisites, required to build **myfempy**:
 - [Python 3.x](https://www.python.org/) - *Python is a programming language that lets you work quickly and integrate systems more effectively.*
 - [Anaconda](https://www.anaconda.com/) - *Anaconda offers the easiest way to perform Python/R data science and machine learning on a single machine.*
 ------------
 #### Outhers prerequisites
 - [Gmsh](https://gmsh.info/) - Gmsh is an open source 3D finite element mesh generator with a built-in CAD engine and post-processor. *Note: needed install manually*
 
-### Python packages required for using myfempy:
+### Python packages required for using **myfempy**:
 - [numpy](https://numpy.org/) - The fundamental package for scientific computing with Python
 - [scipy](https://scipy.org/) - Fundamental algorithms for scientific computing in Python
 - [vedo](https://vedo.embl.es/) - A python module for scientific analysis and visualization of эd objects
