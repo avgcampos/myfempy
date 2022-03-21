@@ -2,6 +2,7 @@
 desktop.ini
 requirements.txt
 docs/manual_dev/
+docs/data/
 tests/
 test*
 
