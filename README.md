@@ -10,7 +10,7 @@
 [![CircleCI](https://circleci.com/gh/marcomusy/vedo.svg?style=svg)](https://circleci.com/gh/marcomusy/vedo) -->
 
 
-## >> About
+## About
 **Myfempy** is a python package based on finite element method for scientific analysis. The code is open source and *intended for educational and scientific purposes only, not recommended to commercial use*. You can help us by contributing with a donation on the main project page, read the support options. **If you use myfempy in your research, the  developers would be grateful if you could cite in your work.**
 
 **Myfempy** uses command lines to solve simulations.
@@ -20,7 +20,7 @@
 
 Copyright © Vinicius Campos and 3D EasyCAE, 2022
 
-## >> Installation
+## Installation
 ### To install myfempy manually in your directory, following the steps
 
 1. Download the main code from [github/myfempy/main](https://github.com/easycae-3d/myfempy/tree/main)
@@ -35,7 +35,7 @@ pip install .
 
 *Note: is recommend to create a new virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/)* 
 
-## >> Requirements
+## Requirements
 
 **Myfempy** can be used in systems based on Linux, MacOS and Windows. **Myfempy** requires Python 3.
 
@@ -56,29 +56,29 @@ pip install .
 pip install numpy, scipy, vedo
 ```
 
-## >> Documentation
-The main webpage documentation is available here: [myfempy web doc](https://myfempy.readthedocs.io/).
+## Documentation
+The main documentation is available here: [myfempy web doc](https://myfempy.readthedocs.io/).
 
 The **User's Manual** is available here: [myfempy/docs](https://github.com/easycae-3d/myfempy/blob/main/docs/Users_Manual.pdf).
 
-Examples may be downloaded from: [myfempy/examples](https://github.com/easycae-3d/myfempy/tree/main/examples).
+Examples are available here: [myfempy/examples](https://github.com/easycae-3d/myfempy/tree/main/examples).
 
-## >> Release
+## Release
 
 The version up to date is **myfempy v1.0.0 dev**. Go to *Features List/Version History* to visualization all versions releses.
 
-## >> Features
+## Features
 
 [Features List](https://docs.google.com/spreadsheets/d/1k9kiXk2PPuUvcsiukAni005zQc-IOCmP2r-Z6B02304/edit?usp=sharing)
 
 
-## >> License
+## License
 
 **myfempy** is published under the [GPLv3 license](https://en.wikipedia.org/wiki/GNU_General_Public_License)
 
 <!-- ## >> Acknowledgment -->
 
-## >> Citing
+## Citing
 
 Have you found this software useful for your research? Star the project and cite it as:
 
@@ -94,7 +94,7 @@ Have you found this software useful for your research? Star the project and cite
   url          = {}
 }
 
-## >> References
+## References
 
 - [Myfempy](https://myfempy.readthedocs.io/) - *A python package for scientific analysis based on finite element method.* 
 
