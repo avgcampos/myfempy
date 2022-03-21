@@ -15,7 +15,7 @@ The **myfempy** is a python package based on finite element method for scientifi
 
 - Author: Vinicius Campos
 
-Copyright © 2022 Vinicius Campos, 3D EasyCAE
+Copyright © Vinicius Campos and 3D EasyCAE, 2022
 
 ## >> Installation
 ### To install myfempy manually in your directory, following the steps
@@ -66,21 +66,36 @@ The **User's Manual** is available here: [myfempy/docs](https://github.com/easyc
 
 Examples may be downloaded from: [myfempy/examples](https://github.com/easycae-3d/myfempy/tree/main/examples).
 
+## >> Release
+
+The version up to date is **myfempy v1.0.0 dev**. Go to *Features List/Version History* to visualization all versions releses.
+
 ## >> Features
 
 [Features List](https://docs.google.com/spreadsheets/d/1k9kiXk2PPuUvcsiukAni005zQc-IOCmP2r-Z6B02304/edit?usp=sharing)
 
-## >> Release
-
-The version up to date is **myfempy v1.0.0 dev**
 
 ## >> License
 
 **myfempy** is published under the [GPLv3 license](https://en.wikipedia.org/wiki/GNU_General_Public_License)
 
-## >> Acknowledgment
+<!-- ## >> Acknowledgment -->
 
 ## >> Citing
+
+Have you found this software useful for your research? Star the project and cite it as:
+
+@software{myfempy,
+  author       = {Antonio Vinicius Garcia Campos,
+                  },
+  title        = {myfempy: 1.0.0 dev},
+  month        = mar,
+  year         = 2022,
+  publisher    = {Zenodo},
+  version      = {},
+  doi          = {},
+  url          = {}
+}
 
 ## >> References
 
@@ -88,4 +103,7 @@ The version up to date is **myfempy v1.0.0 dev**
 
 - [FEM](https://en.wikipedia.org/wiki/Finite_element_method) - *The finite element method (FEM) is a popular method for numerically solving differential equations arising in engineering and mathematical modeling.*
 
+- [Solid Mechanics](https://en.wikipedia.org/wiki/Solid_mechanics) - *Solid mechanics, also known as mechanics of solids, is the branch of continuum mechanics that studies the behavior of solid materials, especially their motion and deformation under the action of forces, temperature changes, phase changes, and other external or internal agents.*
+
+- [PDE](https://en.wikipedia.org/wiki/Partial_differential_equation) - *In mathematics, a partial differential equation (PDE) is an equation which imposes relations between the various partial derivatives of a multivariable function.*
 
