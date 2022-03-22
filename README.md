@@ -68,7 +68,7 @@ Many examples are available here: [myfempy/examples](https://github.com/easycae-
 
 ## Release
 
-The version up to date is **myfempy v1.0.0 dev**. Go to *Features List/Version History* to visualization all versions releses.
+The version up to date is **myfempy v1.0.1 beta**. Go to *Features List/Version History* to visualization all versions releses.
 
 ## Features
 
