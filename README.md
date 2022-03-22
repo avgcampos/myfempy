@@ -97,6 +97,8 @@ Have you found this software useful for your research? Star the project and cite
   url          = {}
 }
 
+[![DOI](https://zenodo.org/badge/462762513.svg)](https://zenodo.org/badge/latestdoi/462762513)
+
 ## References
 
 - [Myfempy](https://myfempy.readthedocs.io/) - *A python package for scientific analysis based on finite element method.* 
