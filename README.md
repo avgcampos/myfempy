@@ -4,7 +4,7 @@
 
 [![lics](https://img.shields.io/badge/license-GPL-blue.svg)](https://en.wikipedia.org/wiki/GNU_General_Public_License)
 
-<!-- [![DOI](https://orcid.org/0000-0003-1678-384X)](https://orcid.org/0000-0003-1678-384X)
+[![DOI](https://zenodo.org/badge/462762513.svg)](https://zenodo.org/badge/latestdoi/462762513)
 
 [![Downloads](https://pepy.tech/badge/vedo)](https://pepy.tech/project/vedo)
 
@@ -96,7 +96,6 @@ Have you found this software useful for your research? Star the project and cite
     url          = {https://doi.org/10.5281/zenodo.6376522}
   }
 
-[![DOI](https://zenodo.org/badge/462762513.svg)](https://zenodo.org/badge/latestdoi/462762513)
 
 ## References
 
