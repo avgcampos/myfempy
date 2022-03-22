@@ -18,7 +18,7 @@ About
 - Author: Vinicius Campos `GitHub page <https://github.com/antonio-vinicius-garcia-campos>`_
 - Version: 1.0.0 dev/ mar 2022
 
-Copyright © Vinicius Campos and 3D EasyCAE, 2022
+Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022
 
 Installation
 ----------------

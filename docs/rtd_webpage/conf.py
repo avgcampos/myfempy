@@ -19,7 +19,7 @@
 
 project = 'myfempy'
 copyright = '2022, Campos, A. V. G.'
-author = 'Campos, A. V. G.'
+author = 'Antonio Vinicius Garcia Campos.'
 
 # The full version, including alpha/beta/rc tags
 release = 'Beta v1.0.0'
@@ -55,7 +55,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # a list of builtin themes.
 #
 # html_theme = 'sphinx_rtd_theme'
-html_theme = "sphinx_rtd_theme"
+html_theme = "classic"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
