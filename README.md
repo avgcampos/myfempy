@@ -68,7 +68,7 @@ Many examples are available here: [myfempy/examples](https://github.com/easycae-
 
 ## Release
 
-The version up to date is **myfempy v1.0.0 dev**. Go to *Features List/Version History* to visualization all versions releses.
+The version up to date is **myfempy v1.0.1 beta**. Go to *Features List/Version History* to visualization all versions releses.
 
 ## Features
 
@@ -86,6 +86,8 @@ The version up to date is **myfempy v1.0.0 dev**. Go to *Features List/Version H
 Have you found this software useful for your research? Star the project and cite it as:
 
 Vinicius Campos. (2022). easycae-3d/myfempy: beta (v1.0.1). Zenodo. https://doi.org/10.5281/zenodo.6376522
+
+- [BibTex Style](https://github.com/easycae-3d/myfempy/blob/master/citing.bib)
 
 
 ## References
