@@ -23,17 +23,17 @@ Copyright © Vinicius Campos and 3D EasyCAE, 2022
 Installation
 ----------------
 
-To install myfempy manually in your directory, following the steps
+	To install myfempy manually in your directory, following the steps
 
-1. Download the main code from [github/myfempy/main](https://github.com/easycae-3d/myfempy/tree/main)
+	1. Download the main code from [github/myfempy/main](https://github.com/easycae-3d/myfempy/tree/main)
 
-2. Unzip the pack in your preferred location
+	2. Unzip the pack in your preferred location
 
-3. In the **myfempy-main** folder, open a terminal and enter with the command:
+	3. In the **myfempy-main** folder, open a terminal and enter with the command:
 
-```
-pip install .
-```
+	```
+	pip install .
+	```
 
 *Note: is recommend to create a new virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/)* 
 
@@ -96,17 +96,18 @@ Citing
 Have you found this software useful for your research? Star the project and cite it as:
 
 - BibTeX::
-@software{campos_2022,
-  author       = {Antonio Vinicius Garcia Campos,
-                  },
-  title        = {myfempy: 1.0.0 dev},
-  month        = mar,
-  year         = 2022,
-  publisher    = {Zenodo},
-  version      = {},
-  doi          = {},
-  url          = {}
-}
+
+	@software{campos_2022,
+	  author       = {Antonio Vinicius Garcia Campos,
+					  },
+	  title        = {myfempy: 1.0.0 dev},
+	  month        = mar,
+	  year         = 2022,
+	  publisher    = {Zenodo},
+	  version      = {},
+	  doi          = {},
+	  url          = {}
+	}
 
 References
 ----------------
@@ -128,9 +129,10 @@ Indices and tables
 * :ref:`search`
 
 .. toctree::
-   :maxdepth: 2
    :hidden:
+   :maxdepth: 3
    
-   About <self>
+   about <self>
+   introduction
    documentation
-   basic_tutorial
+   tutorial
