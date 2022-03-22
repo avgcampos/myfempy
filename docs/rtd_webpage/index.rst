@@ -31,7 +31,7 @@ Installation
 
 	3. In the **myfempy-main** folder, open a terminal and enter with the command:
 
-	- install ::
+	- try: ::
 	
 		pip install .
 	
@@ -61,7 +61,7 @@ Python packages required for using **myfempy**:
 
 - `vedo <https://vedo.embl.es/>`_ - A python module for scientific analysis and visualization of эd objects
 
-- install ::
+- try: ::
 
 	pip install numpy, scipy, vedo
 
