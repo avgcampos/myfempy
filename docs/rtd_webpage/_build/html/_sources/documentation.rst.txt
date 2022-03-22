@@ -6,5 +6,4 @@ Documentation
 
    introduction
    installation
-   users_guide
    examples
