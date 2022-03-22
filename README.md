@@ -4,10 +4,10 @@
 |  | Badges |
 | --- | :---: |
 | Documentation | [![Documentation Status](https://readthedocs.org/projects/myfempy/badge/?version=latest)](https://myfempy.readthedocs.io/en/latest/?badge=latest) |
-| Testing  | [![Style checks]()]() [![Run tests]()]() |
+| Testing  | [![Style checks]()]() [![Run tests](https://sonarcloud.io/project/overview?id=easycae-3d_myfempy)](https://sonarcloud.io/project/overview?id=easycae-3d_myfempy) |
 | Packages | [![PyPI]()]() [![conda]()]() |
 | Paper | [![DOI](https://zenodo.org/badge/462762513.svg)](https://zenodo.org/badge/latestdoi/462762513) |
-| Code quality | [![Quality Gate Status]()]() |
+| Code quality | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=easycae-3d_myfempy&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=easycae-3d_myfempy) |
 | Downloads | [![Downloads]() |
 | License | [![lics](https://img.shields.io/badge/license-GPL-blue.svg)](https://en.wikipedia.org/wiki/GNU_General_Public_License) |
 
