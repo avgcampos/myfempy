@@ -98,18 +98,20 @@ Citing
 
 Have you found this software useful for your research? Star the project and cite it as:
 
+Vinicius Campos. (2022). easycae-3d/myfempy: beta (v1.0.1). Zenodo. `<https://doi.org/10.5281/zenodo.6376522>`_
+
 - BibTeX::
 
-	@software{campos_2022,
-	  author       = {Antonio Vinicius Garcia Campos,
-					  },
-	  title        = {myfempy: 1.0.0 dev},
-	  month        = mar,
-	  year         = 2022,
-	  publisher    = {Zenodo},
-	  version      = {},
-	  doi          = {},
-	  url          = {}
+	@Software{vinicius_campos_2022_6376522,
+	  author    = {Antonio Vinicius Garcia Campos},
+	  date      = {2022-03-22},
+	  title     = {easycae-3d/myfempy: beta v1.0.1},
+	  doi       = {10.5281/zenodo.6376522},
+	  url       = {`<https://doi.org/10.5281/zenodo.6376522>`_},
+	  version   = {v1.0.1},
+	  month     = mar,
+	  publisher = {Zenodo},
+	  year      = {2022},
 	}
 
 References
@@ -136,5 +138,5 @@ Indices and tables
    :maxdepth: 3
    
    About <self>
-   documentation
    tutorial
+   documentation
