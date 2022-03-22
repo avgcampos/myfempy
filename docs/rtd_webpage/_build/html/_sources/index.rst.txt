@@ -69,11 +69,13 @@ Python packages required for using **myfempy**:
 Documentation
 ----------------
 
-The main documentation is available here: `myfempy web doc <https://myfempy.readthedocs.io/>`_ .
+The main documentation is available here: `myfempy web doc <https://myfempy.readthedocs.io/>`_
 
-The **User's Manual** is available here: `myfempy/docs <https://github.com/easycae-3d/myfempy/blob/main/docs/Users_Manual.pdf>`_ .
+The myfempy GitHub page/download page is available here: `myfempy github page <https://github.com/easycae-3d/myfempy/>`_
 
-Examples are available here: `myfempy/examples <https://github.com/easycae-3d/myfempy/tree/main/examples>`_ .
+The **User's Manual** is available here: `myfempy/docs <https://github.com/easycae-3d/myfempy/blob/main/docs/Users_Manual.pdf>`_
+
+Many examples are available here: `myfempy/examples <https://github.com/easycae-3d/myfempy/tree/main/examples>`_
 
 Release
 ----------------
