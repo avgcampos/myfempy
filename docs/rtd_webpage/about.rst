@@ -19,9 +19,3 @@ Indices and tables
 .. toctree::
    :hidden:
    :maxdepth: 3
-
-   introduction
-   installation
-   tutorial
-   users_guide
-   examples

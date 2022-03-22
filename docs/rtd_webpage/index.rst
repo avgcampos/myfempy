@@ -133,6 +133,5 @@ Indices and tables
    :maxdepth: 3
    
    about <self>
-   introduction
    documentation
    tutorial
