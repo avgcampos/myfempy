@@ -87,6 +87,9 @@ Have you found this software useful for your research? Star the project and cite
 
 Vinicius Campos. (2022). easycae-3d/myfempy: beta (v1.0.1). Zenodo. https://doi.org/10.5281/zenodo.6376522
 
+- BibTex ::
+  [citing.bib](https://github.com/easycae-3d/myfempy/blob/master/citing.bib)
+
 
 ## References
 
