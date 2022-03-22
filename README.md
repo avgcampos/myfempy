@@ -84,18 +84,17 @@ The version up to date is **myfempy v1.0.0 dev**. Go to *Features List/Version H
 ## Citing
 
 Have you found this software useful for your research? Star the project and cite it as:
-
-@software{myfempy,
-  author       = {Antonio Vinicius Garcia Campos,
-                  },
-  title        = {myfempy: 1.0.0 dev},
-  month        = mar,
-  year         = 2022,
-  publisher    = {Zenodo},
-  version      = {},
-  doi          = {},
-  url          = {}
-}
+- BibTeX::
+  @software{vinicius_campos_2022_6376522,
+    author       = {Vinicius Campos},
+    title        = {easycae-3d/myfempy: beta},
+    month        = mar,
+    year         = 2022,
+    publisher    = {Zenodo},
+    version      = {v1.0.1},
+    doi          = {10.5281/zenodo.6376522},
+    url          = {https://doi.org/10.5281/zenodo.6376522}
+  }
 
 [![DOI](https://zenodo.org/badge/462762513.svg)](https://zenodo.org/badge/latestdoi/462762513)
 
