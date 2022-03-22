@@ -60,9 +60,11 @@ pip install numpy, scipy, vedo
 ## Documentation
 The main documentation is available here: [myfempy web doc](https://myfempy.readthedocs.io/).
 
+The myfempy GitHub page/download page is available here: [myfempy github page](https://github.com/easycae-3d/myfempy/).
+
 The **User's Manual** is available here: [myfempy/docs](https://github.com/easycae-3d/myfempy/blob/main/docs/Users_Manual.pdf).
 
-Examples are available here: [myfempy/examples](https://github.com/easycae-3d/myfempy/tree/main/examples).
+Many examples are available here: [myfempy/examples](https://github.com/easycae-3d/myfempy/tree/main/examples).
 
 ## Release
 
