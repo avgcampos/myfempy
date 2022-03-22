@@ -6,9 +6,13 @@
 
 [![DOI](https://zenodo.org/badge/462762513.svg)](https://zenodo.org/badge/latestdoi/462762513)
 
+<!--
+
 [![Downloads](https://pepy.tech/badge/vedo)](https://pepy.tech/project/vedo)
 
-[![CircleCI](https://circleci.com/gh/marcomusy/vedo.svg?style=svg)](https://circleci.com/gh/marcomusy/vedo) -->
+[![CircleCI](https://circleci.com/gh/marcomusy/vedo.svg?style=svg)](https://circleci.com/gh/marcomusy/vedo)
+ 
+-->
 
 
 ## About
