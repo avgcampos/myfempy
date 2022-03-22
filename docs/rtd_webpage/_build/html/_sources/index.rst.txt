@@ -126,9 +126,11 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-* :ref:`documentation`
-* :ref:`basic_tutorial`
 
 .. toctree::
    :maxdepth: 2
    :hidden:
+   
+   About <self>
+   documentation
+   basic_tutorial
