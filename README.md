@@ -1,3 +1,4 @@
+# myfempy project
 ![logo](https://user-images.githubusercontent.com/54820276/159380676-a35b17f3-e9cc-4ee4-b8b1-0a7c4c3fb0d6.svg)
 
 
@@ -15,10 +16,10 @@
 
 **Myfempy** uses command lines to solve simulations.
 
-- Author: Vinicius Campos [GitHub page](https://github.com/antonio-vinicius-garcia-campos)
+- Author: Antonio Vinicius Garcia Campos [GitHub page](https://github.com/antonio-vinicius-garcia-campos)
 - Version: 1.0.0 dev/ mar 2022
 
-Copyright © Vinicius Campos and 3D EasyCAE, 2022
+Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022
 
 ## Installation
 ### To install myfempy manually in your directory, following the steps
@@ -29,7 +30,7 @@ Copyright © Vinicius Campos and 3D EasyCAE, 2022
 
 3. In the **myfempy-main** folder, open a terminal and enter with the command:
 
-```
+```bash
 pip install .
 ```
 
@@ -52,7 +53,7 @@ pip install .
 - [vedo](https://vedo.embl.es/) - A python module for scientific analysis and visualization of эd objects
 
 
-```
+```bash
 pip install numpy, scipy, vedo
 ```
 
@@ -104,3 +105,68 @@ Have you found this software useful for your research? Star the project and cite
 
 - [PDE](https://en.wikipedia.org/wiki/Partial_differential_equation) - *In mathematics, a partial differential equation (PDE) is an equation which imposes relations between the various partial derivatives of a multivariable function.*
 
+-----------
+# Tree Structures
+```bash
+/myfempy
+|--/bin
+|	gui.py
+|	plotter.py
+|
+|
+|
+|--/felib
+|	|--/fluid
+|	|
+|	|
+|	|
+|	|--/fsi
+|	|
+|	|
+|	|
+|	|--/struct
+|		beam21.py
+|		frame22.py
+|		frame23.py
+|		plane32.py
+|		plane42.py
+|		solid83.py
+|		spring20.py
+|		truss22.py
+|		.py
+|		.py
+|		.py
+|
+|	integrat.py
+|	material.py
+|	postproc.py
+|
+|
+|
+|--/help
+|	help.py
+|	version.py
+|
+|
+|
+|--/io
+|	filters.py
+|	ioctrl.py
+|	miscel.py
+|
+|
+|
+|--/mesh
+|	meshgen.py
+|
+|
+|
+|--/solver
+|		assembly.py
+|		bcloads.py
+|		plotter.py
+|		solverset.py
+|		static.py
+|		vibra.py
+|
+```
