@@ -1,133 +1,125 @@
-.. include:: links.inc
-
-.. SfePy documentation master file, created by
-   sphinx-quickstart on Wed Oct 14 00:02:22 2009.
+.. myfempy documentation master file, created by
+   sphinx-quickstart on Mon Mar 14 21:53:28 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
-
+   
 .. only:: html
 
-   SfePy: Simple Finite Elements in Python
-   =======================================
+Welcome to myfempy's web documentation!
+=======================================
 
-   SfePy is a software for solving systems of coupled partial differential
-   equations (PDEs) by the finite element method in 1D, 2D and 3D. It can be
-   viewed both as black-box PDE solver, and as a Python package which can be
-   used for building custom applications. The word "simple" means that complex
-   FEM problems can be coded very easily and rapidly.
+About
+----------------
 
-   SfePy can use many terms to build the PDEs to be solved, see
-   :ref:`term_overview`. SfePy comes also with a number of examples that can
-   get you started, check :doc:`examples/gallery`, :doc:`examples` and
-   :doc:`tutorial`. Some more advanced features are discussed in :doc:`primer`.
-   Examples of scientific results obtained with the help of SfePy are listed in
-   :ref:`example_applications`. See also :doc:`faq`.
+**Myfempy** is a python package based on finite element method for scientific analysis. The code is open source and *intended for educational and scientific purposes only, not recommended to commercial use*. You can help us by contributing with a donation on the main project page, read the support options. **If you use myfempy in your research, the  developers would be grateful if you could cite in your work.**
 
-   SfePy can be used in parallel (work in progress), see
-   :ref:`solving_problems_in_parallel`.
-   There is also a preliminary support for the isogeometric analysis,
-   outlined in :ref:`isogeometric_analysis`.
+**Myfempy** uses command lines to solve simulations.
 
-   The easiest way to install SfePy is to use `Anaconda`_, see
-   :ref:`multi_platform_distributions_notes` in
-   :ref:`introduction_installation`.
+- Author: Vinicius Campos [GitHub page](https://github.com/antonio-vinicius-garcia-campos)
+- Version: 1.0.0 dev/ mar 2022
 
-   **License:** :doc:`BSD <license>`
+Copyright © Vinicius Campos and 3D EasyCAE, 2022
 
-   Related Projects
-   ----------------
+Installation
+----------------
 
-   - Semi-automatic generation of finite element meshes from CT/MR scans stored
-     in the DICOM file format: http://sfepy.org/dicom2fem
-   - PUCGen (Periodic Unit Cell Generator): https://github.com/sfepy/pucgen
-   - Utilities to run parametric studies in parallel, and to scoop the output
-     files produced by the studies into a dataframe:
-     https://github.com/rc/soops
+	To install myfempy manually in your directory, following the steps
 
-   Citing
-   ------
+	1. Download the main code from [github/myfempy/main](https://github.com/easycae-3d/myfempy/tree/main)
 
-   If you would like to cite the SfePy package in a paper or presentation, the
-   following references can be used:
+	2. Unzip the pack in your preferred location
 
-   - General article:
+	3. In the **myfempy-main** folder, open a terminal and enter with the command:
 
-     - Plain text:
+	```
+	pip install .
+	```
 
-       Cimrman, R., LukeÅ¡, V., Rohan, E., 2019. Multiscale finite element
-       calculations in Python using SfePy. Advances in Computational
-       Mathematics 45, 1897-1921. https://doi.org/10.1007/s10444-019-09666-0
+*Note: is recommend to create a new virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/)* 
 
-       (preprint: https://arxiv.org/abs/1810.00674)
+Requirements
+----------------
 
-     - BibTeX::
+**Myfempy** can be used in systems based on Linux, MacOS and Windows. **Myfempy** requires Python 3.
 
-         @article{Cimrman_Lukes_Rohan_2019,
-           title =        {Multiscale finite element calculations in Python using SfePy},
-           author =       {Cimrman, Robert and LukeÅ¡, VladimÃ­r and Rohan, Eduard},
-           issn =         {1572-9044},
-           doi =          {10.1007/s10444-019-09666-0},
-           journal =      {Advances in Computational Mathematics},
-           year =         2019,
-         }
+Installation prerequisites, required to build **myfempy**:
 
-   - Performance related data for version 2021.1 and a description of the
-     multi-linear terms implementation are given in:
+- [Python 3.x](https://www.python.org/) - *Python is a programming language that lets you work quickly and integrate systems more effectively.*
 
-     - Plain text:
+- [Anaconda](https://www.anaconda.com/) - *Anaconda offers the easiest way to perform Python/R data science and machine learning on a single machine.*
+------------
+Outhers prerequisites
 
-       Cimrman, R., 2021. Fast evaluation of finite element weak forms using
-       python tensor contraction packages. Advances in Engineering Software
-       159, 103033. https://doi.org/10.1016/j.advengsoft.2021.103033
+- [Gmsh](https://gmsh.info/) - Gmsh is an open source 3D finite element mesh generator with a built-in CAD engine and post-processor. *Note: needed install manually*
 
-       (preprint: https://arxiv.org/abs/2107.04121)
+Python packages required for using **myfempy**:
 
-     - BibTeX::
+- [numpy](https://numpy.org/) - The fundamental package for scientific computing with Python
 
-         @article{Cimrman_2021,
-           title =        {Fast Evaluation of Finite Element Weak Forms Using Python Tensor Contraction Packages},
-           author =       {Cimrman, Robert},
-           issn =         {0965-9978},
-           doi =          {10.1016/j.advengsoft.2021.103033},
-           journal =      {Advances in Engineering Software},
-           volume =       159,
-           year =         2021,
-         }
+- [scipy](https://scipy.org/) - Fundamental algorithms for scientific computing in Python
 
-   - :ref:`example_applications` have links to related scientific articles.
+- [vedo](https://vedo.embl.es/) - A python module for scientific analysis and visualization of эd objects
 
-   - Other references:
 
-     - R. Cimrman. SfePy - write your own FE application. In P. de Buyl
-       and N. Varoquaux, editors, Proceedings of the 6th European Conference
-       on Python in Science (EuroSciPy 2013), pages 65â€“70, 2014.
-       http://arxiv.org/abs/1404.6391.
+```
+pip install numpy, scipy, vedo
+```
 
-     - R. Cimrman. Enhancing SfePy with isogeometric analysis. In P. de Buyl
-       and N. Varoquaux, editors, Proceedings of the 7th European Conference on
-       Python in Science (EuroSciPy 2014), pages 65â€“72, 2014.
-       http://arxiv.org/abs/1412.6407.
+Documentation
+----------------
 
-   Support
-   -------
+The main documentation is available here: [myfempy web doc](https://myfempy.readthedocs.io/).
 
-   Work on SfePy is partially supported by the following ongoing projects:
+The **User's Manual** is available here: [myfempy/docs](https://github.com/easycae-3d/myfempy/blob/main/docs/Users_Manual.pdf).
 
-   - project GA21-16406S (Nonlinear Acoustics and Transport Processes in Porous
-     Periodic Structures) of the Czech Science Foundation, since 2021
-   - project GA19-04956S (Dynamic and nonlinear behaviour of smart structures;
-     modelling and optimization) of the Czech Science Foundation, since 2019;
-   - the European Regional Development Fund-Project "Application of Modern
-     Technologies in Medicine and Industry"
-     (No. CZ.02.1.01/0.0/0.0/17_048/0007280) of the Czech Ministry of
-     Education, Youth and Sports, since 2018.
+Examples are available here: [myfempy/examples](https://github.com/easycae-3d/myfempy/tree/main/examples).
 
-   See also :doc:`archived_support`.
+Release
+----------------
 
-   Manual in PDF
-   --------------
+The version up to date is **myfempy v1.0.0 dev**. Go to *Features List/Version History* to visualization all versions releses.
 
-   PDF version of the documentation: :download:`sfepy_manual.pdf`
+Features
+----------------
+
+[Features List](https://docs.google.com/spreadsheets/d/1k9kiXk2PPuUvcsiukAni005zQc-IOCmP2r-Z6B02304/edit?usp=sharing)
+
+
+License
+----------------
+
+**myfempy** is published under the [GPLv3 license](https://en.wikipedia.org/wiki/GNU_General_Public_License)
+
+Citing
+----------------
+
+Have you found this software useful for your research? Star the project and cite it as:
+
+- BibTeX::
+
+	@software{campos_2022,
+	  author       = {Antonio Vinicius Garcia Campos,
+					  },
+	  title        = {myfempy: 1.0.0 dev},
+	  month        = mar,
+	  year         = 2022,
+	  publisher    = {Zenodo},
+	  version      = {},
+	  doi          = {},
+	  url          = {}
+	}
+
+References
+----------------
+
+- [Myfempy](https://myfempy.readthedocs.io/) - *A python package for scientific analysis based on finite element method.* 
+
+- [FEM](https://en.wikipedia.org/wiki/Finite_element_method) - *The finite element method (FEM) is a popular method for numerically solving differential equations arising in engineering and mathematical modeling.*
+
+- [Solid Mechanics](https://en.wikipedia.org/wiki/Solid_mechanics) - *Solid mechanics, also known as mechanics of solids, is the branch of continuum mechanics that studies the behavior of solid materials, especially their motion and deformation under the action of forces, temperature changes, phase changes, and other external or internal agents.*
+
+- [PDE](https://en.wikipedia.org/wiki/Partial_differential_equation) - *In mathematics, a partial differential equation (PDE) is an equation which imposes relations between the various partial derivatives of a multivariable function.*
+
 
 Indices and tables
 ==================
@@ -139,9 +131,7 @@ Indices and tables
 .. toctree::
    :hidden:
    :maxdepth: 3
-
+   
    about <self>
    documentation
-   basic_tuto
-   examples
-   
+   tutorial
