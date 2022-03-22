@@ -4,7 +4,7 @@
 |  | Badges |
 | --- | :---: |
 | Documentation | [![Documentation Status](https://readthedocs.org/projects/myfempy/badge/?version=latest)](https://myfempy.readthedocs.io/en/latest/?badge=latest) |
-| Testing & coverage | [![Style checks]()]() [![Run tests]()]() [![Coverage Status]()]() |
+| Testing  | [![Style checks]()]() [![Run tests]()]() |
 | Packages | [![PyPI]()]() [![conda]()]() |
 | Paper | [![DOI](https://zenodo.org/badge/462762513.svg)](https://zenodo.org/badge/latestdoi/462762513) |
 | Code quality | [![Quality Gate Status]()]() |
