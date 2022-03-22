@@ -1,18 +1,15 @@
 # myfempy project
 ![logo](https://user-images.githubusercontent.com/54820276/159380676-a35b17f3-e9cc-4ee4-b8b1-0a7c4c3fb0d6.svg)
 
-
-[![lics](https://img.shields.io/badge/license-GPL-blue.svg)](https://en.wikipedia.org/wiki/GNU_General_Public_License)
-
-[![DOI](https://zenodo.org/badge/462762513.svg)](https://zenodo.org/badge/latestdoi/462762513)
-
-<!--
-
-[![Downloads](https://pepy.tech/badge/vedo)](https://pepy.tech/project/vedo)
-
-[![CircleCI](https://circleci.com/gh/marcomusy/vedo.svg?style=svg)](https://circleci.com/gh/marcomusy/vedo)
- 
--->
+|  | Badges |
+| --- | :---: |
+| Documentation | [![Documentation Status](https://readthedocs.org/projects/myfempy/badge/?version=latest)](https://myfempy.readthedocs.io/en/latest/?badge=latest) |
+| Testing & coverage | [![Style checks]()]() [![Run tests]()]() [![Coverage Status]()]() |
+| Packages | [![PyPI]()]() [![conda]()]() |
+| Paper | [![DOI](https://zenodo.org/badge/462762513.svg)](https://zenodo.org/badge/latestdoi/462762513) |
+| Code quality | [![Quality Gate Status]()]() |
+| Downloads | [![Downloads]() |
+| License | [![lics](https://img.shields.io/badge/license-GPL-blue.svg)](https://en.wikipedia.org/wiki/GNU_General_Public_License) |
 
 
 ## About
