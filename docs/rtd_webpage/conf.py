@@ -62,7 +62,7 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ['_static']
 
 html_logo = "logo_png_275_85.png"
-# html_theme_options = {
-    # 'logo_only': True,
-    # 'display_version': True,
-# }
+html_theme_options = {
+    'logo_only': True,
+    'display_version': True,
+}
