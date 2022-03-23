@@ -22,7 +22,12 @@ copyright = '2022, Campos, A. V. G.'
 author = 'Antonio Vinicius Garcia Campos.'
 
 # The full version, including alpha/beta/rc tags
-release = 'beta v1.0.1'
+try:
+    VERSIONFILE = "version.py"
+    verstrline = open(VERSIONFILE,"rt").read()
+    release = verstrline.split("=")[1].replace("\n", "").replace("'", "")
+except:
+    release = "unknown"
 
 
 # -- General configuration ---------------------------------------------------
@@ -64,5 +69,5 @@ html_static_path = ['_static']
 html_logo = "logo.svg"
 html_theme_options = {
     'logo_only': True,
-    'display_version': False,
+    'display_version': True,
 }
