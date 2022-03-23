@@ -76,7 +76,7 @@ Release
 ----------------
 
 The version up to date is available here: 
-`myfempy release <https://github.com/easycae-3d/myfempy/releases>`_
+`myfempy releases <https://github.com/easycae-3d/myfempy/releases>`_
 
 Go to *Features List/Version History* to visualization all versions releses.
 

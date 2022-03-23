@@ -69,7 +69,7 @@ Many examples are available here: [myfempy/examples](https://github.com/easycae-
 ## Release
 
 The version up to date is available here: 
-[myfempy release](https://github.com/easycae-3d/myfempy/releases)
+[myfempy releases](https://github.com/easycae-3d/myfempy/releases)
 
 Go to *Features List/Version History* to visualization all versions releses.
 
