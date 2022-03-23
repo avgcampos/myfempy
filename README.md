@@ -1,6 +1,8 @@
 # myfempy project
 ![logo](https://user-images.githubusercontent.com/54820276/159380676-a35b17f3-e9cc-4ee4-b8b1-0a7c4c3fb0d6.svg)
 
+Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022
+
 |  | Badges |
 | --- | :---: |
 | Documentation | [![Documentation Status](https://readthedocs.org/projects/myfempy/badge/?version=latest)](https://myfempy.readthedocs.io/en/latest/?badge=latest) |
@@ -10,11 +12,11 @@
 | Downloads | [![Downloads]() |
 | License | [![lics](https://img.shields.io/badge/license-GPL-blue.svg)](https://en.wikipedia.org/wiki/GNU_General_Public_License) |
 
+-----------
 
 ## About
 **Myfempy** is a python package based on finite element method for scientific analysis. The code is open source and *intended for educational and scientific purposes only, not recommended to commercial use*. You can help us by contributing with a donation on the main project page, read the support options. **If you use myfempy in your research, the  developers would be grateful if you could cite in your work.**
 
-Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022
 
 ## Installation
 ### To install myfempy manually in your directory, following the steps
