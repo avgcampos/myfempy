@@ -43,7 +43,7 @@ Installation prerequisites, required to build **myfempy**:
 - `Python 3.x <https://www.python.org/>`_ - *Python is a programming language that lets you work quickly and integrate systems more effectively.*
 
 - `Anaconda <https://www.anaconda.com/>`_ - *Anaconda offers the easiest way to perform Python/R data science and machine learning on a single machine.*
-------------
+
 Outhers prerequisites
 
 - `Gmsh <https://gmsh.info/>`_ - Gmsh is an open source 3D finite element mesh generator with a built-in CAD engine and post-processor. *Note: needed install manually*
@@ -135,6 +135,6 @@ Indices and tables
    :hidden:
    :maxdepth: 3
    
-   About <self>
+   Quick Start <self>
    tutorial
    documentation
