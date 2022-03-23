@@ -22,12 +22,7 @@ copyright = '2022, Campos, A. V. G.'
 author = 'Antonio Vinicius Garcia Campos.'
 
 # The full version, including alpha/beta/rc tags
-try:
-    VERSIONFILE = "../../version.py"
-    verstrline = open(VERSIONFILE,"rt").read()
-    release = verstrline.split("=")[1].replace("\n", "").replace("'", "")
-except:
-    release = "unknown"
+release = 'beta 1.dev0'
 
 
 # -- General configuration ---------------------------------------------------
