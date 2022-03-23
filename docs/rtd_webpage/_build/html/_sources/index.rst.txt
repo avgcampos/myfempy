@@ -13,11 +13,6 @@ About
 
 **Myfempy** is a python package based on finite element method for scientific analysis. The code is open source and *intended for educational and scientific purposes only, not recommended to commercial use*. You can help us by contributing with a donation on the main project page, read the support options. **If you use myfempy in your research, the  developers would be grateful if you could cite in your work.**
 
-**Myfempy** uses command lines to solve simulations.
-
-- Author: Vinicius Campos `GitHub page <https://github.com/antonio-vinicius-garcia-campos>`_
-- Version: 1.0.0 dev/ mar 2022
-
 Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022
 
 Installation
