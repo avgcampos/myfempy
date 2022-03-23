@@ -23,7 +23,7 @@ author = 'Antonio Vinicius Garcia Campos.'
 
 # The full version, including alpha/beta/rc tags
 try:
-    VERSIONFILE = "version.py"
+    VERSIONFILE = "../../version.py"
     verstrline = open(VERSIONFILE,"rt").read()
     release = verstrline.split("=")[1].replace("\n", "").replace("'", "")
 except:
@@ -67,7 +67,7 @@ html_theme = "alabaster"
 html_static_path = ['_static']
 
 html_logo = "logo.svg"
-html_theme_options = {
-    'logo_only': True,
-    'display_version': True,
-}
+# html_theme_options = {
+    # 'logo_only': True,
+    # 'display_version': True,
+# }

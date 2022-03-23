@@ -1,0 +1,5 @@
+========================================================================
+> ABOUT
+--- MYFEMPY is a acronym of Mechanical studY with Finite Element Method in PYthon.     
+--- The myfempy is a python package for scientific analysis based on finite element method.
+--- The myfempy is a python based on finite element method for scientific analysis. The code is open source and intended for educational and scientific purposes only, not recommended to commercial use. You can help us by contributing with a donation on the main project page, read the support options. If you use myfempy in your research, the  developers would be grateful if you could cite in your work

@@ -102,7 +102,7 @@ Vinicius Campos. (2022). easycae-3d/myfempy: beta (v1.0.1). Zenodo. `<https://do
 	  date      = {2022-03-22},
 	  title     = {easycae-3d/myfempy: beta v1.0.1},
 	  doi       = {10.5281/zenodo.6376522},
-	  url       = {`<https://doi.org/10.5281/zenodo.6376522>`_},
+	  url       = {https://doi.org/10.5281/zenodo.6376522},
 	  version   = {v1.0.1},
 	  month     = mar,
 	  publisher = {Zenodo},

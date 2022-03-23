@@ -1,0 +1,15 @@
+========================================================================
+> COMMANDS AND VARIABLES
+coord{FULLNODE,4} = [NNODE COORDX COORDY COORDZ]
+
+inci{FELEM,13} = [NELEM PROPE PROPM PROPG NODELIST...]
+
+tabmat{FULLELEM,} = [EXX VXX GXX EYY VYY GYY RHO]
+ 
+tabgeo{FULLELEM,4} = [AREA INEYY INEZZ INEXX THICK]
+
+datamesh{1,5} = [NODEDOF LENCOORD LENINCI FULLDOF KEYELEM  MATDEFI MATBEHA]
+
+forcenodeaply{1,4} = [NNODE FORCDOF FORCVAL FORCSTEP]
+
+boncdnodeaply{1,2} = [BNCDDOF NNODE]

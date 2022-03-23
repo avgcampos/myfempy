@@ -1,0 +1,18 @@
+========================================================================
+> FEATURES
+--- Integridade com Gmsh; pode-se adicionar malha externa em formato ".msh1".
+--- Visualização de posprocessamento pelo módulo vedo/VtkK; pode-se salvar
+ arquivo para visualizar resultados no paraview ou outros visualizadores.
+--- Todo o codigo foi desenvolvido em Python 3 e Cython; utilizou-se as
+ biblioteca Numpy/Scipy para calculo e manipulação de matrizes e solver
+ dos sistemas algebricos.
+--- Recomenda-se utilizar distribuição Anaconda, com todas as bilbiotecas
+atualizadas.
+
+
+> LAST UPDATES:
+--- 
+
+> BUGS AND FIX:
+--- Melhoria no Plot da Estrutura, uso do vtk.
+--- Geração de malha internamente no programa, usando gmsh in bash.
