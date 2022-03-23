@@ -75,7 +75,10 @@ Many examples are available here: `myfempy/examples <https://github.com/easycae-
 Release
 ----------------
 
-The version up to date is **myfempy v1.0.0 dev**. Go to *Features List/Version History* to visualization all versions releses.
+The release version up to date is avalible here: 
+`myfempy versions <https://github.com/easycae-3d/myfempy/releases>`_
+
+Go to *Features List/Version History* to visualization all versions releses.
 
 Features
 ----------------
