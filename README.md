@@ -1,4 +1,3 @@
-# myfempy project
 ![logo](https://user-images.githubusercontent.com/54820276/159380676-a35b17f3-e9cc-4ee4-b8b1-0a7c4c3fb0d6.svg)
 
 Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022
@@ -40,7 +39,8 @@ pip install .
 ### Installation prerequisites, required to build **myfempy**:
 - [Python 3.x](https://www.python.org/) - *Python is a programming language that lets you work quickly and integrate systems more effectively.*
 - [Anaconda](https://www.anaconda.com/) - *Anaconda offers the easiest way to perform Python/R data science and machine learning on a single machine.*
-------------
+
+
 #### Outhers prerequisites
 - [Gmsh](https://gmsh.info/) - Gmsh is an open source 3D finite element mesh generator with a built-in CAD engine and post-processor. *Note: needed install manually*
 
