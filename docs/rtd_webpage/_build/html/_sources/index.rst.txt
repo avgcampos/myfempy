@@ -68,7 +68,7 @@ The main documentation is available here: `myfempy web doc <https://myfempy.read
 
 The myfempy GitHub page/download page is available here: `myfempy github page <https://github.com/easycae-3d/myfempy/>`_
 
-The **User's Manual** is available here: `myfempy/docs <https://github.com/easycae-3d/myfempy/blob/master/docs/Users_Manual.pdf>`_
+The **User's Manual [PT-BR]** is available here: `myfempy/docs <https://github.com/easycae-3d/myfempy/blob/master/docs/Users_Manual.pdf>`_
 
 Many examples are available here: `myfempy/examples <https://github.com/easycae-3d/myfempy/tree/master/examples>`_
 
