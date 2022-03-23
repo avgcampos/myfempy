@@ -6,4 +6,4 @@
             |___/                       |_|     |___/ 
 
 
-copyright @ 2021-2022, all rights reserved             
+Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022. All rights reserved.             

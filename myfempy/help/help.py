@@ -55,7 +55,12 @@ def release():
     print(" ")
     print(Fore.WHITE + Style.BRIGHT+'> LAST VERSION')
     currversion()
-    
+
+def license():
+    f = open('menu/license.txt','r',encoding="utf8")
+    file_contents = f.read()
+    print(Fore.WHITE + Style.BRIGHT+file_contents)
+    f.close()
     
 def paths():
     f = open('menu/paths.txt','r',encoding="utf8")
@@ -77,8 +82,8 @@ def help_webpage():
 
 def currversion():
     project_name = 'myfempy'
-    version_launch = '13 jul 2021'
-    version_current =version._version
+    version_launch = 'mar 2022'
+    version_current = version._version
     print(Fore.WHITE + Style.BRIGHT+project_name+' CURRENT VERSION: '+' '+version_current)
     print(Fore.WHITE + Style.BRIGHT+project_name+' LAUNCH DATA: '+' '+version_launch)
     
@@ -97,14 +102,15 @@ def help_menu():
     print("MYFEMPY HELP MENU")
     print("ENTER WITH THE FOLLOWING OPTIONS")
     print("   a) About")
-    print("   c) Citation and License")
     print("   f) Features")
     print("   v) Version Release")
+    print("   c) Citation")
+    print("   l) License")
     print("   p) Paths")
     print("   w) WebPage Help")
     print("   q) Quit")
     choice = input("Choice: ")    
-    if choice.lower() in ['a','c', 'f','v', 'p', 'q', 'w']:
+    if choice.lower() in ['a','c', 'f','v', 'p', 'q', 'w', 'l']:
         return choice.lower()
     else:
         print(choice +"?")
@@ -133,6 +139,8 @@ def menu_loop():
             paths()
         elif choice == 'w':
             help_webpage()
+        elif choice == 'l':
+            license()
         else:
             print("Invalid choice.")
     

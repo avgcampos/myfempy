@@ -1,4 +1,3 @@
 ========================================================================
 > RELEASES VERSIONS
---- myfempy 1.dev0 / 13 jul 2021	# dev. version
---- myfempy 1.0.0 / 13 jul 2021		# oficial launcher version
+--- myfempy beta 1.0.0 \ mar 2022 # dev. version
