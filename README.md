@@ -88,11 +88,24 @@ Go to *Features List/Version History* to visualization all versions releses.
 
 Have you found this software useful for your research? Star the project and cite it as:
 
-Vinicius Campos. (2022). easycae-3d/myfempy: beta (v1.0.1). Zenodo. https://doi.org/10.5281/zenodo.6376522
+- APA:
+  ```
+  Antonio Vinicius Garcia Campos. (2022). easycae-3d/myfempy: beta (v1.0.1). Zenodo. https://doi.org/10.5281/zenodo.6376522
+  ```
 
-- [BibTex Style](https://github.com/easycae-3d/myfempy/blob/master/citing.bib)
-
-
+- BibTex:
+  ```bash
+   @software{Campos_easycae-3d_myfempy_beta_2022,
+            author = {Antonio Vinicius Garcia Campos},
+            title = {easycae-3d/myfempy: beta},
+            version = {v1.0.1},
+            url = {https://github.com/easycae-3d/myfempy/},
+            doi = {10.5281/zenodo.6376522},
+            month = {3},
+            year = {2022}
+            }
+  ```
+  
 ## References
 
 - [Myfempy](https://myfempy.readthedocs.io/) - *A python package for scientific analysis based on finite element method.* 
