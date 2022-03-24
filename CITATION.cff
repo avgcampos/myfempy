@@ -1,19 +1,30 @@
 cff-version: 1.1.0
 message: "If you use this software, please cite it as below."
-title: 'myfempy: A python package for scientific analysis based on finite element method
-type: software
 authors:
-  - given-names: Nicolás
-    family-names: Guarín-Zapata
-    email: nicoguarin@gmail.com
+  - family-names: Campos
+    given-names: Viniciuss
+    email: antviniciuscampos@gmail.com
     orcid: 'https://orcid.org/0000-0003-1678-384X'
+title: 'myfempy: A python package for scientific analysis based on finite element method
 version: v1.0.0
+doi: 10.5281/zenodo.6376522
 date-released: 2022-03-22
-license: GPL
-identifiers:
-  - type: doi
-    value: 10.5281/zenodo.6376522
 url: 'https://github.com/easycae-3d/myfempy/'
+license: GPL
+preferred-citation:
+  type: software
+  authors:
+  - family-names: Campos
+    given-names: Viniciuss
+    email: antviniciuscampos@gmail.com
+    orcid: 'https://orcid.org/0000-0003-1678-384X'
+  doi: "10.5281/zenodo.6376522"
+  journal: "Zenodo"
+  month: 3
+  title: "easycae-3d/myfempy: beta"
+  issue: 1
+  volume: 1
+  year: 2022
 abstract: >-
   Myfempy is a python package based on finite element
   method for scientific analysis. The code is open source
@@ -26,17 +37,3 @@ keywords:
   - computational mechanics
   - elasticity
   - python
-  preferred-citation:
-  type: software
-  authors:
-  - given-names: Nicolás
-    family-names: Guarín-Zapata
-    email: nicoguarin@gmail.com
-    orcid: 'https://orcid.org/0000-0003-1678-384X'
-  doi: "10.5281/zenodo.6376522"
-  journal: "Zenodo"
-  month: 3
-  title: "easycae-3d/myfempy: beta"
-  issue: 1
-  volume: 1
-  year: 2022
