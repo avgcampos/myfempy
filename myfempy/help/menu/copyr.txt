@@ -1,9 +1,0 @@
-========================================================================
-@author: Campos, A. V. G.
-@org: 3D EasyCAE
-@url: https://myfempy.readthedocs.io/en/main/
-@contact: elementosfinitos.querosaber@gmail.com
-@orcid: https://orcid.org/0000-0003-1678-384X
-@license: GNU General Public License v3 (GPLv3)
-
-Copyright (c) 2022, Campos, A. V. G. and 3D EasyCAE. All rights reserved.

@@ -62,7 +62,7 @@ html_theme = "alabaster"
 html_static_path = ['_static']
 
 html_theme_options = {
-    'logo': 'logo_v1.png',
-    'github_user': 'bitprophet',
-    'github_repo': 'alabaster',
+    'logo': 'logoS.png',
+    'github_user': 'easycae-3d',
+    'github_repo': 'myfempy',
 }
