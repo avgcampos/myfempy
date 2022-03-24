@@ -7,3 +7,20 @@ authors:
 title: easycae-3d/myfempy: beta
 version: v1.0.1
 date-released: 2022-03-22
+license: GPL
+url: https://github.com/easycae-3d/myfempy/
+preferred-citation:
+  type: software
+  authors:
+  - family-names: Campos
+    given-names: Vinicius
+    orcid: https://orcid.org/0000-0003-1678-384X
+  doi: "10.0000/00000"
+  journal: "Journal Title"
+  month: 9
+  start: 1 # First page number
+  end: 10 # Last page number
+  title: "My awesome research software"
+  issue: 1
+  volume: 1
+  year: 2021
