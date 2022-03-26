@@ -2,7 +2,7 @@
 desktop.ini
 requirements.txt
 docs/manual_dev/
-docs/data/
+docs/ghosts_files/
 tests/
 test*
 
