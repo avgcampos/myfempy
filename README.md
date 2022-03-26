@@ -69,8 +69,7 @@ Many examples are available [here](https://github.com/easycae-3d/myfempy/tree/ma
 
 ## Release
 
-The version up to date is available here: 
-[myfempy releases](https://github.com/easycae-3d/myfempy/releases)
+The version up to date is available [here](https://github.com/easycae-3d/myfempy/releases)
 
 Go to *Features List/Version History* to visualization all versions releses.
 
