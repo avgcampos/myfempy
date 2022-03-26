@@ -32,7 +32,7 @@ pip install .
 
 *Note: is recommend to create a new virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/)* 
 
-## Requirements
+## Dependencies
 
 
 **Myfempy** can be used in systems based on Linux, MacOS and Windows. **Myfempy** requires Python 3.
