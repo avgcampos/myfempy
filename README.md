@@ -59,11 +59,9 @@ pip install numpy, scipy, vedo
 
 ## Documentation
 
-The project is documented using Sphinx under docs/. Built version can be found from Read the Docs. Here are direct links to additional resources:
+The project is documented using Sphinx under `docs/`. Built version can be found from [Read the Docs](https://myfempy.readthedocs.io/). Here are direct links to additional resources:
 
-The main documentation is available [here](https://myfempy.readthedocs.io/).
-
-The myfempy GitHub page/download page is available [here](https://github.com/easycae-3d/myfempy/).
+The GitHub/Download page is available [here](https://github.com/easycae-3d/myfempy/).
 
 The **User's Manual [PT-BR]** is available [here](https://github.com/easycae-3d/myfempy/blob/master/docs/Users_Manual.pdf).
 
