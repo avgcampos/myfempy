@@ -120,7 +120,7 @@ Have you found this software useful for your research? Star the project and cite
 
 ## Changelog
 
-The changelog is available [here](*github_wiki*)
+The changelog is available [here](https://github.com/easycae-3d/myfempy/wiki)
 
 
 -----------
