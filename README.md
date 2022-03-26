@@ -57,6 +57,10 @@ pip install .
 pip install numpy, scipy, vedo
 ```
 
+## Quick Start Guide
+
+A **Quick Start Guide** is available [here](https://github.com/easycae-3d/myfempy/wiki/Basic-Tutorial).
+
 ## Documentation
 
 The project is documented using Sphinx under `docs/`. Built version can be found from [Read the Docs](https://myfempy.readthedocs.io/). Here are direct links to additional resources:
