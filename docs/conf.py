@@ -22,9 +22,17 @@ copyright = '2022, Campos, A. V. G.'
 author = 'Antonio Vinicius Garcia Campos.'
 
 # The full version, including alpha/beta/rc tags
-release = 'latest'
+# release = 'latest'
+try:
+    VERSIONFILE = "../myfempy/version.py"
+    verstrline = open(VERSIONFILE,"rt").read()
+    current_version = verstrline.split("=")[1].replace("\n", "").replace("'", "")
+except:
+    current_version = 'latest'
 
 
+# html_context['current_version'] = current_version
+# html_context['version'] = current_version
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -41,7 +49,7 @@ templates_path = ['_templates']
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'en-US'
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -63,8 +71,21 @@ html_static_path = ['_static']
 
 # html_logo = 'logoS.png'
 
+html_sidebars = {
+    '**': [
+    'about.html',
+    'navigation.html',
+    'relations.html',
+    'searchbox.html',
+    'donate.html',
+    ]
+}
+
+
 # html_theme_options = {
-    # 'logo': 'logoS.png',
-    # 'github_user': 'easycae-3d',
-    # 'github_repo': 'myfempy',
+    # 'logo': 'logo.png',
+    # 'logo_name': False,
+    # # 'badge_branch':
+    # # 'github_user': 'bitprophet',
+    # # 'github_repo': 'alabaster',
 # }
