@@ -52,6 +52,7 @@ You can use either of two python development environments to run myfempy
 - [Gmsh/ External Gen Mesh](https://gmsh.info/) - Gmsh is an open source 3D finite element mesh generator with a built-in CAD engine and post-processor. *Notes: 1 - Gmsh is NOT part of myfempy projects;  2 - Is Needed install Gmsh manually*
 
 
+
 ### Python packages required for using **myfempy**:
 The following python packages are required to run myfempy. Check if they are already installed on your machine
 
@@ -66,29 +67,33 @@ The following python packages are required to run myfempy. Check if they are alr
 	pip install numpy, scipy, vedo
 	```
 
-## Quick Start Guide
 
-A **Quick Start Guide** is available [here](https://github.com/easycae-3d/myfempy/wiki/Basic-Tutorial).
+## Tutorial
+
+A **Basic Tutorial** is available [here](https://myfempy.readthedocs.io/en/1.dev9/tutorial.html).
+
 
 ## Documentation
 
 The project is documented using Sphinx under `docs/`. Built version can be found from [Read the Docs](https://myfempy.readthedocs.io/). Here are direct links to additional resources:
 
-The **GitHub/Download** page is available [here](https://github.com/easycae-3d/myfempy/).
+The **Download(GitHub)** page is available [here](https://github.com/easycae-3d/myfempy/).
 
-The **User's Manual [PT-BR]** is available [here](https://github.com/easycae-3d/myfempy/blob/master/docs/Users_Manual_PT-BR.pdf).
+The **User's Manual** is available [here](https://github.com/easycae-3d/myfempy/blob/main/docs/Users%20Manual.pdf).
 
 Many **examples** are available [here](https://github.com/easycae-3d/myfempy/tree/master/examples).
 
+
 ## Release
 
-The version up to date is available [here](https://github.com/easycae-3d/myfempy/releases)
+The all release versions is available [here](https://github.com/easycae-3d/myfempy/releases)
 
-Go to *Features List/Version History* to visualization all versions releses.
 
 ## Features
 
-[Features List](https://docs.google.com/spreadsheets/d/1k9kiXk2PPuUvcsiukAni005zQc-IOCmP2r-Z6B02304/edit?usp=sharing)
+The main myfempy features are available here:
+
+ - [Features List](https://github.com/easycae-3d/myfempy/blob/main/docs/Myfempy%20Features.pdf)
 
 
 ## License
@@ -133,7 +138,7 @@ Have you found this software useful for your research? Star the project and cite
 
 ## Changelog
 
-The changelog is available [here](https://github.com/easycae-3d/myfempy/wiki)
+The changelog is available [here](https://github.com/easycae-3d/myfempy/wiki/Changelog)
 
 
 -----------
