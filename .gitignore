@@ -1,8 +1,7 @@
 ### myfempy ###
 desktop.ini
 requirements.txt
-docs/manual_dev/
-docs/ghosts_files/
+ghosts_files/
 tests/
 test*
 
