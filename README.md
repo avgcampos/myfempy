@@ -22,7 +22,7 @@ Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022
 ## Installation
 ### To install myfempy manually in your directory, following the steps
 
-1. Clone/ Download the main code [latest version] from [github/myfempy/main](https://github.com/easycae-3d/myfempy/tree/main)
+1. Clone/ Download the main code [latest version] from [github/myfempy/main](https://github.com/easycae-3d/myfempy/)
 
 2. Unzip the pack in your preferred location
 
@@ -35,7 +35,6 @@ pip setup.py install
 *Note: is recommend to create a new virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/)* 
 
 ## Dependencies
-
 
 **Myfempy** can be used in systems based on Linux, MacOS and Windows. **Myfempy** requires Python 3.
 
@@ -72,16 +71,16 @@ The following python packages are required to run myfempy. Check if they are alr
 
 A **Basic Tutorial** is available [here](https://myfempy.readthedocs.io/en/1.dev9/tutorial.html).
 
+Many **Examples** are available [here](https://github.com/easycae-3d/myfempy/tree/master/examples).
+
 
 ## Documentation
 
-The project is documented using Sphinx under `docs/`. Built version can be found from [Read the Docs](https://myfempy.readthedocs.io/). Here are direct links to additional resources:
+*The myfempy is documented using Sphinx under `docs/`. The downloads built versions can be found in pdf, html or epub.*
 
-The **Download(GitHub)** page is available [here](https://github.com/easycae-3d/myfempy/).
+The **Web Documentation** is available on [Read the Docs](https://myfempy.readthedocs.io/).
 
-The **User's Manual** is available [here](https://github.com/easycae-3d/myfempy/blob/main/docs/Users%20Manual.pdf).
-
-Many **examples** are available [here](https://github.com/easycae-3d/myfempy/tree/master/examples).
+The **User's Manual [pdf]** is available [here](https://github.com/easycae-3d/myfempy/blob/main/docs/Users%20Manual.pdf).
 
 
 ## Release
@@ -91,7 +90,7 @@ The all release versions is available [here](https://github.com/easycae-3d/myfem
 
 ## Features
 
-The main myfempy features are available here:
+The *main myfempy features* are available here:
 
  - [Features List](https://github.com/easycae-3d/myfempy/blob/main/docs/Myfempy%20Features.pdf)
 
