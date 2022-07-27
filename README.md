@@ -32,7 +32,6 @@ Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022
 3. In the **myfempy-main** folder, open a terminal and enter with the command:
 
 ```bash
->> python setup.py sdist
 >> python setup.py install
 ```
 
