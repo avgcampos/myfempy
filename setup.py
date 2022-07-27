@@ -15,64 +15,66 @@
 ========================================================================
 """
 # SETUP SYSTEM & PIP INSTALL
-import setuptools
+from setuptools import setup, find_packages
  
 try:
-    VERSIONFILE = "myfempy/core/version.py"
+    VERSIONFILE = "myfempy/version.py"
     verstrline = open(VERSIONFILE,"rt").read()
     verstr = verstrline.split("=")[1].replace("\n", "").replace("'", "")
 except:
     verstr = "unknown"
 
 
-setuptools.setup(
-    python_requires='>=3',
+setup(
+    python_requires = '>=3',
     include_package_data = True,
     name = 'myfempy',
     version = verstr,
     license = 'GNU',
-    license_files=['LICENSE'], 
+    license_files = ['LICENSE'], 
     
     author = 'Campos, A. V. G.',
-    author_email = 'profviniciusgarciacae@gmail.com',
-    maintainer="3D EasyCAE",
-    maintainer_email = 'elementosfinitos.querosaber@gmail.com',
+    maintainer = "Campos, A. V. G. & 3D EasyCAE",
+    maintainer_email = '3deasycaebr.contato@gmail.com',
     
     description = "A python package for scientific analysis based on finite element method",
     long_description = "The myfempy is a python based on finite element method for scientific analysis. The code is open source and intended for educational and scientific purposes only, not recommended to commercial use. You can help us by contributing with a donation on the main project page, read the support options. If you use myfempy in your research, the  developers would be grateful if you could cite in your work",
     long_description_content_type='text/markdown',
     
-    url = 'https://myfempy.readthedocs.io/en/main/',
+    url = 'https://myfempy.readthedocs.io/en/latest/',
     download_url = 'https://github.com/easycae-3d/myfempy',
     keywords = ['Finite Element', 'Mechanics', 'Python Package'],
-
-    packages = [
-        "myfempy",
-        "myfempy.core",
-        "myfempy.felib",
-        "myfempy.felib.struct",
-        "myfempy.felib.fluid",
-        "myfempy.felib.fsi",
-        "myfempy.help",
-        "myfempy.help.offline",
-        "myfempy.io",
-        "myfempy.mesh",
-        "myfempy.solver",
-        "myfempy.postproc",
-    ],
     
-    package_dir={
+    packages = find_packages(),
+    
+    # packages = [
+        # "myfempy",
+        # "myfempy.core",
+        # "myfempy.felib",
+        # "myfempy.felib.fluid",
+        # "myfempy.felib.fsi",
+        # "myfempy.felib.materials",
+        # "myfempy.felib.physics",
+        # "myfempy.felib.struct",
+        # "myfempy.io",
+        # "myfempy.mesh",
+        # "myfempy.plots",
+        # "myfempy.postprc",
+        # "myfempy.tools",
+    # ],
+    
+    package_dir = {
         "myfempy": "myfempy",
     },
     
-   
     install_requires = [
         "numpy",
         "scipy",
-        # "matplotlib",
-        # "gmsh",
+        "matplotlib",
+        "gmsh",
         "vedo",
     ],
+    
     # include_package_data=True,
     zip_safe = False,
         

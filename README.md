@@ -32,7 +32,8 @@ Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022
 3. In the **myfempy-main** folder, open a terminal and enter with the command:
 
 ```bash
-pip setup.py install
+>> python setup.py sdist
+>> python setup.py install
 ```
 
 *Note: is recommend to create a new virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/)* 
@@ -66,7 +67,7 @@ The following python packages are required to run myfempy. Check if they are alr
 
  - try
 	```bash
-	pip install numpy, scipy, vedo
+	>> pip install numpy, scipy, vedo
 	```
 
 

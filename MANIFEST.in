@@ -1,1 +1,4 @@
 include myfempy/*
+include examples/*
+
+include *.md *.txt LICENSE
