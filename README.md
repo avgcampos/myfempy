@@ -1,6 +1,8 @@
 ## IN TEST !
 
-![logo_v1](https://user-images.githubusercontent.com/54820276/159730160-871ac41a-958a-4398-a014-506619c4cb56.png)
+<!-- ![logo_v1](https://user-images.githubusercontent.com/54820276/159730160-871ac41a-958a-4398-a014-506619c4cb56.png) -->
+
+![logoB](https://user-images.githubusercontent.com/54820276/181290031-3205ec76-9cda-46e6-8b53-46132ae2a772.png)
 
 Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022
 
