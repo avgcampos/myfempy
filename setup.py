@@ -73,6 +73,7 @@ setup(
         "matplotlib",
         "gmsh",
         "vedo",
+        "art",
     ],
     
     # include_package_data=True,
