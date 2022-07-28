@@ -19,6 +19,7 @@ import sys
 import os
 import imp
 import numpy as np
+import art
 # sys.path.insert(0, os.getcwd() )
 
 
@@ -35,11 +36,18 @@ def get_version():
 
 
 def get_logo():
-    f = open((os.getcwd()+'/myfempy/tools/logo.txt'),'r', encoding="utf8")
-    file_contents = f.read()
-    print(file_contents)
+    
+    art.tprint('myfempy',font="ogre")
     print('myfempy version:',get_version())
-    f.close()
+    
+    # try:
+    #     f = open((os.getcwd()+'/myfempy/tools/logo.txt'),'r', encoding="utf8")
+    #     file_contents = f.read()
+    #     print(file_contents)
+    #     print('myfempy version:',get_version())
+    #     f.close()
+    # except:
+    #     print('MYFEMPY')
     
     
 def clear_console():
@@ -75,7 +83,7 @@ def print_console(sc):
     
     if sc == 'pre':
         
-        clear_console()
+        # clear_console()
         
         print('=================================================================================')
         
