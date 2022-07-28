@@ -17,7 +17,7 @@
 import sys
 import numpy as np
 import scipy.sparse as sp
-from myfempy.bin.tools import loading_bar_v1
+from myfempy.tools.tools import loading_bar_v1
 from myfempy.felib.felemset import get_elemset
 
 #------------------------------------------------------------------------------

@@ -31,7 +31,7 @@ import vtk
 # import vedo as vd
 from myfempy.io.iovtk_old import convert_to_vtk
 from myfempy.plots.physics import view_listforce, view_bondcond_point, view_beam_crossSection, view_text_point
-from myfempy.bin.tools import get_version
+from myfempy.tools.tools import get_version
 from myfempy.plots.meshquality import MeshProp
 
 

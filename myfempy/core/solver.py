@@ -23,7 +23,7 @@ import time
 
 from myfempy.core.assembler import assembler, loads
 from myfempy.core.solverset import get_constrains_dofs, step_setting
-   
+from myfempy.tools.tools import print_console
 
 def get_solve(solver_type):
     if solver_type == 'SLD':
@@ -46,6 +46,8 @@ def get_solve(solver_type):
 #%% SOLVE SOLUTION
 def gen_static_solution(solverset, modelinfo):
     
+    print_console('solver')
+
     solve = get_solve(solverset['SOLVER'])
     
     start = time.time()
@@ -80,10 +82,14 @@ def gen_static_solution(solverset, modelinfo):
                 # 'MODE':U2,
                 # ...}
     
+    print_console('thank')
+
     return solution
 
 
 def gen_dynamic_solution(solverset, modelinfo):
+
+    print_console('solver')
     
     solve = get_solve(solverset['SOLVER'])
     
@@ -122,6 +128,8 @@ def gen_dynamic_solution(solverset, modelinfo):
                 'solvestatus':solvestatus,
                 }
     
+    print_console('thank')
+
     return solution
 
 

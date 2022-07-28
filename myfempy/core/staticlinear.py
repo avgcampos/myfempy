@@ -21,7 +21,7 @@ import scipy.sparse.linalg as ssl
 import scipy.linalg as sl
 import time
 
-from myfempy.bin.tools import loading_bar_v1
+from myfempy.tools.tools import loading_bar_v1
 from myfempy.plots.plotxy import tracker_plot
 
 #%% MYFEMPY STATIC SOLVE

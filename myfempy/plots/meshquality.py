@@ -17,7 +17,7 @@
 
 import vedo as vd 
 import numpy as np
-from myfempy.bin.tools import get_version, get_logo
+from myfempy.tools.tools import get_version, get_logo
 
 class MeshProp:
     

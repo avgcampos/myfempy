@@ -25,6 +25,7 @@ from myfempy.io.iovtk import convert_to_vtk
 # from myfempy.felib.geometry.getnode import search_nodexyz
 from myfempy.plots.plotxy import tracker_plot
 from myfempy.io.iovtk import convert_to_vtk
+from myfempy.tools.tools import print_console
 
 class PostComputer:
     
@@ -207,6 +208,8 @@ class PostComputer:
     # @profile
     def main(self, postprocset):
         
+        print_console('post')
+
         postporc_result = dict()
         postporc_result['displ'] = []
         postporc_result['stress_avr'] = []

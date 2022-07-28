@@ -24,6 +24,7 @@ from myfempy.felib.crossec import sect_prop
 from myfempy.felib.physicset import gen_force, gen_bound
 from myfempy.felib.physics.loadsconstr import get_forces, get_constrain
 from myfempy.felib.physics.getnode import nodes_from_regions, search_nodexyz
+from myfempy.tools.tools import print_console
 
 class MeshSet:
     
@@ -457,7 +458,10 @@ class ModelGen:
             DESCRIPTION.
     
         '''
-        
+
+        print_console('pre')
+        print_console('mesh')
+
         mesh_type_list, inci, coord, tabmat, tabgeo, regions = MeshGen.get_data_mesh(meshdata)
         
         modelinfo = dict()

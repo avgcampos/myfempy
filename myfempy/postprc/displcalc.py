@@ -19,7 +19,7 @@ import numpy as np
 # import scipy.sparse as sp
 # from myfempy.felib.material import mech_mate
 # from myfempy.felib.intpoint import gauss_point
-from myfempy.bin.tools import loading_bar_v1
+from myfempy.tools.tools import loading_bar_v1
 
 #%%------------------------------------------------------------------------------
 

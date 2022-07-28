@@ -24,7 +24,7 @@ import numpy as np
 
 def get_version():
     try:
-        VERSIONFILE = (os.getcwd()+"/myfempy/bin/version.py.py")
+        VERSIONFILE = (os.getcwd()+"/myfempy/version.py")
         verstrline = open(VERSIONFILE,"rt").read()
         version = verstrline.split("=")[1].replace("\n", "").replace("'", "")
     except:
@@ -35,7 +35,7 @@ def get_version():
 
 
 def get_logo():
-    f = open((os.getcwd()+'/myfempy/bin/logo.txt'),'r', encoding="utf8")
+    f = open((os.getcwd()+'/myfempy/tools/logo.txt'),'r', encoding="utf8")
     file_contents = f.read()
     print(file_contents)
     print('myfempy version:',get_version())
