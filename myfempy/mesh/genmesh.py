@@ -17,6 +17,7 @@
 
 #%% READ INPUTDATA FROM USER PATH
 import numpy as np
+import os
 from myfempy.felib.felemset import get_elemset
 from myfempy.felib.crossec import sec_def
 from myfempy.felib.materset import mat_def, mat_beh
@@ -25,6 +26,7 @@ from myfempy.felib.physicset import gen_force, gen_bound
 from myfempy.felib.physics.loadsconstr import get_forces, get_constrain
 from myfempy.felib.physics.getnode import nodes_from_regions, search_nodexyz
 from myfempy.tools.tools import print_console
+from myfempy.tools.path import create_user_path
 
 class MeshSet:
     
@@ -273,6 +275,9 @@ class MeshGen:
             from myfempy.io.iomsh import gmsh_elm_type
             from myfempy.felib.felemset import get_elemset
             
+            path = os.getcwd()
+            meshdata['GMSH']['filename'] = path+'/'+meshdata['GMSH']['filename']
+            
             if 'meshimport' in meshdata['GMSH'].keys():
                 conec, nodes = convert_from_msh1(meshdata['GMSH']['meshimport']['object'])
             else:
@@ -506,6 +511,7 @@ class ModelGen:
             meshdata["QUADRATURE"] = {'meth':'no_interpol','npp':1}
             modelinfo['quadra'] = ModelGen.get_quadra(meshdata["QUADRATURE"])
         
+              
         return modelinfo
     
     

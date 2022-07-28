@@ -37,12 +37,14 @@ from myfempy.plots.meshquality import MeshProp
 
 def preview_plot(previewset, modelinfo):
     
+    path = os.getcwd()
+    
     plotdata = dict()
     plotdata['coord'] = modelinfo['coord']
     plotdata['inci'] = modelinfo['inci']
     plotdata['nodecon'] = modelinfo['nodecon']
     plotdata['elemid']  = modelinfo['elemid']
-    plotdata['filename'] = previewset['RENDER']['filename']
+    plotdata['filename'] = path+'/'+previewset['RENDER']['filename']
     plotdata['title'] = ['UNDEFORM_MESH']
     plotdata['solution'] = np.ones((len(modelinfo['inci']),1))
     plotdata['average'] = False
@@ -168,10 +170,10 @@ def preview_plot(previewset, modelinfo):
 
 #-----------------------------------------------------------------------------#
 def build_preview(previewset):
-    
+    path = os.getcwd()
     # OS Linux
     # file_name = (previewset['file_name']+'.vtk')
-    file_name = str(os.getcwd() + '/' + (previewset['RENDER']['filename']+'.vtk'))
+    file_name = str(path+'/'+previewset['RENDER']['filename']+'.vtk')
     # file_savePNG = str(os.getcwd() + '/' +  previewset['file_savePNG'])
     # file_saveSTL = str(os.getcwd() + '/' +  previewset['file_saveSTL'])
     
@@ -355,7 +357,7 @@ def build_preview(previewset):
         im.SetInput(renderer_window)
         im.Update()
         writer.SetInputConnection(im.GetOutputPort())
-        writer.SetFileName((previewset['RENDER']['filename']+'.png'))
+        writer.SetFileName((path+'/'+previewset['RENDER']['filename']+'.png'))
         writer.Write()
     
         # # Write the extrusion to stl ------------------------------------------------------

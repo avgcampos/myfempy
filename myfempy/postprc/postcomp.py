@@ -16,6 +16,7 @@
 """
 
 import numpy as np
+import os
 import scipy.sparse as sp
 import matplotlib.pyplot as plt
 from myfempy.plots.postplot import postproc_plot
@@ -146,6 +147,8 @@ class PostComputer:
     
     def save_vtk(self, postporc_result, postprocset):
         
+        path = os.getcwd()
+        
         plotdata = dict()
         
         plotdata['inci'] = self.modelinfo['inci']
@@ -170,7 +173,7 @@ class PostComputer:
         if 'displ' in postprocset['COMPUTER'].keys():
             for st in range(len(postporc_result['displ'])):
     
-                plotdata['filename'] = (postprocset["PLOTSET"]['filename']+'_results_step-'+str(st+1)) #(postprocset["PLOTSET"]['filename']+'_'+str(st+1)+'_'+postporc_result['solution'][pp]['name'])
+                plotdata['filename'] = (path+'/'+postprocset["PLOTSET"]['filename']+'_results_step-'+str(st+1)) #(postprocset["PLOTSET"]['filename']+'_'+str(st+1)+'_'+postporc_result['solution'][pp]['name'])
                            
                 # plotdata['defor_POINT_DATA_val'] = postporc_result['displ'][st]['val'][:,0]
                 plotdata['displ_POINT_DATA_val'] = postporc_result['displ'][st]['val'][:,1:]
@@ -193,7 +196,7 @@ class PostComputer:
         if 'eig' in postprocset['COMPUTER'].keys():
             # plotdata['defor_POINT_DATA_val'] = postporc_result['displ'][st]['val'][:,0]
             
-            plotdata['filename'] = (postprocset["PLOTSET"]['filename']+'_results_modes')
+            plotdata['filename'] = (path+'/'+postprocset["PLOTSET"]['filename']+'_results_modes')
             
             plotdata['modes_POINT_DATA'] = postporc_result['modes']#[st]['val'][:,1:]
             # plotdata['modes_POINT_DATA_name'] = postporc_result['modes'][st]['name']
