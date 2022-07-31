@@ -41,6 +41,7 @@ class Spring21:
         self.tabgeo = modelinfo['tabgeo']
         
         
+    @classmethod
     def elemset():
         
         dofelem = {'key':'spring21',

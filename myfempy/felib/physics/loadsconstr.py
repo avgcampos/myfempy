@@ -313,7 +313,7 @@ def get_constrain(modelinfo, blist):
                 
                 node_list_bc = search_edgey(edge_coordY,coord_bc,2E-3)
             
-            elif blist[i][2] == "edgey":
+            elif blist[i][2] == "edgez":
                 # sys.path.append('../lib')
                 from myfempy.felib.physics.getnode import search_edgez
                 edge_coordZ = float(blist[i,5])

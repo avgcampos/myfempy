@@ -40,7 +40,7 @@ class Frame22:
         self.tabmat = modelinfo['tabmat']
         self.tabgeo = modelinfo['tabgeo']
         
-        
+    @classmethod    
     def elemset():
         
         dofelem = {'key':'frame22',
