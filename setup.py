@@ -46,23 +46,7 @@ setup(
     keywords = ['Finite Element', 'Mechanics', 'Python Package'],
     
     packages = find_packages(),
-    
-    # packages = [
-        # "myfempy",
-        # "myfempy.core",
-        # "myfempy.felib",
-        # "myfempy.felib.fluid",
-        # "myfempy.felib.fsi",
-        # "myfempy.felib.materials",
-        # "myfempy.felib.physics",
-        # "myfempy.felib.struct",
-        # "myfempy.io",
-        # "myfempy.mesh",
-        # "myfempy.plots",
-        # "myfempy.postprc",
-        # "myfempy.tools",
-    # ],
-    
+        
     package_dir = {
         "myfempy": "myfempy",
     },
@@ -71,9 +55,9 @@ setup(
         "numpy",
         "scipy",
         "matplotlib",
-        "gmsh",
         "vedo",
         "art",
+        "colorama",
     ],
     
     # include_package_data=True,

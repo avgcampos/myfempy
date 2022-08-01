@@ -52,10 +52,13 @@ You can use either of two python development environments to run myfempy
 - [Anaconda](https://www.anaconda.com/) - *Anaconda offers the easiest way to perform Python/R data science and machine learning on a single machine.*
 
 
-
 #### Outhers prerequisites:
-- [Gmsh/ External Gen Mesh](https://gmsh.info/) - Gmsh is an open source 3D finite element mesh generator with a built-in CAD engine and post-processor. *Notes: 1 - Gmsh is NOT part of myfempy projects;  2 - Is Needed install Gmsh manually*
+- [gmsh/ External Gen Mesh](https://gmsh.info/) - Gmsh is an open source 3D finite element mesh generator with a built-in CAD engine and post-processor. *Notes: 1 - Gmsh is NOT part of myfempy projects;  2 - Is Needed install Gmsh manually*[PyPi gmsh](https://pypi.org/project/gmsh/)
 
+ - try
+	```bash
+	>> pip install --upgrade gmsh ...
+	```
 
 
 ### Python packages required for using **myfempy**:
@@ -69,7 +72,7 @@ The following python packages are required to run myfempy. Check if they are alr
 
  - try
 	```bash
-	>> pip install numpy, scipy, vedo
+	>> pip install numpy, scipy, vedo ...
 	```
 
 
