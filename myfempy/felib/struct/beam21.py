@@ -43,7 +43,6 @@ class Beam21:
         self.tabgeo = modelinfo['tabgeo']
         
     
-    @classmethod
     def elemset():
         
         dofelem = {'key':'beam21',

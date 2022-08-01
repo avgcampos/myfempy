@@ -46,7 +46,6 @@ class Plane41:
             self.npp = modelinfo['quadra'][1]
             self.quadra = Quadrature.no_interpol(self.npp)
     
-    @classmethod
     def elemset():
     
         dofelem = {'key':'plane41',

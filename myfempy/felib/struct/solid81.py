@@ -42,8 +42,6 @@ class Solid81:
             self.npp = modelinfo['quadra'][1]
             self.quadra = Quadrature.gaussian(self.npp)
 
-
-    @classmethod
     def elemset():
     
         dofelem = {'key':'solid81',

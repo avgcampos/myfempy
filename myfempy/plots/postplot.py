@@ -116,9 +116,10 @@ def postproc_plot(postprocset, postporc_result, modelinfo):
             if 'displ' in postprocset["PLOTSET"]['result2plot'].keys():
                 post_show_mesh(file2plot, plotset)
 
-            if postprocset["PLOTSET"]['savepng'] == True:
-                pass
             
+            # if postprocset["PLOTSET"]['savepng'] == True:
+                # pass
+                        
             else:
                 pass
 
