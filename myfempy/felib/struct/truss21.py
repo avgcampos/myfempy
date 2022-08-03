@@ -1,20 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-========================================================================
-~~~ MODULO DE SIMULACAO ESTRUTURAL PELO METODO DOS ELEMENTOS FINITOS ~~~
-       	                    __                                
-       	 _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-       	| '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-       	| | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-       	|_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-       	            |___/                       |_|     |___/ 
-
-~~~      Mechanical studY with Finite Element Method in PYthon       ~~~
-~~~                PROGRAMA DE ANÁLISE COMPUTACIONAL                 ~~~
-~~~              copyright @ 2022, all rights reserved               ~~~
-========================================================================
+texto aqui
 """
-
 import numpy as np
 from myfempy.felib.materset import get_elasticity
 
@@ -36,45 +23,35 @@ class Truss21:
 
     @staticmethod
     def elemset():
-
         dofelem = {'key': 'truss21',
                    'id': 120,
                    'def': 'struct 1D',
                    'dofs': ['ux', 'uy'],
                    'nnodes': ['i', 'j'],
                    'tensor': ['sxx']}
-
         return dofelem
 
     def lockey(self, list_node):
-
         noi = list_node[0]
         noj = list_node[1]
 
         loc = np.array([self.nodedof*noi-2, self.nodedof*noi-1,
                         self.nodedof*noj-2, self.nodedof*noj-1])
-
         return loc
 
     def stiff_linear(self, ee):
-
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
-
         noix = self.coord[noi-1, 1]
         noiy = self.coord[noi-1, 2]
         nojx = self.coord[noj-1, 1]
         nojy = self.coord[noj-1, 2]
-
         D = get_elasticity(self.tabmat, self.inci, ee)
         E = D[0]
-
         A = self.tabgeo[int(self.inci[ee, 3]-1), 0]
-
         L = np.sqrt((nojx-noix)**2 + (nojy-noiy)**2)
         s = (nojy-noiy)/L
         c = (nojx-noix)/L
-
         T = np.zeros((self.dofe, self.dofe))
         T[0, 0] = c
         T[0, 1] = s
@@ -84,44 +61,31 @@ class Truss21:
         T[2, 3] = s
         T[3, 2] = -s
         T[3, 3] = c
-
         ket2 = np.zeros((self.dofe, self.dofe))
         ket2[0, 0] = 1.0
         ket2[0, 2] = -1.0
         ket2[2, 0] = -1.0
         ket2[2, 2] = 1.0
         ket2 = ((E*A)/L)*ket2
-
         ket2t = np.dot(np.dot(np.transpose(T), ket2), T)
-
         list_node = [noi, noj]
         loc = Truss21.lockey(self, list_node)
-
         return ket2t, loc
-
     # # tensao no elemento de barra
+
     def matrix_b(self, ee, csc):
-
-        y = csc[0]
-
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
-
         noix = self.coord[noi-1, 1]
         noiy = self.coord[noi-1, 2]
         nojx = self.coord[noj-1, 1]
         nojy = self.coord[noj-1, 2]
-
         D = get_elasticity(self.tabmat, self.inci, ee)
         E = D[0]
-
         L = np.sqrt((nojx-noix)**2 + (nojy-noiy)**2)
         s = (nojy-noiy)/L
         c = (nojx-noix)/L
-
         T = np.array([[c, s, 0, 0],
                       [0, 0, c, s]])
-
         B = (E/L)*np.array([-1, 1])
-
         return B, T
