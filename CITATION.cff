@@ -8,7 +8,7 @@ authors:
 title: 'Myfempy is a python package for scientific analysis based on finite element method'
 version: v1.5.1
 doi: 10.5281/zenodo.6958796
-date-released: 2022-03-22
+date-released: 2022-08-03
 url: 'https://github.com/easycae-3d/myfempy'
 license: GPL
 preferred-citation:
@@ -19,10 +19,10 @@ preferred-citation:
     email: 3deasycaebr.contato@gmail.com
     orcid: 'https://orcid.org/0000-0003-1678-384X'
   title: 'myfempy'
-  month: 3
+  month: 8
   year: 2022
   publisher: "Zenodo"
-  version: v1.0.1
+  version: v1.5.1
   doi: "10.5281/zenodo.6958796"
   url: 'https://github.com/easycae-3d/myfempy'
   
