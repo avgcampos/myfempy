@@ -39,7 +39,7 @@ class Plane31:
         self.ntensor = modelinfo['ntensor'][0]
         
         
-    def elemset():
+    def elemset(self):
         
         dofelem = {'key':'plane31',
                    'id': 210,

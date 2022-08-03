@@ -66,17 +66,15 @@ def postproc_plot(postprocset, postporc_result, modelinfo):
             else:
                 plotset['edge'] = False
 
-
             if 'average' in postprocset["PLOTSET"]['result2plot'].keys():
                 if postprocset["COMPUTER"]['average'] == True:
                     plotset['apply'] = 'points'
-                
+
                 else:
                     plotset['apply'] = 'cells'
-    
+
             else:
                 plotset['apply'] = 'cells'
-                
 
             if 'intforces' in postprocset["PLOTSET"]['result2plot'].keys():
                 if 'beam' in postprocset["PLOTSET"].keys():
@@ -99,25 +97,31 @@ def postproc_plot(postprocset, postporc_result, modelinfo):
 
             if 'displ' in postprocset["PLOTSET"]['result2plot'].keys():
                 post_show_mesh(file2plot, plotset)
-           
+
             if 'frf' in postprocset["PLOTSET"]['result2plot'].keys():
-                
-                node_coordX = float(postprocset["PLOTSET"]['result2plot']['frf']['point']['x'])
-                node_coordY = float(postprocset["PLOTSET"]['result2plot']['frf']['point']['y'])
-                node_coordZ = float(postprocset["PLOTSET"]['result2plot']['frf']['point']['z'])
-                
-                hist_node = search_nodexyz(node_coordX, node_coordY, node_coordZ, modelinfo['coord'], 2E-3)
+
+                node_coordX = float(
+                    postprocset["PLOTSET"]['result2plot']['frf']['point']['x'])
+                node_coordY = float(
+                    postprocset["PLOTSET"]['result2plot']['frf']['point']['y'])
+                node_coordZ = float(
+                    postprocset["PLOTSET"]['result2plot']['frf']['point']['z'])
+
+                hist_node = search_nodexyz(
+                    node_coordX, node_coordY, node_coordZ, modelinfo['coord'], 2E-3)
                 hist_node = hist_node[0]
-                
+
                 plotset['fignumb'] = 3
-                plotset['rstl'] = modelinfo['nodedof'][0]*hist_node-(modelinfo['nodedof'][0]-postprocset["PLOTSET"]['result2plot']['frf']['dof'])
+                plotset['rstl'] = modelinfo['nodedof'][0]*hist_node - \
+                    (modelinfo['nodedof'][0]-postprocset["PLOTSET"]
+                     ['result2plot']['frf']['dof'])
                 plotset['val_y'] = postporc_result['frf'][0]['val']
                 plotset['val_x'] = postporc_result['frf'][0]['freqlog']
-                
+
                 frf_plot(plotset, hist_node)
 
-            if postprocset["PLOTSET"]['savepng'] == True:
-                pass
+            # if postprocset["PLOTSET"]['savepng'] == True:
+            #     pass
 
             else:
                 pass
