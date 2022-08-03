@@ -21,7 +21,7 @@ import scipy.sparse as sp
 from scipy.linalg import block_diag
 from myfempy.felib.materset import get_elasticity
 from myfempy.felib.crossec import cg_coord
-from myfempy.bin.tools import loading_bar_v1
+from myfempy.tools.tools import loading_bar_v1
 
 #%%------------------------------------------------------------------------------
 
@@ -39,8 +39,8 @@ class Frame22:
         self.coord = modelinfo['coord']
         self.tabmat = modelinfo['tabmat']
         self.tabgeo = modelinfo['tabgeo']
-
-  
+        
+        
     def elemset():
         
         dofelem = {'key':'frame22',

@@ -40,6 +40,7 @@ class Spring21:
         self.tabmat = modelinfo['tabmat']
         self.tabgeo = modelinfo['tabgeo']
         
+        
     def elemset():
         
         dofelem = {'key':'spring21',

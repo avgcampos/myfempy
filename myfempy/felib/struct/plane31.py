@@ -38,7 +38,7 @@ class Plane31:
         self.tabgeo = modelinfo['tabgeo']
         self.ntensor = modelinfo['ntensor'][0]
         
-  
+        
     def elemset():
         
         dofelem = {'key':'plane31',

@@ -38,8 +38,7 @@ class Truss21:
         self.tabmat = modelinfo['tabmat']
         self.tabgeo = modelinfo['tabgeo']
 
-
-
+    
     def elemset():
         
         dofelem = {'key':'truss21',
