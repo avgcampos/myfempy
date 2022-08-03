@@ -21,16 +21,6 @@ import numpy as np
 # Calculo da carga distribuida equivalente nodal
 def force_edge(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
 
-    # dofe = modelinfo['nconec'][0]*modelinfo['nodedof'][0]
-    # keymesh = modelinfo['keymesh'][0]
-    # fulldof = modelinfo['fulldof'][0]
-    # nodedof = modelinfo['nodedof'][0]
-    # nelem = modelinfo['nelem']
-    # nnode = modelinfo['nnode']
-    # modelinfo['inci'] = modelinfo['inci']
-    # coord = modelinfo['coord']
-    # tabgeo = modelinfo['tabgeo']
-
     elmlist = [None]
     for ii in range(len(node_list_fc)):
         elm2list = modelinfo['inci'][(np.asarray(
@@ -161,11 +151,12 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
     elif dir_fc == 'z':
         coord_fc = [1, 2]
 
-    elmlist = np.array([0],dtype=int)
+    elmlist = np.array([0], dtype=int)
     for ii in range(len(node_list_fc)):
-        elm2list = modelinfo['inci'][(np.asarray(np.where(modelinfo['inci'][:, 4:] == node_list_fc[ii])))[0][:], 0]
+        elm2list = modelinfo['inci'][(np.asarray(
+            np.where(modelinfo['inci'][:, 4:] == node_list_fc[ii])))[0][:], 0]
         elmlist = np.append(elmlist, elm2list)
-    
+
     elmlist = np.unique(elmlist)
     elmlist = elmlist[1::][::]
 

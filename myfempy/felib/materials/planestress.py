@@ -61,14 +61,6 @@ class Tensor:
         listnodes = self.inci[ee, 4:]
         self.nodelist = listnodes[listnodes.nonzero()].astype(int).tolist()
 
-        # if modelinfo['quadra'][0] == 1:
-        #     self.npp = modelinfo['quadra'][1]
-        #     self.quadra = Quadrature.gaussian(self.npp)
-
-        # elif modelinfo['quadra'][0] == 0:
-        #     self.npp = modelinfo['quadra'][1]
-        #     self.quadra = Quadrature.no_interpol(self.npp)
-
         # xp, wp = self.quadra
         self.npp = 1
         self.xpp = [0.0]  # xp[0,:]
@@ -83,7 +75,7 @@ class Tensor:
 
             intpl = [self.xpp[pp], self.ypp[pp]]
 
-            Bpp, detJ = self.setelement.matriz_B(self.nodelist, intpl)
+            Bpp, detJ = self.setelement.matriz_b(self.nodelist, intpl)
 
             B += Bpp
 
@@ -105,7 +97,6 @@ class Tensor:
         return epsilon, strain, title
 
     # tensao von-mises no elemento Plane
-
     def stress(self, epsilon):
 
         M = Elasticity(self.tabmat, self.inci, self.ee)

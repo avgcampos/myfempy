@@ -27,7 +27,7 @@ from myfempy.plots.plotxy import tracker_plot
 # %% MYFEMPY STATIC SOLVE
 
 
-def SLD(fulldofs, stiffness, forcelist, freedof, solverset):
+def sld(fulldofs, stiffness, forcelist, freedof, solverset):
 
     plotset = dict()
     postprocset = dict()
@@ -63,7 +63,7 @@ def SLD(fulldofs, stiffness, forcelist, freedof, solverset):
     return U
 
 
-def SLI(fulldofs, stiffness, forcelist, freedof, solverset):
+def sli(fulldofs, stiffness, forcelist, freedof, solverset):
 
     plotset = dict()
     postprocset = dict()
@@ -104,7 +104,7 @@ def SLI(fulldofs, stiffness, forcelist, freedof, solverset):
     return U
 
 
-def SLIPRE(fulldofs, stiffness, forcelist, freedof, solverset):
+def slipre(fulldofs, stiffness, forcelist, freedof, solverset):
 
     plotset = dict()
     postprocset = dict()

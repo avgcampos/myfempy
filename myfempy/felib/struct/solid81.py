@@ -76,7 +76,7 @@ class Solid81:
                         self.nodedof*nop-3, self.nodedof*nop-2, self.nodedof*nop-1])
         return loc
 
-    def matriz_B(self, nodelist, intpl):
+    def matriz_b(self, nodelist, intpl):
 
         noi = nodelist[0]
         noj = nodelist[1]
@@ -118,10 +118,6 @@ class Solid81:
         x = intpl[0]
         y = intpl[1]
         z = intpl[2]
-
-        # V = 0.0
-        # B = np.zeros((6,24))
-        # for pp in range(0,self.npp):
 
         N1x = -(1-y)*(1-z)
         N2x = (1-y)*(1-z)
@@ -237,13 +233,9 @@ class Solid81:
 
         B = (1/8)*np.concatenate((B1, B2, B3, B4, B5, B6, B7, B8), axis=1)
 
-        # B += Bpp*wp[pp]*wp[pp]*wp[pp]
-        # V += detJ
-
         return B, detJ
 
     # montagem matriz triangular CST 2D Sparse
-
     def stiff_linear(self, ee):
 
         noi = int(self.inci[ee, 4])
@@ -272,7 +264,7 @@ class Solid81:
 
             intpl = [xpp[pp], ypp[pp], zpp[pp]]
 
-            B, detJ = Solid81.matriz_B(self, nodelist, intpl)
+            B, detJ = Solid81.matriz_b(self, nodelist, intpl)
             keh8 += np.dot(np.dot(np.transpose(B), D), B) * \
                 detJ*wp[pp]*wp[pp]*wp[pp]
             V += detJ

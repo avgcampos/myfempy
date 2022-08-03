@@ -15,17 +15,10 @@
 ========================================================================
 """
 
-import sys
 import numpy as np
-import scipy.sparse as sp
-from scipy.linalg import block_diag
 from myfempy.felib.materset import get_elasticity
-from myfempy.felib.crossec import cg_coord
-from myfempy.bin.tools import loading_bar_v1
 
 # %%------------------------------------------------------------------------------
-
-
 class Frame21:
     '''Frame 2D 2-node linear Finite Element'''
 
@@ -78,7 +71,7 @@ class Frame21:
         E = D[0]
 
         A = self.tabgeo[int(self.inci[ee, 3]-1), 0]
-        Izz = self.tabgeo[int(self.inci[ee, 3]-1), 1]
+        I = self.tabgeo[int(self.inci[ee, 3]-1), 1]
 
         L = np.sqrt((nojx-noix)**2 + (nojy-noiy)**2)
         s = (nojy-noiy)/L
@@ -100,36 +93,36 @@ class Frame21:
         kef2[0, 0] = (A*E)/L
         kef2[0, 3] = -(A*E)/L
 
-        kef2[1, 1] = 12*(E*Izz)/L**3
-        kef2[1, 2] = 6*(E*Izz)/L**2
-        kef2[1, 4] = -12*(E*Izz)/L**3
-        kef2[1, 5] = 6*(E*Izz)/L**2
+        kef2[1, 1] = 12*(E*I)/L**3
+        kef2[1, 2] = 6*(E*I)/L**2
+        kef2[1, 4] = -12*(E*I)/L**3
+        kef2[1, 5] = 6*(E*I)/L**2
 
-        kef2[2, 1] = 6*(E*Izz)/L**2
-        kef2[2, 2] = 4*(E*Izz)/L
-        kef2[2, 4] = -6*(E*Izz)/L**2
-        kef2[2, 5] = 2*(E*Izz)/L
+        kef2[2, 1] = 6*(E*I)/L**2
+        kef2[2, 2] = 4*(E*I)/L
+        kef2[2, 4] = -6*(E*I)/L**2
+        kef2[2, 5] = 2*(E*I)/L
 
         kef2[3, 0] = -(A*E)/L
         kef2[3, 3] = (A*E)/L
 
-        kef2[4, 1] = -12*(E*Izz)/L**3
-        kef2[4, 2] = -6*(E*Izz)/L**2
-        kef2[4, 4] = 12*(E*Izz)/L**3
-        kef2[4, 5] = -6*(E*Izz)/L**2
+        kef2[4, 1] = -12*(E*I)/L**3
+        kef2[4, 2] = -6*(E*I)/L**2
+        kef2[4, 4] = 12*(E*I)/L**3
+        kef2[4, 5] = -6*(E*I)/L**2
 
-        kef2[5, 1] = 6*(E*Izz)/L**2
-        kef2[5, 2] = 2*(E*Izz)/L
-        kef2[5, 4] = -6*(E*Izz)/L**2
-        kef2[5, 5] = 4*(E*Izz)/L
-        kef2 = (E*Izz/L**3)*kef2
+        kef2[5, 1] = 6*(E*I)/L**2
+        kef2[5, 2] = 2*(E*I)/L
+        kef2[5, 4] = -6*(E*I)/L**2
+        kef2[5, 5] = 4*(E*I)/L
+        kef2 = (E*I/L**3)*kef2
 
-        kef2T = np.dot(np.dot(np.transpose(T), kef2), T)
+        kef2t = np.dot(np.dot(np.transpose(T), kef2), T)
 
         list_node = [noi, noj]
         loc = Frame21.lockey(self, list_node)
 
-        return kef2T, loc
+        return kef2t, loc
 
     # montagem matriz de massa de portico plana
     def mass(self, ee):
@@ -235,83 +228,13 @@ class Frame21:
             Vy[:, ed] = Vy[domLIdc, ed]
             Nx[:, ed] = Nx[domLIdc, ed]
 
-        # BeamNx = np.zeros((self.nelem,3),dtype=float)
-        # for ee in range(self.nelem):
-
-        #     noi = int(self.inci[ee,4])
-        #     noj = int(self.inci[ee,5])
-        #     noix = self.coord[noi-1,1]
-        #     noiy = self.coord[noi-1,2]
-        #     nojx = self.coord[noj-1,1]
-        #     nojy = self.coord[noj-1,2]
-
-        #     Lx = np.sqrt(((noix-nojx)**2))
-        #     Ly = np.sqrt(((noiy-nojy)**2))
-
-        #     if (Lx>0.0)and(Ly==0.0):
-        #         BeamNx[noi-1,1] = Nx[noi-1]
-        #         BeamNx[noj-1,1] = Nx[noj-1]
-
-        #     if (Lx==0.0)and(Ly>0.0):
-        #         BeamNx[noi-1,0] = Nx[noi-1]
-        #         BeamNx[noj-1,0] = Nx[noj-1]
-
-        # meshBeamNx = np.concatenate((self.coord[:,0][:, np.newaxis],np.add(self.coord[:,1:],BeamNx)),axis=1)
-
-        # BeamVy = np.zeros((self.nelem,3),dtype=float)
-        # for ee in range(self.nnode):
-
-        #     noi = int(self.inci[ee,4])
-        #     noj = int(self.inci[ee,5])
-        #     noix = self.coord[noi-1,1]
-        #     noiy = self.coord[noi-1,2]
-        #     nojx = self.coord[noj-1,1]
-        #     nojy = self.coord[noj-1,2]
-
-        #     Lx = np.sqrt(((noix-nojx)**2))
-        #     Ly = np.sqrt(((noiy-nojy)**2))
-
-        #     if (Lx>0.0)and(Ly==0.0):
-        #         BeamVy[noi-1,1] = Vy[noi-1]
-        #         BeamVy[noj-1,1] = Vy[noj-1]
-        #     if (Lx==0.0)and(Ly>0.0):
-        #         BeamVy[noi-1,0] = Vy[noi-1]
-        #         BeamVy[noj-1,0] = Vy[noj-1]
-
-        # meshBeamVy = np.concatenate((self.coord[:,0][:, np.newaxis],np.add(self.coord[:,1:],BeamVy)),axis=1)
-
-        # BeamMz = np.zeros((self.nelem,3),dtype=float)
-        # for ee in range(self.nnode):
-
-        #     noi = int(self.inci[ee,4])
-        #     noj = int(self.inci[ee,5])
-        #     noix = self.coord[noi-1,1]
-        #     noiy = self.coord[noi-1,2]
-        #     nojx = self.coord[noj-1,1]
-        #     nojy = self.coord[noj-1,2]
-
-        #     Lx = np.sqrt(((noix-nojx)**2))
-        #     Ly = np.sqrt(((noiy-nojy)**2))
-
-        #     if (Lx>0.0)and(Ly==0.0):
-        #         BeamMz[noi-1,1] = Mz[noi-1]
-        #         BeamMz[noj-1,1] = Mz[noj-1]
-        #     if (Lx==0.0)and(Ly>0.0):
-        #         BeamMz[noi-1,0] = Mz[noi-1]
-        #         BeamMz[noj-1,0] = Mz[noj-1]
-
-        # meshBeamMz = np.concatenate((self.coord[:,0][:, np.newaxis],np.add(self.coord[:,1:],BeamMz)),axis=1)
-
-        # domLOrd = np.sort(domL,axis=0)
-
         ifb = {'le': domL, 'val': [Nx, Vy, Mz]}
         title = ["NX", "VY", "MZ"]
 
         return ifb, title
 
     # # tensao no elemento de portico 2d
-
-    def matrix_B(self, ee, csc):
+    def matrix_b(self, ee, csc):
 
         y = csc[0]
 

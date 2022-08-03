@@ -14,42 +14,37 @@
 ~~~              copyright @ 2022, all rights reserved               ~~~
 ========================================================================
 """
-import sys
-import numpy as np
-import scipy.sparse as sp
-import scipy.sparse.linalg as ssl
-import scipy.linalg as sl
-import time
 
+import time
 from myfempy.core.assembler import assembler, loads
-from myfempy.core.solverset import get_constrains_dofs, step_setting
+from myfempy.core.solverset import get_constrains_dofs, step_setting, get_solve
 from myfempy.tools.tools import print_console
 
 
-def get_solve(solver_type):
+# def get_solve(solver_type):
 
-    if solver_type == 'SLD':
-        from myfempy.core.staticlinear import SLD
-        return SLD
+#     if solver_type == 'SLD':
+#         from myfempy.core.staticlinear import SLD
+#         return SLD
 
-    elif solver_type == 'SLI':
-        from myfempy.core.staticlinear import SLI
-        return SLI
+#     elif solver_type == 'SLI':
+#         from myfempy.core.staticlinear import SLI
+#         return SLI
 
-    elif solver_type == 'SLIPRE':
-        from myfempy.core.staticlinear import SLIPRE
-        return SLIPRE
+#     elif solver_type == 'SLIPRE':
+#         from myfempy.core.staticlinear import SLIPRE
+#         return SLIPRE
 
-    elif solver_type == 'EIG':
-        from myfempy.core.vibralinear import EIG
-        return EIG
+#     elif solver_type == 'EIG':
+#         from myfempy.core.vibralinear import EIG
+#         return EIG
 
-    elif solver_type == 'FRF':
-        from myfempy.core.vibralinear import FRF
-        return FRF
+#     elif solver_type == 'FRF':
+#         from myfempy.core.vibralinear import FRF
+#         return FRF
 
-    else:
-        print('Erro Import Solver')
+#     else:
+#         print('Erro Import Solver')
 
 
 # %% SOLVE SOLUTION

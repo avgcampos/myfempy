@@ -15,13 +15,9 @@
 ========================================================================
 """
 
-import sys
 import numpy as np
-import scipy.sparse as sp
 from scipy.linalg import block_diag
 from myfempy.felib.materset import get_elasticity
-from myfempy.felib.crossec import cg_coord
-from myfempy.tools.tools import loading_bar_v1
 
 # %%------------------------------------------------------------------------------
 
@@ -148,12 +144,12 @@ class Frame22:
         kef3d2[9, 3] = -G*Jxx/L
         kef3d2[9, 9] = G*Jxx/L
 
-        kef3d2T = np.dot(np.dot(np.transpose(T), kef3d2), T)
+        kef3d2t = np.dot(np.dot(np.transpose(T), kef3d2), T)
 
         list_node = [noi, noj]
         loc = Frame22.lockey(self, list_node)
 
-        return kef3d2T, loc
+        return kef3d2t, loc
 
     # montagem matriz de rigidez de portico espacial
     def mass(self, ee):
@@ -295,7 +291,7 @@ class Frame22:
         return ifb, title
 
     # # tensao no elemento de portico 3d
-    def matrix_B(self, ee, csc):
+    def matrix_b(self, ee, csc):
 
         y = csc[0]
         z = csc[1]

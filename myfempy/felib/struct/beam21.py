@@ -15,14 +15,8 @@
 ========================================================================
 """
 
-import sys
 import numpy as np
-import scipy.sparse as sp
-from scipy.linalg import block_diag
 from myfempy.felib.materset import get_elasticity
-from myfempy.felib.crossec import cg_coord
-from myfempy.tools.tools import loading_bar_v1
-
 
 # %%------------------------------------------------------------------------------
 
@@ -77,7 +71,7 @@ class Beam21:
         D = get_elasticity(self.tabmat, self.inci, ee)
         E = D[0]
 
-        Izz = self.tabgeo[int(self.inci[ee, 3]-1), 1]
+        I = self.tabgeo[int(self.inci[ee, 3]-1), 1]
 
         L = np.sqrt((nojx-noix)**2 + (nojy-noiy)**2)
 
@@ -101,7 +95,7 @@ class Beam21:
         keb1[3, 1] = 2*L**2
         keb1[3, 2] = -6*L
         keb1[3, 3] = 4*L**2
-        keb1 = (E*Izz/L**3)*keb1
+        keb1 = (E*I/L**3)*keb1
 
         list_node = [noi, noj]
         loc = Beam21.lockey(self, list_node)

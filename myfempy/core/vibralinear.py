@@ -24,7 +24,7 @@ import time
 # %% MYFEMPY STATIC SOLVE
 
 
-def EIG(fulldofs, stiffness, mass, forcelist, freedof, solverset):
+def eig(fulldofs, stiffness, mass, forcelist, freedof, solverset):
 
     plotset = dict()
     postprocset = dict()
@@ -34,7 +34,7 @@ def EIG(fulldofs, stiffness, mass, forcelist, freedof, solverset):
 
     startstep = time.time()
     W, U[freedof, :] = spla.eigsh(stiffness[:, freedof][freedof, :],
-                                 modeEnd, mass[:, freedof][freedof, :], sigma=1, which='LM')
+                                  modeEnd, mass[:, freedof][freedof, :], sigma=1, which='LM')
     endstep = time.time()
     print('\nSTEP --: SUCCESSFUL CONVERGED\n')
 
@@ -49,7 +49,7 @@ def EIG(fulldofs, stiffness, mass, forcelist, freedof, solverset):
     return U, w_range
 
 
-def FRF(fulldofs, stiffness, mass, forcelist, freedof, solverset):
+def frf(fulldofs, stiffness, mass, forcelist, freedof, solverset):
 
     twopi = 2*np.pi
     freqStart = (twopi)*solverset['start']
@@ -62,24 +62,22 @@ def FRF(fulldofs, stiffness, mass, forcelist, freedof, solverset):
     startstep = time.time()
     for ww in range(freqStep):
         Wn = w_range[ww]
-        
+
         Dw = (stiffness[:, freedof][freedof, :]) - \
             (Wn**2)*(mass[:, freedof][freedof, :])
 
-        U[freedof, ww] = spla.spsolve(A=Dw, b=forcelist[freedof,:])
-        
+        U[freedof, ww] = spla.spsolve(A=Dw, b=forcelist[freedof, :])
+
         # U[freedof, ww], info = spla.bicgstab(A=Dw, b=forcelist[freedof, :].toarray(), tol=solverset['TOL'])
-        
+
         # if info > 0:
         #     pass
         # elif info < 0:
         #     print('ILLEGAL INPUT OR BREAKDOWN')
         # else:
         #     pass
-        
+
     endstep = time.time()
-
-
 
     print('\ TIME SPEND: ', endstep-startstep, ' SEC')
 

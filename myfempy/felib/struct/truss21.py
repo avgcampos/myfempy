@@ -15,13 +15,8 @@
 ========================================================================
 """
 
-# import sys
 import numpy as np
-# import scipy.sparse as sp
-# from scipy.linalg import block_diag
 from myfempy.felib.materset import get_elasticity
-
-# %%------------------------------------------------------------------------------
 
 
 class Truss21:
@@ -97,15 +92,17 @@ class Truss21:
         ket2[2, 2] = 1.0
         ket2 = ((E*A)/L)*ket2
 
-        ket2T = np.dot(np.dot(np.transpose(T), ket2), T)
+        ket2t = np.dot(np.dot(np.transpose(T), ket2), T)
 
         list_node = [noi, noj]
         loc = Truss21.lockey(self, list_node)
 
-        return ket2T, loc
+        return ket2t, loc
 
     # # tensao no elemento de barra
-    def matrix_B(self, ee, csc):
+    def matrix_b(self, ee, csc):
+
+        y = csc[0]
 
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])

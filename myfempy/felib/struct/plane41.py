@@ -73,7 +73,7 @@ class Plane41:
 
         return loc
 
-    def matriz_B(self, nodelist, intpl):
+    def matriz_b(self, nodelist, intpl):
 
         noi = nodelist[0]
         noj = nodelist[1]
@@ -183,7 +183,7 @@ class Plane41:
             # self.y = ypp[pp]
             intpl = [xpp[pp], ypp[pp]]
 
-            Bpp, detJ = Plane41.matriz_B(self, nodelist, intpl)
+            Bpp, detJ = Plane41.matriz_b(self, nodelist, intpl)
             A += detJ
             keq4 += np.dot(np.dot(np.transpose(Bpp), D), Bpp) * \
                 L*detJ*wp[pp]*wp[pp]

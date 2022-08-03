@@ -16,11 +16,7 @@
 """
 
 import numpy as np
-# import scipy.sparse as sp
-# from scipy.linalg import block_diag
 from myfempy.felib.materset import get_elasticity
-# from myfempy.felib.felib import mech_mate
-# from myfempy.io.miscel import loading_bar_v1
 
 # %%------------------------------------------------------------------------------
 

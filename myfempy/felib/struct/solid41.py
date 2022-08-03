@@ -68,7 +68,7 @@ class Solid41:
                         self.nodedof*nol-3, self.nodedof*nol-2, self.nodedof*nol-1])
         return loc
 
-    def matriz_B(self, nodelist, intpl):
+    def matriz_b(self, nodelist, intpl):
 
         noi = nodelist[0]
         noj = nodelist[1]
@@ -123,43 +123,6 @@ class Solid41:
         gaml = - \
             np.linalg.det(np.array([[1, xi, zi], [1, xj, zj], [1, xk, zk]]))
         dell = np.linalg.det(np.array([[1, xi, yi], [1, xj, yj], [1, xk, yk]]))
-
-        # new LIU
-        # alpi = np.linalg.det(
-        #     np.array([[xj, yj, zj], [xk, yk, zk], [xl, yl, zl]]))
-        # beti = - \
-        #     np.linalg.det(np.array([[1, yj, zj], [1, yk, zk], [1, yl, zl]]))
-        # gami = - \
-        #     np.linalg.det(np.array([[yj, 1, zj], [yk, 1, zk], [yl, 1, zl]]))
-        # deli = - \
-        #     np.linalg.det(np.array([[yj, zj, 1], [yk, zk, 1], [yl, zl, 1]]))
-
-        # alpj = np.linalg.det(
-        #     np.array([[xk, yk, zk], [xl, yl, zl], [xi, yi, zi]]))
-        # betj = - \
-        #     np.linalg.det(np.array([[1, yk, zk], [1, yl, zl], [1, yi, zi]]))
-        # gamj = - \
-        #     np.linalg.det(np.array([[yk, 1, zk], [yl, 1, zl], [yi, 1, zi]]))
-        # delj = - \
-        #     np.linalg.det(np.array([[yk, zk, 1], [yl, zl, 1], [yi, zi, 1]]))
-
-        # alpk = np.linalg.det(
-        #     np.array([[xl, yl, zl], [xi, yi, zi], [xj, yj, zj]]))
-        # betk = - \
-        #     np.linalg.det(np.array([[1, yl, zl], [1, yi, zi], [1, yj, zj]]))
-        # gamk = - \
-        #     np.linalg.det(np.array([[yl, 1, zl], [yi, 1, zi], [yj, 1, zj]]))
-        # delk = - \
-        #     np.linalg.det(np.array([[yl, zl, 1], [yi, zi, 1], [yj, zj, 1]]))
-
-        # alpl = np.linalg.det(
-        #     np.array([[xi, yi, zi], [xj, yj, zj], [xk, yk, zk]]))
-        # betl = - \
-        #     np.linalg.det(np.array([[1, yi, zi], [1, yj, zj], [1, yk, zk]]))
-        # gaml = - \
-        #     np.linalg.det(np.array([[yi, 1, zi], [yj, 1, zj], [yk, 1, zk]]))
-        # dell = - \
-        #     np.linalg.det(np.array([[yi, zi, 1], [yj, zj, 1], [yk, zk, 1]]))
 
         B = np.zeros((self.ntensor, self.dofe))
 
@@ -223,7 +186,7 @@ class Solid41:
 
         intpl = 0.0
 
-        B, V = Solid41.matriz_B(self, nodelist, intpl)
+        B, V = Solid41.matriz_b(self, nodelist, intpl)
         ket4 = V*np.dot(np.dot(np.transpose(B), D), B)
 
         loc = Solid41.lockey(self, nodelist)
