@@ -34,7 +34,6 @@ class Truss21:
     def lockey(self, list_node):
         noi = list_node[0]
         noj = list_node[1]
-
         loc = np.array([self.nodedof*noi-2, self.nodedof*noi-1,
                         self.nodedof*noj-2, self.nodedof*noj-1])
         return loc
@@ -71,7 +70,6 @@ class Truss21:
         list_node = [noi, noj]
         loc = Truss21.lockey(self, list_node)
         return ket2t, loc
-    # # tensao no elemento de barra
 
     def matrix_b(self, ee, csc):
         noi = int(self.inci[ee, 4])
