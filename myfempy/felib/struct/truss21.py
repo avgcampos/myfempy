@@ -1,16 +1,19 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
 """
-texto aqui
+truss21.py: Truss 2D 2-node linear Finite Element
 """
+__author__ = "Antonio Vinicius Garcia Campos"
+__copyright__ = "Copyright @ 2022, Antonio Vinicius Garcia Campos"
+__credits__ = ["Antonio Vinicius Garcia Campos", "3D EasyCAE"]
+__license__ = "GPL"
+__status__ = "Development"
+
 import numpy as np
 from myfempy.felib.materset import get_elasticity
 
 
 class Truss21:
-    '''Truss 2D 2-node linear Finite Element'''
-
     def __init__(self, modelinfo):
-
         self.dofe = modelinfo['nodecon'][0]*modelinfo['nodedof'][0]
         self.fulldof = modelinfo["nodedof"][0]*len(modelinfo["coord"])
         self.nodedof = modelinfo['nodedof'][0]

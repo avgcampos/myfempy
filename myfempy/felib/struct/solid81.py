@@ -1,32 +1,19 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
 """
-========================================================================
-~~~ MODULO DE SIMULACAO ESTRUTURAL PELO METODO DOS ELEMENTOS FINITOS ~~~
-       	                    __                                
-       	 _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-       	| '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-       	| | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-       	|_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-       	            |___/                       |_|     |___/ 
-
-~~~      Mechanical studY with Finite Element Method in PYthon       ~~~
-~~~                PROGRAMA DE ANÁLISE COMPUTACIONAL                 ~~~
-~~~              copyright @ 2022, all rights reserved               ~~~
-========================================================================
+solid81.py: Hexahedron Isoparametric Solid 8-node linear Finite Element
 """
-
+__author__ = "Antonio Vinicius Garcia Campos"
+__copyright__ = "Copyright @ 2022, Antonio Vinicius Garcia Campos"
+__credits__ = ["Antonio Vinicius Garcia Campos", "3D EasyCAE"]
+__license__ = "GPL"
+__status__ = "Development"
 import numpy as np
 from myfempy.felib.materset import get_elasticity
 from myfempy.felib.quadrature import Quadrature
 
-# %%------------------------------------------------------------------------------
-
 
 class Solid81:
-    '''hexahedron Isoparametric Solid 8-node linear Finite Element'''
-
     def __init__(self, modelinfo):
-
         self.dofe = modelinfo['nodecon'][0]*modelinfo['nodedof'][0]
         self.nodecon = modelinfo['nodecon'][0]
         self.fulldof = modelinfo["nodedof"][0]*len(modelinfo["coord"])
@@ -38,25 +25,21 @@ class Solid81:
         self.tabmat = modelinfo['tabmat']
         self.tabgeo = modelinfo['tabgeo']
         self.ntensor = modelinfo['ntensor'][0]
-
         if modelinfo['quadra'][0] == 1:
             self.npp = modelinfo['quadra'][1]
             self.quadra = Quadrature.gaussian(self.npp)
 
     @staticmethod
     def elemset():
-
         dofelem = {'key': 'solid81',
                    'id': 320,
                    'def': 'struct 3D',
                    'dofs': ['ux', 'uy', 'uz'],
                    'nnodes': ['i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'],
                    'tensor': ['sxx', 'syy', 'szz', 'sxy', 'syz', 'szx']}
-
         return dofelem
 
     def lockey(self, nodelist):
-
         noi = nodelist[0]
         noj = nodelist[1]
         nok = nodelist[2]
@@ -65,7 +48,6 @@ class Solid81:
         non = nodelist[5]
         noo = nodelist[6]
         nop = nodelist[7]
-
         loc = np.array([self.nodedof*noi-3, self.nodedof*noi-2, self.nodedof*noi-1,
                         self.nodedof*noj-3, self.nodedof*noj-2, self.nodedof*noj-1,
                         self.nodedof*nok-3, self.nodedof*nok-2, self.nodedof*nok-1,
@@ -77,7 +59,6 @@ class Solid81:
         return loc
 
     def matriz_b(self, nodelist, intpl):
-
         noi = nodelist[0]
         noj = nodelist[1]
         nok = nodelist[2]
@@ -86,7 +67,6 @@ class Solid81:
         non = nodelist[5]
         noo = nodelist[6]
         nop = nodelist[7]
-
         xi = self.coord[noi-1, 1]
         yi = self.coord[noi-1, 2]
         zi = self.coord[noi-1, 3]
@@ -111,14 +91,11 @@ class Solid81:
         xp = self.coord[nop-1, 1]
         yp = self.coord[nop-1, 2]
         zp = self.coord[nop-1, 3]
-
         matXYZ = np.array([[xi, yi, zi], [xj, yj, zj], [xk, yk, zk], [xl, yl, zl],
                           [xm, ym, zm], [xn, yn, zn], [xo, yo, zo], [xp, yp, zp]])
-
         x = intpl[0]
         y = intpl[1]
         z = intpl[2]
-
         N1x = -(1-y)*(1-z)
         N2x = (1-y)*(1-z)
         N3x = (1+y)*(1-z)
@@ -143,20 +120,12 @@ class Solid81:
         N6z = (1+x)*(1-y)
         N7z = (1+x)*(1+y)
         N8z = (1-x)*(1+y)
-
-        # dN = (1/4)*np.array([[-(1-y[pp]),(1-y[pp]),(1+y[pp]),-(1+y[pp])],\
-        #                      [-(1-x[pp]),-(1+x[pp]),(1+x[pp]),(1-x[pp])]])
-
         dN = (1/8)*np.array([[N1x, N2x, N3x, N4x, N5x, N6x, N7x, N8x],
                              [N1y, N2y, N3y, N4y, N5y, N6y, N7y, N8y],
                              [N1z, N2z, N3z, N4z, N5z, N6z, N7z, N8z]])
-
         J = np.dot(dN, matXYZ)
-
         detJ = np.linalg.det(J)
-
         invJ = np.linalg.inv(J)
-
         dN1 = np.array([[N1x], [N1y], [N1z]])
         dN2 = np.array([[N2x], [N2y], [N2z]])
         dN3 = np.array([[N3x], [N3y], [N3z]])
@@ -165,7 +134,6 @@ class Solid81:
         dN6 = np.array([[N6x], [N6y], [N6z]])
         dN7 = np.array([[N7x], [N7y], [N7z]])
         dN8 = np.array([[N8x], [N8y], [N8z]])
-
         pN1 = np.dot(invJ, dN1)
         pN2 = np.dot(invJ, dN2)
         pN3 = np.dot(invJ, dN3)
@@ -174,70 +142,58 @@ class Solid81:
         pN6 = np.dot(invJ, dN6)
         pN7 = np.dot(invJ, dN7)
         pN8 = np.dot(invJ, dN8)
-
         B1 = np.array([[pN1[0, 0], 0, 0],
                       [0, pN1[1, 0], 0],
                       [0, 0, pN1[2, 0]],
                       [pN1[1, 0], pN1[0, 0], 0],
                       [0, pN1[2, 0], pN1[1, 0]],
                       [pN1[2, 0], 0, pN1[0, 0]]])
-
         B2 = np.array([[pN2[0, 0], 0, 0],
                       [0, pN2[1, 0], 0],
                       [0, 0, pN2[2, 0]],
                       [pN2[1, 0], pN2[0, 0], 0],
                       [0, pN2[2, 0], pN2[1, 0]],
                       [pN2[2, 0], 0, pN2[0, 0]]])
-
         B3 = np.array([[pN3[0, 0], 0, 0],
                       [0, pN3[1, 0], 0],
                       [0, 0, pN3[2, 0]],
                       [pN3[1, 0], pN3[0, 0], 0],
                       [0, pN3[2, 0], pN3[1, 0]],
                       [pN3[2, 0], 0, pN3[0, 0]]])
-
         B4 = np.array([[pN4[0, 0], 0, 0],
                       [0, pN4[1, 0], 0],
                       [0, 0, pN4[2, 0]],
                       [pN4[1, 0], pN4[0, 0], 0],
                       [0, pN4[2, 0], pN4[1, 0]],
                       [pN4[2, 0], 0, pN4[0, 0]]])
-
         B5 = np.array([[pN5[0, 0], 0, 0],
                       [0, pN5[1, 0], 0],
                       [0, 0, pN5[2, 0]],
                       [pN5[1, 0], pN5[0, 0], 0],
                       [0, pN5[2, 0], pN5[1, 0]],
                       [pN5[2, 0], 0, pN5[0, 0]]])
-
         B6 = np.array([[pN6[0, 0], 0, 0],
                       [0, pN6[1, 0], 0],
                       [0, 0, pN6[2, 0]],
                       [pN6[1, 0], pN6[0, 0], 0],
                       [0, pN6[2, 0], pN6[1, 0]],
                       [pN6[2, 0], 0, pN6[0, 0]]])
-
         B7 = np.array([[pN7[0, 0], 0, 0],
                       [0, pN7[1, 0], 0],
                       [0, 0, pN7[2, 0]],
                       [pN7[1, 0], pN7[0, 0], 0],
                       [0, pN7[2, 0], pN7[1, 0]],
                       [pN7[2, 0], 0, pN7[0, 0]]])
-
         B8 = np.array([[pN8[0, 0], 0, 0],
                       [0, pN8[1, 0], 0],
                       [0, 0, pN8[2, 0]],
                       [pN8[1, 0], pN8[0, 0], 0],
                       [0, pN8[2, 0], pN8[1, 0]],
                       [pN8[2, 0], 0, pN8[0, 0]]])
-
         B = (1/8)*np.concatenate((B1, B2, B3, B4, B5, B6, B7, B8), axis=1)
-
         return B, detJ
 
-    # montagem matriz triangular CST 2D Sparse
     def stiff_linear(self, ee):
-
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
         nok = int(self.inci[ee, 6])
@@ -246,36 +202,24 @@ class Solid81:
         non = int(self.inci[ee, 9])
         noo = int(self.inci[ee, 10])
         nop = int(self.inci[ee, 11])
-
         nodelist = [noi, noj, nok, nol, nom, non, noo, nop]
-
         D = get_elasticity(self.tabmat, self.inci, ee)
-
-        # L = self.tabgeo[int(self.inci[self.ee,3]-1),4]
-
         xp, wp = self.quadra
         xpp = xp[0, :]
         ypp = xp[1, :]
         zpp = xp[2, :]
-
         keh8 = np.zeros((self.dofe, self.dofe))
         V = 0
         for pp in range(0, self.npp):
-
             intpl = [xpp[pp], ypp[pp], zpp[pp]]
-
             B, detJ = Solid81.matriz_b(self, nodelist, intpl)
             keh8 += np.dot(np.dot(np.transpose(B), D), B) * \
                 detJ*wp[pp]*wp[pp]*wp[pp]
             V += detJ
-
         loc = Solid81.lockey(self, nodelist)
-
         return keh8, loc
 
-    # montagem matriz triangular CST 2D Sparse
     def mass(self, ee):
-
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
         nok = int(self.inci[ee, 6])
@@ -284,7 +228,6 @@ class Solid81:
         non = int(self.inci[ee, 9])
         noo = int(self.inci[ee, 10])
         nop = int(self.inci[ee, 11])
-
         xi = self.coord[noi-1, 1]
         yi = self.coord[noi-1, 2]
         zi = self.coord[noi-1, 3]
@@ -309,20 +252,15 @@ class Solid81:
         xp = self.coord[nop-1, 1]
         yp = self.coord[nop-1, 2]
         zp = self.coord[nop-1, 3]
-
         matXY = np.array([[xi, yi, zi], [xj, yj, zj], [xk, yk, zk], [xl, yl, zl],
                           [xm, ym, zm], [xn, yn, zn], [xo, yo, zo], [xp, yp, zp]])
-
         R = self.tabmat[int(self.inci[ee, 2]-1), 6]
-
         xp, wp = self.quadra
         x = xp[0, :]
         y = xp[1, :]
         z = xp[2, :]
-
         meh8 = np.zeros((self.dofe, self.dofe))
         for pp in range(0, self.npp):
-
             N1 = (1-x[pp])*(1-y[pp])*(1-z[pp])
             N2 = (1+x[pp])*(1-y[pp])*(1-z[pp])
             N3 = (1+x[pp])*(1+y[pp])*(1-z[pp])
@@ -331,12 +269,12 @@ class Solid81:
             N6 = (1+x[pp])*(1-y[pp])*(1+z[pp])
             N7 = (1+x[pp])*(1+y[pp])*(1+z[pp])
             N8 = (1-x[pp])*(1+y[pp])*(1+z[pp])
-
-            N = (1/8)*np.array([[N1, 0, 0, N2, 0, 0, N3, 0, 0, N4, 0, 0, N5, 0, 0, N6, 0, 0, N7, 0, 0, N8, 0, 0],
+            N = (1/8)*np.array([[N1, 0, 0, N2, 0, 0, N3, 0, 0, N4, 0, 0, N5, 0,
+                                0, N6, 0, 0, N7, 0, 0, N8, 0, 0],
                                 [0, N1, 0, 0, N2, 0, 0, N3, 0, 0, N4, 0, 0,
-                                    N5, 0, 0, N6, 0, 0, N7, 0, 0, N8, 0],
-                                [0, 0, N1, 0, 0, N2, 0, 0, N3, 0, 0, N4, 0, 0, N5, 0, 0, N6, 0, 0, N7, 0, 0, N8]])
-
+                                N5, 0, 0, N6, 0, 0, N7, 0, 0, N8, 0],
+                                [0, 0, N1, 0, 0, N2, 0, 0, N3, 0, 0, N4, 0, 0,
+                                N5, 0, 0, N6, 0, 0, N7, 0, 0, N8]])
             N1x = -(1-y[pp])*(1-z[pp])
             N2x = (1-y[pp])*(1-z[pp])
             N3x = (1+y[pp])*(1-z[pp])
@@ -361,18 +299,12 @@ class Solid81:
             N6z = (1+x[pp])*(1-y[pp])
             N7z = (1+x[pp])*(1+y[pp])
             N8z = (1-x[pp])*(1+y[pp])
-
             dN = (1/8)*np.array([[N1x, N2x, N3x, N4x, N5x, N6x, N7x, N8x],
                                  [N1y, N2y, N3y, N4y, N5y, N6y, N7y, N8y],
                                  [N1z, N2z, N3z, N4z, N5z, N6z, N7z, N8z]])
-
             J = np.dot(dN, matXY)
-
             detJ = np.linalg.det(J)
-
             meh8 += np.dot(np.transpose(N), N)*R*detJ*wp[pp]*wp[pp]
-
         list_node = [noi, noj, nok, nol, nom, non, noo, nop]
         loc = Solid81.lockey(self, list_node)
-
         return meh8, loc

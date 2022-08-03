@@ -1,75 +1,45 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
 """
-========================================================================
-~~~ MODULO DE SIMULACAO ESTRUTURAL PELO METODO DOS ELEMENTOS FINITOS ~~~
-       	                    __                                
-       	 _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-       	| '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-       	| | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-       	|_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-       	            |___/                       |_|     |___/ 
-
-~~~      Mechanical studY with Finite Element Method in PYthon       ~~~
-~~~                PROGRAMA DE ANÁLISE COMPUTACIONAL                 ~~~
-~~~              copyright @ 2022, all rights reserved               ~~~
-========================================================================
+GMSH GEN MESH
 """
+__author__ = "Antonio Vinicius Garcia Campos"
+__copyright__ = "Copyright @ 2022, Antonio Vinicius Garcia Campos"
+__credits__ = ["Antonio Vinicius Garcia Campos", "3D EasyCAE"]
+__license__ = "GPL"
+__status__ = "Development"
 
-# %% READ INPUTDATA FROM USER PATH
-import sys
 import os
-# import imp
-import numpy as np
-# from colorama import Fore, Back, Style
 
-# from myfempy.felib.felib import fe_key
-# from myfempy.felib.material import mat_def, mat_beh
-# from myfempy.felib.crossec import sect_prop, sec_def
-
-
-# %%
 
 def gmsh_key(meshtype):
-
     l = {'line2': '-1',
          'tria3': '-2',
          'quad4': '-2',
          'hexa8': '-3',
          'tetr4': '-3',
          }
-
     return l[meshtype]
 
 
-# gera a malha no GMSH, inserir arquivo de geometria .geo --> run gmsh
 def get_gmsh_msh(meshdata):
-    # cmd = 'gmsh geo_1d_beam.geo -1 -o mesh_out_1d_beam.msh1'
-
     cmd = "gmsh"+" "+(meshdata['GMSH']['filename']+'.geo')+" "+gmsh_key(meshdata['GMSH']
-                                                                        ['meshconfig']['mesh'])+" -o "+(meshdata['GMSH']['filename']+'.msh1')  # +'.msh1'
-
+                                                                        ['meshconfig']['mesh'])+" -o "+(meshdata['GMSH']['filename']+'.msh1')
     os.system("echo GENERATING MESH FROM EXTERNAL GMSH")
     os.system(cmd)
     os.system("echo MESHING IS DONE")
     os.system("echo SAVING AND EXIT")
 
 
-#-----------------------------------------------------------------------------#
 def get_gmsh_geo(meshdata):
     with open((meshdata['GMSH']['filename']+'.geo'), 'w') as file_object:
-
         file_object.write('// GMSH GEOMETRY FILE FROM MYFEMPY\n')
         file_object.write('SetFactory("OpenCASCADE");\n')
         if 'pointlist' in meshdata['GMSH'].keys():
-
-            # if 'linelist' in meshdata['GMSH'].keys():
             numlinlist = len(meshdata['GMSH']['linelist'])
-
             line_list = ""
             for i in range(numlinlist):
                 line_list += str(i+1)+','
             line_list = line_list[0:-1]
-
             if 'planelist' in meshdata['GMSH'].keys():
                 numplalistP = len(meshdata['GMSH']['planelist'])
                 planes = ""
@@ -78,12 +48,10 @@ def get_gmsh_geo(meshdata):
                 planes = planes[0:-1]
             else:
                 pass
-
             numpnt = len(meshdata['GMSH']['pointlist'])
             for i in range(0, numpnt):
                 file_object.write('Point('+str(i+1)+') = {'+str(meshdata['GMSH']['pointlist'][i][0])+','+str(meshdata['GMSH']['pointlist'][i][1])+','+str(
                     meshdata['GMSH']['pointlist'][i][2])+','+str(meshdata['GMSH']['meshconfig']['sizeelement'])+'};'+'\n')
-
             if 'arc' in meshdata['GMSH'].keys():
                 numincl = len(meshdata['GMSH']['arc'])
                 for inl in range(numincl):
@@ -95,36 +63,25 @@ def get_gmsh_geo(meshdata):
                     arc1 = meshdata['GMSH']['arc'][inl][2][1]
                     file_object.write('Circle('+str(numlinlist+inl+1)+') = {'+str(
                         cx)+','+str(cy)+','+str(cz)+','+str(d)+','+arc0+','+arc1+'};\n')
-
             else:
                 numincl = 0
-
             for i in range(0, numlinlist):
                 file_object.write('Line('+str(i+1)+') = {'+str(
                     meshdata['GMSH']['linelist'][i][0])+','+str(meshdata['GMSH']['linelist'][i][1])+'};\n')
-
-        # ---------------------------
         if meshdata['GMSH']['meshconfig']['mesh'] == 'line2':
-
             if 'numbernodes' in meshdata['GMSH']['meshconfig'].keys():
                 file_object.write('Transfinite Curve {'+line_list+'} = '+str(
                     meshdata['GMSH']['meshconfig']['numbernodes'])+' Using Progression 1;\n')
-
             elif 'sizeelement' in meshdata['GMSH']['meshconfig'].keys():
                 for i in range(0, numpnt):
                     file_object.write('Point('+str(i+1)+') = {'+str(meshdata['GMSH']['pointlist'][i][0])+','+str(meshdata['GMSH']['pointlist'][i][1])+','+str(
                         meshdata['GMSH']['pointlist'][i][2])+','+str(meshdata['GMSH']['meshconfig']['sizeelement'])+'};'+'\n')
-
             else:
                 pass
-
-        # ---------------------------
         elif meshdata['GMSH']['meshconfig']['mesh'] != 'line2':
-
             if 'cadimport' in meshdata['GMSH'].keys():
                 file_object.write(
                     'Merge "'+meshdata['GMSH']['cadimport']['object']+'";\n')
-
             else:
                 npl = 0
                 phl = 0
@@ -141,21 +98,16 @@ def get_gmsh_geo(meshdata):
                             phl = meshdata['GMSH']['arc'][inl][1]
                             file_object.write(
                                 'Curve Loop('+str(i+1+inl+1)+') = {'+str(numlinlist+inl+1)+'};\n')
-
                     if 'arc' in meshdata['GMSH'].keys():
                         file_object.write(
                             'Plane Surface('+str(i+1)+') = {'+plane_hole[0:-1]+'};\n')
-
                     else:
                         file_object.write(
                             'Plane Surface('+str(i+1)+') = {'+str(npl)+'};\n')
-
                 file_object.write(
                     'Characteristic Length {:} = '+str(meshdata['GMSH']['meshconfig']['sizeelement'])+';\n')
-
             if meshdata['GMSH']['meshconfig']['meshmap']['on'] == True:
                 file_object.write('//FACE MAPPING \n')
-
                 if 'numbernodes' in meshdata['GMSH']['meshconfig']['meshmap'].keys():
                     if meshdata['GMSH']['meshconfig']['meshmap']['edge'] == 'all':
                         file_object.write('Transfinite Curve {:} = '+str(
@@ -164,13 +116,9 @@ def get_gmsh_geo(meshdata):
                         file_object.write('Transfinite Curve {'+str(meshdata['GMSH']['meshconfig']['meshmap']['edge'])[
                                           1:-1]+'} = '+str(meshdata['GMSH']['meshconfig']['meshmap']['numbernodes'])+' Using Progression 1;\n')
                 file_object.write('Transfinite Surface {:};\n')
-
             else:
                 pass
-
-        # ---------------------------
             if meshdata['GMSH']['meshconfig']['mesh'] == 'tria3':
-
                 file_object.write('// MESH CONFIGURATION\n')
                 file_object.write(
                     'Mesh.CharacteristicLengthExtendFromBoundary = 1;\n')
@@ -182,10 +130,7 @@ def get_gmsh_geo(meshdata):
                 file_object.write('Mesh.HighOrderOptimize = 0;\n')
                 file_object.write('Mesh.Algorithm = 8;\n')
                 file_object.write('Mesh.ElementOrder = 1;\n')
-
-        # ---------------------------
             elif meshdata['GMSH']['meshconfig']['mesh'] == 'quad4':
-
                 file_object.write('Recombine Surface {:};\n')
                 file_object.write('// MESH CONFIGURATION\n')
                 file_object.write('Mesh.RecombinationAlgorithm = 1;\n')
@@ -201,17 +146,11 @@ def get_gmsh_geo(meshdata):
                 file_object.write('Mesh.HighOrderOptimize = 0;\n')
                 file_object.write('Mesh.Algorithm = 8;\n')
                 file_object.write('Mesh.ElementOrder = 1;\n')
-
-        # ---------------------------
             elif meshdata['GMSH']['meshconfig']['mesh'] == 'tetr4':
-
-                # thck=1
                 if 'extrude' in meshdata['GMSH']['meshconfig'].keys():
                     thck = meshdata['GMSH']['meshconfig']['extrude']
-                    # file_object.write('Extrude {0, 0, '+str(float(thck))+'} {Surface{:};Layers{'+str(int(float(thck)/float(meshdata['GMSH']['meshconfig']['sizeelement'])))+'};Recombine;};\n')
                     file_object.write(
                         'Extrude {0, 0, '+str(float(thck))+'} {Surface{:};}\n')
-
                 file_object.write('// MESH CONFIGURATION\n')
                 file_object.write('Mesh.Algorithm = 2;\n')  # 4
                 file_object.write('Mesh.Algorithm3D = 4;\n')  # 7
@@ -223,17 +162,12 @@ def get_gmsh_geo(meshdata):
                 file_object.write('Mesh.ElementOrder = 1;\n')
                 file_object.write('Mesh.Optimize = 1;\n')
                 file_object.write('Mesh.HighOrderOptimize = 0;\n')
-
-        # ---------------------------
             elif meshdata['GMSH']['meshconfig']['mesh'] == 'hexa8':
-
-                # thck=1
                 if 'extrude' in meshdata['GMSH']['meshconfig'].keys():
                     thck = meshdata['GMSH']['meshconfig']['extrude']
                     # file_object.write('Extrude {0, 0, '+str(float(thck))+'} {Surface{:};Layers{'+str(int(float(thck)/float(meshdata['GMSH']['meshconfig']['sizeelement'])))+'};Recombine;};\n')
                     file_object.write('Extrude {0, 0, '+str(float(thck))+'} {Surface{:};Layers{'+str(int(
                         float(thck)/float(meshdata['GMSH']['meshconfig']['sizeelement'])))+'};Recombine;};\n')
-
                 file_object.write('Recombine Surface {:};\n')
                 file_object.write('// MESH CONFIGURATION\n')
                 file_object.write('Mesh.Algorithm = 2;\n')  # 8
@@ -249,6 +183,5 @@ def get_gmsh_geo(meshdata):
                 file_object.write('Mesh.RecombinationAlgorithm = 0;\n')
                 file_object.write('Mesh.SubdivisionAlgorithm = 2;\n')
                 file_object.write('Mesh.RecombineAll = 1;\n')
-
         else:
             print("input erro: mesh_cfg don't defined")

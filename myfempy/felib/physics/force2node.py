@@ -1,51 +1,36 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
 """
-========================================================================
-~~~ MODULO DE SIMULACAO ESTRUTURAL PELO METODO DOS ELEMENTOS FINITOS ~~~
-       	                    __                                
-       	 _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-       	| '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-       	| | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-       	|_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-       	            |___/                       |_|     |___/ 
-
-~~~      Mechanical studY with Finite Element Method in PYthon       ~~~
-~~~                PROGRAMA DE ANÁLISE COMPUTACIONAL                 ~~~
-~~~              copyright @ 2022, all rights reserved               ~~~
-========================================================================
+forces to nodes
 """
+__author__ = "Antonio Vinicius Garcia Campos"
+__copyright__ = "Copyright @ 2022, Antonio Vinicius Garcia Campos"
+__credits__ = ["Antonio Vinicius Garcia Campos", "3D EasyCAE"]
+__license__ = "GPL"
+__status__ = "Development"
 import numpy as np
 
 
-# %%----------------------------------------------------------------------------
-# Calculo da carga distribuida equivalente nodal
 def force_edge(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
-
     elmlist = [None]
     for ii in range(len(node_list_fc)):
         elm2list = modelinfo['inci'][(np.asarray(
             np.where(modelinfo['inci'][:, 4:] == node_list_fc[ii])))[0][:], 0]
         elmlist.extend(elm2list)
-
     elmlist = elmlist[1::][::]
     elmlist = np.unique(elmlist)
-
     if (dir_fc == 'x') or (dir_fc == 'y_x') or (dir_fc == 'z_x'):
         coord_fc = 1
     elif (dir_fc == 'y') or (dir_fc == 'x_y') or (dir_fc == 'z_y'):
         coord_fc = 2
     elif (dir_fc == 'z') or (dir_fc == 'x_z') or (dir_fc == 'y_z'):
         coord_fc = 3
-
     if modelinfo['elemid'][0] == 210:
-
         force_value_vector = np.zeros(
             (modelinfo['nodedof'][0]*len(node_list_fc), 1))
         for i in range(len(elmlist)):
             noi = int(modelinfo['inci'][int(elmlist[i]-1), 4])
             noj = int(modelinfo['inci'][int(elmlist[i]-1), 5])
             nok = int(modelinfo['inci'][int(elmlist[i]-1), 6])
-
             if np.any([noi == node_list_fc[:]]):
                 no1 = noi
                 if np.any([noj == node_list_fc[:]]):
@@ -54,7 +39,6 @@ def force_edge(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                     no2 = nok
                 else:
                     continue
-
             elif np.any([noj == node_list_fc[:]]):
                 no1 = noj
                 if np.any([nok == node_list_fc[:]]):
@@ -63,17 +47,14 @@ def force_edge(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                     continue
             else:
                 continue
-
             L = np.sqrt((modelinfo['coord'][no1-1, 1] - modelinfo['coord'][no2-1, 1])**2 + (modelinfo['coord'][no1-1, 2] - modelinfo['coord'][no2-1, 2])**2 +
                         (modelinfo['coord'][no1-1, 3] - modelinfo['coord'][no2-1, 3])**2)
-
             no1dof = np.where(no1 == node_list_fc)[0][0]
             no2dof = np.where(no2 == node_list_fc)[0][0]
             loc = np.array([modelinfo['nodedof'][0]*no1dof, modelinfo['nodedof'][0] *
                            no1dof+1, modelinfo['nodedof'][0]*no2dof, modelinfo['nodedof'][0]*no2dof+1])
             tck = modelinfo['tabgeo'][int(
                 modelinfo['inci'][int(elmlist[i]-1), 3]-1), 4]
-
             if force_dirc == 'fx':
                 force_value_vector[loc, 0] += np.array(
                     [force_value*tck*L/2, 0, force_value*tck*L/2, 0])
@@ -82,9 +63,7 @@ def force_edge(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                 force_value_vector[loc, 0] += np.array(
                     [0, force_value*tck*L/2, 0, force_value*tck*L/2])
                 fc_type_dof = np.array([0, 2])
-
     elif modelinfo['elemid'][0] == 220:
-
         force_value_vector = np.zeros(
             (modelinfo['nodedof'][0]*len(node_list_fc), 1))
         for i in range(len(elmlist)):
@@ -92,7 +71,6 @@ def force_edge(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
             noj = int(modelinfo['inci'][int(elmlist[i]-1), 5])
             nok = int(modelinfo['inci'][int(elmlist[i]-1), 6])
             nol = int(modelinfo['inci'][int(elmlist[i]-1), 7])
-
             if np.any([noi == node_list_fc[:]]):
                 no1 = noi
                 if np.any([noj == node_list_fc[:]]):
@@ -101,14 +79,12 @@ def force_edge(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                     no2 = nol
                 else:
                     continue
-
             elif np.any([noj == node_list_fc[:]]):
                 no1 = noj
                 if np.any([nok == node_list_fc[:]]):
                     no2 = nok
                 else:
                     continue
-
             elif np.any([nok == node_list_fc[:]]):
                 no1 = nok
                 if np.any([nol == node_list_fc[:]]):
@@ -117,17 +93,14 @@ def force_edge(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                     continue
             else:
                 continue
-
             L = np.sqrt((modelinfo['coord'][no1-1, 1] - modelinfo['coord'][no2-1, 1])**2 + (modelinfo['coord'][no1-1, 2] - modelinfo['coord'][no2-1, 2])**2 +
                         (modelinfo['coord'][no1-1, 3] - modelinfo['coord'][no2-1, 3])**2)
-
             no1dof = np.where(no1 == node_list_fc)[0][0]
             no2dof = np.where(no2 == node_list_fc)[0][0]
             loc = np.array([modelinfo['nodedof'][0]*no1dof, modelinfo['nodedof'][0] *
                            no1dof+1, modelinfo['nodedof'][0]*no2dof, modelinfo['nodedof'][0]*no2dof+1])
             tck = modelinfo['tabgeo'][int(
                 modelinfo['inci'][int(elmlist[i]-1), 3]-1), 4]
-
             if force_dirc == 'fx':
                 force_value_vector[loc, 0] += np.array(
                     [force_value*tck*L/2, 0, force_value*tck*L/2, 0])
@@ -136,30 +109,23 @@ def force_edge(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                 force_value_vector[loc, 0] += np.array(
                     [0, force_value*tck*L/2, 0, force_value*tck*L/2])
                 fc_type_dof = np.array([0, 2])
-
     return force_value_vector, fc_type_dof
-
-# Calculo da carga distribuida equivalente nodal
 
 
 def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
-
     if dir_fc == 'x':
         coord_fc = [3, 2]
     elif dir_fc == 'y':
         coord_fc = [1, 3]
     elif dir_fc == 'z':
         coord_fc = [1, 2]
-
     elmlist = np.array([0], dtype=int)
     for ii in range(len(node_list_fc)):
         elm2list = modelinfo['inci'][(np.asarray(
             np.where(modelinfo['inci'][:, 4:] == node_list_fc[ii])))[0][:], 0]
         elmlist = np.append(elmlist, elm2list)
-
     elmlist = np.unique(elmlist)
     elmlist = elmlist[1::][::]
-
     if modelinfo['elemid'][0] == 320:
         force_value_vector = np.zeros(
             (modelinfo['nodedof'][0]*len(node_list_fc), 1))
@@ -172,7 +138,6 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
             non = int(modelinfo['inci'][int(elmlist[i]-1), 9])
             noo = int(modelinfo['inci'][int(elmlist[i]-1), 10])
             nop = int(modelinfo['inci'][int(elmlist[i]-1), 11])
-
             if np.any([noi == node_list_fc[:]]):
                 no1 = noi
                 if np.any([noj == node_list_fc[:]]):
@@ -182,7 +147,6 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                         no4 = nol
                     else:
                         continue
-
                 elif np.any([nom == node_list_fc[:]]):
                     no2 = nom
                     if np.any([nop == node_list_fc[:]]):
@@ -191,15 +155,12 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                     elif np.any([non == node_list_fc[:]]):
                         no3 = non
                         no4 = noj
-
                     else:
                         continue
-
             elif np.any([nom == node_list_fc[:]]):
                 no1 = nom
                 if np.any([non == node_list_fc[:]]):
                     no2 = non
-
                     if np.any([noo == node_list_fc[:]]):
                         no3 = non
                         no4 = nop
@@ -207,7 +168,6 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                         continue
                 else:
                     continue
-
             elif np.any([non == node_list_fc[:]]):
                 no1 = non
                 if np.any([noo == node_list_fc[:]]):
@@ -216,7 +176,6 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                     no4 = noj
                 else:
                     continue
-
             elif np.any([noo == node_list_fc[:]]):
                 no1 = noo
                 if np.any([nok == node_list_fc[:]]):
@@ -227,42 +186,33 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                     continue
             else:
                 continue
-
             coord_x_no1 = modelinfo['coord'][no1-1, 1]
             coord_y_no1 = modelinfo['coord'][no1-1, 2]
             coord_z_no1 = modelinfo['coord'][no1-1, 3]
-
             coord_x_no2 = modelinfo['coord'][no2-1, 1]
             coord_y_no2 = modelinfo['coord'][no2-1, 2]
             coord_z_no2 = modelinfo['coord'][no2-1, 3]
-
             coord_x_no3 = modelinfo['coord'][no3-1, 1]
             coord_y_no3 = modelinfo['coord'][no3-1, 2]
             coord_z_no3 = modelinfo['coord'][no3-1, 3]
-
             coord_x_no4 = modelinfo['coord'][no4-1, 1]
             coord_y_no4 = modelinfo['coord'][no4-1, 2]
             coord_z_no4 = modelinfo['coord'][no4-1, 3]
-
             poly = np.array([[coord_x_no1, coord_y_no1, coord_z_no1],
                              [coord_x_no2, coord_y_no2, coord_z_no2],
                              [coord_x_no3, coord_y_no3, coord_z_no3],
                              [coord_x_no4, coord_y_no4, coord_z_no4]])
-
             A = poly_area(poly)
-
             no1dof = np.where(no1 == node_list_fc)[0][0]
             no2dof = np.where(no2 == node_list_fc)[0][0]
             no3dof = np.where(no3 == node_list_fc)[0][0]
             no4dof = np.where(no4 == node_list_fc)[0][0]
-
             loc = np.array([modelinfo['nodedof'][0]*no1dof, modelinfo['nodedof'][0]*no1dof+1, modelinfo['nodedof'][0]*no1dof+2,
                             modelinfo['nodedof'][0]*no2dof, modelinfo['nodedof'][0] *
                             no2dof+1, modelinfo['nodedof'][0]*no2dof+2,
                             modelinfo['nodedof'][0]*no3dof, modelinfo['nodedof'][0] *
                             no3dof+1, modelinfo['nodedof'][0]*no3dof+2,
                             modelinfo['nodedof'][0]*no4dof, modelinfo['nodedof'][0]*no4dof+1, modelinfo['nodedof'][0]*no4dof+2, ])
-
             if force_dirc == 'fx':
                 force_value_vector[loc, 0] += np.array(
                     [force_value*A/4, 0.0, 0.0, force_value*A/4, 0.0, 0.0, force_value*A/4, 0.0, 0.0, force_value*A/4, 0.0, 0.0])
@@ -275,7 +225,6 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                 force_value_vector[loc, 0] += np.array([0.0, 0.0, force_value*A/4, 0.0, 0.0,
                                                        force_value*A/4, 0.0, 0.0, force_value*A/4, 0.0, 0.0, force_value*A/4])
                 fc_type_dof = np.array([0, 0, 3])
-
     elif modelinfo['elemid'][0] == 310:
         force_value_vector = np.zeros(
             (modelinfo['nodedof'][0]*len(node_list_fc), 1))
@@ -284,7 +233,6 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
             noj = int(modelinfo['inci'][int(elmlist[i]-1), 5])
             nok = int(modelinfo['inci'][int(elmlist[i]-1), 6])
             nol = int(modelinfo['inci'][int(elmlist[i]-1), 7])
-
             if np.any([noi == node_list_fc[:]]):
                 no1 = noi
                 if np.any([noj == node_list_fc[:]]):
@@ -295,7 +243,6 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                         no3 = nol
                     else:
                         continue
-
                 elif np.any([nok == node_list_fc[:]]):
                     no2 = nok
                     if np.any([nol == node_list_fc[:]]):
@@ -304,7 +251,6 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                         continue
                 else:
                     continue
-
             elif np.any([noj == node_list_fc[:]]):
                 no1 = noj
                 if np.any([nok == node_list_fc[:]]):
@@ -315,42 +261,32 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                         continue
                 else:
                     continue
-
             # elif np.any([nok == node_list_fc[:]]):
             #     no1 = nok
             #     if np.any([nol == node_list_fc[:]]):
             #         no2 = nol
-
             else:
                 continue
-
             coord_x_no1 = modelinfo['coord'][no1-1, 1]
             coord_y_no1 = modelinfo['coord'][no1-1, 2]
             coord_z_no1 = modelinfo['coord'][no1-1, 3]
-
             coord_x_no2 = modelinfo['coord'][no2-1, 1]
             coord_y_no2 = modelinfo['coord'][no2-1, 2]
             coord_z_no2 = modelinfo['coord'][no2-1, 3]
-
             coord_x_no3 = modelinfo['coord'][no3-1, 1]
             coord_y_no3 = modelinfo['coord'][no3-1, 2]
             coord_z_no3 = modelinfo['coord'][no3-1, 3]
-
             poly = np.array([[coord_x_no1, coord_y_no1, coord_z_no1],
                              [coord_x_no2, coord_y_no2, coord_z_no2],
                              [coord_x_no3, coord_y_no3, coord_z_no3]])
-
             A = poly_area(poly)
-
             no1dof = np.where(no1 == node_list_fc)[0][0]
             no2dof = np.where(no2 == node_list_fc)[0][0]
             no3dof = np.where(no3 == node_list_fc)[0][0]
-
             loc = np.array([modelinfo['nodedof'][0]*no1dof, modelinfo['nodedof'][0]*no1dof+1, modelinfo['nodedof'][0]*no1dof+2,
                             modelinfo['nodedof'][0]*no2dof, modelinfo['nodedof'][0] *
                             no2dof+1, modelinfo['nodedof'][0]*no2dof+2,
                             modelinfo['nodedof'][0]*no3dof, modelinfo['nodedof'][0]*no3dof+1, modelinfo['nodedof'][0]*no3dof+2])
-
             if force_dirc == 'fx':
                 force_value_vector[loc, 0] += np.array(
                     [force_value*A/3, 0.0, 0.0, force_value*A/3, 0.0, 0.0, force_value*A/3, 0.0, 0.0])
@@ -363,38 +299,30 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
                 force_value_vector[loc, 0] += np.array(
                     [0.0, 0.0, force_value*A/3, 0.0, 0.0, force_value*A/3, 0.0, 0.0, force_value*A/3])
                 fc_type_dof = np.array([0, 0, 3])
-
     return force_value_vector, fc_type_dof
 
 
 def force_beam(modelinfo, force_value, force_dirc, dir_fc, node_list_fc, line_fc):
-
-    # inic_fc = modelinfo['inci'][np.where(modelinfo['inci'][:,3]==line_fc),:][0]
 
     elmlist = [None]
     for ii in range(len(node_list_fc)):
         elm2list = modelinfo['inci'][(np.asarray(
             np.where(modelinfo['inci'][:, 4:] == node_list_fc[ii])))[0][:], 0]
         elmlist.extend(elm2list)
-
     elmlist = elmlist[1::][::]
     elmlist = np.unique(elmlist)
-
     if dir_fc == 'x':
         coord_fc = 1
     elif dir_fc == 'y':
         coord_fc = 2
     elif dir_fc == 'z':
         coord_fc = 3
-
     if modelinfo['elemid'][0] == 130:
-
         force_value_vector = np.zeros(
             (modelinfo['nodedof'][0]*len(node_list_fc), 1))
         for i in range(len(elmlist)):
             no1 = int(modelinfo['inci'][int(elmlist[i]-1), 4])
             no2 = int(modelinfo['inci'][int(elmlist[i]-1), 5])
-
             no1dof = np.asarray(np.where(no1 == node_list_fc))
             no2dof = np.asarray(np.where(no2 == node_list_fc))
             if no1dof.size != 0:
@@ -407,23 +335,12 @@ def force_beam(modelinfo, force_value, force_dirc, dir_fc, node_list_fc, line_fc
                     force_value_vector[loc, 0] += np.array(
                         [force_value*L/2, (force_value*L**2)/12, force_value*L/2, (-1*force_value*L**2)/12])
                     fc_type_dof = np.array([2, 6])
-
     elif modelinfo['elemid'][0] == 140:
-        # elmlist = np.zeros((1))
-        # for ii in range(len(node_list_fc)):
-        #     elm2list =  inic_fc[(np.asarray(np.where(inic_fc[:,4:]==node_list_fc[ii])))[0][:],0]
-        #     if elm2list.size != 0:
-        #         elmlist = np.append(elmlist,[elm2list[0]],axis=0)
-
-        # elmlist = np.unique(elmlist)
-        # elmlist = elmlist[1::][::]
-
         force_value_vector = np.zeros(
             (modelinfo['nodedof'][0]*len(node_list_fc), 1))
         for i in range(len(elmlist)):
             no1 = int(modelinfo['inci'][int(elmlist[i]-1), 4])
             no2 = int(modelinfo['inci'][int(elmlist[i]-1), 5])
-
             no1dof = np.asarray(np.where(no1 == node_list_fc))
             no2dof = np.asarray(np.where(no2 == node_list_fc))
             if no1dof.size != 0:
@@ -441,23 +358,12 @@ def force_beam(modelinfo, force_value, force_dirc, dir_fc, node_list_fc, line_fc
                         force_value_vector[loc, 0] += np.array(
                             [0, force_value*L/2, (force_value*L**2)/12, 0, force_value*L/2, (-1*force_value*L**2)/12])
                         fc_type_dof = np.array([0, 2, 6])
-
     elif modelinfo['elemid'][0] == 141:
-        # elmlist = np.zeros((1))
-        # for ii in range(len(node_list_fc)):
-        #     elm2list = inic_fc[(np.asarray(np.where(inic_fc[:,4:]==node_list_fc[ii])))[0][:],0]
-        #     if elm2list.size != 0:
-        #         elmlist = np.append(elmlist,[elm2list[0]],axis=0)
-
-        # elmlist = np.unique(elmlist)
-        # elmlist = elmlist[1::][::]
-
         force_value_vector = np.zeros(
             (modelinfo['nodedof'][0]*len(node_list_fc), 1))
         for i in range(len(elmlist)):
             no1 = int(modelinfo['inci'][int(elmlist[i]-1), 4])
             no2 = int(modelinfo['inci'][int(elmlist[i]-1), 5])
-
             no1dof = np.asarray(np.where(no1 == node_list_fc))
             no2dof = np.asarray(np.where(no2 == node_list_fc))
             if no1dof.size != 0:
@@ -479,13 +385,9 @@ def force_beam(modelinfo, force_value, force_dirc, dir_fc, node_list_fc, line_fc
                         force_value_vector[loc, 0] += np.array([0, 0, force_value*L/2, 0, (
                             force_value*L**2)/12, 0, 0, 0, force_value*L/2, 0, (-1*force_value*L**2)/120, 0])
                         fc_type_dof = np.array([0, 0, 3, 0, 5, 0])
-
     return force_value_vector, fc_type_dof
 
 
-# ----- Functions External URL: https://oco-carbon.com/coding/python-and-energyplus-polygon-areas-in-3d-space/
-
-# area of polygon poly
 def poly_area(poly):
     if len(poly) < 3:  # not a plane - no area
         return 0
@@ -500,8 +402,6 @@ def poly_area(poly):
         total[2] += prod[2]
     result = np.dot(total, unit_normal(poly[0], poly[1], poly[2]))
     return abs(result/2)
-
-# unit normal vector of plane defined by points a, b, and c
 
 
 def unit_normal(a, b, c):
