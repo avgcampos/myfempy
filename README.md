@@ -117,20 +117,21 @@ Have you found this software useful for your research? Star the project and cite
 
 - APA:
   ```
-  Antonio Vinicius Garcia Campos. (2022). easycae-3d/myfempy: beta (v1.0.1). Zenodo. https://doi.org/10.5281/zenodo.6376522
+  Antonio Vinicius Garcia Campos. (2022). myfempy (1.5.1). Zenodo. https://doi.org/10.5281/zenodo.6958796
   ```
 
 - BibTex:
   ```bash
-   @software{Campos_easycae-3d_myfempy_beta_2022,
-            author = {Antonio Vinicius Garcia Campos},
-            title = {easycae-3d/myfempy: beta},
-            version = {v1.0.1},
-            url = {https://github.com/easycae-3d/myfempy/},
-            doi = {10.5281/zenodo.6376522},
-            month = {3},
-            year = {2022}
-            }
+	@software{antonio_vinicius_garcia_campos_2022_6958796,
+	  author       = {Antonio Vinicius Garcia Campos},
+	  title        = {myfempy},
+	  month        = aug,
+	  year         = 2022,
+	  publisher    = {Zenodo},
+	  version      = {1.5.1},
+	  doi          = {10.5281/zenodo.6958796},
+	  url          = {https://doi.org/10.5281/zenodo.6958796}
+	}
   ```
   
 ## References
