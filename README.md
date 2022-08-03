@@ -57,7 +57,7 @@ You can use either of two python development environments to run myfempy
 
  - try
 	```bash
-	>> pip install --upgrade gmsh ...
+	>> pip install --upgrade gmsh
 	```
 
 - [gmsh PyPi](https://pypi.org/project/gmsh/)
