@@ -24,7 +24,7 @@ jobs:
             pip install .
             # pip install -r requirements.txt
             # python setup.py install
-      # - name: Test with pytest
-       #  run: |
-        #   pip install pytest
-        #   pytest tests/
+      - name: Test with pytest
+        run: |
+            pip install pytest
+            pytest tests/
