@@ -24,7 +24,14 @@ jobs:
             pip install .
             # pip install -r requirements.txt
             # python setup.py install
-      - name: Test with pytest
+      - name: Lint with flake8
         run: |
-            pip install pytest
-            pytest tests/
+            pip install flake8
+            flake8 .
+        continue-on-error: true
+      - name: Test with tox
+        run: |
+            pip install tox
+            tox -e py
+            #tox -- --cov myfempy --cov-report xml --cov-report term
+        continue-on-error: true
