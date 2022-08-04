@@ -27,6 +27,11 @@ jobs:
             pip install pytest
             pip install pytest-cov
             pytest -v  --cov --cov-report=xml --cov-report=html
+        continue-on-error: true
+      - uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage
+          path: htmlcov
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
