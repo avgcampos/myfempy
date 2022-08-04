@@ -20,7 +20,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Install dependencies
         run: |
-          python setup.py install
+            python -m pip install --upgrade pip
+            pip install .
+            # pip install -r requirements.txt
+          # python setup.py install
       - name: Test with pytest
         run: |
           pip install pytest
