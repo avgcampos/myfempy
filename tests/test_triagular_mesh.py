@@ -33,7 +33,7 @@ bondcond = {'DEF': 'fixed',
 
 #-------------------------- GEN WITH LEGACY MESH ----------------------------#
 
-meshdata = {"LEGACY": {'lx': 4000, 'ly': 1000, 'mesh': 'tria3', 'elem': 'plane31', 'nx': 80, 'ny': 20},
+meshdata = {"LEGACY": {'lx': 4000, 'ly': 1000, 'mesh': 'tria3', 'elem': 'plane31', 'nx': 8, 'ny': 2},
             "PROPMAT": [mat],
             "PROPGEO": [geo],
             "FORCES": [force],
