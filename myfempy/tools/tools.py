@@ -4,7 +4,6 @@ Tools and Misc.
 """
 import sys
 import os
-import art
 
 
 def get_version():
@@ -13,6 +12,7 @@ def get_version():
 
 
 def get_logo():
+    import art
     art.tprint('myfempy', font="ogre")
     print('myfempy version:', get_version())
 
