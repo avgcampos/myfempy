@@ -1,12 +1,7 @@
 #!/usr/bin/env python
-"""
+__doc__ ="""
 Plotter Post Process
 """
-__author__ = "Antonio Vinicius Garcia Campos"
-__copyright__ = "Copyright @ 2022, Antonio Vinicius Garcia Campos"
-__credits__ = ["Antonio Vinicius Garcia Campos", "3D EasyCAE"]
-__license__ = "GPL"
-__status__ = "Development"
 import numpy as np
 from myfempy.felib.physics.getnode import search_nodexyz
 from myfempy.plots.plotxy import plot_forces, tracker_plot, frf_plot

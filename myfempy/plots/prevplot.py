@@ -1,17 +1,10 @@
 #!/usr/bin/env python
-"""
+__doc__ ="""
 Plotter Prev Process
 """
-__author__ = "Antonio Vinicius Garcia Campos"
-__copyright__ = "Copyright @ 2022, Antonio Vinicius Garcia Campos"
-__credits__ = ["Antonio Vinicius Garcia Campos", "3D EasyCAE"]
-__license__ = "GPL"
-__status__ = "Development"
-
 import numpy as np
 import os
 import vtk
-# from myfempy.io.iovtk_old import convert_to_vtk
 from myfempy.io.iovtk import convert_to_vtk
 from myfempy.plots.physics import view_listforce, view_bondcond_point, view_beam_crossSection, view_text_point
 from myfempy.tools.tools import get_version

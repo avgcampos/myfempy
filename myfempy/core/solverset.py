@@ -1,34 +1,13 @@
-# -*- coding: utf-8 -*-
-"""
-========================================================================
-~~~ MODULO DE SIMULACAO ESTRUTURAL PELO METODO DOS ELEMENTOS FINITOS ~~~
-       	                    __                                
-       	 _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-       	| '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-       	| | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-       	|_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-       	            |___/                       |_|     |___/ 
-
-~~~      Mechanical studY with Finite Element Method in PYthon       ~~~
-~~~                PROGRAMA DE ANÁLISE COMPUTACIONAL                 ~~~
-~~~              copyright @ 2022, all rights reserved               ~~~
-========================================================================
-"""
-
+#!/usr/bin/env python
 import numpy as np
-
-# ------------------------------------------------------------------------------
-# %% vetor cond. contorno
+__doc__ = """
+Solver Setting
+"""
 
 
 def get_constrains_dofs(modelinfo):
-    # numero de tipos de restriçoes fixas
-
     ntbc = modelinfo['constrains'].shape[0]
-
-    # dofs fixos do sistema
     fixedof = np.zeros((1, modelinfo["nodedof"][0]*len(modelinfo["coord"])))
-
     if modelinfo['nodedof'][0] == 2:
         if (modelinfo['elemid'][0] == 110) or (modelinfo['elemid'][0] == 120) or (modelinfo['elemid'][0] == 210) or (modelinfo['elemid'][0] == 220):
             for ii in range(ntbc):
@@ -44,7 +23,6 @@ def get_constrains_dofs(modelinfo):
                 elif int(modelinfo['constrains'][ii, 0]) == 2:
                     fixedof[0, modelinfo['nodedof'][0] *
                             no-1] = modelinfo['nodedof'][0]*no
-
         elif modelinfo['elemid'][0] == 130:
             for ii in range(ntbc):
                 no = int(modelinfo['constrains'][ii, 1])
@@ -59,7 +37,6 @@ def get_constrains_dofs(modelinfo):
                 elif int(modelinfo['constrains'][ii, 0]) == 6:
                     fixedof[0, modelinfo['nodedof'][0] *
                             no-1] = modelinfo['nodedof'][0]*no
-
     elif modelinfo['nodedof'][0] == 3:
         if modelinfo['elemid'][0] == 140:
             for ii in range(ntbc):
@@ -80,7 +57,6 @@ def get_constrains_dofs(modelinfo):
                 elif int(modelinfo['constrains'][ii, 0]) == 6:
                     fixedof[0, modelinfo['nodedof'][0] *
                             no-1] = modelinfo['nodedof'][0]*no
-
         elif (modelinfo['elemid'][0] == 310) or (modelinfo['elemid'][0] == 320):
             for ii in range(ntbc):
                 no = int(modelinfo['constrains'][ii, 1])
@@ -100,7 +76,6 @@ def get_constrains_dofs(modelinfo):
                 elif int(modelinfo['constrains'][ii, 0]) == 3:
                     fixedof[0, modelinfo['nodedof'][0] *
                             no-1] = modelinfo['nodedof'][0]*no
-
     elif modelinfo['nodedof'][0] == 6:
         if modelinfo['elemid'][0] == 141:
             for ii in range(ntbc):
@@ -136,53 +111,38 @@ def get_constrains_dofs(modelinfo):
                 elif int(modelinfo['constrains'][ii, 0]) == 6:
                     fixedof[0, modelinfo['nodedof'][0] *
                             no-1] = modelinfo['nodedof'][0]*no
-
     fixedof = fixedof[np.nonzero(fixedof)]
     fixedof = fixedof - np.ones_like(fixedof)
-    # fixedofs = np.unique(fixedofs)
-    # todos os dofs do sistema
     alldof = np.arange(0, modelinfo["nodedof"]
                        [0]*len(modelinfo["coord"]), 1, int)
-    # dofs livres do sistema
     freedof = np.setdiff1d(alldof, fixedof)
     return freedof, fixedof
 
 
 def get_solve(solver_type):
-
     if solver_type == 'SLD':
         from myfempy.core.staticlinear import sld
         return sld
-
     elif solver_type == 'SLI':
         from myfempy.core.staticlinear import sli
         return sli
-
     elif solver_type == 'SLIPRE':
         from myfempy.core.staticlinear import slipre
         return slipre
-
     elif solver_type == 'EIG':
         from myfempy.core.vibralinear import eig
         return eig
-
     elif solver_type == 'FRF':
         from myfempy.core.vibralinear import frf
         return frf
-
     else:
         print('Erro Import Solver')
 
-# ------------------------------------------------------------------------------
-# %% step setting
-
 
 def step_setting(steps):
-
     start = steps['start']
     end = steps['end']
     substep = steps['step']
-
     if (end-start) == 0:
         nsteps = int(end)
     else:

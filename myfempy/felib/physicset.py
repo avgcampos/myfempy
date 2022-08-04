@@ -2,11 +2,6 @@
 """
 Physics Setting
 """
-__author__ = "Antonio Vinicius Garcia Campos"
-__copyright__ = "Copyright @ 2022, Antonio Vinicius Garcia Campos"
-__credits__ = ["Antonio Vinicius Garcia Campos", "3D EasyCAE"]
-__license__ = "GPL"
-__status__ = "Development"
 import numpy as np
 
 

@@ -1,14 +1,7 @@
 #!/usr/bin/env python
-"""
+__doc__ ="""
 Path Setting
 """
-__author__ = "Antonio Vinicius Garcia Campos"
-__copyright__ = "Copyright @ 2022, Antonio Vinicius Garcia Campos"
-__credits__ = ["Antonio Vinicius Garcia Campos", "3D EasyCAE"]
-__license__ = "GPL"
-__status__ = "Development"
-
-# import sys
 import os
 
 

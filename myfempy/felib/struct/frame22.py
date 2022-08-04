@@ -1,13 +1,7 @@
 #!/usr/bin/env python
-"""
+__doc__ ="""
 frame22.py: Frame 3D 2-node linear Finite Element
 """
-__author__ = "Antonio Vinicius Garcia Campos"
-__copyright__ = "Copyright @ 2022, Antonio Vinicius Garcia Campos"
-__credits__ = ["Antonio Vinicius Garcia Campos", "3D EasyCAE"]
-__license__ = "GPL"
-__status__ = "Development"
-
 import numpy as np
 from scipy.linalg import block_diag
 from myfempy.felib.materset import get_elasticity

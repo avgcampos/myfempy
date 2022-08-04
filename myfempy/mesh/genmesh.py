@@ -1,12 +1,7 @@
 #!/usr/bin/env python
-"""
+__doc__ ="""
 CLASS MESH SET
 """
-__author__ = "Antonio Vinicius Garcia Campos"
-__copyright__ = "Copyright @ 2022, Antonio Vinicius Garcia Campos"
-__credits__ = ["Antonio Vinicius Garcia Campos", "3D EasyCAE"]
-__license__ = "GPL"
-__status__ = "Development"
 import numpy as np
 import os
 from myfempy.felib.felemset import get_elemset
