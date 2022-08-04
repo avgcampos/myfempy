@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.isort]
+profile = "black"
+
+[project]
+name = "myfempy"
+authors = [{name = "Campos, A. V. G.", email = "3deasycaebr.contato@gmail.com"}]
+description = "Python frontend for Gmsh"
+readme = "README.md"
+license = {text = "GNU"}
+
+classifiers = [
+  "Development Status :: 1 - Development/Stable",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Programming Language :: Python",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Education",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Operating System :: MacOS :: MacOSX",
+]
+
+dynamic = ["version"]
+requires-python = ">=3.7"
+dependencies = [
+  "numpy",
+  "scipy",
+  "matplotlib",
+  "vedo",
+  "art",
+  "colorama",
+]
+
+keywords=['Finite Element', 'Mechanics', 'Python Package']
+
+[project.urls]
+Code = "https://github.com/easycae-3d/myfempy"
+Documentation = "https://myfempy.readthedocs.io/en/latest/"

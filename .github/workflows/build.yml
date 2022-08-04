@@ -32,6 +32,6 @@ jobs:
       - name: Test with tox
         run: |
             pip install tox
-            tox -e py
-            #tox -- --cov myfempy --cov-report xml --cov-report term
+            #tox -e py
+            tox -- --cov myfempy --cov-report xml --cov-report term
         continue-on-error: true
