@@ -35,7 +35,8 @@ Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022
 3. In the **myfempy-main** folder, open a terminal and enter with the command:
 
 ```bash
->> python setup.py install
+>> python -m pip install --upgrade pip
+>> pip install .
 ```
 
 *Note: is recommend to create a new virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/)* 
