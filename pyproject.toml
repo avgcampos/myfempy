@@ -1,10 +1,11 @@
 [tool.poetry]
 name = "myfempy"
 version = "1.5.7"
-description = "A python package for scientific analysis based on finite element method"
+description = "myfempy is a python package for scientific analysis based on finite element method"
 authors = ["Antonio Vinicius Garcia Campos"]
 readme = "README.md"
 license = "GLP-3.0"
+keywords = ["mesh", "gmsh", "mesh generation", "mathematics", "engineering"]
 classifiers = [
     "Development Status :: 1 - Production/Stable",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
@@ -34,6 +35,7 @@ poetry = "^1.1.14"
 gmsh = "^4.10.5"
 sphinx = "^5.1.1"
 cython = "^0.29.32"
+
 
 
 [build-system]
