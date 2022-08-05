@@ -156,64 +156,89 @@ The changelog is available [here](https://github.com/easycae-3d/myfempy/wiki/Cha
 # Project tree structure
 ```bash
 /myfempy
-|--/bin
-|	gui.py
-|	plotter.py
+|   version.py
+|   __init__.py
 |
++---core
+|       assembler.py
+|       solver.py
+|       solverset.py
+|       staticlinear.py
+|       vibralinear.py
+|       __init__.py
 |
++---felib
+|   |   crossec.py
+|   |   felemset.py
+|   |   materset.py
+|   |   physicset.py
+|   |   quadrature.py
+|   |   __init__.py
+|   |
+|   +---fluid
+|   |       __init__.py
+|   |
+|   +---fsi
+|   |       __init__.py
+|   |
+|   +---materials
+|   |       axial.py
+|   |       lumped.py
+|   |       planestrain.py
+|   |       planestress.py
+|   |       solid.py
+|   |       __init__.py
+|   |
+|   +---physics
+|   |       force2node.py
+|   |       getnode.py
+|   |       loadsconstr.py
+|   |       __init__.py
+|   |
+|   \---struct
+|           beam21.py
+|           frame21.py
+|           frame22.py
+|           plane31.py
+|           plane41.py
+|           solid41.py
+|           solid81.py
+|           spring21.py
+|           truss21.py
+|           __init__.py
 |
-|--/felib
-|	|--/fluid
-|	|
-|	|
-|	|
-|	|--/fsi
-|	|
-|	|
-|	|
-|	|--/struct
-|		beam21.py
-|		frame22.py
-|		frame23.py
-|		plane32.py
-|		plane42.py
-|		solid83.py
-|		spring20.py
-|		truss22.py
-|		.py
-|		.py
-|		.py
++---io
+|       filters.py
+|       iomsh.py
+|       iovtk.py
+|       __init__.py
 |
-|	integrat.py
-|	material.py
-|	postproc.py
++---mesh
+|       genmesh.py
+|       gmsh.py
+|       legacy.py
+|       __init__.py
 |
++---plots
+|       meshquality.py
+|       physics.py
+|       plotmesh.py
+|       plotxy.py
+|       postplot.py
+|       prevplot.py
+|       __init__.py
 |
++---postprc
+|       displcalc.py
+|       postcomp.py
+|       postset.py
+|       __init__.py
 |
-|--/help
-|	help.py
-|	version.py
-|
-|
-|
-|--/io
-|	filters.py
-|	ioctrl.py
-|	miscel.py
-|
-|
-|
-|--/mesh
-|	meshgen.py
-|
-|
-|
-|--/solver
-|		assembly.py
-|		bcloads.py
-|		plotter.py
-|		solverset.py
-|		static.py
-|		vibra.py
-|
+\---tools
+        logo.png
+        logo.txt
+        path.py
+        tools.py
+        __init__.py
+
 ```
