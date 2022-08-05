@@ -18,7 +18,7 @@ Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022
 | Downloads | [![Downloads]() |
 | License | [![lics](https://img.shields.io/badge/license-GPL-blue.svg)](https://en.wikipedia.org/wiki/GNU_General_Public_License) |
 | Discord Chat	| [![Discord](https://img.shields.io/discord/897137517038551042)](https://discord.gg/DwS4s3gr)|
-| Code style	| [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)]([https://github.com/psf/black](https://github.com/psf/black))|
+| Code style	| [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat&logo=appveyor)]([https://github.com/psf/black](https://github.com/psf/black))|
 
 -----------
 
