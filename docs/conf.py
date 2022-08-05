@@ -23,14 +23,14 @@ author = "Antonio Vinicius Garcia Campos."
 
 # The full version, including alpha/beta/rc tags
 # release = 'latest'
-try:
-    VERSIONFILE = "../myfempy/version.py"
-    verstrline = open(VERSIONFILE, "rt").read()
-    current_version = verstrline.split("=")[1].replace("\n", "").replace("'", "")
-except:
-    current_version = "latest"
-
-
+# try:
+#     VERSIONFILE = "../myfempy/version.py"
+#     verstrline = open(VERSIONFILE, "rt").read()
+#     current_version = verstrline.split("=")[1].replace("\n", "").replace("'", "")
+# except:
+#     current_version = "latest"
+from myfempy import version
+current_version = version.__version__
 # html_context['current_version'] = current_version
 # html_context['version'] = current_version
 # -- General configuration ---------------------------------------------------
