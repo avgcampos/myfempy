@@ -10,14 +10,15 @@ Copyright © Antonio Vinicius G. Campos and 3D EasyCAE, 2022
 
 |  Description | Badges|
 | --- | :---: |
-| Python Version | [![Python Versions]()]() |
+| Python version | [![Python Versions]()]() |
 | Documentation | [![Documentation Status](https://readthedocs.org/projects/myfempy/badge/?version=latest)](https://myfempy.readthedocs.io/en/latest/?badge=latest) |
 | Packages | [![PyPI]()]() [![conda]()]() |
 | Paper | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6958796.svg)](https://doi.org/10.5281/zenodo.6958796) |
 | Code quality | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=easycae-3d_myfempy&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=easycae-3d_myfempy) |
 | Downloads | [![Downloads]() |
 | License | [![lics](https://img.shields.io/badge/license-GPL-blue.svg)](https://en.wikipedia.org/wiki/GNU_General_Public_License) |
-| Discord Chat	| [![Discord](https://img.shields.io/discord/897137517038551042)](https://discord.gg/DwS4s3gr)|
+| Discord chat	| [![Discord](https://img.shields.io/discord/897137517038551042)](https://discord.gg/DwS4s3gr)|
+| Code style	| [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat&logo=appveyor)]([https://github.com/psf/black](https://github.com/psf/black))|
 
 -----------
 
