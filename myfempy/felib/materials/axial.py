@@ -2,6 +2,7 @@
 from myfempy.felib.crossec import cg_coord
 from myfempy.felib.felemset import get_elemset
 import numpy as np
+
 __doc__ = """
 axial.py: Axial Isotropic material
 """
@@ -9,8 +10,8 @@ axial.py: Axial Isotropic material
 
 class Elasticity:
     def __init__(self, tabmat, inci, num_elm):
-        self.E = tabmat[int(inci[num_elm, 2])-1, 0]  # material elasticity
-        self.G = tabmat[int(inci[num_elm, 2])-1, 2]  # material shear
+        self.E = tabmat[int(inci[num_elm, 2]) - 1, 0]  # material elasticity
+        self.G = tabmat[int(inci[num_elm, 2]) - 1, 2]  # material shear
 
     def isotropic(self):
         E = self.E
@@ -24,11 +25,11 @@ class Tensor:
         self.ee = ee
         self.U = U
         self.modelinfo = modelinfo
-        self.dofe = modelinfo['nodecon'][0]*modelinfo['nodedof'][0]
-        self.ntensor = modelinfo['ntensor'][0]
-        self.inci = modelinfo['inci']
-        self.tabmat = modelinfo['tabmat']
-        self.tabgeo = modelinfo['tabgeo']
+        self.dofe = modelinfo["nodecon"][0] * modelinfo["nodedof"][0]
+        self.ntensor = modelinfo["ntensor"][0]
+        self.inci = modelinfo["inci"]
+        self.tabmat = modelinfo["tabmat"]
+        self.tabgeo = modelinfo["tabgeo"]
         element = get_elemset(int(self.inci[ee][1]))
         self.setelement = element(self.modelinfo)
         listnodes = self.inci[ee, 4:]
@@ -50,8 +51,8 @@ class Tensor:
         csc_min = [self.y_min, self.z_min, self.r_max]
         Bmin, T = self.setelement.matrix_b(self.ee, csc_min)
         loc = self.setelement.lockey(self.nodelist)
-        epsilon_max = np.dot(Bmax, T@(self.U[loc]))
-        epsilon_min = np.dot(Bmin, T@(self.U[loc]))
+        epsilon_max = np.dot(Bmax, T @ (self.U[loc]))
+        epsilon_min = np.dot(Bmin, T @ (self.U[loc]))
         strain = 0.0
         epsilon = [epsilon_max, epsilon_min]
         title = ["STRAIN_XX_MAX", "STRAIN_XX_MIN"]
@@ -67,4 +68,5 @@ class Tensor:
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

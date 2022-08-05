@@ -4,6 +4,7 @@ import sys
 
 # from myfempy.io.ioctrl import postproc2vtk
 from myfempy.mesh.genmesh import ModelGen
+
 # from myfempy.solver.assembler import stiffness, loads
 # from myfempy.solver.solverset import get_constrains_dofs
 from myfempy.core.solver import gen_static_solution
@@ -11,57 +12,54 @@ from myfempy.postprc.postcomp import PostComputer, postproc_plot
 from myfempy.plots.prevplot import preview_plot
 from myfempy.bin.tools import print_console
 
-#----------------------------- PRE-PROCESS -----------------------------------#
+# ----------------------------- PRE-PROCESS -----------------------------------#
 # print_console('pre')
 
 
 mat1 = {
     "NAME": "steel",
     "VXX": 0.33,
-    "EXX": 200E3,
-    "MAT": 'isotropic',
-    "DEF": 'planestress'
+    "EXX": 200e3,
+    "MAT": "isotropic",
+    "DEF": "planestress",
 }
 
 
-mat2 = {
-    "NAME": "mola",
-    "DAMP": 0,
-    "STIF": 1000,
-    "MAT": 'springlinear',
-    "DEF": 'lumped'
-}
+mat2 = {"NAME": "mola", "DAMP": 0, "STIF": 1000, "MAT": "springlinear", "DEF": "lumped"}
 
 
 geo1 = {"NAME": "geo1", "THICKN": 100}
 
 geo2 = {"NAME": "geo2"}
 
-f1 = {'DEF': 'forceedge',
-      'DOF': 'fx',
-      'DIR': 'edge',
-      'TAG': 2,
-      # 'LOC': {'x':800,'y':999,'z':0},
-      'VAL': [100],  # table: [val_setp1, val_step2,...]
-      }
+f1 = {
+    "DEF": "forceedge",
+    "DOF": "fx",
+    "DIR": "edge",
+    "TAG": 2,
+    # 'LOC': {'x':800,'y':999,'z':0},
+    "VAL": [100],  # table: [val_setp1, val_step2,...]
+}
 
 
-f2 = {'DEF': 'forceedge',
-      'DOF': 'fy',
-      'DIR': 'edge',
-      'TAG': 3,
-      # 'LOC': {'x':800,'y':999,'z':0},
-      'VAL': [-100],  # table: [val_setp1, val_step2,...]
-      }
+f2 = {
+    "DEF": "forceedge",
+    "DOF": "fy",
+    "DIR": "edge",
+    "TAG": 3,
+    # 'LOC': {'x':800,'y':999,'z':0},
+    "VAL": [-100],  # table: [val_setp1, val_step2,...]
+}
 
 
-s1 = {'DEF': 'forcenode',
-      'DOF': 'spring2ground',
-      'DIR': 'edgey',
-      # 'TAG': 9,
-      'LOC': {'x': 999, 'y': 3, 'z': 0},
-      'VAL': [100],  # table: [val_setp1, val_step2,...]
-      }
+s1 = {
+    "DEF": "forcenode",
+    "DOF": "spring2ground",
+    "DIR": "edgey",
+    # 'TAG': 9,
+    "LOC": {"x": 999, "y": 3, "z": 0},
+    "VAL": [100],  # table: [val_setp1, val_step2,...]
+}
 
 
 # f2 = {'DEF':'forcenode',
@@ -87,20 +85,22 @@ s1 = {'DEF': 'forcenode',
 #        'LOC': {'x': 0, 'y': 999, 'z': 0},
 #        }
 
-bc1 = {'DEF': 'fixed',
-       'DOF': 'all',
-       'DIR': 'edge',
-       'TAG': 2,
-       # 'LOC': {'x':0,'y':999,'z':0},
-       }
+bc1 = {
+    "DEF": "fixed",
+    "DOF": "all",
+    "DIR": "edge",
+    "TAG": 2,
+    # 'LOC': {'x':0,'y':999,'z':0},
+}
 
 
-bc2 = {'DEF': 'fixed',
-       'DOF': 'all',
-       'DIR': 'edge',
-       'TAG': 4,
-       # 'LOC': {'x':0,'y':999,'z':0},
-       }
+bc2 = {
+    "DEF": "fixed",
+    "DOF": "all",
+    "DIR": "edge",
+    "TAG": 4,
+    # 'LOC': {'x':0,'y':999,'z':0},
+}
 
 # bc1 = {'DEF': 'fixed',
 #        'DOF': 'all',
@@ -116,7 +116,7 @@ bc2 = {'DEF': 'fixed',
 #        # 'LOC': {'x':0,'y':999,'z':0},
 #        }
 
-#-------------------------------- BY ADD ELEMENTS -----------------------------------#
+# -------------------------------- BY ADD ELEMENTS -----------------------------------#
 
 # elementos = [[1,"plane31","steel","geo1",[1, 6, 5]],
 #             [2,"plane31","steel","geo1",[1, 2, 6]],
@@ -155,7 +155,7 @@ bc2 = {'DEF': 'fixed',
 #         }
 
 
-#-------------------------------- BT DEF GEOMETRY -----------------------------------#
+# -------------------------------- BT DEF GEOMETRY -----------------------------------#
 # elementos = [[1,'spring21','mola','geo1',[1,2]]]
 
 # coordenadas = [[1, 6, 0, 0],
@@ -171,21 +171,15 @@ bc2 = {'DEF': 'fixed',
 #             }
 
 
-#-------------------------------- BY GMSH -----------------------------------#
+# -------------------------------- BY GMSH -----------------------------------#
 
-points = [[0, 0, 0],
-          [4000, 0, 0],
-          [4000, 1000, 0],
-          [0, 1000, 0]]
+points = [[0, 0, 0], [4000, 0, 0], [4000, 1000, 0], [0, 1000, 0]]
 # [5,0,0],
 # [5,1,0],
 # ]
 
 
-lines = [[1, 2],
-         [2, 3],
-         [3, 4],
-         [4, 1]]
+lines = [[1, 2], [2, 3], [3, 4], [4, 1]]
 # [2,5],
 # [5,6],
 # [6,3],
@@ -229,70 +223,93 @@ plane = [[1, 2, 3, 4]]
 # plane = [[1,6,2,3],
 #           [7,4,5,2]]
 
-meshdata = {"GMSH": {'filename': 'test_gmsh',
-                     'pointlist': points,
-                     'linelist': lines,
-                     'planelist': plane,
-                     # 'curve': hole2,
-                     'meshconfig': {
-                         'mesh': 'quad4',
-                         'elem': 'plane41',
-                         'sizeelement': 100,
-                         'meshmap': {'on': True,
-                                     'edge': 'all'}}},  # 'numbernodes':50
-            "PROPMAT": [mat1],
-            "PROPGEO": [geo1],
-            "FORCES": [f1],
-            "BOUNDCOND": [bc2],
-            "QUADRATURE": {'meth': 'gaussian', 'npp': 4}
-            }
+meshdata = {
+    "GMSH": {
+        "filename": "test_gmsh",
+        "pointlist": points,
+        "linelist": lines,
+        "planelist": plane,
+        # 'curve': hole2,
+        "meshconfig": {
+            "mesh": "quad4",
+            "elem": "plane41",
+            "sizeelement": 100,
+            "meshmap": {"on": True, "edge": "all"},
+        },
+    },  # 'numbernodes':50
+    "PROPMAT": [mat1],
+    "PROPGEO": [geo1],
+    "FORCES": [f1],
+    "BOUNDCOND": [bc2],
+    "QUADRATURE": {"meth": "gaussian", "npp": 4},
+}
 
 
-#-------------------------------- GEN MESH -----------------------------------#
-print_console('mesh')
+# -------------------------------- GEN MESH -----------------------------------#
+print_console("mesh")
 
 modelinfo = ModelGen.get_model(meshdata)
 
-previewset = {'RENDER': {'filename': 'test_gmsh_pre', 'show': True, 'scale': 4, 'savepng': True, 'lines': False, 'plottags': {'point': True}},
-              'QUALITY': {'show': False, 'method': 1, 'scale': 0.1},
-              'LABELS': {'show': False, 'lines': True, 'scale': 1},
-              }
+previewset = {
+    "RENDER": {
+        "filename": "test_gmsh_pre",
+        "show": True,
+        "scale": 4,
+        "savepng": True,
+        "lines": False,
+        "plottags": {"point": True},
+    },
+    "QUALITY": {"show": False, "method": 1, "scale": 0.1},
+    "LABELS": {"show": False, "lines": True, "scale": 1},
+}
 
 preview_plot(previewset, modelinfo)
 
 # sys.exit()
 # #
-#-------------------------------- SOLVER -------------------------------------#
-print_console('solver')
+# -------------------------------- SOLVER -------------------------------------#
+print_console("solver")
 
-solverset = {"SOLVER": 'SLD',
-             'TOL': 2E-3,
-             "STEPSET": {'type': 'table',  # mode, freq, time ...
-                         'start': 0,
-                         'end': 1,
-                         'step': 1},
-             "TRACKER": {'show': False, 'result2plot': 'displ', 'max': []}
-             }
+solverset = {
+    "SOLVER": "SLD",
+    "TOL": 2e-3,
+    "STEPSET": {
+        "type": "table",  # mode, freq, time ...
+        "start": 0,
+        "end": 1,
+        "step": 1,
+    },
+    "TRACKER": {"show": False, "result2plot": "displ", "max": []},
+}
 
 
 solution = gen_static_solution(solverset, modelinfo)
 
-#----------------------------- POST-PROCESS ----------------------------------#
+# ----------------------------- POST-PROCESS ----------------------------------#
 
-print_console('post')
+print_console("post")
 postprocset = {
-    "SOLUTION": solution['U'],
-    "COMPUTER": {'displ': True, 'stress': True, 'average': True},
+    "SOLUTION": solution["U"],
+    "COMPUTER": {"displ": True, "stress": True, "average": True},
     "SCALE": 20,
     # 'step':2
-    "PLOTSET": {'show': True, 'result2plot': {'displ': []}, 'filename': 'quadrilatero_load_edge', 'savepng': True},
-    "TRACKER": {'show': False, 'result2plot': 'stress', 'point': {'x': 6, 'y': 1.5, 'z': 0}}
+    "PLOTSET": {
+        "show": True,
+        "result2plot": {"displ": []},
+        "filename": "quadrilatero_load_edge",
+        "savepng": True,
+    },
+    "TRACKER": {
+        "show": False,
+        "result2plot": "stress",
+        "point": {"x": 6, "y": 1.5, "z": 0},
+    },
 }
 
 
 postporc_result = PostComputer(modelinfo).main(postprocset)
 
-#----------------------------- VIEW SOLUTION ---------------------------------#
+# ----------------------------- VIEW SOLUTION ---------------------------------#
 postproc_plot(postprocset, postporc_result, modelinfo)
 
-print_console('thank')
+print_console("thank")
