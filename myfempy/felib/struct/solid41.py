@@ -2,7 +2,6 @@
 from myfempy.felib.quadrature import gaussian, no_interpol
 from myfempy.felib.materset import get_elasticity
 import numpy as np
-
 __doc__ = """
 solid41.py: Tetrahedron Isoparametric Solid 8-node linear Finite Element
 """
@@ -10,34 +9,32 @@ solid41.py: Tetrahedron Isoparametric Solid 8-node linear Finite Element
 
 class Solid41:
     def __init__(self, modelinfo):
-        self.dofe = modelinfo["nodecon"][0] * modelinfo["nodedof"][0]
-        self.nodecon = modelinfo["nodecon"][0]
-        self.fulldof = modelinfo["nodedof"][0] * len(modelinfo["coord"])
-        self.nodedof = modelinfo["nodedof"][0]
+        self.dofe = modelinfo['nodecon'][0]*modelinfo['nodedof'][0]
+        self.nodecon = modelinfo['nodecon'][0]
+        self.fulldof = modelinfo["nodedof"][0]*len(modelinfo["coord"])
+        self.nodedof = modelinfo['nodedof'][0]
         self.nelem = len(modelinfo["inci"])
         self.nnode = len(modelinfo["coord"])
-        self.inci = modelinfo["inci"]
-        self.coord = modelinfo["coord"]
-        self.tabmat = modelinfo["tabmat"]
-        self.tabgeo = modelinfo["tabgeo"]
-        self.ntensor = modelinfo["ntensor"][0]
-        if modelinfo["quadra"][0] == 1:
-            self.npp = modelinfo["quadra"][1]
+        self.inci = modelinfo['inci']
+        self.coord = modelinfo['coord']
+        self.tabmat = modelinfo['tabmat']
+        self.tabgeo = modelinfo['tabgeo']
+        self.ntensor = modelinfo['ntensor'][0]
+        if modelinfo['quadra'][0] == 1:
+            self.npp = modelinfo['quadra'][1]
             self.quadra = gaussian(self.npp)
-        elif modelinfo["quadra"][0] == 0:
-            self.npp = modelinfo["quadra"][1]
+        elif modelinfo['quadra'][0] == 0:
+            self.npp = modelinfo['quadra'][1]
             self.quadra = no_interpol(self.npp)
 
     @staticmethod
     def elemset():
-        dofelem = {
-            "key": "solid41",
-            "id": 310,
-            "def": "struct 3D",
-            "dofs": ["ux", "uy", "uz"],
-            "nnodes": ["i", "j", "k", "l"],
-            "tensor": ["sxx", "syy", "szz", "sxy", "syz", "szx"],
-        }
+        dofelem = {'key': 'solid41',
+                   'id': 310,
+                   'def': 'struct 3D',
+                   'dofs': ['ux', 'uy', 'uz'],
+                   'nnodes': ['i', 'j', 'k', 'l'],
+                   'tensor': ['sxx', 'syy', 'szz', 'sxy', 'syz', 'szx']}
         return dofelem
 
     def lockey(self, nodelist):
@@ -45,22 +42,10 @@ class Solid41:
         noj = nodelist[1]
         nok = nodelist[2]
         nol = nodelist[3]
-        loc = np.array(
-            [
-                self.nodedof * noi - 3,
-                self.nodedof * noi - 2,
-                self.nodedof * noi - 1,
-                self.nodedof * noj - 3,
-                self.nodedof * noj - 2,
-                self.nodedof * noj - 1,
-                self.nodedof * nok - 3,
-                self.nodedof * nok - 2,
-                self.nodedof * nok - 1,
-                self.nodedof * nol - 3,
-                self.nodedof * nol - 2,
-                self.nodedof * nol - 1,
-            ]
-        )
+        loc = np.array([self.nodedof*noi-3, self.nodedof*noi-2, self.nodedof*noi-1,
+                        self.nodedof*noj-3, self.nodedof*noj-2, self.nodedof*noj-1,
+                        self.nodedof*nok-3, self.nodedof*nok-2, self.nodedof*nok-1,
+                        self.nodedof*nol-3, self.nodedof*nol-2, self.nodedof*nol-1])
         return loc
 
     def matriz_b(self, nodelist, intpl):
@@ -68,33 +53,38 @@ class Solid41:
         noj = nodelist[1]
         nok = nodelist[2]
         nol = nodelist[3]
-        xi = self.coord[noi - 1, 1]
-        yi = self.coord[noi - 1, 2]
-        zi = self.coord[noi - 1, 3]
-        xj = self.coord[noj - 1, 1]
-        yj = self.coord[noj - 1, 2]
-        zj = self.coord[noj - 1, 3]
-        xk = self.coord[nok - 1, 1]
-        yk = self.coord[nok - 1, 2]
-        zk = self.coord[nok - 1, 3]
-        xl = self.coord[nol - 1, 1]
-        yl = self.coord[nol - 1, 2]
-        zl = self.coord[nol - 1, 3]
-        C = np.array(
-            [[1, xi, yi, zi], [1, xj, yj, zj], [1, xk, yk, zk], [1, xl, yl, zl]]
-        )
-        V = (1 / 6) * abs(np.linalg.det(C))
-        beti = -np.linalg.det(np.array([[1, yj, zj], [1, yk, zk], [1, yl, zl]]))
+        xi = self.coord[noi-1, 1]
+        yi = self.coord[noi-1, 2]
+        zi = self.coord[noi-1, 3]
+        xj = self.coord[noj-1, 1]
+        yj = self.coord[noj-1, 2]
+        zj = self.coord[noj-1, 3]
+        xk = self.coord[nok-1, 1]
+        yk = self.coord[nok-1, 2]
+        zk = self.coord[nok-1, 3]
+        xl = self.coord[nol-1, 1]
+        yl = self.coord[nol-1, 2]
+        zl = self.coord[nol-1, 3]
+        C = np.array([[1, xi, yi, zi], [1, xj, yj, zj],
+                     [1, xk, yk, zk], [1, xl, yl, zl]])
+        V = (1/6)*abs(np.linalg.det(C))
+        beti = - \
+            np.linalg.det(np.array([[1, yj, zj], [1, yk, zk], [1, yl, zl]]))
         gami = np.linalg.det(np.array([[1, xj, zj], [1, xk, zk], [1, xl, zl]]))
-        deli = -np.linalg.det(np.array([[1, xj, yj], [1, xk, yk], [1, xl, yl]]))
+        deli = - \
+            np.linalg.det(np.array([[1, xj, yj], [1, xk, yk], [1, xl, yl]]))
         betj = np.linalg.det(np.array([[1, yi, zi], [1, yk, zk], [1, yl, zl]]))
-        gamj = -np.linalg.det(np.array([[1, xi, zi], [1, xk, zk], [1, xl, zl]]))
+        gamj = - \
+            np.linalg.det(np.array([[1, xi, zi], [1, xk, zk], [1, xl, zl]]))
         delj = np.linalg.det(np.array([[1, xi, yi], [1, xk, yk], [1, xl, yl]]))
-        betk = -np.linalg.det(np.array([[1, yi, zi], [1, yj, zj], [1, yl, zl]]))
+        betk = - \
+            np.linalg.det(np.array([[1, yi, zi], [1, yj, zj], [1, yl, zl]]))
         gamk = np.linalg.det(np.array([[1, xi, zi], [1, xj, zj], [1, xl, zl]]))
-        delk = -np.linalg.det(np.array([[1, xi, yi], [1, xj, yj], [1, xl, yl]]))
+        delk = - \
+            np.linalg.det(np.array([[1, xi, yi], [1, xj, yj], [1, xl, yl]]))
         betl = np.linalg.det(np.array([[1, yi, zi], [1, yj, zj], [1, yk, zk]]))
-        gaml = -np.linalg.det(np.array([[1, xi, zi], [1, xj, zj], [1, xk, zk]]))
+        gaml = - \
+            np.linalg.det(np.array([[1, xi, zi], [1, xj, zj], [1, xk, zk]]))
         dell = np.linalg.det(np.array([[1, xi, yi], [1, xj, yj], [1, xk, yk]]))
         B = np.zeros((self.ntensor, self.dofe))
         B[0, 0] = beti
@@ -133,7 +123,7 @@ class Solid41:
         B[5, 8] = betk
         B[5, 9] = dell
         B[5, 11] = betl
-        B = (1 / (6 * V)) * B
+        B = (1/(6*V))*B
         return B, V
 
     def stiff_linear(self, ee):
@@ -145,7 +135,7 @@ class Solid41:
         D = get_elasticity(self.tabmat, self.inci, ee)
         intpl = 0.0
         B, V = Solid41.matriz_b(self, nodelist, intpl)
-        ket4 = V * np.dot(np.dot(np.transpose(B), D), B)
+        ket4 = V*np.dot(np.dot(np.transpose(B), D), B)
         loc = Solid41.lockey(self, nodelist)
         return ket4, loc
 
@@ -154,24 +144,25 @@ class Solid41:
         noj = int(self.inci[ee, 5])
         nok = int(self.inci[ee, 6])
         nol = int(self.inci[ee, 7])
-        xi = self.coord[noi - 1, 1]
-        yi = self.coord[noi - 1, 2]
-        zi = self.coord[noi - 1, 3]
-        xj = self.coord[noj - 1, 1]
-        yj = self.coord[noj - 1, 2]
-        zj = self.coord[noj - 1, 3]
-        xk = self.coord[nok - 1, 1]
-        yk = self.coord[nok - 1, 2]
-        zk = self.coord[nok - 1, 3]
-        xl = self.coord[nol - 1, 1]
-        yl = self.coord[nol - 1, 2]
-        zl = self.coord[nol - 1, 3]
-        C = np.array(
-            [[1, xi, yi, zi], [1, xj, yj, zj], [1, xk, yk, zk], [1, xl, yl, zl]]
-        )
+        xi = self.coord[noi-1, 1]
+        yi = self.coord[noi-1, 2]
+        zi = self.coord[noi-1, 3]
+        xj = self.coord[noj-1, 1]
+        yj = self.coord[noj-1, 2]
+        zj = self.coord[noj-1, 3]
+        xk = self.coord[nok-1, 1]
+        yk = self.coord[nok-1, 2]
+        zk = self.coord[nok-1, 3]
+        xl = self.coord[nol-1, 1]
+        yl = self.coord[nol-1, 2]
+        zl = self.coord[nol-1, 3]
+        C = np.array([[1, xi, yi, zi],
+                      [1, xj, yj, zj],
+                      [1, xk, yk, zk],
+                      [1, xl, yl, zl]])
 
-        V = (1 / 6) * abs(np.linalg.det(C))
-        R = self.tabmat[int(self.inci[ee, 2] - 1), 6]
+        V = (1/6)*abs(np.linalg.det(C))
+        R = self.tabmat[int(self.inci[ee, 2]-1), 6]
         met4 = np.zeros((self.dofe, self.dofe))
         met4[0, 0] = 2.0
         met4[0, 3] = 1.0
@@ -221,7 +212,7 @@ class Solid41:
         met4[11, 5] = 1.0
         met4[11, 8] = 1.0
         met4[11, 11] = 2.0
-        met4 = ((R * V) / 20) * met4
+        met4 = ((R*V)/20)*met4
         list_node = [noi, noj, nok, nol]
         loc = Solid41.lockey(self, list_node)
         return met4, loc
@@ -229,5 +220,4 @@ class Solid41:
 
 if __name__ == "__main__":
     import doctest
-
     doctest.testmod()
