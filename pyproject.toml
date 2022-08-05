@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "myfempy"
-version = "1.5.7"
+version = "1.5.6"
 description = "myfempy is a python package for scientific analysis based on finite element method"
 authors = ["Antonio Vinicius Garcia Campos"]
 readme = "README.md"
