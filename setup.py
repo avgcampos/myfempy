@@ -25,7 +25,7 @@ setup(
     name='myfempy',
     version=version.__version__,
     license='GNU',
-    license_files=['LICENSE'],
+    license_files=['LICENSE.txt'],
 
     author='Campos, A. V. G.',
     maintainer="Campos, A. V. G. & 3D EasyCAE",
@@ -59,6 +59,7 @@ setup(
     zip_safe=False,
 
     classifiers=[
+        "Development Status :: 1 - Production/Stable",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python",
         "Intended Audience :: Science/Research",
