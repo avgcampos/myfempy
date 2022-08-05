@@ -1,12 +1,14 @@
 #!/usr/bin/env python
-__doc__="""
+from myfempy.tools.tools import print_console
+from myfempy.core.solverset import get_constrains_dofs, step_setting, get_solve
+from myfempy.core.assembler import assembler, loads
+import time
+__doc__ = """
 Solver Manager
 """
-import time
-from myfempy.core.assembler import assembler, loads
-from myfempy.core.solverset import get_constrains_dofs, step_setting, get_solve
-from myfempy.tools.tools import print_console
 
+
+# class Solver
 def gen_static_solution(solverset, modelinfo):
     print_console('solver')
     solve = get_solve(solverset['SOLVER'])

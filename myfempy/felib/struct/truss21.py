@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.felib.materset import get_elasticity
+import numpy as np
+__doc__ = """
 truss21.py: Truss 2D 2-node linear Finite Element
 """
-import numpy as np
-from myfempy.felib.materset import get_elasticity
 
 
 class Truss21:
@@ -84,3 +84,8 @@ class Truss21:
                       [0, 0, c, s]])
         B = (E/L)*np.array([-1, 1])
         return B, T
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

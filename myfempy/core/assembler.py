@@ -8,6 +8,8 @@ __doc__ = """
 Assembler
 """
 
+# class Assembler
+
 
 def assembler(modelinfo, key):
     dofe = modelinfo['nodecon'][0]*modelinfo['nodedof'][0]
@@ -21,9 +23,9 @@ def assembler(modelinfo, key):
         element = get_elemset(int(modelinfo['inci'][ee][1]))
         setelement = element(modelinfo)
         if key == 'stiffness':
-            ke, loc = setelement.stiff_linear(ee)
+            mat, loc = setelement.stiff_linear(ee)
         elif key == 'mass':
-            ke, loc = setelement.mass(ee)
+            mat, loc = setelement.mass(ee)
         elif key == 'damper':
             pass
         loc_T = loc.reshape(1, dofe).T
@@ -31,7 +33,7 @@ def assembler(modelinfo, key):
         Ycopy_loc_T = np.transpose(Ycopy_loc)
         ith[(dofe*dofe)*ee:(dofe*dofe)*(ee+1)] = Ycopy_loc.flatten('F')
         jth[(dofe*dofe)*ee:(dofe*dofe)*(ee+1)] = Ycopy_loc_T.flatten('F')
-        val[(dofe*dofe)*ee:(dofe*dofe)*(ee+1)] = ke.flatten('F')
+        val[(dofe*dofe)*ee:(dofe*dofe)*(ee+1)] = mat.flatten('F')
     matrix = sp.csc_matrix((val, (ith, jth)), shape=(modelinfo["nodedof"][0]*len(
         modelinfo["coord"]), modelinfo["nodedof"][0]*len(modelinfo["coord"])))
     return matrix

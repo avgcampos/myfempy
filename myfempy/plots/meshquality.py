@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.tools.tools import get_version
+import numpy as np
+import vedo as vd
+__doc__ = """
 Mesh Quality Calc.
 """
-import vedo as vd
-import numpy as np
 
 
 class MeshProp:
@@ -20,7 +21,7 @@ class MeshProp:
         else:
             pass
         mesh.cmap("RdYlBu", on='cells', n=4)
-        text = vd.Text2D('MYFEMPY v'+get_version() +
+        text = vd.Text2D('MYFEMPY '+get_version() +
                          ' < mesh numb. > ',  s=1, font='Arial', c='white')
         nodes = self.plotset['inci'][:, 4:4+self.plotset["nodecon"]
                                      ].reshape((self.plotset["nnode"]*self.plotset["nodecon"],))
@@ -47,7 +48,7 @@ class MeshProp:
         else:
             pass
         mesh.cmap("RdYlBu", on='cells', n=16).addScalarBar()
-        text = vd.Text2D('MYFEMPY v'+get_version() +
+        text = vd.Text2D('MYFEMPY '+get_version() +
                          ' < mesh quality > ',  s=1, font='Arial', c='white')
         mesh.addQuality(measure=self.plotset['QUALITY']['method']).cmap(
             'RdYlBu', on='cells').print()

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.felib.quadrature import gaussian, no_interpol
+from myfempy.felib.materset import get_elasticity
+import numpy as np
+__doc__ = """
 plane41.py: Quatrangular Isoparametric Plane 4-node linear Finite Element
 """
-import numpy as np
-from myfempy.felib.materset import get_elasticity
-from myfempy.felib.quadrature import Quadrature
 
 
 class Plane41:
@@ -22,10 +22,10 @@ class Plane41:
         self.ntensor = modelinfo['ntensor'][0]
         if modelinfo['quadra'][0] == 1:
             self.npp = modelinfo['quadra'][1]
-            self.quadra = Quadrature.gaussian(self.npp)
+            self.quadra = gaussian(self.npp)
         elif modelinfo['quadra'][0] == 0:
             self.npp = modelinfo['quadra'][1]
-            self.quadra = Quadrature.no_interpol(self.npp)
+            self.quadra = no_interpol(self.npp)
 
     @staticmethod
     def elemset():
@@ -164,3 +164,8 @@ class Plane41:
         list_node = [noi, noj, nok, nol]
         loc = Plane41.lockey(self, list_node)
         return meq4, loc
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

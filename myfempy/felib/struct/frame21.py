@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.felib.materset import get_elasticity
+import numpy as np
+__doc__ = """
 frame21.py: Frame 2D 2-node linear Finite Element
 """
-import numpy as np
-from myfempy.felib.materset import get_elasticity
 
 
 class Frame21:
@@ -200,3 +200,8 @@ class Frame21:
                       E/L, -(y*E)*(-(12*x_mid)/(L**3) + 6/(L**2)),
                       -(y*E)*((6*x_mid)/(L**2) - 2/L)])
         return B, T
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

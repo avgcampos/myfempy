@@ -1,14 +1,14 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.tools.tools import print_console
+from myfempy.io.iovtk import convert_to_vtk
+from myfempy.postprc.postset import get_stress, get_displ
+from myfempy.felib.felemset import get_elemset
+import scipy.sparse as sp
+import os
+import numpy as np
+__doc__ = """
 Post-Process Calculator
 """
-import numpy as np
-import os
-import scipy.sparse as sp
-from myfempy.felib.felemset import get_elemset
-from myfempy.postprc.postset import get_stress, get_displ
-from myfempy.io.iovtk import convert_to_vtk
-from myfempy.tools.tools import print_console
 
 
 class PostComputer:
@@ -92,32 +92,33 @@ class PostComputer:
         plotdata['displ_POINT_DATA_val'] = []
         plotdata['displ_POINT_DATA_name'] = []
         plotdata['displ_POINT_DATA_title'] = []
-        plotdata['stress_CELL_DATA_val'] = []
-        plotdata['stress_CELL_DATA_name'] = []
-        plotdata['stress_CELL_DATA_title'] = []
         plotdata['stress_POINT_DATA_val'] = []
         plotdata['stress_POINT_DATA_name'] = []
         plotdata['stress_POINT_DATA_title'] = []
+        plotdata['stress_CELL_DATA_val'] = []
+        plotdata['stress_CELL_DATA_name'] = []
+        plotdata['stress_CELL_DATA_title'] = []
         plotdata['modes_POINT_DATA'] = []
-        if 'displ' in postprocset['COMPUTER'].keys():
-            for st in range(len(postporc_result['displ'])):
-                plotdata['filename'] = (
-                    path+'/'+postprocset["PLOTSET"]['filename']+'_results_step-'+str(st+1))
-                plotdata['displ_POINT_DATA_val'] = postporc_result['displ'][st]['val'][:, 1:]
-                plotdata['displ_POINT_DATA_title'] = postporc_result['displ'][st]['title']
-                if 'stress' in postprocset['COMPUTER'].keys():
-                    if postprocset['COMPUTER']['stress'] == True:
-                        plotdata['stress_CELL_DATA_val'] = postporc_result['stress_elm'][st]['val']
-                        plotdata['stress_CELL_DATA_title'] = postporc_result['stress_elm'][st]['title']
-                if 'average' in postprocset['COMPUTER'].keys():
-                    if postprocset['COMPUTER']['average'] == True:
-                        plotdata['stress_POINT_DATA_val'] = postporc_result['stress_avr'][st]['val']
-                        plotdata['stress_POINT_DATA_title'] = postporc_result['stress_avr'][st]['title']
-                convert_to_vtk(plotdata)
+        # ... any field in future
+        if 'elasticity' in postprocset['COMPUTER'].keys():
+            if postprocset['COMPUTER']['elasticity']['displ']:
+                for st in range(len(postporc_result['displ'])):
+                    plotdata['filename'] = (
+                        path+'/'+postprocset["PLOTSET"]['filename']+'_results_step-'+str(st+1))
+                    plotdata['displ_POINT_DATA_val'] = postporc_result['displ'][st]['val'][:, 1:]
+                    plotdata['displ_POINT_DATA_title'] = postporc_result['displ'][st]['title']
+            if postprocset['COMPUTER']['elasticity']['stress']:
+                plotdata['stress_CELL_DATA_val'] = postporc_result['stress_elm'][st]['val']
+                plotdata['stress_CELL_DATA_title'] = postporc_result['stress_elm'][st]['title']
+            if postprocset['COMPUTER']['elasticity']['average']:
+                plotdata['stress_POINT_DATA_val'] = postporc_result['stress_avr'][st]['val']
+                plotdata['stress_POINT_DATA_title'] = postporc_result['stress_avr'][st]['title']
+            convert_to_vtk(plotdata)
         if 'eig' in postprocset['COMPUTER'].keys():
-            plotdata['filename'] = (
-                path+'/'+postprocset["PLOTSET"]['filename']+'_results_modes')
-            plotdata['modes_POINT_DATA'] = postporc_result['modes']
+            if postprocset['COMPUTER']['eig']['modes']:
+                plotdata['filename'] = (
+                    path+'/'+postprocset["PLOTSET"]['filename']+'_results_modes')
+                plotdata['modes_POINT_DATA'] = postporc_result['modes']
             convert_to_vtk(plotdata)
 
     def main(self, postprocset):
@@ -126,7 +127,7 @@ class PostComputer:
         postporc_result['displ'] = []
         postporc_result['stress_avr'] = []
         postporc_result['stress_elm'] = []
-        postporc_result['balance'] = []
+        postporc_result['intforces_plot'] = []
         postporc_result['modes'] = []
         postporc_result['frf'] = []
         result_disp = np.zeros(
@@ -134,16 +135,12 @@ class PostComputer:
         for ns in range(postprocset["SOLUTION"].shape[1]):
             result_disp[ns, :, :] = PostComputer.displ(
                 self, postprocset["SOLUTION"][:, ns])
-        if 'displ' in postprocset['COMPUTER'].keys():
-            if postprocset['COMPUTER']['displ'] == True:
+        if 'elasticity' in postprocset['COMPUTER'].keys():
+            if postprocset['COMPUTER']['elasticity']['displ']:
                 for st in range(postprocset["SOLUTION"].shape[1]):
-                    # postporc_result['displ'] = {'val':result_disp, 'title':title}
                     postporc_result['displ'].append(
                         {'val': result_disp[st][:][:], 'title': 'DISPLACEMENT', 'avr': True})
-            else:
-                pass
-        if 'stress' in postprocset['COMPUTER'].keys():
-            if postprocset['COMPUTER']['stress'] == True:
+            if postprocset['COMPUTER']['elasticity']['stress']:
                 result_stress = np.zeros(
                     (postprocset["SOLUTION"].shape[1], self.modelinfo['inci'].shape[0], 2*self.modelinfo["ntensor"][0]+2))
                 for ns in range(postprocset["SOLUTION"].shape[1]):
@@ -161,29 +158,32 @@ class PostComputer:
                         {'val': result_stress[st][:][:], 'title': title, 'avr': False})
                     postporc_result['stress_avr'].append(
                         {'val': result_stress_avr[st][:][:], 'title': title, 'avr': True})
+            else:
+                pass
         if 'balance' in postprocset['COMPUTER'].keys():
-            if postprocset['COMPUTER']['balance'] == True:
+            if postprocset['COMPUTER']['balance']['intforces_plot']:
                 for ns in range(postprocset["SOLUTION"].shape[1]):
                     ifb, title = PostComputer.intforces(
                         self, postprocset["SOLUTION"][:, ns])
-                    postporc_result['balance'].append(
+                    postporc_result['intforces_plot'].append(
                         {'val': [ifb['le'], ifb['val']], 'title': title})
             else:
                 pass
         if 'eig' in postprocset['COMPUTER'].keys():
-            if postprocset['COMPUTER']['eig'] == True:
+            if postprocset['COMPUTER']['eig']['modes']:
                 for st in range(postprocset["SOLUTION"].shape[1]):
-                    # postporc_result['displ'] = {'val':result_disp, 'title':title}
                     postporc_result['modes'].append({'val': result_disp[st][:][:], 'title': (
                         'MODE_'+str(st+1)+'-'+'FREQ_'+str(round(postprocset["FREQ"][st][2], 2))+'Hz'), 'avr': True})
             else:
                 pass
         if 'frf' in postprocset['COMPUTER'].keys():
-            if postprocset['COMPUTER']['frf'] == True:
+            if postprocset['COMPUTER']['frf']['frf_plot']:
                 postporc_result['frf'].append(
                     {'val': postprocset["SOLUTION"], 'freqlog': postprocset["FREQ"]})
             else:
                 pass
+        else:
+            pass
         PostComputer.save_vtk(self, postporc_result,
                               postprocset)  # save in vtk file
         return postporc_result

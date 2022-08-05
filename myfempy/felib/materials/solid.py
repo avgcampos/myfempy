@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.felib.felemset import get_elemset
+import numpy as np
+__doc__ = """
 solid.py: Solid Isotropic and Elasticity Material
 """
-import numpy as np
-from myfempy.felib.felemset import get_elemset
 
 
 class Elasticity:
@@ -87,3 +87,8 @@ class Tensor:
         title = ["STRESS_VM", "STRESS_XX", "STRESS_YY",
                  "STRESS_ZZ", "STRESS_XY", "STRESS_YZ", "STRESS_ZX"]
         return stress, title
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

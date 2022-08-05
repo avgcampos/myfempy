@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.felib.materset import get_elasticity
+import numpy as np
+__doc__ = """
 spring21.py: Spring 2D 2-node linear Finite Element
 """
-import numpy as np
-from myfempy.felib.materset import get_elasticity
 
 
 class Spring21:
@@ -75,3 +75,8 @@ class Spring21:
         list_node = [noi, noj]
         loc = Spring21.lockey(self, list_node)
         return mes2, loc
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

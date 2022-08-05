@@ -17,7 +17,7 @@ def eig(fulldofs, stiffness, mass, forcelist, freedof, solverset):
                                   modeEnd, mass[:, freedof][freedof, :], sigma=1, which='LM')
     endstep = time.time()
     print('\nSTEP --: SUCCESSFUL CONVERGED\n')
-    print('\nTIME SPEND: ', endstep-startstep, ' SEC\n')
+    print('\ TIME SPEND: ', endstep-startstep, ' SEC')
     Wlist = np.arange(0, modeEnd+1)
     Wrad = np.sqrt(W)
     Whz = Wrad/(2*np.pi)
@@ -47,6 +47,6 @@ def frf(fulldofs, stiffness, mass, forcelist, freedof, solverset):
         # else:
         #     pass
     endstep = time.time()
-    print('\nTIME SPEND: ', endstep-startstep, ' SEC\n')
+    print('\ TIME SPEND: ', endstep-startstep, ' SEC')
     w_range = w_range/(twopi)
     return U, w_range

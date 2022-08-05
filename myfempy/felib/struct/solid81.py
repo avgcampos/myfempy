@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.felib.quadrature import gaussian, no_interpol
+from myfempy.felib.materset import get_elasticity
+import numpy as np
+__doc__ = """
 solid81.py: Hexahedron Isoparametric Solid 8-node linear Finite Element
 """
-import numpy as np
-from myfempy.felib.materset import get_elasticity
-from myfempy.felib.quadrature import Quadrature
 
 
 class Solid81:
@@ -22,7 +22,10 @@ class Solid81:
         self.ntensor = modelinfo['ntensor'][0]
         if modelinfo['quadra'][0] == 1:
             self.npp = modelinfo['quadra'][1]
-            self.quadra = Quadrature.gaussian(self.npp)
+            self.quadra = gaussian(self.npp)
+        elif modelinfo['quadra'][0] == 0:
+            self.npp = modelinfo['quadra'][1]
+            self.quadra = no_interpol(self.npp)
 
     @staticmethod
     def elemset():
@@ -303,3 +306,8 @@ class Solid81:
         list_node = [noi, noj, nok, nol, nom, non, noo, nop]
         loc = Solid81.lockey(self, list_node)
         return meh8, loc
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

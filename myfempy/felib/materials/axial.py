@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.felib.crossec import cg_coord
+from myfempy.felib.felemset import get_elemset
+import numpy as np
+__doc__ = """
 axial.py: Axial Isotropic material
 """
-import numpy as np
-from myfempy.felib.felemset import get_elemset
-from myfempy.felib.crossec import cg_coord
 
 
 class Elasticity:
@@ -63,3 +63,8 @@ class Tensor:
         stress = [stress_max, stress_min]
         title = ["STRESS_XX_MAX", "STRESS_XX_MIN"]
         return stress, title
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

@@ -24,7 +24,7 @@ def sld(fulldofs, stiffness, forcelist, freedof, solverset):
         endstep = time.time()
         print('\nSTEP --', step, ': SUCCESSFUL CONVERGED\n')
         print('\nSOLVE STEP '+str(step),
-              '\nTIME SPEND: ', endstep-startstep, ' SEC\n')
+              '\ TIME SPEND: ', endstep-startstep, ' SEC')
         U1[freedof, 0] += U0[freedof, 0]
         U[freedof, step] = U1[freedof, 0]
         U0[freedof, 0] = U1[freedof, 0]
@@ -61,7 +61,7 @@ def sli(fulldofs, stiffness, forcelist, freedof, solverset):
             print('\nSTEP --', step, ': SUCCESSFUL CONVERGED\n')
 
         print('\nSOLVE STEP '+str(step),
-              '\nTIME SPEND: ', endstep-startstep, ' SEC\n')
+              '\ TIME SPEND: ', endstep-startstep, ' SEC')
         U1[freedof, 0] += U0[freedof, 0]
         U[freedof, step] = U1[freedof, 0]
         U0[freedof, 0] = U1[freedof, 0]
@@ -101,7 +101,7 @@ def slipre(fulldofs, stiffness, forcelist, freedof, solverset):
         else:
             print('\nSTEP --', step, ': SUCCESSFUL CONVERGED\n')
         print('\nSOLVE STEP '+str(step),
-              '\nTIME SPEND: ', endstep-startstep, ' SEC\n')
+              '\ TIME SPEND: ', endstep-startstep, ' SEC')
         U1[freedof, 0] += U0[freedof, 0]
         U[freedof, step] = U1[freedof, 0]
         U0[freedof, 0] = U1[freedof, 0]

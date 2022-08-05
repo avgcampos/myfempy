@@ -1,18 +1,18 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.tools.path import create_user_path
+from myfempy.tools.tools import print_console
+from myfempy.felib.physics.getnode import nodes_from_regions, search_nodexyz
+from myfempy.felib.physics.loadsconstr import get_forces, get_constrain
+from myfempy.felib.physicset import gen_force, gen_bound
+from myfempy.felib.crossec import sect_prop
+from myfempy.felib.materset import mat_def, mat_beh
+from myfempy.felib.crossec import sec_def
+from myfempy.felib.felemset import get_elemset
+import os
+import numpy as np
+__doc__ = """
 CLASS MESH SET
 """
-import numpy as np
-import os
-from myfempy.felib.felemset import get_elemset
-from myfempy.felib.crossec import sec_def
-from myfempy.felib.materset import mat_def, mat_beh
-from myfempy.felib.crossec import sect_prop
-from myfempy.felib.physicset import gen_force, gen_bound
-from myfempy.felib.physics.loadsconstr import get_forces, get_constrain
-from myfempy.felib.physics.getnode import nodes_from_regions, search_nodexyz
-from myfempy.tools.tools import print_console
-from myfempy.tools.path import create_user_path
 
 
 class MeshSet:
@@ -311,7 +311,6 @@ class MeshGen:
 
 
 class ModelGen:
-
     def get_quadra(quadrature):
 
         if quadrature['meth'] == 'gaussian':
@@ -370,3 +369,8 @@ class ModelGen:
             meshdata["QUADRATURE"] = {'meth': 'no_interpol', 'npp': 1}
             modelinfo['quadra'] = ModelGen.get_quadra(meshdata["QUADRATURE"])
         return modelinfo
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.felib.materset import get_elasticity
+from scipy.linalg import block_diag
+import numpy as np
+__doc__ = """
 frame22.py: Frame 3D 2-node linear Finite Element
 """
-import numpy as np
-from scipy.linalg import block_diag
-from myfempy.felib.materset import get_elasticity
 
 
 class Frame22:
@@ -269,3 +269,8 @@ class Frame22:
         B12 = (-y*E)*((6*x_mid)/(L**2) - 2/L)
         B = np.array([B1, B2, B3, B4, B5, B6, B7, B8, B9, B10, B11, B12])
         return B, T
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

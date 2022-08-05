@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.felib.physics.getnode import search_nodexyz
+import matplotlib.pyplot as plt
+import numpy as np
+__doc__ = """
 Plot XY
 """
-import numpy as np
-import matplotlib.pyplot as plt
-from myfempy.felib.physics.getnode import search_nodexyz
 
 
 def plot(x, y, xlabel, ylabel, fignumb):
@@ -65,7 +65,7 @@ def tracker_plot(postprocset, plotset, coord):
     plot(val_X, val_Y, xlabel, ylabel, plotset['fignumb'])
 
 
-def plot_forces(lenx, leny, xlabel, yl, size, nbeam):
+def forces_plot(lenx, leny, xlabel, yl, size, nbeam):
     plt.gcf().set_size_inches(16, 8)
     plt.subplots_adjust(hspace=0.5)
     cont = 1

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.felib.materset import get_elasticity
+import numpy as np
+__doc__ = """
 plane31.py: Triagular Plane 3-node linear Finite Element
 """
-import numpy as np
-from myfempy.felib.materset import get_elasticity
 
 
 class Plane31:
@@ -116,3 +116,8 @@ class Plane31:
         list_node = [noi, noj, nok]
         loc = Plane31.lockey(self, list_node)
         return met3, loc
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

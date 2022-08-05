@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-__doc__ ="""
+import numpy as np
+__doc__ = """
 planestrain.py: Plane Strain Isotropic material
 """
-import numpy as np
 
 
 class Elasticity:
@@ -18,3 +18,8 @@ class Elasticity:
         D[1, 1] = D[0, 0]
         D[2, 2] = D[0, 0]*0.5*(1.0-2.0*self.v)/(1.0-self.v)
         return D
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

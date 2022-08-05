@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.felib.materset import get_elasticity
+import numpy as np
+__doc__ = """
 beam21.py: Beam 1D 2-node linear Finite Element
 """
-import numpy as np
-from myfempy.felib.materset import get_elasticity
 
 
 class Beam21:
@@ -145,3 +145,8 @@ class Beam21:
                             -(12*x_mid)/(L**3) + 6/(L**2),
                              (6*x_mid)/(L**2) - 2/L])
         return B, T
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

@@ -5,7 +5,7 @@ myfempy -- MultiphYsics Finite Element Method with PYthon
 Copyright (C) 2022 Antonio Vinicius Garcia Campos
 """
 #==========================================================
-# import numpy as np
+from __future__ import absolute_import
 #==========================================================
 # from myfempy.tools.tools import *
 # from myfempy.tools.path import *
@@ -61,7 +61,7 @@ from myfempy import version
 __author__ = "Antonio Vinicius Garcia Campos"
 __copyright__ = "Copyright @ 2022, Antonio Vinicius Garcia Campos"
 __credits__ = ["Antonio Vinicius Garcia Campos", "3D EasyCAE"]
-__license__ = "GPL"
+__license__ = "GPL-3.0"
 __status__ = "Development"
 __website__ = "https://github.com/easycae-3d/myfempy"
 __version__ = version.__version__

@@ -14,3 +14,8 @@ class Elasticity:
         D = self.D
         E = [S, D]
         return E
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

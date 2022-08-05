@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.felib.felemset import get_elemset
+import numpy as np
+__doc__ = """
 planestress.py: Plane Stress Isotropic and Elasticity Material
 """
-import numpy as np
-from myfempy.felib.felemset import get_elemset
-from myfempy.felib.quadrature import Quadrature
 
 
 class Elasticity:
@@ -71,3 +70,8 @@ class Tensor:
         stress = [strs_elm_vm, strs_elm_xx, strs_elm_yy, strs_elm_xy]
         title = ["STRESS_VM", "STRESS_XX", "STRESS_YY", "STRESS_XY"]
         return stress, title
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

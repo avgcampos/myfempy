@@ -1,17 +1,17 @@
 #!/usr/bin/env python
-__doc__ ="""
+from myfempy.plots.plotmesh import post_show_mesh
+from myfempy.plots.plotxy import forces_plot, tracker_plot, frf_plot
+from myfempy.felib.physics.getnode import search_nodexyz
+import numpy as np
+__doc__ = """
 Plotter Post Process
 """
-import numpy as np
-from myfempy.felib.physics.getnode import search_nodexyz
-from myfempy.plots.plotxy import plot_forces, tracker_plot, frf_plot
-from myfempy.plots.plotmesh import post_show_mesh
 
 
 def postproc_plot(postprocset, postporc_result, modelinfo):
     plotset = dict()
     if "TRACKER" in postprocset.keys():
-        if postprocset["TRACKER"]['show'] == True:
+        if postprocset["TRACKER"]['show']:
             # for pp in range(len(postporc_result['solution'])):
             for st in range(len(plotset[postprocset["TRACKER"]['result2plot']])):
                 plotset['step'] = st+1
@@ -21,7 +21,7 @@ def postproc_plot(postprocset, postporc_result, modelinfo):
                 plotset['rstl'] = [0, modelinfo["ntensor"][0]+1]
                 tracker_plot(postprocset, plotset, modelinfo['coord'])
     if "PLOTSET" in postprocset.keys():
-        if postprocset["PLOTSET"]['show'] == True:
+        if postprocset["PLOTSET"]['show']:
             if 'step' in postprocset["PLOTSET"].keys():
                 step = int(postprocset["PLOTSET"]['step'])
             else:
@@ -35,25 +35,25 @@ def postproc_plot(postprocset, postporc_result, modelinfo):
             else:
                 plotset['edge'] = False
             if 'average' in postprocset["PLOTSET"]['result2plot'].keys():
-                if postprocset["COMPUTER"]['average'] == True:
+                if postprocset["COMPUTER"]['average']:
                     plotset['apply'] = 'points'
                 else:
                     plotset['apply'] = 'cells'
             else:
                 plotset['apply'] = 'cells'
-            if 'intforces' in postprocset["PLOTSET"]['result2plot'].keys():
+            if 'intforces_plot' in postprocset["PLOTSET"]['result2plot'].keys():
                 if 'beam' in postprocset["PLOTSET"].keys():
                     nbeam = postprocset["PLOTSET"]['beam']
                 else:
                     nbeam = [1]
                 lenx = np.around(
-                    postporc_result['balance'][step-1]['val'][0], decimals=3)
+                    postporc_result['intforces_plot'][step-1]['val'][0], decimals=3)
                 leny = np.around(
-                    postporc_result['balance'][step-1]['val'][1], decimals=3)
+                    postporc_result['intforces_plot'][step-1]['val'][1], decimals=3)
                 xlabel = 'lenght ---> x'
-                ylabel = postporc_result['balance'][step-1]['title']
+                ylabel = postporc_result['intforces_plot'][step-1]['title']
                 size = len(ylabel)
-                plot_forces(lenx, leny, xlabel, ylabel, size, nbeam)
+                forces_plot(lenx, leny, xlabel, ylabel, size, nbeam)
             if 'displ' in postprocset["PLOTSET"]['result2plot'].keys():
                 post_show_mesh(file2plot, plotset)
             if 'frf' in postprocset["PLOTSET"]['result2plot'].keys():
