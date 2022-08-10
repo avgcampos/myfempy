@@ -1,15 +1,16 @@
 [tool.poetry]
 name = "myfempy"
 version = "1.5.6"
+authors = ["Antonio Vinicius Garcia Campos <3deasycaebr.contato@gmail.com>"]
 description = "myfempy is a python package for scientific analysis based on finite element method"
-authors = ["Antonio Vinicius Garcia Campos"]
 readme = "README.md"
-license = "GLP-3.0"
+license = "GPLv3"
 keywords = ["mesh", "gmsh", "mesh generation", "mathematics", "engineering"]
+homepage = "https://github.com/easycae-3d/myfempy"
 classifiers = [
     "Development Status :: 1 - Production/Stable",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Education",
     "Topic :: Scientific/Engineering :: Physics",
