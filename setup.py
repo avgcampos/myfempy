@@ -1,18 +1,40 @@
 #!/usr/bin/env python
+#==========================================================================#
+#  This Python file is part of myfempy project                             #
+#                                                                          #
+#  The code is written by A. V. G. Campos                                  #
+#                                                                          #
+#  A github repository, with the most up to date version of the code,      #
+#  can be found here:                                                      #
+#     https://github.com/easycae-3d/myfempy                                #
+#                                                                          #
+#  The code is open source and intended for educational and scientific     #
+#  purposes only. If you use myfempy in your research, the developers      #
+#  would be grateful if you could cite this.                               #  
+#                                                                          #
+#  Disclaimer:                                                             #
+#  The authors reserve all rights but do not guarantee that the code is    #
+#  free from errors. Furthermore, the authors shall not be liable in any   #
+#  event caused by the use of the program.                                 #
+#==========================================================================#
 """
-========================================================================
-       	                    __                                
-       	 _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-       	| '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-       	| | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-       	|_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-       	            |___/                       |_|     |___/ 
+#==========================================================================#
+                                __                                
+             _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
+            | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
+            | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
+            |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
+                        |___/                       |_|     |___/ 
 
-~~~    myfempy -- MultiphYsics Finite Element Method with PYthon    ~~~
-~~~                 COMPUTATIONAL ANALYSIS PROGRAM                   ~~~
-~~~                PROGRAMA DE ANÁLISE COMPUTACIONAL                 ~~~
-~~~         Copyright (C) 2022 Antonio Vinicius Garcia Campos        ~~~
-========================================================================
+~~~         myfempy -- MultiphYsics Finite Element Method with PYthon    ~~~
+~~~                     COMPUTATIONAL ANALYSIS PROGRAM                   ~~~
+~~~                    PROGRAMA DE ANÁLISE COMPUTACIONAL                 ~~~
+~~~             Copyright (C) 2022 Antonio Vinicius Garcia Campos        ~~~
+#==========================================================================#
+myfempy install script
+
+Install myfempy through `python setup.py install`,
+or visit the github page to more information
 """
 # SETUP SYSTEM & PIP INSTALL
 from setuptools import setup, find_packages
