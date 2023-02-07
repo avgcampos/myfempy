@@ -42,7 +42,7 @@ or
 ```
 
 *Note: is recommend to create a virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/) or [anaconda distro](https://www.anaconda.com/products/distribution)*
-*
+
 ## Dependencies
 
 **Myfempy** can be used in systems based on Linux, MacOS and Windows. **Myfempy** requires Python 3.
