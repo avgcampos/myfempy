@@ -41,7 +41,7 @@ or
 >> python -m build
 ```
 
-**Note: is recommend to create a virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/) or [conda environments]([https://www.anaconda.com/products/distribution](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html))**
+**Note: is recommend to create a virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/) or [conda environments]([https://www.anaconda.com/products/distribution](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)**
 
 ## Dependencies
 
