@@ -110,7 +110,7 @@ The *main myfempy features* are available here:
 
 ## License
 
-**myfempy** is published under the [GPLv3 license](https://www.gnu.org/licenses/gpl-3.0.en.html). See the [myfempy/LICENSE](https://github.com/easycae-3d/myfempy/blob/main/LICENSE).
+**myfempy** is published under the [GPLv3 license](https://www.gnu.org/licenses/gpl-3.0.en.html). See the [myfempy/LICENSE](https://github.com/easycae-3d/myfempy/blob/main/LICENSE.txt).
 
 <!-- ## >> Acknowledgment -->
 
