@@ -41,8 +41,8 @@ or
 >> python -m build
 ```
 
-*Note: is recommend to create a virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/)* 
-
+*Note: is recommend to create a virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/) or [Anaconda distro](https://www.anaconda.com/products/distribution)*
+*
 ## Dependencies
 
 **Myfempy** can be used in systems based on Linux, MacOS and Windows. **Myfempy** requires Python 3.
