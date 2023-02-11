@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 __doc__ ="""
-Tools and Misc.
+Utilities
 """
 import sys
 import os
