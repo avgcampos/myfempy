@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from myfempy.felib.physics.getnode import search_nodexyz
-from myfempy.io.iocsv import writer2csv_file
+from myfempy.io.iocsv import writer2csv
 import matplotlib.pyplot as plt
 import numpy as np
 

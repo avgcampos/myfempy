@@ -2,7 +2,7 @@
 from myfempy.plots.plotmesh import post_show_mesh
 from myfempy.plots.plotxy import forces_plot, tracker_plot, frf_plot
 from myfempy.felib.physics.getnode import search_nodexyz
-from myfempy.io.iocsv import writer2csv_file, write2log_file
+from myfempy.io.iocsv import writer2csv, write2log
 import numpy as np
 
 __doc__ = """

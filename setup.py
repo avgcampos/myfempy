@@ -67,7 +67,7 @@ setup(
         "numpy==1.24.2",
         "scipy==1.10.0",
         "matplotlib==3.6.3",
-        "Cython==0.29.33",
+        "cython==0.29.33",
         "art==5.8",
         "colorama==0.4.6",
         "vedo==2023.4.3",
