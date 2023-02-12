@@ -6,7 +6,7 @@ import numpy as np
 import csv
 
 
-def write2log_file(log_file,log_data,modelinfo,solstatus):
+def write2log(log_file,log_data,modelinfo,solstatus):
     with open(log_file, "w") as file_object:
         file_object.write("### MYFEMPY OUTPUT LOG ###\n")
         if 'get' in log_data.keys():
@@ -104,15 +104,12 @@ def write2log_file(log_file,log_data,modelinfo,solstatus):
             
                         
                         
-def writer2csv_file(csv2write_file,csv2write_data,label):
+def writer2csv(csv2write_file,csv2write_data,label):
     with open(csv2write_file, "w") as file_object:
         writer = csv.writer(file_object)
         writer.writerow([label[0],label[1]])
         for tt in range(len(csv2write_data[0])):
             writer.writerow([csv2write_data[0][tt],csv2write_data[1][tt]])
-
-
-
 
 
 def gen_usrlog(

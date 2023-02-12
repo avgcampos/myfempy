@@ -31,11 +31,11 @@ def sld(fulldofs, stiffness, forcelist, freedof, solverset):
     # loading_bar_v1(0, "SOLVER")
     for step in range(solverset["nsteps"]):
         # loading_bar_v1(100 * ((step + 1) / solverset["nsteps"]), "SOLVER")
-        startstep = time.time()
+        # startstep = time.time()
         U1[freedof, 0] = spla.spsolve(
             A=stiffness[:, freedof][freedof, :], b=forcelist[freedof, step]
         )
-        endstep = time.time()
+        # endstep = time.time()
         # print("\nSTEP --", step, ": SUCCESSFUL CONVERGED\n")
         # print(
         #     "\nSOLVE STEP " + str(step), "\ TIME SPEND: ", endstep - startstep, " SEC"
@@ -75,14 +75,14 @@ def sli(fulldofs, stiffness, forcelist, freedof, solverset):
     # loading_bar_v1(0, "SOLVER")
     for step in range(solverset["nsteps"]):
         # loading_bar_v1(100 * ((step + 1) / solverset["nsteps"]), "SOLVER")
-        startstep = time.time()
+        # startstep = time.time()
         U1[freedof, 0], info = spla.bicgstab(
             A=stiffness[:, freedof][freedof, :],
             b=forcelist[freedof, step].toarray(),
             x0=U0[freedof, 0],
             tol=solverset["TOL"],
         )
-        endstep = time.time()
+        # endstep = time.time()
         # if info > 0:
         #     print("\nSTEP --", step, ": CONVERGED TO TOLERANCE NOT ACHIEVED\n")
         # elif info < 0:
@@ -129,14 +129,14 @@ def slipre(fulldofs, stiffness, forcelist, freedof, solverset):
     Nshape = np.size(freedof)
     sA = stiffness[:, freedof][freedof, :]
 
-    def A_ilu(x):
+    def a_ilu(x):
         return spla.spsolve(sA, x)
 
-    M = spla.LinearOperator((Nshape, Nshape), A_ilu)
+    M = spla.LinearOperator((Nshape, Nshape), a_ilu)
     # loading_bar_v1(0, "SOLVER")
     for step in range(solverset["nsteps"]):
         # loading_bar_v1(100 * ((step + 1) / solverset["nsteps"]), "SOLVER")
-        startstep = time.time()
+        # startstep = time.time()
         U1[freedof, 0], info = spla.gmres(
             A=sA,
             b=forcelist[freedof, step].toarray(),
@@ -144,7 +144,7 @@ def slipre(fulldofs, stiffness, forcelist, freedof, solverset):
             tol=solverset["TOL"],
             M=M,
         )
-        endstep = time.time()
+        # endstep = time.time()
         # if info > 0:
         #     print("\nSTEP --", step, ": CONVERGED TO TOLERANCE NOT ACHIEVED\n")
         # elif info < 0:

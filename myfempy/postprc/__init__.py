@@ -1,3 +1,3 @@
 from .postcomp import PostProcess
 
-__all__ = ['PostProces']
+__all__ = ['PostProcess']
