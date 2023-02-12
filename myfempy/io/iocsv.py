@@ -49,7 +49,7 @@ def write2log(log_file,log_data,modelinfo,solstatus):
                         file_object.write('{0:<7}{1:<10}\n'.format('RX',modelinfo["constrains"][row][1].astype(int)))
                     elif bc_type==5:
                         file_object.write('{0:<7}{1:<10}\n'.format('RY',modelinfo["constrains"][row][1].astype(int)))
-                    elif bc_type==5:
+                    elif bc_type==6:
                         file_object.write('{0:<7}{1:<10}\n'.format('RZ',modelinfo["constrains"][row][1].astype(int)))
                     else:
                         pass

@@ -103,7 +103,7 @@ def sli(fulldofs, stiffness, forcelist, freedof, solverset):
                 plotset["fignumb"] = 1
                 postprocset["TRACKER"] = solverset["TRACKER"]
                 coord = solverset["coord"]
-                tracker_plot(postprocset, plotset, coord)
+                tracker_plot(postprocset, plotset, solverset["coord"], solverset["nodedof"])
     return U
 
 
@@ -129,10 +129,10 @@ def slipre(fulldofs, stiffness, forcelist, freedof, solverset):
     Nshape = np.size(freedof)
     sA = stiffness[:, freedof][freedof, :]
 
-    def a_ilu(x):
+    def A_ilu(x):
         return spla.spsolve(sA, x)
 
-    M = spla.LinearOperator((Nshape, Nshape), a_ilu)
+    M = spla.LinearOperator((Nshape, Nshape), A_ilu)
     # loading_bar_v1(0, "SOLVER")
     for step in range(solverset["nsteps"]):
         # loading_bar_v1(100 * ((step + 1) / solverset["nsteps"]), "SOLVER")
@@ -164,5 +164,5 @@ def slipre(fulldofs, stiffness, forcelist, freedof, solverset):
                 plotset["fignumb"] = 1
                 postprocset["TRACKER"] = solverset["TRACKER"]
                 coord = solverset["coord"]
-                tracker_plot(postprocset, plotset, coord)
+                tracker_plot(postprocset, plotset, solverset["coord"], solverset["nodedof"])
     return U

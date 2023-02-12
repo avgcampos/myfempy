@@ -2,7 +2,7 @@
 """
 Average Nodes Calculator version 2
 """
-import cython
+import Cython
 import numpy as np
 import scipy.sparse as sp
 
