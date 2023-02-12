@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-__doc__ ="""
+__doc__ = """
 Physics Vtk Plot.
 """
 import numpy as np
@@ -7,9 +7,20 @@ import vtk
 
 
 def view_listforce(coord, frcApy_vet, scala_view, num_lf):
-    coordX_force = coord[int(frcApy_vet[num_lf][0])-1, 1]
-    coordY_force = coord[int(frcApy_vet[num_lf][0])-1, 2]
-    coordZ_force = coord[int(frcApy_vet[num_lf][0])-1, 3]
+    """_summary_
+
+    Arguments:
+        coord -- _description_
+        frcApy_vet -- _description_
+        scala_view -- _description_
+        num_lf -- _description_
+
+    Returns:
+        _description_
+    """
+    coordX_force = coord[int(frcApy_vet[num_lf][0]) - 1, 1]
+    coordY_force = coord[int(frcApy_vet[num_lf][0]) - 1, 2]
+    coordZ_force = coord[int(frcApy_vet[num_lf][0]) - 1, 3]
     fr_text = vtk.vtkVectorText()
     if frcApy_vet[num_lf][2] == 0.0:
         height_cone = 0.0
@@ -23,65 +34,64 @@ def view_listforce(coord, frcApy_vet, scala_view, num_lf):
         center_cone2 = center_cone1
         color_fr = (0, 0, 0)
         height_cone = 0
-        fr_text.SetText(' ')
+        fr_text.SetText(" ")
         fr_text.Update()
     if frcApy_vet[num_lf][1] == 1:  # fx
         dir_cone1 = (np.sign(frcApy_vet[num_lf][2]), 0, 0)
         dir_cone2 = dir_cone1
-        center_cone1 = (coordX_force+height_cone/2, coordY_force, coordZ_force)
+        center_cone1 = (coordX_force + height_cone / 2, coordY_force, coordZ_force)
         center_cone2 = center_cone1
         color_fr = (1, 0, 0)
     elif frcApy_vet[num_lf][1] == 2:  # fy
         dir_cone1 = (0, np.sign(frcApy_vet[num_lf][2]), 0)
         dir_cone2 = dir_cone1
-        center_cone1 = (coordX_force, coordY_force+height_cone/2, coordZ_force)
+        center_cone1 = (coordX_force, coordY_force + height_cone / 2, coordZ_force)
         center_cone2 = center_cone1
         color_fr = (1, 0, 0)
     elif frcApy_vet[num_lf][1] == 3:  # fz
         dir_cone1 = (0, 0, np.sign(frcApy_vet[num_lf][2]))
         dir_cone2 = dir_cone1
-        center_cone1 = (coordX_force, coordY_force, coordZ_force+height_cone/2)
+        center_cone1 = (coordX_force, coordY_force, coordZ_force + height_cone / 2)
         center_cone2 = center_cone1
         color_fr = (1, 0, 0)
     elif frcApy_vet[num_lf][1] == 4:  # tx
-        height_cone = 1.2*height_cone
+        height_cone = 1.2 * height_cone
         dir_cone1 = (np.sign(frcApy_vet[num_lf][2]), 0, 0)
         dir_cone2 = dir_cone1
-        center_cone1 = (coordX_force+height_cone/2, coordY_force, coordZ_force)
-        center_cone2 = (coordX_force+height_cone, coordY_force, coordZ_force)
+        center_cone1 = (coordX_force + height_cone / 2, coordY_force, coordZ_force)
+        center_cone2 = (coordX_force + height_cone, coordY_force, coordZ_force)
         color_fr = (0, 1, 0)
     elif frcApy_vet[num_lf][1] == 5:  # ty
-        height_cone = 1.2*height_cone
+        height_cone = 1.2 * height_cone
         dir_cone1 = (0, np.sign(frcApy_vet[num_lf][2]), 0)
         dir_cone2 = dir_cone1
-        center_cone1 = (coordX_force, coordY_force+height_cone/2, coordZ_force)
-        center_cone2 = (coordX_force, coordY_force+height_cone, coordZ_force)
+        center_cone1 = (coordX_force, coordY_force + height_cone / 2, coordZ_force)
+        center_cone2 = (coordX_force, coordY_force + height_cone, coordZ_force)
         color_fr = (0, 1, 0)
     elif frcApy_vet[num_lf][1] == 6:  # tz
-        height_cone = 1.2*height_cone
+        height_cone = 1.2 * height_cone
         dir_cone1 = (0, 0, np.sign(frcApy_vet[num_lf][2]))
         dir_cone2 = dir_cone1
-        center_cone1 = (coordX_force, coordY_force, coordZ_force+height_cone/2)
-        center_cone2 = (coordX_force, coordY_force, coordZ_force+height_cone)
+        center_cone1 = (coordX_force, coordY_force, coordZ_force + height_cone / 2)
+        center_cone2 = (coordX_force, coordY_force, coordZ_force + height_cone)
         color_fr = (0, 1, 0)
     elif frcApy_vet[num_lf][1] == 15:  # massadd
-        height_cone = 1.2*scala_view
+        height_cone = 1.2 * scala_view
         dir_cone1 = (-1, 0, 0)
         dir_cone2 = (1, 0, 0)
         center_cone1 = (coordX_force, coordY_force, coordZ_force)
         center_cone2 = (coordX_force, coordY_force, coordZ_force)
         color_fr = (0.4, 0.1, 0.8)
     elif frcApy_vet[num_lf][1] == 16:  # spring2gd
-        height_cone = 1.2*scala_view
+        height_cone = 1.2 * scala_view
         dir_cone1 = (0, 1, 0)
         dir_cone2 = (0, -1, 0)
-        center_cone1 = (coordX_force, coordY_force-height_cone/2, coordZ_force)
-        center_cone2 = (coordX_force, coordY_force -
-                        3*height_cone/2, coordZ_force)
+        center_cone1 = (coordX_force, coordY_force - height_cone / 2, coordZ_force)
+        center_cone2 = (coordX_force, coordY_force - 3 * height_cone / 2, coordZ_force)
         color_fr = (0, 0.9, 0.8)
     elif frcApy_vet[num_lf][1] == 17:  # damper2gd
         # *(0.5*max(abs(frcApy_vet[:,2])))/(0.5*max(abs(frcApy_vet[:,2])))
-        height_cone = 1.2*scala_view
+        height_cone = 1.2 * scala_view
         dir_cone1 = (0, 1, 0)
         dir_cone2 = (0, -1, 0)
         center_cone1 = (coordX_force, coordY_force, coordZ_force)
@@ -90,7 +100,7 @@ def view_listforce(coord, frcApy_vet, scala_view, num_lf):
     cone1 = vtk.vtkConeSource()
     cone1.SetResolution(1)
     cone1.SetHeight(height_cone)
-    cone1.SetRadius(0.15*height_cone)
+    cone1.SetRadius(0.15 * height_cone)
     cone1.SetCenter(center_cone1)
     cone1.SetDirection(dir_cone1)
     forcemap1 = vtk.vtkPolyDataMapper()
@@ -102,7 +112,7 @@ def view_listforce(coord, frcApy_vet, scala_view, num_lf):
     cone2 = vtk.vtkConeSource()
     cone2.SetResolution(1)
     cone2.SetHeight(height_cone)
-    cone2.SetRadius(0.15*height_cone)
+    cone2.SetRadius(0.15 * height_cone)
     cone2.SetCenter(center_cone2)
     cone2.SetDirection(dir_cone2)
     forcemap2 = vtk.vtkPolyDataMapper()
@@ -115,28 +125,39 @@ def view_listforce(coord, frcApy_vet, scala_view, num_lf):
 
 
 def view_bondcond_point(coord, bondCond_vet, scala_view, num_bc):
-    coordX_bc = coord[int(bondCond_vet[num_bc, 1])-1, 1]
-    coordY_bc = coord[int(bondCond_vet[num_bc, 1])-1, 2]
-    coordZ_bc = coord[int(bondCond_vet[num_bc, 1])-1, 3]
-    height_cone = 0.9*scala_view
+    """_summary_
+
+    Arguments:
+        coord -- _description_
+        bondCond_vet -- _description_
+        scala_view -- _description_
+        num_bc -- _description_
+
+    Returns:
+        _description_
+    """
+    coordX_bc = coord[int(bondCond_vet[num_bc, 1]) - 1, 1]
+    coordY_bc = coord[int(bondCond_vet[num_bc, 1]) - 1, 2]
+    coordZ_bc = coord[int(bondCond_vet[num_bc, 1]) - 1, 3]
+    height_cone = 0.9 * scala_view
     color_rgb = (1, 1, 0)
     max_coordX = max(coord[:, 1])
     bc_text = vtk.vtkVectorText()
     if int(bondCond_vet[num_bc, 0]) == 0:  # fixed all dofs
         if coordX_bc == max_coordX:
             dir_cone = (-1, 0, 0)
-            center_cone = (coordX_bc+height_cone/2, coordY_bc, coordZ_bc)
-            center_cube = (coordX_bc+2*height_cone/2, coordY_bc, coordZ_bc)
+            center_cone = (coordX_bc + height_cone / 2, coordY_bc, coordZ_bc)
+            center_cube = (coordX_bc + 2 * height_cone / 2, coordY_bc, coordZ_bc)
         else:
             dir_cone = (1, 0, 0)
-            center_cone = (coordX_bc-height_cone/2, coordY_bc, coordZ_bc)
-            center_cube = (coordX_bc-2*height_cone/2, coordY_bc, coordZ_bc)
-        bc_text.SetText('F')
+            center_cone = (coordX_bc - height_cone / 2, coordY_bc, coordZ_bc)
+            center_cube = (coordX_bc - 2 * height_cone / 2, coordY_bc, coordZ_bc)
+        bc_text.SetText("F")
         bc_text.Update()
         cube = vtk.vtkCubeSource()
-        cube.SetXLength(2*height_cone)
-        cube.SetYLength(2*height_cone)
-        cube.SetZLength(0*height_cone)
+        cube.SetXLength(2 * height_cone)
+        cube.SetYLength(2 * height_cone)
+        cube.SetZLength(0 * height_cone)
         cube.SetCenter(center_cube)
         bcmap = vtk.vtkPolyDataMapper()
         bcmap.SetInputConnection(cube.GetOutputPort())
@@ -149,18 +170,18 @@ def view_bondcond_point(coord, bondCond_vet, scala_view, num_bc):
         dir_cone = (1, 0, 0)
         if coordX_bc == max_coordX:
             dir_cone = (-1, 0, 0)
-            center_cone = (coordX_bc+height_cone/2, coordY_bc, coordZ_bc)
-            center_cube = (coordX_bc+3.5*height_cone/2, coordY_bc, coordZ_bc)
+            center_cone = (coordX_bc + height_cone / 2, coordY_bc, coordZ_bc)
+            center_cube = (coordX_bc + 3.5 * height_cone / 2, coordY_bc, coordZ_bc)
         else:
             dir_cone = (1, 0, 0)
-            center_cone = (coordX_bc-height_cone/2, coordY_bc, coordZ_bc)
-            center_cube = (coordX_bc-3.5*height_cone/2, coordY_bc, coordZ_bc)
-        bc_text.SetText('UX')
+            center_cone = (coordX_bc - height_cone / 2, coordY_bc, coordZ_bc)
+            center_cube = (coordX_bc - 3.5 * height_cone / 2, coordY_bc, coordZ_bc)
+        bc_text.SetText("UX")
         bc_text.Update()
         cube = vtk.vtkCubeSource()
-        cube.SetXLength(0.5*height_cone)
-        cube.SetYLength(2.5*height_cone)
-        cube.SetZLength(0*height_cone)
+        cube.SetXLength(0.5 * height_cone)
+        cube.SetYLength(2.5 * height_cone)
+        cube.SetZLength(0 * height_cone)
         cube.SetCenter(center_cube)
         bcmap = vtk.vtkPolyDataMapper()
         bcmap.SetInputConnection(cube.GetOutputPort())
@@ -170,14 +191,14 @@ def view_bondcond_point(coord, bondCond_vet, scala_view, num_bc):
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
     elif int(bondCond_vet[num_bc, 0]) == 2:  # fixed uy dofs
         dir_cone = (0, 1, 0)
-        center_cone = (coordX_bc, coordY_bc-height_cone/2, coordZ_bc)
-        center_cube = (coordX_bc, coordY_bc-3.5*height_cone/2, coordZ_bc)
-        bc_text.SetText('UY')
+        center_cone = (coordX_bc, coordY_bc - height_cone / 2, coordZ_bc)
+        center_cube = (coordX_bc, coordY_bc - 3.5 * height_cone / 2, coordZ_bc)
+        bc_text.SetText("UY")
         bc_text.Update()
         cube = vtk.vtkCubeSource()
-        cube.SetXLength(2.5*height_cone)
-        cube.SetYLength(0.5*height_cone)
-        cube.SetZLength(0*height_cone)
+        cube.SetXLength(2.5 * height_cone)
+        cube.SetYLength(0.5 * height_cone)
+        cube.SetZLength(0 * height_cone)
         cube.SetCenter(center_cube)
         bcmap = vtk.vtkPolyDataMapper()
         bcmap.SetInputConnection(cube.GetOutputPort())
@@ -187,14 +208,14 @@ def view_bondcond_point(coord, bondCond_vet, scala_view, num_bc):
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
     elif int(bondCond_vet[num_bc, 0]) == 3:  # fixed uz dofs
         dir_cone = (0, 0, 1)
-        center_cone = (coordX_bc, coordY_bc, coordZ_bc-height_cone/2)
-        center_cube = (coordX_bc, coordY_bc, coordZ_bc-3.5*height_cone/2)
-        bc_text.SetText('UZ')
+        center_cone = (coordX_bc, coordY_bc, coordZ_bc - height_cone / 2)
+        center_cube = (coordX_bc, coordY_bc, coordZ_bc - 3.5 * height_cone / 2)
+        bc_text.SetText("UZ")
         bc_text.Update()
         cube = vtk.vtkCubeSource()
-        cube.SetXLength(0*height_cone)
-        cube.SetYLength(2.5*height_cone)
-        cube.SetZLength(0.5*height_cone)
+        cube.SetXLength(0 * height_cone)
+        cube.SetYLength(2.5 * height_cone)
+        cube.SetZLength(0.5 * height_cone)
         cube.SetCenter(center_cube)
         bcmap = vtk.vtkPolyDataMapper()
         bcmap.SetInputConnection(cube.GetOutputPort())
@@ -204,15 +225,15 @@ def view_bondcond_point(coord, bondCond_vet, scala_view, num_bc):
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
     elif int(bondCond_vet[num_bc, 0]) == 4:  # fixed rx dofs
         dir_cone = (0, 0, 1)
-        center_cone = (coordX_bc, coordY_bc, coordZ_bc-height_cone/2)
-        center_cube = (coordX_bc, coordY_bc, coordZ_bc-3.5*height_cone/2)
-        bc_text.SetText('RX')
+        center_cone = (coordX_bc, coordY_bc, coordZ_bc - height_cone / 2)
+        center_cube = (coordX_bc, coordY_bc, coordZ_bc - 3.5 * height_cone / 2)
+        bc_text.SetText("RX")
         bc_text.Update()
 
         cube = vtk.vtkCubeSource()
-        cube.SetXLength(0*height_cone)
-        cube.SetYLength(2.5*height_cone)
-        cube.SetZLength(0.5*height_cone)
+        cube.SetXLength(0 * height_cone)
+        cube.SetYLength(2.5 * height_cone)
+        cube.SetZLength(0.5 * height_cone)
         cube.SetCenter(center_cube)
         bcmap = vtk.vtkPolyDataMapper()
         bcmap.SetInputConnection(cube.GetOutputPort())
@@ -225,18 +246,18 @@ def view_bondcond_point(coord, bondCond_vet, scala_view, num_bc):
         dir_cone = (1, 0, 0)
         if coordX_bc == max_coordX:
             dir_cone = (-1, 0, 0)
-            center_cone = (coordX_bc+height_cone/2, coordY_bc, coordZ_bc)
-            center_cube = (coordX_bc+3.5*height_cone/2, coordY_bc, coordZ_bc)
+            center_cone = (coordX_bc + height_cone / 2, coordY_bc, coordZ_bc)
+            center_cube = (coordX_bc + 3.5 * height_cone / 2, coordY_bc, coordZ_bc)
         else:
             dir_cone = (1, 0, 0)
-            center_cone = (coordX_bc-height_cone/2, coordY_bc, coordZ_bc)
-            center_cube = (coordX_bc-3.5*height_cone/2, coordY_bc, coordZ_bc)
-        bc_text.SetText('RY')
+            center_cone = (coordX_bc - height_cone / 2, coordY_bc, coordZ_bc)
+            center_cube = (coordX_bc - 3.5 * height_cone / 2, coordY_bc, coordZ_bc)
+        bc_text.SetText("RY")
         bc_text.Update()
         cube = vtk.vtkCubeSource()
-        cube.SetXLength(0.5*height_cone)
-        cube.SetYLength(2.5*height_cone)
-        cube.SetZLength(0*height_cone)
+        cube.SetXLength(0.5 * height_cone)
+        cube.SetYLength(2.5 * height_cone)
+        cube.SetZLength(0 * height_cone)
         cube.SetCenter(center_cube)
         bcmap = vtk.vtkPolyDataMapper()
         bcmap.SetInputConnection(cube.GetOutputPort())
@@ -247,14 +268,14 @@ def view_bondcond_point(coord, bondCond_vet, scala_view, num_bc):
 
     elif int(bondCond_vet[num_bc, 0]) == 6:  # fixed rz dofs
         dir_cone = (0, 1, 0)
-        center_cone = (coordX_bc, coordY_bc-height_cone/2, coordZ_bc)
-        center_cube = (coordX_bc, coordY_bc-3.5*height_cone/2, coordZ_bc)
-        bc_text.SetText('RZ')
+        center_cone = (coordX_bc, coordY_bc - height_cone / 2, coordZ_bc)
+        center_cube = (coordX_bc, coordY_bc - 3.5 * height_cone / 2, coordZ_bc)
+        bc_text.SetText("RZ")
         bc_text.Update()
         cube = vtk.vtkCubeSource()
-        cube.SetXLength(2.5*height_cone)
-        cube.SetYLength(0.5*height_cone)
-        cube.SetZLength(0*height_cone)
+        cube.SetXLength(2.5 * height_cone)
+        cube.SetYLength(0.5 * height_cone)
+        cube.SetZLength(0 * height_cone)
         cube.SetCenter(center_cube)
         bcmap = vtk.vtkPolyDataMapper()
         bcmap.SetInputConnection(cube.GetOutputPort())
@@ -265,7 +286,7 @@ def view_bondcond_point(coord, bondCond_vet, scala_view, num_bc):
     cone = vtk.vtkConeSource()
     cone.SetResolution(1)
     cone.SetHeight(height_cone)
-    cone.SetRadius(0.5*height_cone)
+    cone.SetRadius(0.5 * height_cone)
     cone.SetCenter(center_cone)
     cone.SetDirection(dir_cone)
     bccmap = vtk.vtkPolyDataMapper()
@@ -285,13 +306,24 @@ def view_bondcond_point(coord, bondCond_vet, scala_view, num_bc):
 
 
 def view_text_point(coord, coordMax, scala_view, text):
+    """_summary_
+
+    Arguments:
+        coord -- _description_
+        coordMax -- _description_
+        scala_view -- _description_
+        text -- _description_
+
+    Returns:
+        _description_
+    """
     coordX = coord[0]
     coordY = coord[1]
     coordZ = coord[2]
-    height_cone = 0.9*scala_view
-    scala = 0.3*scala_view
+    height_cone = 0.9 * scala_view
+    scala = 0.3 * scala_view
     bc_text = vtk.vtkVectorText()
-    bc_text.SetText(text[0]+'_'+text[1])
+    bc_text.SetText(text[0] + "_" + text[1])
     bc_text.Update()
     center_cone = (coordX, coordY, coordZ)
     bc_text_map = vtk.vtkPolyDataMapper()
@@ -305,112 +337,143 @@ def view_text_point(coord, coordMax, scala_view, text):
 
 
 def view_beam_crossSection(dimSection, typSection, coord_bcs):
+    """_summary_
+
+    Arguments:
+        dimSection -- _description_
+        typSection -- _description_
+        coord_bcs -- _description_
+
+    Returns:
+        _description_
+    """
     b = dimSection[0]
     h = dimSection[1]
     t = dimSection[2]
     dia = dimSection[3]
-    Lx = np.sqrt(((coord_bcs[3]-coord_bcs[0])**2))
-    Ly = np.sqrt(((coord_bcs[4]-coord_bcs[1])**2))
-    Lz = np.sqrt(((coord_bcs[5]-coord_bcs[2])**2))
+    Lx = np.sqrt(((coord_bcs[3] - coord_bcs[0]) ** 2))
+    Ly = np.sqrt(((coord_bcs[4] - coord_bcs[1]) ** 2))
+    Lz = np.sqrt(((coord_bcs[5] - coord_bcs[2]) ** 2))
     L = np.sqrt(Lx**2 + Ly**2 + Lz**2)
     if (Lx > 0.0) and (Ly == 0.0) and (Lz == 0.0):
-        l = (coord_bcs[3]-coord_bcs[0])/L
-        m = (coord_bcs[1]-coord_bcs[4])/L
-        n = (coord_bcs[5]-coord_bcs[2])/L
+        l = (coord_bcs[3] - coord_bcs[0]) / L
+        m = (coord_bcs[1] - coord_bcs[4]) / L
+        n = (coord_bcs[5] - coord_bcs[2]) / L
         rotate1 = (0, 1, 0)
         rotate2 = (0, 0, 0)
         rotate3 = (0, 0, 0)
         ang1 = 90
         ang2 = 0
         ang3 = 0
-        translate = (coord_bcs[0]-np.cos(l*np.pi)*0.5*L, coord_bcs[1] -
-                     np.sin(m*np.pi)*0.5*L, coord_bcs[2]-np.sin(n*np.pi)*0.5*L)
+        translate = (
+            coord_bcs[0] - np.cos(l * np.pi) * 0.5 * L,
+            coord_bcs[1] - np.sin(m * np.pi) * 0.5 * L,
+            coord_bcs[2] - np.sin(n * np.pi) * 0.5 * L,
+        )
     elif (Lx == 0.0) and (Ly > 0.0) and (Lz == 0.0):
-        l = (coord_bcs[3]-coord_bcs[0])/L
-        m = (coord_bcs[1]-coord_bcs[4])/L
-        n = (coord_bcs[5]-coord_bcs[2])/L
+        l = (coord_bcs[3] - coord_bcs[0]) / L
+        m = (coord_bcs[1] - coord_bcs[4]) / L
+        n = (coord_bcs[5] - coord_bcs[2]) / L
         rotate1 = (1, 0, 0)
         rotate2 = (0, 0, 0)
         rotate3 = (0, 0, 1)
         ang1 = 90
         ang2 = 0
         ang3 = 90
-        translate = (coord_bcs[0]-np.sin(l*np.pi)*0.5*L, coord_bcs[1] -
-                     np.cos(m*np.pi)*0.5*L, coord_bcs[2]-np.sin(n*np.pi)*0.5*L)
+        translate = (
+            coord_bcs[0] - np.sin(l * np.pi) * 0.5 * L,
+            coord_bcs[1] - np.cos(m * np.pi) * 0.5 * L,
+            coord_bcs[2] - np.sin(n * np.pi) * 0.5 * L,
+        )
     elif (Lx == 0.0) and (Ly == 0.0) and (Lz > 0.0):
-        l = (coord_bcs[3]-coord_bcs[0])/L
-        m = (coord_bcs[1]-coord_bcs[4])/L
-        n = (coord_bcs[5]-coord_bcs[2])/L
+        l = (coord_bcs[3] - coord_bcs[0]) / L
+        m = (coord_bcs[1] - coord_bcs[4]) / L
+        n = (coord_bcs[5] - coord_bcs[2]) / L
         rotate1 = (0, 0, 0)
         rotate2 = (0, 0, 0)
         rotate3 = (0, 1, 0)
         ang1 = 0
         ang2 = 0
         ang3 = -90
-        translate = (coord_bcs[0]-np.sin(l*np.pi)*0.5*L, coord_bcs[1] -
-                     np.sin(m*np.pi)*0.5*L, coord_bcs[2]-np.cos(n*np.pi)*0.5*L)
+        translate = (
+            coord_bcs[0] - np.sin(l * np.pi) * 0.5 * L,
+            coord_bcs[1] - np.sin(m * np.pi) * 0.5 * L,
+            coord_bcs[2] - np.cos(n * np.pi) * 0.5 * L,
+        )
     elif (Lx > 0.0) and (Ly > 0.0) and (Lz == 0.0):
-        l = (coord_bcs[3]-coord_bcs[0])/L
-        m = (coord_bcs[1]-coord_bcs[4])/L
-        n = (coord_bcs[5]-coord_bcs[2])/L
+        l = (coord_bcs[3] - coord_bcs[0]) / L
+        m = (coord_bcs[1] - coord_bcs[4]) / L
+        n = (coord_bcs[5] - coord_bcs[2]) / L
         ang1 = 90
         rotate1 = (0, m, 0)
         if l < 0:
-            ang2 = (np.arctan(l/m))*(180/np.pi)
+            ang2 = (np.arctan(l / m)) * (180 / np.pi)
         else:
-            ang2 = (np.arctan(-l/m))*(180/np.pi)
+            ang2 = (np.arctan(-l / m)) * (180 / np.pi)
         rotate2 = (l, 0, 0)
         ang3 = 0
         rotate3 = (0, 0, 0)
-        translate = (coord_bcs[0]+l*0.5*L, coord_bcs[1] -
-                     m*0.5*L, coord_bcs[2]-n*0.5*L)
+        translate = (
+            coord_bcs[0] + l * 0.5 * L,
+            coord_bcs[1] - m * 0.5 * L,
+            coord_bcs[2] - n * 0.5 * L,
+        )
     elif (Lx > 0.0) and (Ly == 0.0) and (Lz > 0.0):
-        l = (coord_bcs[3]-coord_bcs[0])/L
-        m = (coord_bcs[1]-coord_bcs[4])/L
-        n = (coord_bcs[5]-coord_bcs[2])/L
+        l = (coord_bcs[3] - coord_bcs[0]) / L
+        m = (coord_bcs[1] - coord_bcs[4]) / L
+        n = (coord_bcs[5] - coord_bcs[2]) / L
         ang1 = 90
         rotate1 = (0, 0, 0)
-        rotate2 = (0, -l/n, 0)
+        rotate2 = (0, -l / n, 0)
         rotate3 = (0, 0, 0)
         if l < 0:
-            ang2 = (np.arctan(l/n))*(180/np.pi)
+            ang2 = (np.arctan(l / n)) * (180 / np.pi)
         else:
-            ang2 = (np.arctan(-l/n))*(180/np.pi)
+            ang2 = (np.arctan(-l / n)) * (180 / np.pi)
         ang3 = 0
-        translate = (coord_bcs[0]+l*0.5*L, coord_bcs[1] -
-                     m*0.5*L, coord_bcs[2]+n*0.5*L)
+        translate = (
+            coord_bcs[0] + l * 0.5 * L,
+            coord_bcs[1] - m * 0.5 * L,
+            coord_bcs[2] + n * 0.5 * L,
+        )
     elif (Lx == 0.0) and (Ly > 0.0) and (Lz > 0.0):
-        l = (coord_bcs[3]-coord_bcs[0])/L
-        m = (coord_bcs[1]-coord_bcs[4])/L
-        n = (coord_bcs[5]-coord_bcs[2])/L
+        l = (coord_bcs[3] - coord_bcs[0]) / L
+        m = (coord_bcs[1] - coord_bcs[4]) / L
+        n = (coord_bcs[5] - coord_bcs[2]) / L
         d = np.sqrt(l**2 + m**2)
         ang1 = 0
         rotate1 = (0, 0, 0)
-        ang2 = (np.arctan(m/n))*(180/np.pi)
+        ang2 = (np.arctan(m / n)) * (180 / np.pi)
         rotate2 = (d, 0, 0)
         ang3 = 0
         rotate3 = (0, 0, 0)
-        translate = (coord_bcs[0]+l*0.5*L, coord_bcs[1] -
-                     m*0.5*L, coord_bcs[2]+n*0.5*L)
+        translate = (
+            coord_bcs[0] + l * 0.5 * L,
+            coord_bcs[1] - m * 0.5 * L,
+            coord_bcs[2] + n * 0.5 * L,
+        )
     elif (Lx > 0.0) and (Ly > 0.0) and (Lz > 0.0):
-        l = (coord_bcs[3]-coord_bcs[0])/L
-        m = (coord_bcs[1]-coord_bcs[4])/L
-        n = (coord_bcs[5]-coord_bcs[2])/L
-        ang1 = (np.arctan(l/m))*(180/np.pi)
+        l = (coord_bcs[3] - coord_bcs[0]) / L
+        m = (coord_bcs[1] - coord_bcs[4]) / L
+        n = (coord_bcs[5] - coord_bcs[2]) / L
+        ang1 = (np.arctan(l / m)) * (180 / np.pi)
         rotate1 = (0, m, 0)
-        ang2 = (np.arctan(l/m))*(180/np.pi)
+        ang2 = (np.arctan(l / m)) * (180 / np.pi)
         rotate2 = (l, 0, 0)
         ang3 = 0
         rotate3 = (0, 0, 0)
-        translate = (coord_bcs[0]+l*0.5*L, coord_bcs[1] +
-                     m*0.5*L, coord_bcs[2]+n*0.5*L)
+        translate = (
+            coord_bcs[0] + l * 0.5 * L,
+            coord_bcs[1] + m * 0.5 * L,
+            coord_bcs[2] + n * 0.5 * L,
+        )
     if typSection == 10:
         points = vtk.vtkPoints()
         points.SetNumberOfPoints(4)
-        points.SetPoint(0, -b/2, -h/2, 0.0)
-        points.SetPoint(1, b/2, -h/2, 0.0)
-        points.SetPoint(2, b/2, h/2, 0.0)
-        points.SetPoint(3, -b/2, h/2, 0.0)
+        points.SetPoint(0, -b / 2, -h / 2, 0.0)
+        points.SetPoint(1, b / 2, -h / 2, 0.0)
+        points.SetPoint(2, b / 2, h / 2, 0.0)
+        points.SetPoint(3, -b / 2, h / 2, 0.0)
         lines = vtk.vtkCellArray()
         lines.InsertNextCell(4)
         lines.InsertCellPoint(0)
@@ -431,18 +494,18 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs):
     elif typSection == 11:
         points = vtk.vtkPoints()
         points.SetNumberOfPoints(12)
-        points.SetPoint(0, 0.0, h/2, 0.0)
-        points.SetPoint(1, -b/2, h/2, 0.0)
-        points.SetPoint(2, -b/2, -h/2, 0.0)
-        points.SetPoint(3, b/2, -h/2, 0.0)
-        points.SetPoint(4, b/2, h/2, 0.0)
-        points.SetPoint(5, 0.0, h/2, 0.0)
-        points.SetPoint(6, 0.0, h/2-t, 0.0)
-        points.SetPoint(7, b/2-t, h/2-t, 0.0)
-        points.SetPoint(8, b/2-t, -h/2+t, 0.0)
-        points.SetPoint(9, -b/2+t, -h/2+t, 0.0)
-        points.SetPoint(10, -b/2+t, h/2-t, 0.0)
-        points.SetPoint(11, 0.0, h/2-t, 0.0)
+        points.SetPoint(0, 0.0, h / 2, 0.0)
+        points.SetPoint(1, -b / 2, h / 2, 0.0)
+        points.SetPoint(2, -b / 2, -h / 2, 0.0)
+        points.SetPoint(3, b / 2, -h / 2, 0.0)
+        points.SetPoint(4, b / 2, h / 2, 0.0)
+        points.SetPoint(5, 0.0, h / 2, 0.0)
+        points.SetPoint(6, 0.0, h / 2 - t, 0.0)
+        points.SetPoint(7, b / 2 - t, h / 2 - t, 0.0)
+        points.SetPoint(8, b / 2 - t, -h / 2 + t, 0.0)
+        points.SetPoint(9, -b / 2 + t, -h / 2 + t, 0.0)
+        points.SetPoint(10, -b / 2 + t, h / 2 - t, 0.0)
+        points.SetPoint(11, 0.0, h / 2 - t, 0.0)
         lines = vtk.vtkCellArray()
         lines.InsertNextCell(12)
         lines.InsertCellPoint(0)
@@ -476,18 +539,18 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs):
     elif typSection == 30:
         points = vtk.vtkPoints()
         points.SetNumberOfPoints(12)
-        points.SetPoint(0, b/2, h/2, 0)
-        points.SetPoint(1, -b/2, h/2, 0)
-        points.SetPoint(2, -b/2, h/2-dia, 0)
-        points.SetPoint(3, -t/2, h/2-dia, 0)
-        points.SetPoint(4, -t/2, -h/2+dia, 0)
-        points.SetPoint(5, -b/2, -h/2+dia, 0)
-        points.SetPoint(6, -b/2, -h/2, 0)
-        points.SetPoint(7, b/2, -h/2, 0)
-        points.SetPoint(8, b/2, -h/2+dia, 0)
-        points.SetPoint(9, t/2, -h/2+dia, 0)
-        points.SetPoint(10, t/2, h/2-dia, 0)
-        points.SetPoint(11, b/2, h/2-dia, 0)
+        points.SetPoint(0, b / 2, h / 2, 0)
+        points.SetPoint(1, -b / 2, h / 2, 0)
+        points.SetPoint(2, -b / 2, h / 2 - dia, 0)
+        points.SetPoint(3, -t / 2, h / 2 - dia, 0)
+        points.SetPoint(4, -t / 2, -h / 2 + dia, 0)
+        points.SetPoint(5, -b / 2, -h / 2 + dia, 0)
+        points.SetPoint(6, -b / 2, -h / 2, 0)
+        points.SetPoint(7, b / 2, -h / 2, 0)
+        points.SetPoint(8, b / 2, -h / 2 + dia, 0)
+        points.SetPoint(9, t / 2, -h / 2 + dia, 0)
+        points.SetPoint(10, t / 2, h / 2 - dia, 0)
+        points.SetPoint(11, b / 2, h / 2 - dia, 0)
         lines = vtk.vtkCellArray()
         lines.InsertNextCell(13)
         lines.InsertCellPoint(0)
@@ -517,7 +580,7 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs):
     elif typSection == 20:
         profile = vtk.vtkDiskSource()
         profile.SetCircumferentialResolution(32)
-        profile.SetOuterRadius(dia/2)
+        profile.SetOuterRadius(dia / 2)
         profile.SetInnerRadius(0)
         transform = vtk.vtkTransform()
         transform.Translate(translate)
@@ -530,8 +593,8 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs):
     elif typSection == 21:
         profile = vtk.vtkDiskSource()
         profile.SetCircumferentialResolution(64)
-        profile.SetOuterRadius(dia/2)
-        profile.SetInnerRadius(dia/2-t)
+        profile.SetOuterRadius(dia / 2)
+        profile.SetInnerRadius(dia / 2 - t)
         transform = vtk.vtkTransform()
         transform.Translate(translate)
         transform.RotateWXYZ(ang1, rotate1)
@@ -542,10 +605,10 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs):
         transform_filter.Update()
     elif typSection == 40:
         p0 = [0.0, 0.0, 0.0]
-        p1 = [0.25*L, 0.0, 0.0]
-        p2 = [0.5*L, 0.25*L, 0.0]
-        p3 = [0.5*L, -0.25*L, 0.0]
-        p4 = [0.75*L, 0.0, 0.0]
+        p1 = [0.25 * L, 0.0, 0.0]
+        p2 = [0.5 * L, 0.25 * L, 0.0]
+        p3 = [0.5 * L, -0.25 * L, 0.0]
+        p4 = [0.75 * L, 0.0, 0.0]
         p5 = [L, 0.0, 0.0]
         points = vtk.vtkPoints()
         points.InsertNextPoint(p0)

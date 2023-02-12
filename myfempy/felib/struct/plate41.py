@@ -4,11 +4,11 @@ from myfempy.felib.materset import get_elasticity
 import numpy as np
 
 __doc__ = """
-plane41.py: Quatrangular Isoparametric Plane 4-node linear Finite Element
+plate41.py: Quatrangular Isoparametric Plate Mindlin 4-node linear Finite Element
 """
 
 
-class Plane41:
+class Plate41:
     """_summary_"""
 
     def __init__(self, modelinfo):
@@ -38,10 +38,10 @@ class Plane41:
             _description_
         """
         dofelem = {
-            "key": "plane41",
-            "id": 220,
+            "key": "plate41",
+            "id": 230,
             "def": "struct 2D",
-            "dofs": ["ux", "uy"],
+            "dofs": ["uz", "rx", "ry"],
             "nnodes": ["i", "j", "k", "l"],
             "tensor": ["sxx", "syy", "sxy"],
         }
@@ -99,12 +99,12 @@ class Plane41:
         matXY = np.array([[xi, yi], [xj, yj], [xk, yk], [xl, yl]])
         x = intpl[0]
         y = intpl[1]
-        N1x = -(1 - y)
+        N1x = -1 + y
         N2x = 1 - y
         N3x = 1 + y
-        N4x = -(1 + y)
-        N1y = -(1 - x)
-        N2y = -(1 + x)
+        N4x = -1 - y
+        N1y = -1 + x
+        N2y = -1 - x
         N3y = 1 + x
         N4y = 1 - x
         dN = (1 / 4) * np.array([[N1x, N2x, N3x, N4x], [N1y, N2y, N3y, N4y]])
@@ -161,12 +161,12 @@ class Plane41:
         keq4 = np.zeros((self.dofe, self.dofe))
         for pp in range(0, self.npp):
             intpl = [xpp[pp], ypp[pp]]
-            Bpp, detJ = Plane41.matriz_b(self, nodelist, intpl)
+            Bpp, detJ = Plate41.matriz_b(self, nodelist, intpl)
             A += detJ
             keq4 += (
                 np.dot(np.dot(np.transpose(Bpp), D), Bpp) * L * detJ * wp[pp] * wp[pp]
             )
-        loc = Plane41.lockey(self, nodelist)
+        loc = Plate41.lockey(self, nodelist)
         return keq4, loc
 
     def mass(self, ee):
@@ -218,7 +218,7 @@ class Plane41:
             detJ = np.linalg.det(J)
             meq4 += np.dot(np.transpose(N), N) * R * L * detJ * wp[pp] * wp[pp]
         list_node = [noi, noj, nok, nol]
-        loc = Plane41.lockey(self, list_node)
+        loc = Plate41.lockey(self, list_node)
         return meq4, loc
 
 
