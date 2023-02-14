@@ -402,7 +402,7 @@ class MeshGen:
         tabmat, mat_lib = MeshSet.get_tabmat(matlist)
         tabgeo, geo_lib = MeshSet.get_tabgeo(geolist)
         coord = MeshSet.get_coord(nodelist)
-        if "ADD121" in meshdata.keys():
+        if "ELEMLIST" in meshdata.keys():
             if (mesh == "legacyON") or (mesh == "gmshON"):
                 nodefind = [None]
                 for nn in range(len(meshdata["NODELIST"])):
@@ -442,7 +442,7 @@ class MeshGen:
                     ]
                 )
             else:
-                elemlist = meshdata["ADD121"]
+                elemlist = meshdata["ELEMLIST"]
                 nodelist = meshdata["NODELIST"]
                 coord = MeshSet.get_coord(nodelist)
         else:
