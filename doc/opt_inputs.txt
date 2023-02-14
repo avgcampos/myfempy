@@ -1,0 +1,162 @@
+##########################################################################
+> MYFEMPY BASIC INPUT
+##########################################################################
+# PRE-PROCESS
+
+## myfempy.mesh.genmesh.ModelGen.get_model(meshdata: dict{})
+
+### meshdata{"PROPMAT"}: list[mat_set_1: dict{}, ..., mat_set_n: dict{}]
+		mat_set_n = {
+		- parameters
+			"NAME":str(def.val.='mat_1') 			-- material name def
+			"EXX":float(def.val.=1.0)				-- elasticity modulus in x direction
+			"VXX":float(def.val.=1.0) 				-- poisson's ratio in x direction
+			"GXX":float(def.val.=1.0)				-- shear modulus in x direction
+			"EYY":float(optional)					-- elasticity modulus in y direction, to orthotropic material only 
+			"VYY":float(optional) 					-- poisson's ratio in y direction, to orthotropic material only 
+			"GYY":float(optional)					-- shear modulus in y direction, to orthotropic material only 
+			"RHO":float(optional) 					-- density, to dynamic analysis only
+			"STIF":float(optional)					-- stiffness lumped, to lumped model
+			"DAMP":float(optional)					-- damping lumped, to lumped model
+			"MAT":str(def.val.='isotropic')			-- material definition
+				- options
+					'springlinear'					-- spring linear lumped 
+					'springnonlin'					-- spring non linear lumped
+					'isotropic'						-- isotropic stress/strain material
+					'orthotropic'					-- orthotropic stress/strain material
+			"DEF":str(def.val.='planestress')		-- material behavior
+				- options
+					'lumped' 						-- lumped material
+					'axial'							-- axial{rod, beams...} behavior material
+					'planestress'					-- plane stress behavior
+					'planestrain'					-- plane strain behavior
+					'solid'							-- solid behavior material
+		}
+		
+		
+### meshdata{"PROPGEO"}: list[geo_set_1: dict{}, ..., geo_set_n: dict{}]
+		geo_set_n = {
+		- parameters
+			"NAME":str(def.val.='geo_1') 			-- geometry name def
+			"AREACS":float(def.val.=1.0)			-- area cross section
+            "INERYY":float(def.val.=1.0)			-- inercia y diretion 
+            "INERZZ":float(def.val.=1.0)			-- inercia z diretion 
+            "INERXX":float(def.val.=1.0)			-- inercia x diretion 
+            "THICKN":float(def.val.=1.0)			-- thickness of plane/plate
+			"SEC":str(optional) 					-- type of cross section, view list
+			"DIM":dict(optional)(def.val.={			-- dimensional cross section def, view list
+				"b":float(def.val.=1.0)				-- b size
+				"h":float(def.val.=1.0)				-- h size
+				"t":float(def.val.=1.0)				-- t size
+				"d":float(def.val.=1.0)})			-- d size
+		}
+
+
+### meshdata{"FORCES"}: list[force_set_1: dict{},..., force_set_n: dict{}]
+		force_set_n = {
+		- parameters
+			"DEF":str(def.val.='forcenode') 		-- type force n def.
+				- options
+					'forcenode'						-- force in nodes, concentrated load
+					'forceedge'						-- force in edge, distributed load
+					'forcebeam'						-- force in beam only opt., distributed load [legacy version]
+					'forcesurf'						-- force in surface, distributed load
+			"DOF":str(def.val.='fx')				-- dof direction of force n
+				- options
+					'fx'							-- force in x dir.
+					'fy'							-- force in y dir.
+					'fz'							-- force in z dir.
+					'tx'							-- torque/moment in x dir.
+					'ty'							-- torque/moment in y dir.
+					'tz'							-- torque/moment in z dir.
+					'masspoint'						-- mass concentrated applied in node/point 
+					'spring2ground'					-- spring connected node to ground/fixed end
+					'damper2ground'					-- damper connected node to ground/fixed end
+            "DIR":str(def.val.='node')				-- type direction of force n
+				- options
+					# ----- OPT. WITH LOC SEEKERS 
+					'node'							-- node in mesh
+					'lengthx'						-- length line in x dir., beam only option [legacy version]
+					'lengthy'						-- length line in y dir., beam only option [legacy version]
+					'lengthz'						-- length line in z dir., beam only option [legacy version]
+					'edgex'							-- edge def in x dir. 	>>'LOC': {'x':float(coord. x nodes), 'y':999(ind. all node in y dir.), 'z':float(coord. z nodes)}
+					'edgey'							-- edge def in y dir.
+					'edgez'							-- edge def in z dir.
+					'surfxy'						-- surf def in xy plane >>'LOC': {'x':999, 'y': 999, 'z':float(coord. z nodes)}
+					'surfyz'						-- surf def in yz plane
+					'surfzx'						-- surf def in zx plane
+					# ----- OPT. WITH TAG SEEKERS
+					'point'							-- point number in tag list
+					'edge'							-- edge number in tag list
+					'surf'							-- surface number in tag list
+            "LOC":dict(def.val.={					-- coord. node locator of force n
+				'x':float(def.val.=1.0)				-- x coord. node
+				'y':float(def.val.=1.0)				-- y coord. node
+				'z':float(def.val.=0.0)})			-- z coord. node
+			"TAG":int(optional)						-- tag number of regions type, used with gmsh mesh gen, view list
+			"VAL":list(def.val.=[-1.0])				-- value list of force on steps, signal +/- is the direction
+				- options
+					[val_force_step_1,				-- force on steps, in solver opt. is possible to indicate the one step or all steps number
+					...,
+					val_force_step_n]
+		}
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+geo = {"NAME": "geo1",
+		"THICKN": 1.0
+		}
+
+
+force = {
+		'DEF': 'forceedge',
+         'DOF': 'fx',
+         'DIR': 'edgex',
+         'LOC': {'x': 0, 'y': 999, 'z': 0},
+         'VAL': [1.0],
+         }
+
+
+bondcond = {'DEF': 'fixed',
+            'DOF': 'all',
+            'DIR': 'edgey',
+            'LOC': {'x': 999, 'y': 0, 'z': 0},
+            }
+
+example
+meshdata = {"LEGACY": {'lx': 0.5,
+						'ly': 10,
+						'mesh': 'quad4',
+						'elem': 'plane41',
+						'nx': 10,
+						'ny': 100},
+            "PROPMAT": [mat],
+            "PROPGEO": [geo],
+            "FORCES": [force],
+            "BOUNDCOND": [bondcond],
+            "QUADRATURE": {'meth': 'gaussian', 'npp': 4},
+            "DOMAIN":'structural'
+            }
