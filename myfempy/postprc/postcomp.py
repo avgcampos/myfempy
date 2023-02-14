@@ -105,7 +105,9 @@ class PostProcess:
         plotdata["inci"] = self.modelinfo["inci"]
         plotdata["nodecon"] = self.modelinfo["nodecon"]
         plotdata["elemid"] = self.modelinfo["elemid"]
-        plotdata["filename"] = (path + "/" + postprocset["PLOTSET"]["filename"] + "_results_step-" + str(0))
+        plotdata["filename"] = (
+            path + "/" + postprocset["PLOTSET"]["filename"] + "_results_step-" + str(0)
+        )
         plotdata["coord"] = self.modelinfo["coord"]
         plotdata["displ_POINT_DATA_val"] = []
         plotdata["displ_POINT_DATA_name"] = []
@@ -135,19 +137,19 @@ class PostProcess:
                         "title"
                     ]
                 if postprocset["COMPUTER"]["elasticity"]["stress"]:
-                    plotdata["stress_CELL_DATA_val"] = postporc_result["stress_elm"][st][
-                        "val"
-                    ]
-                    plotdata["stress_CELL_DATA_title"] = postporc_result["stress_elm"][st][
-                        "title"
-                    ]
+                    plotdata["stress_CELL_DATA_val"] = postporc_result["stress_elm"][
+                        st
+                    ]["val"]
+                    plotdata["stress_CELL_DATA_title"] = postporc_result["stress_elm"][
+                        st
+                    ]["title"]
                 if postprocset["COMPUTER"]["elasticity"]["average"]:
-                    plotdata["stress_POINT_DATA_val"] = postporc_result["stress_avr"][st][
-                        "val"
-                    ]
-                    plotdata["stress_POINT_DATA_title"] = postporc_result["stress_avr"][st][
-                        "title"
-                    ]
+                    plotdata["stress_POINT_DATA_val"] = postporc_result["stress_avr"][
+                        st
+                    ]["val"]
+                    plotdata["stress_POINT_DATA_title"] = postporc_result["stress_avr"][
+                        st
+                    ]["title"]
                 convert_to_vtk(plotdata)
         if "eig" in postprocset["COMPUTER"].keys():
             if postprocset["COMPUTER"]["eig"]["modes"]:
@@ -156,7 +158,7 @@ class PostProcess:
                 )
                 plotdata["modes_POINT_DATA"] = postporc_result["modes"]
             convert_to_vtk(plotdata)
-    
+
     # @profile
     def compute(self, postprocset):
         """_summary_
@@ -175,20 +177,18 @@ class PostProcess:
         postporc_result["intforces_plot"] = []
         postporc_result["modes"] = []
         postporc_result["frf"] = []
-        
-        if self.modelinfo['domain']=='structural':
+
+        if self.modelinfo["domain"] == "structural":
             SOLUTION = postprocset["SOLUTION"]
-        
+
         result_disp = np.zeros(
-            (SOLUTION['U'].shape[1], self.modelinfo["coord"].shape[0], 4)
+            (SOLUTION["U"].shape[1], self.modelinfo["coord"].shape[0], 4)
         )
-        for ns in range(SOLUTION['U'].shape[1]):
-            result_disp[ns, :, :] = PostProcess.displ(
-                self, SOLUTION['U'][:, ns]
-            )
+        for ns in range(SOLUTION["U"].shape[1]):
+            result_disp[ns, :, :] = PostProcess.displ(self, SOLUTION["U"][:, ns])
         if "elasticity" in postprocset["COMPUTER"].keys():
             if postprocset["COMPUTER"]["elasticity"]["displ"]:
-                for st in range(SOLUTION['U'].shape[1]):
+                for st in range(SOLUTION["U"].shape[1]):
                     postporc_result["displ"].append(
                         {
                             "val": result_disp[st][:][:],
@@ -199,30 +199,36 @@ class PostProcess:
             if postprocset["COMPUTER"]["elasticity"]["stress"]:
                 result_stress = np.zeros(
                     (
-                        SOLUTION['U'].shape[1],
+                        SOLUTION["U"].shape[1],
                         self.modelinfo["inci"].shape[0],
                         2 * self.modelinfo["ntensor"][0] + 2,
                     )
                 )
-                for ns in range(SOLUTION['U'].shape[1]):
+                for ns in range(SOLUTION["U"].shape[1]):
                     result_stress[ns, :, :], title = PostProcess.stress(
-                        self, SOLUTION['U'][:, ns]
+                        self, SOLUTION["U"][:, ns]
                     )
                 results_avr = np.zeros(
                     (
-                        SOLUTION['U'].shape[1],
+                        SOLUTION["U"].shape[1],
                         self.modelinfo["coord"].shape[0],
                         2 * self.modelinfo["ntensor"][0] + 2,
                     )
                 )
-                for ns in range(SOLUTION['U'].shape[1]):
+                for ns in range(SOLUTION["U"].shape[1]):
                     for nt in range(2 * self.modelinfo["ntensor"][0] + 2):
                         # results_avr[ns, :, nt] = PostComputer.results_average(self, result_stress[ns, :, nt])
                         # results_avr[ns, :, nt] = results_average(self, result_stress[ns, :, nt])
-                        results_avr[ns, :, nt] = results_average(result_stress[ns, :, nt], self.nnode, self.nelem, self.dofe, self.inci)
-                
+                        results_avr[ns, :, nt] = results_average(
+                            result_stress[ns, :, nt],
+                            self.nnode,
+                            self.nelem,
+                            self.dofe,
+                            self.inci,
+                        )
+
                 result_stress_avr = results_avr
-                for st in range(SOLUTION['U'].shape[1]):
+                for st in range(SOLUTION["U"].shape[1]):
                     postporc_result["stress_elm"].append(
                         {"val": result_stress[st][:][:], "title": title, "avr": False}
                     )
@@ -237,10 +243,8 @@ class PostProcess:
                 pass
         if "balance" in postprocset["COMPUTER"].keys():
             if postprocset["COMPUTER"]["balance"]["intforces_plot"]:
-                for ns in range(SOLUTION['U'].shape[1]):
-                    ifb, title = PostProcess.intforces(
-                        self, SOLUTION['U'][:, ns]
-                    )
+                for ns in range(SOLUTION["U"].shape[1]):
+                    ifb, title = PostProcess.intforces(self, SOLUTION["U"][:, ns])
                     postporc_result["intforces_plot"].append(
                         {"val": [ifb["le"], ifb["val"]], "title": title}
                     )
@@ -248,7 +252,7 @@ class PostProcess:
                 pass
         if "eig" in postprocset["COMPUTER"].keys():
             if postprocset["COMPUTER"]["eig"]["modes"]:
-                for st in range(SOLUTION['U'].shape[1]):
+                for st in range(SOLUTION["U"].shape[1]):
                     postporc_result["modes"].append(
                         {
                             "val": result_disp[st][:][:],
@@ -268,7 +272,7 @@ class PostProcess:
         if "frf" in postprocset["COMPUTER"].keys():
             if postprocset["COMPUTER"]["frf"]["frf_plot"]:
                 postporc_result["frf"].append(
-                    {"val": SOLUTION['U'], "freqlog": SOLUTION["FREQ"]}
+                    {"val": SOLUTION["U"], "freqlog": SOLUTION["FREQ"]}
                 )
             else:
                 pass

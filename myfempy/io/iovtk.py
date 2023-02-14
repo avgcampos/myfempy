@@ -39,6 +39,7 @@ def vtk_CellType(elemid: cython.char):
     vtkCT = CellType[elemid]
     return vtkCT
 
+
 # @cython.cfunc
 def convert_to_vtk(plotdata):
     """_summary_
@@ -58,7 +59,7 @@ def convert_to_vtk(plotdata):
     numstr_clldata: cython.int
 
     numnodes = int(len(plotdata["coord"]))
-    numelem =int(len(plotdata["inci"]))
+    numelem = int(len(plotdata["inci"]))
     numdsp_pntdata = int(len(plotdata["displ_POINT_DATA_val"]))
     numstr_pntdata = int(len(plotdata["stress_POINT_DATA_title"]))
     nummds_pntdata = int(len(plotdata["modes_POINT_DATA"]))
@@ -136,7 +137,9 @@ def convert_to_vtk(plotdata):
                     + str(int(len(plotdata["modes_POINT_DATA"][md]["val"][:, 1:])))
                     + " float\n"
                 )
-                for ii in range(0, int(len(plotdata["modes_POINT_DATA"][md]["val"][:, 1:]))):
+                for ii in range(
+                    0, int(len(plotdata["modes_POINT_DATA"][md]["val"][:, 1:]))
+                ):
                     list2write = (
                         plotdata["modes_POINT_DATA"][md]["val"][:, 1:][ii, :]
                         .astype(str)
@@ -159,6 +162,7 @@ def convert_to_vtk(plotdata):
                 )
                 file_object.write("\n".join(list2write) + "\n")
         # POINT DATA FUTURE...
+
 
 # @cython.cfunc
 def convert_from_vtk(filename):
@@ -183,7 +187,7 @@ def convert_from_vtk(filename):
         lineaux = line.split()
         nnod = int(lineaux[1])
         nodelist = [[None] * 4]
-        for ii in range(0, nnod ):
+        for ii in range(0, nnod):
             line = file_object.readline()
             lineaux = line.split()
             contstr = lineaux[0:3]

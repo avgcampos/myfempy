@@ -6,11 +6,16 @@ __doc__ = """
 truss21.py: Truss 2D 2-node linear Finite Element
 """
 
-
 class Truss21:
-    """_summary_"""
-
+    """Truss21 class: Truss 2D 2-node linear Finite Element"""
+    
     def __init__(self, modelinfo):
+        """
+       Truss21 class: Truss 2D 2-node linear Finite Element
+
+        Args:
+            modelinfo (dict): dict with information of the model F.E.
+        """
         self.dofe = modelinfo["nodecon"][0] * modelinfo["nodedof"][0]
         self.fulldof = modelinfo["nodedof"][0] * len(modelinfo["coord"])
         self.nodedof = modelinfo["nodedof"][0]
@@ -20,13 +25,14 @@ class Truss21:
         self.coord = modelinfo["coord"]
         self.tabmat = modelinfo["tabmat"]
         self.tabgeo = modelinfo["tabgeo"]
+    
 
     @staticmethod
     def elemset():
         """_summary_
 
         Returns:
-            _description_
+             dofelem (dict): element definition set 
         """
         dofelem = {
             "key": "truss21",

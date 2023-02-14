@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-from myfempy.felib.felemset import get_elemset
-from myfempy.utils.utils import loading_bar_v1
-import scipy.sparse as sp
 import numpy as np
-import sys
+# from myfempy.utils.utils import loading_bar_v1
+import scipy.sparse as sp
+
+from myfempy.felib.felemset import get_elemset
+
+# import sys
 
 __doc__ = """
 Assembly stiffness and mass, assembly of loads vector
@@ -41,11 +43,9 @@ class Assembler:
             loc_T = loc.reshape(1, dofe).T
             Ycopy_loc = np.tile(loc_T, (1, dofe))
             Ycopy_loc_T = np.transpose(Ycopy_loc)
-            ith[(dofe * dofe) * ee : (dofe * dofe) * (ee + 1)] = Ycopy_loc.flatten("F")
-            jth[(dofe * dofe) * ee : (dofe * dofe) * (ee + 1)] = Ycopy_loc_T.flatten(
-                "F"
-            )
-            val[(dofe * dofe) * ee : (dofe * dofe) * (ee + 1)] = mat.flatten("F")
+            ith[(dofe*dofe)*ee:(dofe*dofe)*(ee+1)] = Ycopy_loc.flatten("F")
+            jth[(dofe*dofe)*ee:(dofe*dofe)*(ee+1)] = Ycopy_loc_T.flatten("F")
+            val[(dofe*dofe)*ee:(dofe*dofe)*(ee+1)] = mat.flatten("F")
         matrix = sp.csc_matrix(
             (val, (ith, jth)),
             shape=(
@@ -101,11 +101,11 @@ class Assembler:
                             loc = np.array(
                                 [
                                     int(
-                                        modelinfo["nodedof"][0] * forceaply[ii, 0]
+                                        modelinfo["nodedof"][0]*forceaply[ii, 0]
                                         - (modelinfo["nodedof"][0])
                                     ),
                                     int(
-                                        modelinfo["nodedof"][0] * forceaply[ii, 0]
+                                        modelinfo["nodedof"][0]*forceaply[ii, 0]
                                         - (modelinfo["nodedof"][0] - 1)
                                     ),
                                 ]

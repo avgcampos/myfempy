@@ -1,3 +1,3 @@
 from .genmesh import MeshGen
 
-__all__ = ['MeshGen']
+__all__ = ["MeshGen"]

@@ -2,7 +2,7 @@
 """
 Average Nodes Calculator version 2
 """
-import Cython
+import cython
 import numpy as np
 import scipy.sparse as sp
 
@@ -31,7 +31,10 @@ def elem2nodes_filter(nnode: cython.int, nelem: cython.int, dofe: cython.int, in
     S = sp.csc_matrix((val, (ith, jth)), shape=(nnode, nelem))
     return S
 
-def results_average(results_elm, nnode: cython.int, nelem: cython.int, dofe: cython.int, inci):
+
+def results_average(
+    results_elm, nnode: cython.int, nelem: cython.int, dofe: cython.int, inci
+):
     """_summary_
 
     Arguments:

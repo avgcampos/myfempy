@@ -11,7 +11,6 @@ class Frame21:
     """_summary_"""
 
     def __init__(self, modelinfo):
-
         self.dofe = modelinfo["nodecon"][0] * modelinfo["nodedof"][0]
         self.fulldof = modelinfo["nodedof"][0] * len(modelinfo["coord"])
         self.nodedof = modelinfo["nodedof"][0]

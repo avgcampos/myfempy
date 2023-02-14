@@ -21,7 +21,7 @@ def get_forces(modelinfo, flist):
         node_list_fc = np.array([])
         for i in range(len(forcelist)):
             # ----- SEEKERS IN LOC -----
-            if forcelist[i][3] == "lenghx":
+            if forcelist[i][3] == "lengthx":
                 coord_0 = float(forcelist[i, 5])
                 coord_1 = float(forcelist[i, 6])
                 node_list_fc = modelinfo["coord"][
@@ -148,7 +148,6 @@ def get_forces(modelinfo, flist):
                 orthg_coordY = float(forcelist[i, 5])
                 node_list_fc = search_surfzx(orthg_coordY, modelinfo["coord"], 2e-3)
                 dir_fc = "y"
-            
             elif forcelist[i][3] == "node":
                 from myfempy.felib.physics.getnode import search_nodexyz
 
@@ -418,7 +417,7 @@ def get_constrain(modelinfo, blist):
                 node_list_bc = search_nodexyz(
                     node_coordX, node_coordY, node_coordZ, modelinfo["coord"], 2e-3
                 )
-            # ----- SEEKERS IN TAG -----
+            # ----- SEEKERS IN TAG -----    
             elif blist[i][2] == "point":
                 node_list_bc = modelinfo["regions"][0][1][int(blist[i][6]) - 1][1][:]
             elif blist[i][2] == "edge":

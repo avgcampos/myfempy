@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-from myfempy.plots.plotxy import tracker_plot
-from myfempy.utils.utils import loading_bar_v1
-import time
-import scipy.sparse.linalg as spla
 import numpy as np
+# from myfempy.utils.utils import loading_bar_v1
+# import time
+import scipy.sparse.linalg as spla
+
+from myfempy.plots.plotxy import tracker_plot
 
 __doc__ = """
 Static Linear Solver
@@ -50,7 +51,9 @@ def sld(fulldofs, stiffness, forcelist, freedof, solverset):
                 plotset["val_list"] = U1
                 plotset["fignumb"] = 1
                 postprocset["TRACKER"] = solverset["TRACKER"]
-                tracker_plot(postprocset, plotset, solverset["coord"], solverset["nodedof"])
+                tracker_plot(
+                    postprocset, plotset, solverset["coord"], solverset["nodedof"]
+                )
     return U
 
 
@@ -102,8 +105,9 @@ def sli(fulldofs, stiffness, forcelist, freedof, solverset):
                 plotset["val_list"] = U1
                 plotset["fignumb"] = 1
                 postprocset["TRACKER"] = solverset["TRACKER"]
-                coord = solverset["coord"]
-                tracker_plot(postprocset, plotset, solverset["coord"], solverset["nodedof"])
+                tracker_plot(
+                    postprocset, plotset, solverset["coord"], solverset["nodedof"]
+                )
     return U
 
 
@@ -163,6 +167,7 @@ def slipre(fulldofs, stiffness, forcelist, freedof, solverset):
                 plotset["val_list"] = U1
                 plotset["fignumb"] = 1
                 postprocset["TRACKER"] = solverset["TRACKER"]
-                coord = solverset["coord"]
-                tracker_plot(postprocset, plotset, solverset["coord"], solverset["nodedof"])
+                tracker_plot(
+                    postprocset, plotset, solverset["coord"], solverset["nodedof"]
+                )
     return U

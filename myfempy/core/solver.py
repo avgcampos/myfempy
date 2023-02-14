@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-from myfempy.utils.utils import print_console
-from myfempy.core.solverset import get_constrains_dofs, step_setting, get_solve
-from myfempy.core.assembler import Assembler
-import time
 import sys
+import time
+
+from myfempy.core.assembler import Assembler
+from myfempy.core.solverset import get_constrains_dofs, get_solve, step_setting
+from myfempy.utils.utils import print_console
 
 __doc__ = """
 Solver Manager
@@ -17,7 +18,6 @@ class Solver:
         _description_
     """
 
-   
     @staticmethod
     def get_static_solve(solverset, modelinfo):
         """_summary_
@@ -34,7 +34,7 @@ class Solver:
         start = time.time()
         KG = Assembler.assembler(modelinfo, key="stiffness")
         end = time.time()
-        kg_mem_size = sys.getsizeof(KG.toarray())/1e6
+        kg_mem_size = sys.getsizeof(KG.toarray()) / 1e6
         assembly_time = end - start
         print(" ")
         # print("STIFFNESS SIZE: ", kg_mem_size, " MB")
@@ -76,7 +76,7 @@ class Solver:
         KG = Assembler.assembler(modelinfo, key="stiffness")
         MG = Assembler.assembler(modelinfo, key="mass")
         end = time.time()
-        kg_mem_size = sys.getsizeof(KG.toarray())/1e6
+        kg_mem_size = sys.getsizeof(KG.toarray()) / 1e6
         assembly_time = end - start
         # print(" ")
         # print("STIFFNESS SIZE: ", kg_mem_size, " MB")
@@ -109,4 +109,5 @@ class Solver:
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

@@ -15,6 +15,7 @@ import numpy as np
 CLASS MESH SET
 """
 
+
 class MeshSet:
     """_summary_"""
 
@@ -50,7 +51,7 @@ class MeshSet:
         for ii in range(0, nnod):
             coord[ii, :] = np.array(nodelist[ii][:])
         return coord
-    
+
     def get_inci(elemlist, mat_lib, geo_lib, regions):
         """_summary_
 
@@ -402,7 +403,7 @@ class MeshGen:
         tabmat, mat_lib = MeshSet.get_tabmat(matlist)
         tabgeo, geo_lib = MeshSet.get_tabgeo(geolist)
         coord = MeshSet.get_coord(nodelist)
-        if "ELEMLIST" in meshdata.keys():
+        if "ADD121" in meshdata.keys():
             if (mesh == "legacyON") or (mesh == "gmshON"):
                 nodefind = [None]
                 for nn in range(len(meshdata["NODELIST"])):
@@ -442,7 +443,7 @@ class MeshGen:
                     ]
                 )
             else:
-                elemlist = meshdata["ELEMLIST"]
+                elemlist = meshdata["ADD121"]
                 nodelist = meshdata["NODELIST"]
                 coord = MeshSet.get_coord(nodelist)
         else:
@@ -469,7 +470,7 @@ class ModelGen:
         elif quadrature["meth"] == "no_interpol":
             quadra = [0, 1]
             return quadra
-    
+
     # @profile
     def get_model(meshdata):
         """_summary_
@@ -517,8 +518,8 @@ class ModelGen:
         if "DOMAIN" in meshdata.keys():
             modelinfo["domain"] = meshdata["DOMAIN"]
         else:
-            modelinfo["domain"] = 'null'
-        
+            modelinfo["domain"] = "null"
+
         return modelinfo
 
 

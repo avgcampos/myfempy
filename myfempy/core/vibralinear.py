@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-import time
-import scipy.sparse.linalg as spla
+# import time
 import numpy as np
+import scipy.sparse.linalg as spla
 
 __doc__ = """
 Vibration/Dynamic Linear Solver
@@ -22,11 +22,11 @@ def eig(fulldofs, stiffness, mass, forcelist, freedof, solverset):
     Returns:
         _description_
     """
-    plotset = dict()
-    postprocset = dict()
+    # plotset = dict()
+    # postprocset = dict()
     U = np.zeros((fulldofs, solverset["end"]))
     modeEnd = solverset["end"]
-    startstep = time.time()
+    # startstep = time.time()
     W, U[freedof, :] = spla.eigsh(
         stiffness[:, freedof][freedof, :],
         modeEnd,
@@ -34,7 +34,7 @@ def eig(fulldofs, stiffness, mass, forcelist, freedof, solverset):
         sigma=1,
         which="LM",
     )
-    endstep = time.time()
+    # endstep = time.time()
     # print("\nSTEP --: SUCCESSFUL CONVERGED\n")
     # print("\ TIME SPEND: ", endstep - startstep, " SEC")
     Wlist = np.arange(0, modeEnd + 1)
@@ -66,7 +66,7 @@ def frf(fulldofs, stiffness, mass, forcelist, freedof, solverset):
     freqStep = solverset["nsteps"]
     U = np.zeros((fulldofs, solverset["nsteps"]))
     w_range = np.linspace(freqStart, freqEnd, freqStep)
-    startstep = time.time()
+    # startstep = time.time()
     for ww in range(freqStep):
         Wn = w_range[ww]
         Dw = (stiffness[:, freedof][freedof, :]) - (Wn**2) * (
@@ -80,7 +80,7 @@ def frf(fulldofs, stiffness, mass, forcelist, freedof, solverset):
         #     print('ILLEGAL INPUT OR BREAKDOWN')
         # else:
         #     pass
-    endstep = time.time()
+    # endstep = time.time()
     # print("\ TIME SPEND: ", endstep - startstep, " SEC")
     w_range = w_range / (twopi)
     return U, w_range

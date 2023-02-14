@@ -100,7 +100,6 @@ def cg_coord(tabgeo, inci, num_elm):
     z_min = 1
     r_max = 1
     if tabgeo[int(inci[num_elm, 3]) - 1, -1] == 10:
-
         y_max = h * 0.5
         y_min = -h * 0.5
         z_max = b * 0.5
