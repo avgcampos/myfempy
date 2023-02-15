@@ -47,13 +47,24 @@ or
 
 **Myfempy** can be used in systems based on Linux, MacOS and Windows. **Myfempy** requires Python 3.
 
-
 ### Installation prerequisites, required to build **myfempy**:
 You can use either of two python development environments to run myfempy
 
 - [Python 3.x](https://www.python.org/) - *Python is a programming language that lets you work quickly and integrate systems more effectively.*
 - [Anaconda](https://www.anaconda.com/) - *Anaconda offers the easiest way to perform Python/R data science and machine learning on a single machine.*
 
+### Python packages required for using **myfempy**:
+The following python packages are required to run myfempy. Before to install myfempy-main, install this packages. Check if they are already installed on your machine
+
+- [numpy](https://numpy.org/) - The fundamental package for scientific computing with Python
+- [scipy](https://scipy.org/) - Fundamental algorithms for scientific computing in Python
+- [vtk](https://pypi.org/project/vtk/) - VTK is an open-source toolkit for 3D computer graphics, image processing, and visualization
+- [vedo](https://vedo.embl.es/) - A python module for scientific analysis and visualization of эd objects
+
+ - try
+	```bash
+	>> pip install numpy, cython, scipy, vedo
+	```
 
 #### Outhers prerequisites:
 - [gmsh/External Generator Mesh](https://gmsh.info/) - Gmsh is an open source 3D finite element mesh generator with a built-in CAD engine and post-processor. *Notes: 1 - Gmsh is NOT part of myfempy projects;  2 - Is Needed install Gmsh manually* 
@@ -64,20 +75,6 @@ You can use either of two python development environments to run myfempy
 	```
 
 - [gmsh PyPi](https://pypi.org/project/gmsh/)
-
-### Python packages required for using **myfempy**:
-The following python packages are required to run myfempy. Before to install myfempy-main, install this packages. Check if they are already installed on your machine
-
-- [numpy](https://numpy.org/) - The fundamental package for scientific computing with Python
-- [scipy](https://scipy.org/) - Fundamental algorithms for scientific computing in Python
-- [vtk](https://pypi.org/project/vtk/) - VTK is an open-source toolkit for 3D computer graphics, image processing, and visualization
-- [vedo](https://vedo.embl.es/) - A python module for scientific analysis and visualization of эd objects
-
-
- - try
-	```bash
-	>> pip install numpy, cython, scipy, vedo
-	```
 
 
 ## Tutorial
