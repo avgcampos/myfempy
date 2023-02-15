@@ -57,9 +57,10 @@ You can use either of two python development environments to run myfempy
 The following python packages are required to run myfempy. Before to install myfempy-main, install this packages. Check if they are already installed on your machine
 
 - [numpy](https://numpy.org/) - The fundamental package for scientific computing with Python
+- [cython](https://cython.org/) - Cython is a language that makes writing C extensions for Python as easy as Python itself
 - [scipy](https://scipy.org/) - Fundamental algorithms for scientific computing in Python
-- [vtk](https://pypi.org/project/vtk/) - VTK is an open-source toolkit for 3D computer graphics, image processing, and visualization
 - [vedo](https://vedo.embl.es/) - A python module for scientific analysis and visualization of эd objects
+- [vtk](https://pypi.org/project/vtk/)[optional] - VTK is an open-source toolkit for 3D computer graphics, image processing, and visualization
 
  - try
 	```bash
