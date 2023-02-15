@@ -66,7 +66,7 @@ You can use either of two python development environments to run myfempy
 - [gmsh PyPi](https://pypi.org/project/gmsh/)
 
 ### Python packages required for using **myfempy**:
-The following python packages are required to run myfempy. Check if they are already installed on your machine
+The following python packages are required to run myfempy. Before to install myfempy-main, install this packages. Check if they are already installed on your machine
 
 - [numpy](https://numpy.org/) - The fundamental package for scientific computing with Python
 - [scipy](https://scipy.org/) - Fundamental algorithms for scientific computing in Python
@@ -76,7 +76,7 @@ The following python packages are required to run myfempy. Check if they are alr
 
  - try
 	```bash
-	>> pip install numpy, scipy, vedo ...
+	>> pip install numpy, cython, scipy, vedo
 	```
 
 
