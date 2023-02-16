@@ -336,4 +336,4 @@ Project tree structure
    Quick Start <self>
    tutorial
    documentation
-   Source Coude <https://github.com/easycae-3d/myfempy>
+   Source Code <https://github.com/easycae-3d/myfempy>
