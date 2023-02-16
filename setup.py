@@ -36,10 +36,14 @@ myfempy install script
 Install myfempy through `python setup.py install`,
 or visit the github page to more information
 """
-# SETUP SYSTEM & PIP INSTALL
+# SETUP SYSTEM
 from setuptools import setup, find_packages
 
-# -------------- VERSION
+# README 
+with open('README.md', 'r', encoding="utf-8") as ld:
+    long_description = ld.read()
+
+# VERSION
 from myfempy import version
 
 # --------------
@@ -54,7 +58,7 @@ setup(
     maintainer="Campos, A. V. G. & 3D EasyCAE",
     maintainer_email="3deasycaebr.contato@gmail.com",
     description="myfempy is a python package to scientific analysis based on finite element method",
-    long_description="The myfempy is a python based on finite element method to scientific analysis. The code is open source and intended for educational and scientific purposes only, not recommended to commercial use. You can help us by contributing with a donation on the main project page, read the support options. If you use myfempy in your research, the  developers would be grateful if you could cite in your work",
+    long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://myfempy.readthedocs.io/en/latest/",
     download_url="https://github.com/easycae-3d/myfempy",
