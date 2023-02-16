@@ -1,6 +1,7 @@
-myfempy project Modules
-=========================
-
+myfempy
+=======
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
+
+   myfempy
