@@ -16,7 +16,10 @@ jobs:
       - name: Install myfempy
         run: |
             python -m pip install --upgrade pip
-            pip install numpy, cython, scipy, vedo 
+            pip install numpy
+            pip install cython
+            pip install scipy
+            pip install vedo 
             pip install .
       - name: Lint with flake8
         run: |
