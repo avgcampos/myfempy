@@ -13,7 +13,7 @@
 
 ```
 
-# Install myfempy
+## Install myfempy
 
 1. Clone/ Download the main code [latest version] from [github/myfempy/main](https://github.com/easycae-3d/myfempy/)
 
