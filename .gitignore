@@ -1,6 +1,9 @@
 ### myfempy ###
 desktop.ini
 ghosts_files/
+*.vtk
+*.geo
+*.msh1
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
