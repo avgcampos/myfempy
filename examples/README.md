@@ -1,5 +1,5 @@
 
-# myfempy_dev: myfempy project development proceedings
+# Get Started
 
 ```bash
 #                     __                                
@@ -13,9 +13,7 @@
 
 ```
 
-# Examples
-
-## Get Started
+# Install myfempy
 
 1. Clone/ Download the main code [latest version] from [github/myfempy/main](https://github.com/easycae-3d/myfempy/)
 
@@ -27,26 +25,27 @@
 
 5. Run any file example
 
-. Commands on terminal
+**Commands on terminal**
 
 ```bash
 
->> git clone https://github.com/easycae-3d/myfempy  # install git is needed before this command
+>> git clone https://github.com/easycae-3d/myfempy   # install git is needed before this command
 
->> python -m pip install --upgrade pip
+>> python -m pip install --upgrade pip               # update pip
 
->> pip install numpy, cython, scipy, vedo 			# install packages required
+>> pip install numpy, cython, scipy, vedo            # install packages required
 	
->> pip install .									# install myfempy-main
+>> pip install .                                     # install myfempy-main
 
 >> cd myfempy/examples
 
->> python ex_first_test.py							# run any file to test installation
-
+>> python ex_first_test.py                           # run any file to test installation
 
 ```
 
 ## Example List
+
+### Static Linear Analysis
 
 1. <ex_first_test.py> 							-- First test required to test install myfempy
 2. <ex_ex_su2_Linear Elasticity_Case.py>		-- Analysis to convergence of myfempy solver with su2 code [https://su2code.github.io/tutorials/Linear_Elasticity]
@@ -61,3 +60,13 @@
 11. <ex_plane2d_fromcad.py>						[dev]
 12. <ex_solid_fromcad.py>						[dev]
 
+### Modal Linear Analysis
+
+1. <ex_beam_modal.py> 							[dev]
+2. <ex_plane2d_modal.py>						[dev]
+3. <ex_lumped_modal.py> 						[dev]
+
+### Harmonic Dynamic Linear Analysis
+
+1. <ex_beam_dyharm.py> 							[dev]
+2. <ex_plane2d_dyharm.py>						[dev]
