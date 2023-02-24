@@ -248,7 +248,7 @@ def get_forces(modelinfo: dict, flist: np.ndarray):
                 force_value = float(forcelist[i, 2])
                 force_dirc = forcelist[i, 1]
                 force_value_vector, fc_type_dof = force_beam(
-                    modelinfo, force_value, force_dirc, dir_fc, node_list_fc, line_fc
+                    modelinfo, force_value, force_dirc, dir_fc, node_list_fc
                 )
                 fc_type_dof = np.tile(fc_type_dof, len(node_list_fc))
                 node_list_fc = np.repeat(node_list_fc, modelinfo["nodedof"][0], axis=0)
