@@ -6,13 +6,9 @@ import vedo as vd
 from myfempy.utils.utils import get_version, get_logo
 
 
-def post_show_mesh(file2plot, plotset):
-    """_summary_
-
-    Arguments:
-        file2plot -- _description_
-        plotset -- _description_
-    """
+def post_show_mesh(file2plot: str, plotset: dict):
+    """vedo code"""
+    
     win = vd.Plotter(title="POST-PROCESS", sharecam=False, screensize=(1280, 720))
     mesh = vd.Mesh(file2plot + ".vtk").lineWidth(1).flat()
     if plotset["edge"] == False:

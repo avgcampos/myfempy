@@ -9,13 +9,12 @@ Mesh Quality Calc.
 
 
 class MeshProp:
-    """_summary_"""
 
-    def __init__(self, plotset):
+    def __init__(self, plotset: dict):
         self.plotset = plotset
 
     def mesh_numbering(self):
-        """_summary_"""
+
         win = vd.Plotter(title="PRE-PROCESS", sharecam=False, screensize=(1280, 720))
         mesh = (
             vd.Mesh(self.plotset["RENDER"]["filename"] + ".vtk").lineWidth(0.1).flat()

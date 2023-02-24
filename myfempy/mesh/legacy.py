@@ -5,15 +5,13 @@ LEGACY MESH GEN
 import numpy as np
 
 
-def get_legacy_line2(GEOMETRY):
-    """_summary_
-
-    Arguments:
-        GEOMETRY -- _description_
-
-    Returns:
-        _description_
+def get_legacy_line2(GEOMETRY: dict):
+    """get a line 2 nodes mesh
+    
+    (i)---{1}---(j)
+        
     """
+    
     nel = GEOMETRY["nx"]
     lx = GEOMETRY["lx"]
     step = lx / nel
@@ -27,15 +25,25 @@ def get_legacy_line2(GEOMETRY):
     return conec, coord
 
 
-def get_legacy_tria3(GEOMETRY):
-    """_summary_
-
-    Arguments:
-        GEOMETRY -- _description_
-
-    Returns:
-        _description_
+def get_legacy_tria3(GEOMETRY: dict):
+    """get a triagular 3 nodes mesh
+  
+    (k) 
+     |\ 
+     | \ 
+     |  \
+     |   \
+     |    \
+     |     \
+     |  {1} \ 
+     |       \
+     |        \
+     |         \
+     |          \ 
+    (i)--------(j)
+    
     """
+    
     nelx = GEOMETRY["nx"]
     nely = GEOMETRY["ny"]
     nel = nelx * nely * 2
@@ -76,15 +84,19 @@ def get_legacy_tria3(GEOMETRY):
     return conec, coord
 
 
-def get_legacy_quad4(GEOMETRY):
-    """_summary_
-
-    Arguments:
-        GEOMETRY -- _description_
-
-    Returns:
-        _description_
+def get_legacy_quad4(GEOMETRY: dict):
+    """get a quadrangular 4 nodes mesh
+    
+    (l)---------------(k)
+     |                 |
+     |                 |
+     |      {1}        |
+     |                 |
+     |                 |
+    (i)---------------(j)
+    
     """
+    
     nelx = GEOMETRY["nx"]
     nely = GEOMETRY["ny"]
     nel = nelx * nely

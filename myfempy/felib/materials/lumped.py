@@ -5,22 +5,22 @@ lumped.py: SpringLinear material
 
 
 class Elasticity:
-    """_summary_"""
+    """elasticity set class""" 
 
-    def __init__(self, tabmat, inci, num_elm):
-        self.S = tabmat[int(inci[num_elm, 2]) - 1, 7]  # spring stiffness
-        self.D = tabmat[int(inci[num_elm, 2]) - 1, 8]  # spring dampe
+    def __init__(self, tabmat: np.ndarray, inci: np.ndarray, num_elm: int):
+        self.K = tabmat[int(inci[num_elm, 2]) - 1, 7]  # spring stiffness
+        self.C = tabmat[int(inci[num_elm, 2]) - 1, 8]  # spring dampe
 
     def springlinear(self):
-        """_summary_
+        """spring material lumped
 
         Returns:
-            _description_
+             D:list[]  -- elasticity matrix
         """
-        S = self.S
-        D = self.D
-        E = [S, D]
-        return E
+        K = self.K
+        C = self.C
+        D = [K, C]
+        return D
 
 
 if __name__ == "__main__":

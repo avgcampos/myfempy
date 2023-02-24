@@ -5,15 +5,7 @@ GMSH GEN MESH
 import os
 
 
-def gmsh_key(meshtype):
-    """_summary_
-
-    Arguments:
-        meshtype -- _description_
-
-    Returns:
-        _description_
-    """
+def gmsh_key(meshtype: str):
     l = {
         "line2": "-1",
         "tria3": "-2",
@@ -24,12 +16,7 @@ def gmsh_key(meshtype):
     return l[meshtype]
 
 
-def get_gmsh_msh(meshdata):
-    """_summary_
-
-    Arguments:
-        meshdata -- _description_
-    """
+def get_gmsh_msh(meshdata: dict):
     cmd = (
         "gmsh"
         + " "
@@ -45,12 +32,7 @@ def get_gmsh_msh(meshdata):
     # os.system("echo SAVING AND EXIT")
 
 
-def get_gmsh_geo(meshdata):
-    """_summary_
-
-    Arguments:
-        meshdata -- _description_
-    """
+def get_gmsh_geo(meshdata: dict):
     with open((meshdata["GMSH"]["filename"] + ".geo"), "w") as file_object:
         file_object.write("// GMSH GEOMETRY FILE FROM MYFEMPY\n")
         file_object.write('SetFactory("OpenCASCADE");\n')

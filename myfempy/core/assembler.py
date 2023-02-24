@@ -8,22 +8,24 @@ from myfempy.felib.felemset import get_elemset
 # import sys
 
 __doc__ = """
-Assembly stiffness and mass, assembly of loads vector
+Assembly matrix
 """
 
-
 class Assembler:
+    
     @staticmethod
-    def assembler(modelinfo, key):
-        """montagem de matrizes
+    def assembler(modelinfo: dict, key: str):
+        """
+        class assembly matrix
 
-        Arguments:
-            modelinfo -- _description_
-            key -- _description_
+        Args:
+            modelinfo:dict:   -- F.E. model dict with full information needed
+            key:str           -- key type of assembly
 
         Returns:
-            _description_
+            matrix:np.ndarray -- assembly matrix
         """
+        
         dofe = modelinfo["nodecon"][0] * modelinfo["nodedof"][0]
         nelem = len(modelinfo["inci"])
         ith = np.zeros((nelem * (dofe * dofe)), dtype=int)
@@ -56,17 +58,20 @@ class Assembler:
         return matrix
 
     @staticmethod
-    def loads(modelinfo, KG):
-        """_summary_
+    def loads(modelinfo:dict, KG:np.ndarray):
+        """
+        _summary_
 
-        Arguments:
-            modelinfo -- _description_
-            KG -- _description_
+        Args:
+            modelinfo:dict     -- F.E. model dict with full information needed
+            KG:np.ndarray      -- stiffness matrix
 
         Returns:
-            _description_
+            forcevec          -- forces vector
+            KG                -- stiffness matrix updated
         """
-        forcelist = np.zeros(
+
+        forcevec = np.zeros(
             (
                 modelinfo["nodedof"][0] * len(modelinfo["coord"]),
                 len(np.unique(modelinfo["forces"][:, 3])),
@@ -90,13 +95,13 @@ class Assembler:
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0])
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 2:
                             gdlload = int(
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0] - 1)
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 16:
                             loc = np.array(
                                 [
@@ -119,13 +124,13 @@ class Assembler:
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0])
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 6:
                             gdlload = int(
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0] - 1)
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 16:
                             loc = np.array(
                                 [
@@ -149,19 +154,19 @@ class Assembler:
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0])
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 2:
                             gdlload = int(
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0] - 1)
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 6:
                             gdlload = int(
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0] - 2)
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
 
                         elif int(forceaply[ii, 1]) == 16:
                             loc = np.array(
@@ -185,19 +190,19 @@ class Assembler:
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0])
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 2:
                             gdlload = int(
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0] - 1)
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 3:
                             gdlload = int(
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0] - 2)
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 16:
                             loc = np.array(
                                 [
@@ -221,37 +226,37 @@ class Assembler:
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0])
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 2:
                             gdlload = int(
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0] - 1)
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 3:
                             gdlload = int(
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0] - 2)
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 4:
                             gdlload = int(
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0] - 3)
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 5:
                             gdlload = int(
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0] - 4)
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 6:
                             gdlload = int(
                                 modelinfo["nodedof"][0] * forceaply[ii, 0]
                                 - (modelinfo["nodedof"][0] - 5)
                             )
-                            forcelist[gdlload, fstep] += forceaply[ii, 2]
+                            forcevec[gdlload, fstep] += forceaply[ii, 2]
                         elif int(forceaply[ii, 1]) == 16:
                             loc = np.array(
                                 [
@@ -267,5 +272,5 @@ class Assembler:
                             )
                             kespr = forceaply[ii, 2] * np.array([[1, -1], [-1, 1]])
                             KG[np.ix_(loc, loc)] += kespr
-        forcelist = sp.csc_matrix(forcelist)
-        return forcelist, KG
+        forcevec = sp.csc_matrix(forcevec)
+        return forcevec, KG

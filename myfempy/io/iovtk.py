@@ -8,14 +8,6 @@ import numpy as np
 
 # @cython.cfunc
 def vtk_CellType(elemid: cython.char):
-    """_summary_
-
-    Arguments:
-        elemid -- _description_
-
-    Returns:
-        _description_
-    """
     # 'vtkkey' >>' Type "elem" in myfempy':CellType --> https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
     CellType = {
         "110": 3,

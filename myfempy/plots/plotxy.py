@@ -9,16 +9,9 @@ Plot XY
 """
 
 
-def plot(x, y, xlabel, ylabel, fignumb):
-    """_summary_
-
-    Arguments:
-        x -- _description_
-        y -- _description_
-        xlabel -- _description_
-        ylabel -- _description_
-        fignumb -- _description_
-    """
+def plot(x: np.ndarray, y: np.ndarray, xlabel: str, ylabel: str, fignumb: int):
+    """plot function"""
+    
     plt.ion()
     plt.gcf().set_size_inches(10, 8)
     plt.plot(x, y, "-sm")
@@ -29,14 +22,9 @@ def plot(x, y, xlabel, ylabel, fignumb):
     plt.pause(0.001)
 
 
-def tracker_plot(postprocset, plotset, coord, nodedof):
-    """_summary_
-
-    Arguments:
-        postprocset -- _description_
-        plotset -- _description_
-        coord -- _description_
-    """
+def tracker_plot(postprocset: dict, plotset: dict, coord: np.ndarray, nodedof):
+    """trancker plot function"""
+    
     if "displ" in postprocset["TRACKER"]['data'].keys():
         if "point" in postprocset["TRACKER"]['data']['displ'].keys():
             node_coordX = float(postprocset["TRACKER"]['data']['displ']["point"]["x"])
@@ -68,17 +56,9 @@ def tracker_plot(postprocset, plotset, coord, nodedof):
     return val_X, val_Y, xlabel, ylabel
 
 
-def forces_plot(lenx, leny, xlabel, yl, size, nbeam):
-    """_summary_
-
-    Arguments:
-        lenx -- _description_
-        leny -- _description_
-        xlabel -- _description_
-        yl -- _description_
-        size -- _description_
-        nbeam -- _description_
-    """
+def forces_plot(lenx: np.ndarray, leny: np.ndarray, xlabel: str, yl: np.ndarray, size: int, nbeam: np.ndarray):
+    """plot internal forces of beam structures"""
+    
     plt.gcf().set_size_inches(16, 8)
     plt.subplots_adjust(hspace=0.5)
     cont = 1
@@ -97,16 +77,12 @@ def forces_plot(lenx, leny, xlabel, yl, size, nbeam):
             writer2csv_file('BEAM-BALANCE_'+str(nbeam[bb])+'_csvfile.txt',[val_X,val_Y],[xlabel,ylabel])
     plt.show()
 
-def frf_plot(plotset, hist_node):
-    """_summary_
-
-    Arguments:
-        plotset -- _description_
-        hist_node -- _description_
-    """
+def frf_plot(plotset: dict, hist_node):
+    """plot frf graph vtk file"""
+    
     val_Y = plotset["val_y"] #20*np.log((abs(plotset["val_y"][plotset["rstl"], :]))/10E-12)
     val_X = plotset["val_x"]
     xlabel = "FREQ HZ"
     ylabel = "dB 20*LOG[DISPL/10E-12 m]"
     plot(val_X, val_Y, xlabel, ylabel, plotset["fignumb"])
-    writer2csv_file('FRF_csvfile.txt',[val_X,val_Y],['Hz','dB(20LOG(U))'])
+    writer2csv('FRF_csvfile.txt',[val_X,val_Y],['Hz','dB(20LOG(U))'])

@@ -11,19 +11,9 @@ Static Linear Solver
 """
 
 
-def sld(fulldofs, stiffness, forcelist, freedof, solverset):
-    """_summary_
-
-    Arguments:
-        fulldofs -- _description_
-        stiffness -- _description_
-        forcelist -- _description_
-        freedof -- _description_
-        solverset -- _description_
-
-    Returns:
-        _description_
-    """
+def sld(fulldofs: int, stiffness: np.ndarray, forcelist: np.ndarray, freedof: np.ndarray, solverset: dict):
+    """scipy sparse linear solver"""
+    
     plotset = dict()
     postprocset = dict()
     U0 = np.zeros((fulldofs, 1))
@@ -57,19 +47,9 @@ def sld(fulldofs, stiffness, forcelist, freedof, solverset):
     return U
 
 
-def sli(fulldofs, stiffness, forcelist, freedof, solverset):
-    """_summary_
-
-    Arguments:
-        fulldofs -- _description_
-        stiffness -- _description_
-        forcelist -- _description_
-        freedof -- _description_
-        solverset -- _description_
-
-    Returns:
-        _description_
-    """
+def sli(fulldofs: int, stiffness: np.ndarray, forcelist: np.ndarray, freedof: np.ndarray, solverset: dict):
+    """scipy sparse biconjugate gradient stabilized iteration solver"""
+    
     plotset = dict()
     postprocset = dict()
     U0 = np.zeros((fulldofs, 1))
@@ -111,19 +91,9 @@ def sli(fulldofs, stiffness, forcelist, freedof, solverset):
     return U
 
 
-def slipre(fulldofs, stiffness, forcelist, freedof, solverset):
-    """_summary_
-
-    Arguments:
-        fulldofs -- _description_
-        stiffness -- _description_
-        forcelist -- _description_
-        freedof -- _description_
-        solverset -- _description_
-
-    Returns:
-        _description_
-    """
+def slipre(fulldofs: int, stiffness: np.ndarray, forcelist: np.ndarray, freedof: np.ndarray, solverset: dict):
+    """scipy generalized minimal residual iteration solver"""
+    
     plotset = dict()
     postprocset = dict()
     U0 = np.zeros((fulldofs, 1))

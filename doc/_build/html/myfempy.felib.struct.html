@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="myfempy.io package" href="myfempy.io.html" />
+    <link rel="next" title="myfempy.mesh package" href="myfempy.mesh.html" />
     <link rel="prev" title="myfempy.felib.physics package" href="myfempy.felib.physics.html" /> 
 </head>
 
@@ -52,13 +52,9 @@
 <li class="toctree-l2"><a class="reference internal" href="theory.html">Theory Basic</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="modules.html">myfempy</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="myfempy.html">myfempy package</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="myfempy.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="myfempy.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="myfempy.html#module-myfempy.version">myfempy.version module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="myfempy.html#module-myfempy">Module contents</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myfempy.html#submodules">Submodules</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="setup.html">setup module</a></li>
 </ul>
 </li>
 </ul>
@@ -106,63 +102,39 @@
 <dt class="sig sig-object py" id="myfempy.felib.struct.beam21.Beam21">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.felib.struct.beam21.</span></span><span class="sig-name descname"><span class="pre">Beam21</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.beam21.Beam21" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>_summary_</p>
+<p>class Beam 1D 2-node linear Finite Element</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.beam21.Beam21.elemset">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elemset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.beam21.Beam21.elemset" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element setting</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.beam21.Beam21.intforces">
 <span class="sig-name descname"><span class="pre">intforces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">U</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.beam21.Beam21.intforces" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>U – _description_
-lines – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>internal forces balance calc.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.beam21.Beam21.lockey">
 <span class="sig-name descname"><span class="pre">lockey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.beam21.Beam21.lockey" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>list_node – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element lockey(dof)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.beam21.Beam21.mass">
 <span class="sig-name descname"><span class="pre">mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.beam21.Beam21.mass" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>consistent mass matrix</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.beam21.Beam21.matrix_B">
 <span class="sig-name descname"><span class="pre">matrix_B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.beam21.Beam21.matrix_B" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<dd><p>shape function derivatives</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_
-csc – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>csc:list[y,z,r]    – cross section center(CG)</dt><dd><p>y(max,min)     – y coord.
+z(max,min)     – z coord.
+r(max,min)     – r(radius) coord.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -170,11 +142,24 @@ csc – _description_</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.beam21.Beam21.stiff_linear">
 <span class="sig-name descname"><span class="pre">stiff_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.beam21.Beam21.stiff_linear" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
+<dd><p>stiffness linear matrix</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myfempy.felib.struct.beam21.Beam21.tabgeo">
+<span class="sig-name descname"><span class="pre">tabgeo</span></span><a class="headerlink" href="#myfempy.felib.struct.beam21.Beam21.tabgeo" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Arguments:</dt><dd><p>modelinfo:dict     – F.E. model dict with full information needed</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Parameters:</dt><dd><p>dofe              – element dof
+fulldof           – total dof of model
+nodedof           – node dof 
+nelem             – total number of elements in mesh
+nnode             – number of degree of freedom per node
+inci              – elements conection and prop. list
+coord             – nodes coordinates list in mesh
+tabmat            – table of material prop.
+tabgeo            – table of geometry prop.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -189,63 +174,39 @@ csc – _description_</p>
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame21.Frame21">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.felib.struct.frame21.</span></span><span class="sig-name descname"><span class="pre">Frame21</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame21.Frame21" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>_summary_</p>
+<p>class Frame 2D 2-node linear Finite Element</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame21.Frame21.elemset">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elemset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame21.Frame21.elemset" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element setting</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame21.Frame21.intforces">
 <span class="sig-name descname"><span class="pre">intforces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">U</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame21.Frame21.intforces" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>U – _description_
-lines – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>internal forces balance calc.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame21.Frame21.lockey">
 <span class="sig-name descname"><span class="pre">lockey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame21.Frame21.lockey" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>list_node – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element lockey(dof)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame21.Frame21.mass">
 <span class="sig-name descname"><span class="pre">mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame21.Frame21.mass" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>consistent mass matrix</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame21.Frame21.matrix_b">
 <span class="sig-name descname"><span class="pre">matrix_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame21.Frame21.matrix_b" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<dd><p>shape function derivatives</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_
-csc – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>csc:list[y,z,r]    – cross section center(CG)</dt><dd><p>y(max,min)     – y coord.
+z(max,min)     – z coord.
+r(max,min)     – r(radius) coord.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -253,11 +214,24 @@ csc – _description_</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame21.Frame21.stiff_linear">
 <span class="sig-name descname"><span class="pre">stiff_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame21.Frame21.stiff_linear" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
+<dd><p>stiffness linear matrix</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myfempy.felib.struct.frame21.Frame21.tabgeo">
+<span class="sig-name descname"><span class="pre">tabgeo</span></span><a class="headerlink" href="#myfempy.felib.struct.frame21.Frame21.tabgeo" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Arguments:</dt><dd><p>modelinfo:dict     – F.E. model dict with full information needed</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Parameters:</dt><dd><p>dofe              – element dof
+fulldof           – total dof of model
+nodedof           – node dof 
+nelem             – total number of elements in mesh
+nnode             – number of degree of freedom per node
+inci              – elements conection and prop. list
+coord             – nodes coordinates list in mesh
+tabmat            – table of material prop.
+tabgeo            – table of geometry prop.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -272,63 +246,39 @@ csc – _description_</p>
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame22.Frame22">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.felib.struct.frame22.</span></span><span class="sig-name descname"><span class="pre">Frame22</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame22.Frame22" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>_summary_</p>
+<p>class Frame 3D 2-node linear Finite Element</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame22.Frame22.elemset">
 <span class="sig-name descname"><span class="pre">elemset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame22.Frame22.elemset" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element setting</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame22.Frame22.intforces">
 <span class="sig-name descname"><span class="pre">intforces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">U</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame22.Frame22.intforces" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>U – _description_
-lines – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>internal forces balance calc.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame22.Frame22.lockey">
 <span class="sig-name descname"><span class="pre">lockey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame22.Frame22.lockey" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>list_node – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element lockey(dof)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame22.Frame22.mass">
 <span class="sig-name descname"><span class="pre">mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame22.Frame22.mass" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>consistent mass matrix</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame22.Frame22.matrix_b">
 <span class="sig-name descname"><span class="pre">matrix_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame22.Frame22.matrix_b" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<dd><p>shape function derivatives</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_
-csc – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>csc:list[y,z,r]    – cross section center(CG)</dt><dd><p>y(max,min)     – y coord.
+z(max,min)     – z coord.
+r(max,min)     – r(radius) coord.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -336,11 +286,24 @@ csc – _description_</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.frame22.Frame22.stiff_linear">
 <span class="sig-name descname"><span class="pre">stiff_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.frame22.Frame22.stiff_linear" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
+<dd><p>stiffness linear matrix</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myfempy.felib.struct.frame22.Frame22.tabgeo">
+<span class="sig-name descname"><span class="pre">tabgeo</span></span><a class="headerlink" href="#myfempy.felib.struct.frame22.Frame22.tabgeo" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Arguments:</dt><dd><p>modelinfo:dict     – F.E. model dict with full information needed</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Parameters:</dt><dd><p>dofe              – element dof
+fulldof           – total dof of model
+nodedof           – node dof 
+nelem             – total number of elements in mesh
+nnode             – number of degree of freedom per node
+inci              – elements conection and prop. list
+coord             – nodes coordinates list in mesh
+tabmat            – table of material prop.
+tabgeo            – table of geometry prop.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -355,50 +318,47 @@ csc – _description_</p>
 <dt class="sig sig-object py" id="myfempy.felib.struct.plane31.Plane31">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.felib.struct.plane31.</span></span><span class="sig-name descname"><span class="pre">Plane31</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plane31.Plane31" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>_summary_</p>
+<p>class Beam 1D 2-node linear Finite Element</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plane31.Plane31.elemset">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elemset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plane31.Plane31.elemset" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element setting</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plane31.Plane31.lockey">
 <span class="sig-name descname"><span class="pre">lockey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodelist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plane31.Plane31.lockey" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>nodelist – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element lockey(dof)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plane31.Plane31.mass">
 <span class="sig-name descname"><span class="pre">mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plane31.Plane31.mass" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>consistent mass matrix</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plane31.Plane31.matriz_b">
 <span class="sig-name descname"><span class="pre">matriz_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodelist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intpl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plane31.Plane31.matriz_b" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>nodelist – _description_
-intpl – _description_</p>
+<dd><p>shape function derivatives</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myfempy.felib.struct.plane31.Plane31.ntensor">
+<span class="sig-name descname"><span class="pre">ntensor</span></span><a class="headerlink" href="#myfempy.felib.struct.plane31.Plane31.ntensor" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Arguments:</dt><dd><p>modelinfo:dict     – F.E. model dict with full information needed</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Parameters:</dt><dd><p>dofe              – element dof
+fulldof           – total dof of model
+nodedof           – node dof 
+nelem             – total number of elements in mesh
+nnode             – number of degree of freedom per node
+inci              – elements conection and prop. list
+coord             – nodes coordinates list in mesh
+tabmat            – table of material prop.
+tabgeo            – table of geometry prop.
+ntensor           – dim. of tensor (stress-strain relat.)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -406,13 +366,7 @@ intpl – _description_</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plane31.Plane31.stiff_linear">
 <span class="sig-name descname"><span class="pre">stiff_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plane31.Plane31.stiff_linear" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>stiffness linear matrix</p>
 </dd></dl>
 
 </dd></dl>
@@ -425,64 +379,35 @@ intpl – _description_</p>
 <dt class="sig sig-object py" id="myfempy.felib.struct.plane41.Plane41">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.felib.struct.plane41.</span></span><span class="sig-name descname"><span class="pre">Plane41</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plane41.Plane41" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>_summary_</p>
+<p>class Quatrangular Isoparametric Plane 4-node linear Finite Element</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plane41.Plane41.elemset">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elemset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plane41.Plane41.elemset" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element setting</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plane41.Plane41.lockey">
 <span class="sig-name descname"><span class="pre">lockey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodelist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plane41.Plane41.lockey" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>nodelist – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element lockey(dof)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plane41.Plane41.mass">
 <span class="sig-name descname"><span class="pre">mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plane41.Plane41.mass" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>consistent mass matrix</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plane41.Plane41.matriz_b">
 <span class="sig-name descname"><span class="pre">matriz_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodelist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intpl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plane41.Plane41.matriz_b" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>nodelist – _description_
-intpl – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>shape function derivatives</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plane41.Plane41.stiff_linear">
 <span class="sig-name descname"><span class="pre">stiff_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plane41.Plane41.stiff_linear" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>stiffness linear matrix</p>
 </dd></dl>
 
 </dd></dl>
@@ -495,64 +420,35 @@ intpl – _description_</p>
 <dt class="sig sig-object py" id="myfempy.felib.struct.plate41.Plate41">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.felib.struct.plate41.</span></span><span class="sig-name descname"><span class="pre">Plate41</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plate41.Plate41" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>_summary_</p>
+<p>class Quatrangular Isoparametric Plate Mindlin 4-node linear Finite Element</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plate41.Plate41.elemset">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elemset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plate41.Plate41.elemset" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element setting</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plate41.Plate41.lockey">
 <span class="sig-name descname"><span class="pre">lockey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodelist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plate41.Plate41.lockey" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>nodelist – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element lockey(dof)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plate41.Plate41.mass">
 <span class="sig-name descname"><span class="pre">mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plate41.Plate41.mass" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>consistent mass matrix</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plate41.Plate41.matriz_b">
 <span class="sig-name descname"><span class="pre">matriz_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodelist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intpl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plate41.Plate41.matriz_b" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>nodelist – _description_
-intpl – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>shape function derivatives</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.plate41.Plate41.stiff_linear">
 <span class="sig-name descname"><span class="pre">stiff_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.plate41.Plate41.stiff_linear" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>stiffness linear matrix</p>
 </dd></dl>
 
 </dd></dl>
@@ -565,64 +461,35 @@ intpl – _description_</p>
 <dt class="sig sig-object py" id="myfempy.felib.struct.solid41.Solid41">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.felib.struct.solid41.</span></span><span class="sig-name descname"><span class="pre">Solid41</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.solid41.Solid41" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>_summary_</p>
+<p>class Tetrahedron Isoparametric Solid 8-node linear Finite Element</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.solid41.Solid41.elemset">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elemset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.solid41.Solid41.elemset" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element setting</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.solid41.Solid41.lockey">
 <span class="sig-name descname"><span class="pre">lockey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodelist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.solid41.Solid41.lockey" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>nodelist – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element lockey(dof)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.solid41.Solid41.mass">
 <span class="sig-name descname"><span class="pre">mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.solid41.Solid41.mass" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>consistent mass matrix</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.solid41.Solid41.matriz_b">
 <span class="sig-name descname"><span class="pre">matriz_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodelist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intpl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.solid41.Solid41.matriz_b" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>nodelist – _description_
-intpl – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>shape function derivatives</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.solid41.Solid41.stiff_linear">
 <span class="sig-name descname"><span class="pre">stiff_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.solid41.Solid41.stiff_linear" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>stiffness linear matrix</p>
 </dd></dl>
 
 </dd></dl>
@@ -635,64 +502,35 @@ intpl – _description_</p>
 <dt class="sig sig-object py" id="myfempy.felib.struct.solid81.Solid81">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.felib.struct.solid81.</span></span><span class="sig-name descname"><span class="pre">Solid81</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.solid81.Solid81" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>_summary_</p>
+<p>class Hexahedron Isoparametric Solid 8-node linear Finite Element</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.solid81.Solid81.elemset">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elemset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.solid81.Solid81.elemset" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element setting</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.solid81.Solid81.lockey">
 <span class="sig-name descname"><span class="pre">lockey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodelist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.solid81.Solid81.lockey" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>nodelist – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element lockey(dof)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.solid81.Solid81.mass">
 <span class="sig-name descname"><span class="pre">mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.solid81.Solid81.mass" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>consistent mass matrix</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.solid81.Solid81.matriz_b">
 <span class="sig-name descname"><span class="pre">matriz_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodelist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intpl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.solid81.Solid81.matriz_b" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>nodelist – _description_
-intpl – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>shape function derivatives</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.solid81.Solid81.stiff_linear">
 <span class="sig-name descname"><span class="pre">stiff_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.solid81.Solid81.stiff_linear" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>stiffness linear matrix</p>
 </dd></dl>
 
 </dd></dl>
@@ -705,49 +543,46 @@ intpl – _description_</p>
 <dt class="sig sig-object py" id="myfempy.felib.struct.spring21.Spring21">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.felib.struct.spring21.</span></span><span class="sig-name descname"><span class="pre">Spring21</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.spring21.Spring21" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>_summary_</p>
+<p>class Spring 2D 2-node linear Finite Element</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.spring21.Spring21.elemset">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elemset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.spring21.Spring21.elemset" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element setting</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.spring21.Spring21.lockey">
 <span class="sig-name descname"><span class="pre">lockey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.spring21.Spring21.lockey" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>list_node – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element lockey(dof)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.spring21.Spring21.mass">
 <span class="sig-name descname"><span class="pre">mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.spring21.Spring21.mass" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>consistent mass matrix</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.spring21.Spring21.stiff_linear">
 <span class="sig-name descname"><span class="pre">stiff_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.spring21.Spring21.stiff_linear" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
+<dd><p>stiffness linear matrix</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myfempy.felib.struct.spring21.Spring21.tabgeo">
+<span class="sig-name descname"><span class="pre">tabgeo</span></span><a class="headerlink" href="#myfempy.felib.struct.spring21.Spring21.tabgeo" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Arguments:</dt><dd><p>modelinfo:dict     – F.E. model dict with full information needed</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Parameters:</dt><dd><p>dofe              – element dof
+fulldof           – total dof of model
+nodedof           – node dof 
+nelem             – total number of elements in mesh
+nnode             – number of degree of freedom per node
+inci              – elements conection and prop. list
+coord             – nodes coordinates list in mesh
+tabmat            – table of material prop.
+tabgeo            – table of geometry prop.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -762,38 +597,27 @@ intpl – _description_</p>
 <dt class="sig sig-object py" id="myfempy.felib.struct.truss21.Truss21">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.felib.struct.truss21.</span></span><span class="sig-name descname"><span class="pre">Truss21</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.truss21.Truss21" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Truss21 class: Truss 2D 2-node linear Finite Element</p>
+<p>class Truss 2D 2-node linear Finite Element</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.truss21.Truss21.elemset">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elemset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.truss21.Truss21.elemset" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>dofelem (dict): element definition set</p>
-</dd>
-</dl>
+<dd><p>element setting</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.truss21.Truss21.lockey">
 <span class="sig-name descname"><span class="pre">lockey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.truss21.Truss21.lockey" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>list_node – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<dd><p>element lockey(dof)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.truss21.Truss21.matrix_b">
 <span class="sig-name descname"><span class="pre">matrix_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.truss21.Truss21.matrix_b" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<dd><p>shape function derivatives</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_
-csc – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>csc:list[y,z,r]    – cross section center(CG)</dt><dd><p>y(max,min)     – y coord.
+z(max,min)     – z coord.
+r(max,min)     – r(radius) coord.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -801,11 +625,24 @@ csc – _description_</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.felib.struct.truss21.Truss21.stiff_linear">
 <span class="sig-name descname"><span class="pre">stiff_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.struct.truss21.Truss21.stiff_linear" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>ee – _description_</p>
+<dd><p>stiffness linear matrix</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myfempy.felib.struct.truss21.Truss21.tabgeo">
+<span class="sig-name descname"><span class="pre">tabgeo</span></span><a class="headerlink" href="#myfempy.felib.struct.truss21.Truss21.tabgeo" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Arguments:</dt><dd><p>modelinfo:dict     – F.E. model dict with full information needed</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Parameters:</dt><dd><p>dofe              – element dof
+fulldof           – total dof of model
+nodedof           – node dof 
+nelem             – total number of elements in mesh
+nnode             – number of degree of freedom per node
+inci              – elements conection and prop. list
+coord             – nodes coordinates list in mesh
+tabmat            – table of material prop.
+tabgeo            – table of geometry prop.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -823,7 +660,7 @@ csc – _description_</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="myfempy.felib.physics.html" class="btn btn-neutral float-left" title="myfempy.felib.physics package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="myfempy.io.html" class="btn btn-neutral float-right" title="myfempy.io package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="myfempy.mesh.html" class="btn btn-neutral float-right" title="myfempy.mesh package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

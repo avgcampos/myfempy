@@ -6,18 +6,9 @@ import numpy as np
 import vtk
 
 
-def view_listforce(coord, frcApy_vet, scala_view, num_lf):
-    """_summary_
-
-    Arguments:
-        coord -- _description_
-        frcApy_vet -- _description_
-        scala_view -- _description_
-        num_lf -- _description_
-
-    Returns:
-        _description_
-    """
+def view_listforce(coord: np.ndarray, frcApy_vet: np.ndarray, scala_view: float, num_lf: int):
+    """vtk code"""
+    
     coordX_force = coord[int(frcApy_vet[num_lf][0]) - 1, 1]
     coordY_force = coord[int(frcApy_vet[num_lf][0]) - 1, 2]
     coordZ_force = coord[int(frcApy_vet[num_lf][0]) - 1, 3]
@@ -124,18 +115,9 @@ def view_listforce(coord, frcApy_vet, scala_view, num_lf):
     return fr_point_actor_cone1, fr_point_actor_cone2  # , fr_text_actor
 
 
-def view_bondcond_point(coord, bondCond_vet, scala_view, num_bc):
-    """_summary_
-
-    Arguments:
-        coord -- _description_
-        bondCond_vet -- _description_
-        scala_view -- _description_
-        num_bc -- _description_
-
-    Returns:
-        _description_
-    """
+def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view: float, num_bc: int):
+    """vtk code"""
+    
     coordX_bc = coord[int(bondCond_vet[num_bc, 1]) - 1, 1]
     coordY_bc = coord[int(bondCond_vet[num_bc, 1]) - 1, 2]
     coordZ_bc = coord[int(bondCond_vet[num_bc, 1]) - 1, 3]
@@ -305,18 +287,9 @@ def view_bondcond_point(coord, bondCond_vet, scala_view, num_bc):
     return bc_point_actor_cone, bc_point_actor_tdof
 
 
-def view_text_point(coord, coordMax, scala_view, text):
-    """_summary_
-
-    Arguments:
-        coord -- _description_
-        coordMax -- _description_
-        scala_view -- _description_
-        text -- _description_
-
-    Returns:
-        _description_
-    """
+def view_text_point(coord: np.ndarray, coordMax: float, scala_view: float, text: str):
+    """vtk code"""
+    
     coordX = coord[0]
     coordY = coord[1]
     coordZ = coord[2]
@@ -642,4 +615,5 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs):
     beam_extrude_actor.SetMapper(beam_extrude)
     beam_extrude_actor.GetProperty().SetLineWidth(1.0)
     beam_extrude_actor.GetProperty().SetColor(1.0, 1.0, 1.0)  # (R,G,B)
+    
     return beam_extrude_actor

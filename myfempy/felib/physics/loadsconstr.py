@@ -5,16 +5,8 @@ calculate loads and constrains
 import numpy as np
 
 
-def get_forces(modelinfo, flist):
-    """_summary_
-
-    Arguments:
-        modelinfo -- _description_
-        flist -- _description_
-
-    Returns:
-        _description_
-    """
+def get_forces(modelinfo: dict, flist: np.ndarray):
+    """get forces"""
     forcenodeaply = np.zeros((1, 4))
     for k in range(int(len(np.unique([flist[:, 7]])))):
         forcelist = flist[np.where(flist[:, 7] == str(k + 1))[0], :]
@@ -325,18 +317,8 @@ def get_forces(modelinfo, flist):
 
 
 # BOUNDARY CONDITIONS
-
-
-def get_constrain(modelinfo, blist):
-    """_summary_
-
-    Arguments:
-        modelinfo -- _description_
-        blist -- _description_
-
-    Returns:
-        _description_
-    """
+def get_constrain(modelinfo: dict, blist: np.ndarray):
+    """get bound. cond."""
     boncdnodeaply = np.zeros((1, 2))
     node_list_bc = np.array([])
     for i in range(len(blist)):

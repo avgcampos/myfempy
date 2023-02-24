@@ -8,7 +8,7 @@ spring21.py: Spring 2D 2-node linear Finite Element
 
 
 class Spring21:
-    """_summary_"""
+    """class Spring 2D 2-node linear Finite Element"""
 
     def __init__(self, modelinfo):
         self.dofe = modelinfo["nodecon"][0] * modelinfo["nodedof"][0]
@@ -20,14 +20,28 @@ class Spring21:
         self.coord = modelinfo["coord"]
         self.tabmat = modelinfo["tabmat"]
         self.tabgeo = modelinfo["tabgeo"]
+        
+        """
+        Arguments:
+           modelinfo:dict     -- F.E. model dict with full information needed
+
+        Parameters:
+            dofe              -- element dof
+            fulldof           -- total dof of model
+            nodedof           -- node dof 
+            nelem             -- total number of elements in mesh
+            nnode             -- number of degree of freedom per node
+            inci              -- elements conection and prop. list
+            coord             -- nodes coordinates list in mesh
+            tabmat            -- table of material prop.
+            tabgeo            -- table of geometry prop.
+            
+        """  
 
     @staticmethod
     def elemset():
-        """_summary_
-
-        Returns:
-            _description_
-        """
+        """element setting"""
+        
         dofelem = {
             "key": "spring21",
             "id": 110,
@@ -39,14 +53,8 @@ class Spring21:
         return dofelem
 
     def lockey(self, list_node):
-        """_summary_
-
-        Arguments:
-            list_node -- _description_
-
-        Returns:
-            _description_
-        """
+        """element lockey(dof)"""
+        
         noi = list_node[0]
         noj = list_node[1]
         loc = np.array(
@@ -60,14 +68,8 @@ class Spring21:
         return loc
 
     def stiff_linear(self, ee):
-        """_summary_
-
-        Arguments:
-            ee -- _description_
-
-        Returns:
-            _description_
-        """
+        """stiffness linear matrix"""
+        
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
         noix = self.coord[noi - 1, 1]
@@ -100,14 +102,8 @@ class Spring21:
         return kes2T, loc
 
     def mass(self, ee):
-        """_summary_
-
-        Arguments:
-            ee -- _description_
-
-        Returns:
-            _description_
-        """
+        """consistent mass matrix"""
+        
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
         R = self.tabmat[int(self.inci[ee, 2] - 1), 6]

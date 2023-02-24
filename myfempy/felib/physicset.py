@@ -1,18 +1,17 @@
 #!/usr/bin/env python
-"""
+__doc__ = """
 Physics Setting
 """
 import numpy as np
 
-
-def gen_force(forcelist):
-    """_summary_
+def gen_force(forcelist: np.ndarray):
+    """gen force set
 
     Arguments:
-        forcelist -- _description_
+        forcelist:list[] -- force list in boundary conditions
 
     Returns:
-        _description_
+        flist:list[]     -- force list to myfempy
     """
     nforc = len(forcelist)
     flist = np.zeros((1, 9))
@@ -82,14 +81,14 @@ def gen_force(forcelist):
     return flist
 
 
-def gen_bound(boundcondlist):
-    """_summary_
+def gen_bound(boundcondlist: np.ndarray):
+    """gen boundary conditions set
 
     Arguments:
-        boundcondlist -- _description_
+        boundcondlist:list[] -- boundary conditions list
 
     Returns:
-        _description_
+        blist:list[]         -- boundary conditions list to myfempy
     """
     nbound = len(boundcondlist)
     blist = np.zeros((1, 7))

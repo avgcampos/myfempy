@@ -182,12 +182,14 @@ projects; 2 - Is Needed install Gmsh manually</em></p></li>
 </section>
 <section id="documentation">
 <h1>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading"></a></h1>
-<p><em>The myfempy is documented using Sphinx under ``docs/``. The downloads
-built versions can be found in pdf, html or epub.</em></p>
-<p>The <strong>Web Documentation</strong> is available on <a class="reference external" href="https://myfempy.readthedocs.io/">Read the
-Docs</a>.</p>
-<p>The <strong>User’s Manual [pdf]</strong> is available
-<a class="reference external" href="https://github.com/easycae-3d/myfempy/blob/main/docs/Users%20Manual.pdf">here</a>.</p>
+<p>The myfempy is documented using Sphinx under <strong>doc</strong>. The myfempy’s documents versions can be found in html, pdf or epub.</p>
+<p>The <strong>Web Documentation</strong> is available on [Read the Docs](<a class="reference external" href="https://myfempy.readthedocs.io/">https://myfempy.readthedocs.io/</a>).</p>
+<p>To compile the documentation use <em>sphinx</em> in the <strong>doc</strong> folder. Do,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;&gt;<span class="w"> </span>make<span class="w"> </span>html<span class="w"> </span><span class="o">{</span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>root<span class="w"> </span>folder<span class="w"> </span>where<span class="w"> </span>the<span class="w"> </span>index.rst<span class="w"> </span>file<span class="w"> </span>is<span class="o">}</span><span class="w"> </span>--&gt;<span class="w"> </span>This<span class="w"> </span><span class="nb">command</span><span class="w"> </span>generates<span class="w"> </span>*.html*<span class="w"> </span>files
+
+&gt;&gt;<span class="w"> </span>make<span class="w"> </span>latexpdf<span class="w"> </span><span class="c1"># [optional] todo doc pdf</span>
+</pre></div>
+</div>
 </section>
 <section id="release">
 <h1>Release<a class="headerlink" href="#release" title="Permalink to this heading"></a></h1>

@@ -24,9 +24,14 @@ Copyright (C) 2022 Antonio Vinicius Garcia Campos
 # ==========================================================
 from __future__ import absolute_import
 from . import core
+from .core.solver import Solver
 from . import mesh
+from .mesh.genmesh import ModelGen
 from . import postprc
+from .postprc.postcomp import PostProcess
 from . import plots
+from .plots.prevplot import preview_plot
+from .plots.postplot import postproc_plot
 from . import version
 
 # ==========================================================
@@ -38,5 +43,5 @@ __status__ = "Development"
 __website__ = "https://github.com/easycae-3d/myfempy"
 __version__ = version.__version__
 # ==========================================================
-__all__ = ["core", "mesh", "postprc", "plots", "__version__"]
+__all__ = ["Solver", "ModelGen", "PostProcess",  "preview_plot", "postproc_plot", "__version__"]
 # ==========================================================

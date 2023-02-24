@@ -10,9 +10,9 @@ planestress.py: Plane Stress Isotropic and Elasticity Material
 class Elasticity:
     """_summary_"""
 
-    def __init__(self, tabmat, inci, ee):
-        self.E = tabmat[int(inci[ee, 2]) - 1, 0]  # material elasticity
-        self.v = tabmat[int(inci[ee, 2]) - 1, 1]  # material poisson ratio
+    def __init__(self, tabmat: np.ndarray, inci: np.ndarray, num_elm: int):
+        self.E = tabmat[int(inci[num_elm, 2]) - 1, 0]  # material elasticity
+        self.v = tabmat[int(inci[num_elm, 2]) - 1, 1]  # material poisson ratio
 
     def isotropic(self):
         """_summary_
@@ -32,7 +32,7 @@ class Elasticity:
 class Tensor:
     """_summary_"""
 
-    def __init__(self, modelinfo, U, ee):
+    def __init__(self, modelinfo: dict, U: np.ndarray, ee: int):
         self.ee = ee
         self.U = U
         self.modelinfo = modelinfo
@@ -76,7 +76,7 @@ class Tensor:
         title = ["STRAIN_VM", "STRAIN_XX", "STRAIN_YY", "STRAIN_XY"]
         return epsilon, strain, title
 
-    def stress(self, epsilon):
+    def stress(self, epsilon: np.ndarray):
         """_summary_
 
         Arguments:

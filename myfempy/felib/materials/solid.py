@@ -8,17 +8,17 @@ solid.py: Solid Isotropic and Elasticity Material
 
 
 class Elasticity:
-    """_summary_"""
+    """elasticity set class""" 
 
-    def __init__(self, tabmat, inci, num_elm):
+    def __init__(self, tabmat: np.ndarray, inci: np.ndarray, num_elm: int):
         self.E = tabmat[int(inci[num_elm, 2]) - 1, 0]  # material elasticity
         self.v = tabmat[int(inci[num_elm, 2]) - 1, 1]  # material poisson ratio
 
     def isotropic(self):
-        """_summary_
+        """isotropic def
 
         Returns:
-            _description_
+            D:list[]  -- elasticity matrix
         """
         D = np.zeros((6, 6))
         fac = 1.0 / (2.0 * self.v * self.v + self.v - 1.0)
@@ -38,9 +38,9 @@ class Elasticity:
 
 
 class Tensor:
-    """_summary_"""
+    """_material tensor stress-strain relat."""
 
-    def __init__(self, modelinfo, U, ee):
+    def __init__(self, modelinfo: dict, U: np.ndarray, ee: int):
         self.ee = ee
         self.U = U
         self.modelinfo = modelinfo
@@ -59,10 +59,12 @@ class Tensor:
         self.wp = [2.0]
 
     def strain(self):
-        """_summary_
+        """strain in element
 
         Returns:
-            _description_
+            epsilon:list[]  -- list of strain calc. [e] = [B]*{U}
+            strain:float    -- list of strain tensor
+            title:list[]    -- tensor set names myfempy
         """
         B = np.zeros((self.ntensor, self.dofe))
         for pp in range(0, self.npp):
@@ -106,14 +108,15 @@ class Tensor:
         ]
         return epsilon, strain, title
 
-    def stress(self, epsilon):
+    def stress(self, epsilon: np.ndarray):
         """_summary_
 
         Arguments:
-            epsilon -- _description_
+            epsilon:np.array[] -- strain in element
 
         Returns:
-            _description_
+            stress:list[]   -- list of stress calc. [s] = [D]*[e]
+            title:list[]    -- tensor set names myfempy
         """
         M = Elasticity(self.tabmat, self.inci, self.ee)
         D = M.isotropic()

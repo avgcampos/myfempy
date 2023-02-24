@@ -1,19 +1,16 @@
 #!/usr/bin/env python
-"""
+__doc__ = """
 Finite Elements Setting
 """
-import cython
 
-
-@cython.cfunc
-def get_elemset(keyelem: cython.char):
-    """_summary_
+def get_elemset(keyelem: str):
+    """get element setting
 
     Arguments:
-        keyelem -- _description_
+        keyelem:str -- key element(view myfempy User's Manual)
 
     Returns:
-        _description_
+        element class
     """
     if (keyelem == "spring21") or (keyelem == 110):
         from myfempy.felib.struct.spring21 import Spring21

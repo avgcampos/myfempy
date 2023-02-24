@@ -7,9 +7,8 @@ __doc__ = """
 solid41.py: Tetrahedron Isoparametric Solid 8-node linear Finite Element
 """
 
-
 class Solid41:
-    """_summary_"""
+    """class Tetrahedron Isoparametric Solid 8-node linear Finite Element"""
 
     def __init__(self, modelinfo):
         self.dofe = modelinfo["nodecon"][0] * modelinfo["nodedof"][0]
@@ -30,13 +29,30 @@ class Solid41:
             self.npp = modelinfo["quadra"][1]
             self.quadra = no_interpol(self.npp)
 
+        """
+        Arguments:
+           modelinfo:dict     -- F.E. model dict with full information needed
+
+        Parameters:
+            dofe              -- element dof
+            fulldof           -- total dof of model
+            nodedof           -- node dof 
+            nelem             -- total number of elements in mesh
+            nnode             -- number of degree of freedom per node
+            inci              -- elements conection and prop. list
+            coord             -- nodes coordinates list in mesh
+            tabmat            -- table of material prop.
+            tabgeo            -- table of geometry prop.
+            ntensor           -- dim. of tensor (stress-strain relat.)
+            quadra            -- quadrature integration, only used in isoparametric elements
+            npp               -- number of points to integrations
+        
+        """ 
+
     @staticmethod
     def elemset():
-        """_summary_
-
-        Returns:
-            _description_
-        """
+        """element setting"""
+        
         dofelem = {
             "key": "solid41",
             "id": 310,
@@ -48,14 +64,8 @@ class Solid41:
         return dofelem
 
     def lockey(self, nodelist):
-        """_summary_
-
-        Arguments:
-            nodelist -- _description_
-
-        Returns:
-            _description_
-        """
+        """element lockey(dof)"""
+        
         noi = nodelist[0]
         noj = nodelist[1]
         nok = nodelist[2]
@@ -79,15 +89,8 @@ class Solid41:
         return loc
 
     def matriz_b(self, nodelist, intpl):
-        """_summary_
-
-        Arguments:
-            nodelist -- _description_
-            intpl -- _description_
-
-        Returns:
-            _description_
-        """
+        """shape function derivatives"""
+        
         noi = nodelist[0]
         noj = nodelist[1]
         nok = nodelist[2]
@@ -161,14 +164,8 @@ class Solid41:
         return B, V
 
     def stiff_linear(self, ee):
-        """_summary_
-
-        Arguments:
-            ee -- _description_
-
-        Returns:
-            _description_
-        """
+        """stiffness linear matrix"""
+        
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
         nok = int(self.inci[ee, 6])
@@ -182,14 +179,8 @@ class Solid41:
         return ket4, loc
 
     def mass(self, ee):
-        """_summary_
-
-        Arguments:
-            ee -- _description_
-
-        Returns:
-            _description_
-        """
+        """consistent mass matrix"""
+        
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
         nok = int(self.inci[ee, 6])

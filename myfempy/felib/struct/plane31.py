@@ -8,7 +8,7 @@ plane31.py: Triagular Plane 3-node linear Finite Element
 
 
 class Plane31:
-    """_summary_"""
+    """class Beam 1D 2-node linear Finite Element"""
 
     def __init__(self, modelinfo):
         self.dofe = modelinfo["nodecon"][0] * modelinfo["nodedof"][0]
@@ -21,14 +21,29 @@ class Plane31:
         self.tabmat = modelinfo["tabmat"]
         self.tabgeo = modelinfo["tabgeo"]
         self.ntensor = modelinfo["ntensor"][0]
+        
+        """
+        Arguments:
+           modelinfo:dict     -- F.E. model dict with full information needed
+
+        Parameters:
+            dofe              -- element dof
+            fulldof           -- total dof of model
+            nodedof           -- node dof 
+            nelem             -- total number of elements in mesh
+            nnode             -- number of degree of freedom per node
+            inci              -- elements conection and prop. list
+            coord             -- nodes coordinates list in mesh
+            tabmat            -- table of material prop.
+            tabgeo            -- table of geometry prop.
+            ntensor           -- dim. of tensor (stress-strain relat.)
+        
+        """ 
 
     @staticmethod
     def elemset():
-        """_summary_
-
-        Returns:
-            _description_
-        """
+        """element setting"""
+        
         dofelem = {
             "key": "plane31",
             "id": 210,
@@ -40,14 +55,8 @@ class Plane31:
         return dofelem
 
     def lockey(self, nodelist):
-        """_summary_
-
-        Arguments:
-            nodelist -- _description_
-
-        Returns:
-            _description_
-        """
+        """element lockey(dof)"""
+        
         noi = nodelist[0]
         noj = nodelist[1]
         nok = nodelist[2]
@@ -64,15 +73,8 @@ class Plane31:
         return loc
 
     def matriz_b(self, nodelist, intpl):
-        """_summary_
-
-        Arguments:
-            nodelist -- _description_
-            intpl -- _description_
-
-        Returns:
-            _description_
-        """
+        """shape function derivatives"""
+        
         noi = nodelist[0]
         noj = nodelist[1]
         nok = nodelist[2]
@@ -107,14 +109,8 @@ class Plane31:
         return B, A
 
     def stiff_linear(self, ee):
-        """_summary_
-
-        Arguments:
-            ee -- _description_
-
-        Returns:
-            _description_
-        """
+        """stiffness linear matrix"""
+        
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
         nok = int(self.inci[ee, 6])
@@ -128,14 +124,8 @@ class Plane31:
         return ket3, loc
 
     def mass(self, ee):
-        """_summary_
-
-        Arguments:
-            ee -- _description_
-
-        Returns:
-            _description_
-        """
+        """consistent mass matrix"""
+        
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
         nok = int(self.inci[ee, 6])

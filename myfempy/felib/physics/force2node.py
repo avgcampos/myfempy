@@ -1,22 +1,23 @@
 #!/usr/bin/env python
 __doc__ = """
-forces to nodes
+forces list to nodes vector
 """
 import numpy as np
 
 
-def force_edge(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
-    """_summary_
+def force_edge(modelinfo: dict, force_value: float, force_dirc: str, node_list_fc: np.ndarray, fc_set: str):
+    """force in edge appl.
 
     Arguments:
-        modelinfo -- _description_
-        force_value -- _description_
-        force_dirc -- _description_
-        node_list_fc -- _description_
-        dir_fc -- _description_
+        modelinfo:dict        -- F.E. model dict with full information needed
+        force_value:float     -- force value
+        force_dirc:str        -- force direction
+        node_list_fc:list     -- list of node with force applied
+        fc_set:str            -- force set direction
 
     Returns:
-        _description_
+        force_value_vector:np.array  -- force vecto
+        fc_type_dof:list             -- force list dofs
     """
     elmlist = [None]
     for ii in range(len(node_list_fc)):
@@ -27,11 +28,11 @@ def force_edge(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
         elmlist.extend(elm2list)
     elmlist = elmlist[1::][::]
     elmlist = np.unique(elmlist)
-    if (dir_fc == "x") or (dir_fc == "y_x") or (dir_fc == "z_x"):
+    if (fc_set == "x") or (fc_set == "y_x") or (fc_set == "z_x"):
         coord_fc = 1
-    elif (dir_fc == "y") or (dir_fc == "x_y") or (dir_fc == "z_y"):
+    elif (fc_set == "y") or (fc_set == "x_y") or (fc_set == "z_y"):
         coord_fc = 2
-    elif (dir_fc == "z") or (dir_fc == "x_z") or (dir_fc == "y_z"):
+    elif (fc_set == "z") or (fc_set == "x_z") or (fc_set == "y_z"):
         coord_fc = 3
     if modelinfo["elemid"][0] == 210:
         force_value_vector = np.zeros((modelinfo["nodedof"][0] * len(node_list_fc), 1))
@@ -143,24 +144,26 @@ def force_edge(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
     return force_value_vector, fc_type_dof
 
 
-def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
-    """_summary_
+def force_surf(modelinfo: dict, force_value: float, force_dirc: str, node_list_fc: np.ndarray, fc_set: str):
+    """force in surface appl.
 
     Arguments:
-        modelinfo -- _description_
-        force_value -- _description_
-        force_dirc -- _description_
-        node_list_fc -- _description_
-        dir_fc -- _description_
+        modelinfo:dict        -- F.E. model dict with full information needed
+        force_value:float     -- force value
+        force_dirc:str        -- force direction
+        node_list_fc:list     -- list of node with force applied
+        fc_set:str            -- force set direction
 
     Returns:
-        _description_
+        force_value_vector:np.array  -- force vecto
+        fc_type_dof:list             -- force list dofs
     """
-    if dir_fc == "x":
+    
+    if fc_set == "x":
         coord_fc = [3, 2]
-    elif dir_fc == "y":
+    elif fc_set == "y":
         coord_fc = [1, 3]
-    elif dir_fc == "z":
+    elif fc_set == "z":
         coord_fc = [1, 2]
     elmlist = np.array([0], dtype=int)
     for ii in range(len(node_list_fc)):
@@ -447,19 +450,19 @@ def force_surf(modelinfo, force_value, force_dirc, node_list_fc, dir_fc):
     return force_value_vector, fc_type_dof
 
 
-def force_beam(modelinfo, force_value, force_dirc, dir_fc, node_list_fc, line_fc):
-    """_summary_
+def force_beam(modelinfo: dict, force_value: float, force_dirc: str, fc_set: str, node_list_fc: np.ndarray):
+    """force in line beam appl.
 
     Arguments:
-        modelinfo -- _description_
-        force_value -- _description_
-        force_dirc -- _description_
-        dir_fc -- _description_
-        node_list_fc -- _description_
-        line_fc -- _description_
+        modelinfo:dict        -- F.E. model dict with full information needed
+        force_value:float     -- force value
+        force_dirc:str        -- force direction
+        node_list_fc:list     -- list of node with force applied
+        fc_set:str            -- force set direction
 
     Returns:
-        _description_
+        force_value_vector:np.array  -- force vecto
+        fc_type_dof:list             -- force list dofs
     """
     elmlist = [None]
     for ii in range(len(node_list_fc)):
@@ -470,11 +473,11 @@ def force_beam(modelinfo, force_value, force_dirc, dir_fc, node_list_fc, line_fc
         elmlist.extend(elm2list)
     elmlist = elmlist[1::][::]
     elmlist = np.unique(elmlist)
-    if dir_fc == "x":
+    if fc_set == "x":
         coord_fc = 1
-    elif dir_fc == "y":
+    elif fc_set == "y":
         coord_fc = 2
-    elif dir_fc == "z":
+    elif fc_set == "z":
         coord_fc = 3
     if modelinfo["elemid"][0] == 130:
         force_value_vector = np.zeros((modelinfo["nodedof"][0] * len(node_list_fc), 1))
@@ -680,16 +683,9 @@ def force_beam(modelinfo, force_value, force_dirc, dir_fc, node_list_fc, line_fc
                         fc_type_dof = np.array([0, 0, 3, 0, 5, 0])
     return force_value_vector, fc_type_dof
 
-
+# utils
 def poly_area(poly):
-    """_summary_
 
-    Arguments:
-        poly -- _description_
-
-    Returns:
-        _description_
-    """
     if len(poly) < 3:  # not a plane - no area
         return 0
     total = [0, 0, 0]
@@ -706,16 +702,7 @@ def poly_area(poly):
 
 
 def unit_normal(a, b, c):
-    """_summary_
 
-    Arguments:
-        a -- _description_
-        b -- _description_
-        c -- _description_
-
-    Returns:
-        _description_
-    """
     x = np.linalg.det([[1, a[1], a[2]], [1, b[1], b[2]], [1, c[1], c[2]]])
     y = np.linalg.det([[a[0], 1, a[2]], [b[0], 1, b[2]], [c[0], 1, c[2]]])
     z = np.linalg.det([[a[0], a[1], 1], [b[0], b[1], 1], [c[0], c[1], 1]])

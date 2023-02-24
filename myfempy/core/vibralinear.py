@@ -8,20 +8,9 @@ Vibration/Dynamic Linear Solver
 """
 
 
-def eig(fulldofs, stiffness, mass, forcelist, freedof, solverset):
-    """_summary_
-
-    Arguments:
-        fulldofs -- _description_
-        stiffness -- _description_
-        mass -- _description_
-        forcelist -- _description_
-        freedof -- _description_
-        solverset -- _description_
-
-    Returns:
-        _description_
-    """
+def eig(fulldofs: int, stiffness: np.ndarray, mass: np.ndarray, forcelist: np.ndarray, freedof: np.ndarray, solverset: dict):
+    """scipy eigenvalues and eigenvectors solver"""
+    
     # plotset = dict()
     # postprocset = dict()
     U = np.zeros((fulldofs, solverset["end"]))
@@ -46,20 +35,9 @@ def eig(fulldofs, stiffness, mass, forcelist, freedof, solverset):
     return U, w_range
 
 
-def frf(fulldofs, stiffness, mass, forcelist, freedof, solverset):
-    """_summary_
-
-    Arguments:
-        fulldofs -- _description_
-        stiffness -- _description_
-        mass -- _description_
-        forcelist -- _description_
-        freedof -- _description_
-        solverset -- _description_
-
-    Returns:
-        _description_
-    """
+def frf(fulldofs: int, stiffness: np.ndarray, mass: np.ndarray, forcelist: np.ndarray, freedof: np.ndarray, solverset: dict):
+    """scipy sparse linear steps(frequency) solver"""
+    
     twopi = 2 * np.pi
     freqStart = (twopi) * solverset["start"]
     freqEnd = (twopi) * solverset["end"]

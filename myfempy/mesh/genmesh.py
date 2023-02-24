@@ -17,17 +17,10 @@ CLASS MESH SET
 
 
 class MeshSet:
-    """_summary_"""
+    """class mesh set"""
 
-    def mesh2elem_key(meshtype):
-        """_summary_
-
-        Arguments:
-            meshtype -- _description_
-
-        Returns:
-            _description_
-        """
+    def mesh2elem_key(meshtype: str):
+        """mesh to elem. key """
         l = {
             "line2": ["truss21", "beam21", "frame21", "frame22"],
             "tria3": ["plane31"],
@@ -37,33 +30,18 @@ class MeshSet:
         }
         return l[meshtype]
 
-    def get_coord(nodelist):
-        """_summary_
-
-        Arguments:
-            nodelist -- _description_
-
-        Returns:
-            _description_
-        """
+    def get_coord(nodelist: np.ndarray):
+        """get coord nodes"""
+        
         nnod = len(nodelist)
         coord = np.zeros((nnod, 4))
         for ii in range(0, nnod):
             coord[ii, :] = np.array(nodelist[ii][:])
         return coord
 
-    def get_inci(elemlist, mat_lib, geo_lib, regions):
-        """_summary_
-
-        Arguments:
-            elemlist -- _description_
-            mat_lib -- _description_
-            geo_lib -- _description_
-            regions -- _description_
-
-        Returns:
-            _description_
-        """
+    def get_inci(elemlist: np.ndarray, mat_lib: list, geo_lib: list, regions: list):
+        """get incidence conection"""
+        
         MAXCONECELM = int(8)
         inci = [[None] * (1 + 3 + MAXCONECELM)]
         nelem = len(elemlist)
@@ -97,15 +75,9 @@ class MeshSet:
         )
         return inci, mesh_type_list
 
-    def get_tabmat(matlist):
-        """_summary_
-
-        Arguments:
-            matlist -- _description_
-
-        Returns:
-            _description_
-        """
+    def get_tabmat(matlist: np.ndarray):
+        """get material table"""
+        
         nmat = len(matlist)
         mat_lib = dict()
         mat_prop = dict()
@@ -146,15 +118,9 @@ class MeshSet:
             ]
         return tabmat, mat_lib
 
-    def get_tabgeo(geolist):
-        """_summary_
-
-        Arguments:
-            geolist -- _description_
-
-        Returns:
-            _description_
-        """
+    def get_tabgeo(geolist: np.ndarray):
+        """get geometry table"""
+        
         ngeo = len(geolist)
         geo_lib = dict()
         geo_prop = dict()
@@ -219,17 +185,15 @@ class MeshSet:
 
 
 class MeshGen:
-    """_summary_"""
+    """generate mesh"""
 
     # @profile
-    def get_data_mesh(meshdata):
-        """_summary_
+    def get_data_mesh(meshdata: dict):
+        """get mesh data
 
         Arguments:
-            meshdata -- _description_
+            meshdata:dict -- data model
 
-        Returns:
-            _description_
         """
         mesh = str()
         regions = []
@@ -453,17 +417,13 @@ class MeshGen:
 
 
 class ModelGen:
-    """_summary_"""
+    """generate the model F.E.
+       
+    """
 
-    def get_quadra(quadrature):
-        """_summary_
-
-        Arguments:
-            quadrature -- _description_
-
-        Returns:
-            _description_
-        """
+    def get_quadra(quadrature: dict):
+        """get quadrature"""
+        
         if quadrature["meth"] == "gaussian":
             quadra = [1, quadrature["npp"]]
             return quadra
@@ -472,15 +432,14 @@ class ModelGen:
             return quadra
 
     # @profile
-    def get_model(meshdata):
-        """_summary_
-
+    def get_model(meshdata: dict):
+        """get model
+        
         Arguments:
-            meshdata -- _description_
-
-        Returns:
-            _description_
+            meshdata:dict -- data model
+        
         """
+        
         # print_console("pre")
         # print_console("mesh")
         mesh_type_list, inci, coord, tabmat, tabgeo, regions = MeshGen.get_data_mesh(

@@ -7,15 +7,9 @@ truss21.py: Truss 2D 2-node linear Finite Element
 """
 
 class Truss21:
-    """Truss21 class: Truss 2D 2-node linear Finite Element"""
+    """class Truss 2D 2-node linear Finite Element"""
     
     def __init__(self, modelinfo):
-        """
-       Truss21 class: Truss 2D 2-node linear Finite Element
-
-        Args:
-            modelinfo (dict): dict with information of the model F.E.
-        """
         self.dofe = modelinfo["nodecon"][0] * modelinfo["nodedof"][0]
         self.fulldof = modelinfo["nodedof"][0] * len(modelinfo["coord"])
         self.nodedof = modelinfo["nodedof"][0]
@@ -26,14 +20,28 @@ class Truss21:
         self.tabmat = modelinfo["tabmat"]
         self.tabgeo = modelinfo["tabgeo"]
     
+        """
+        Arguments:
+           modelinfo:dict     -- F.E. model dict with full information needed
+
+        Parameters:
+            dofe              -- element dof
+            fulldof           -- total dof of model
+            nodedof           -- node dof 
+            nelem             -- total number of elements in mesh
+            nnode             -- number of degree of freedom per node
+            inci              -- elements conection and prop. list
+            coord             -- nodes coordinates list in mesh
+            tabmat            -- table of material prop.
+            tabgeo            -- table of geometry prop.
+            
+        """ 
+    
 
     @staticmethod
     def elemset():
-        """_summary_
-
-        Returns:
-             dofelem (dict): element definition set 
-        """
+        """element setting"""
+        
         dofelem = {
             "key": "truss21",
             "id": 120,
@@ -45,14 +53,8 @@ class Truss21:
         return dofelem
 
     def lockey(self, list_node):
-        """_summary_
-
-        Arguments:
-            list_node -- _description_
-
-        Returns:
-            _description_
-        """
+        """element lockey(dof)"""
+        
         noi = list_node[0]
         noj = list_node[1]
         loc = np.array(
@@ -66,14 +68,8 @@ class Truss21:
         return loc
 
     def stiff_linear(self, ee):
-        """_summary_
-
-        Arguments:
-            ee -- _description_
-
-        Returns:
-            _description_
-        """
+        """stiffness linear matrix"""
+        
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
         noix = self.coord[noi - 1, 1]
@@ -107,15 +103,15 @@ class Truss21:
         return ket2t, loc
 
     def matrix_b(self, ee, csc):
-        """_summary_
-
-        Arguments:
-            ee -- _description_
-            csc -- _description_
-
-        Returns:
-            _description_
+        """shape function derivatives
+        
+        csc:list[y,z,r]    -- cross section center(CG)
+            y(max,min)     -- y coord.
+            z(max,min)     -- z coord.
+            r(max,min)     -- r(radius) coord.
         """
+        
+        y = csc[0]
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
         noix = self.coord[noi - 1, 1]

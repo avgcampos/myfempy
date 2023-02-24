@@ -9,17 +9,17 @@ axial.py: Axial Isotropic material
 
 
 class Elasticity:
-    """_summary_"""
+    """elasticity set class"""
 
-    def __init__(self, tabmat, inci, num_elm):
+    def __init__(self, tabmat: np.ndarray, inci: np.ndarray, num_elm: int):
         self.E = tabmat[int(inci[num_elm, 2]) - 1, 0]  # material elasticity
         self.G = tabmat[int(inci[num_elm, 2]) - 1, 2]  # material shear
 
     def isotropic(self):
-        """_summary_
+        """isotropic def
 
         Returns:
-            _description_
+            D:list[]  -- elasticity matrix
         """
         E = self.E
         G = self.G
@@ -28,9 +28,9 @@ class Elasticity:
 
 
 class Tensor:
-    """_summary_"""
+    """material tensor stress-strain relat."""
 
-    def __init__(self, modelinfo, U, ee):
+    def __init__(self, modelinfo: dict, U: np.ndarray, ee: int):
         self.ee = ee
         self.U = U
         self.modelinfo = modelinfo
@@ -55,10 +55,12 @@ class Tensor:
         self.wp = [2.0]
 
     def strain(self):
-        """_summary_
+        """strain in element
 
         Returns:
-            _description_
+            epsilon:list[]  -- list of strain calc. [e] = [B]*{U}
+            strain:float    -- list of strain tensor
+            title:list[]    -- tensor set names myfempy
         """
         csc_max = [self.y_max, self.z_max, self.r_max]
         Bmax, T = self.setelement.matrix_b(self.ee, csc_max)
@@ -72,14 +74,15 @@ class Tensor:
         title = ["STRAIN_XX_MAX", "STRAIN_XX_MIN"]
         return epsilon, strain, title
 
-    def stress(self, epsilon):
-        """_summary_
+    def stress(self, epsilon: np.ndarray):
+        """stress in element
 
         Arguments:
-            epsilon -- _description_
+            epsilon:np.array[] -- strain in element
 
         Returns:
-            _description_
+            stress:list[]   -- list of stress calc. [s] = [D]*[e]
+            title:list[]    -- tensor set names myfempy
         """
         stress_max = epsilon[0]
         stress_min = epsilon[1]
@@ -90,5 +93,5 @@ class Tensor:
 
 if __name__ == "__main__":
     import doctest
-
+    
     doctest.testmod()

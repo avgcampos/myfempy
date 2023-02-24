@@ -16,13 +16,8 @@ from myfempy.utils.utils import get_version
 from myfempy.plots.meshquality import MeshProp
 
 # @profile
-def preview_plot(previewset, modelinfo):
-    """_summary_
+def preview_plot(previewset: dict, modelinfo: dict):
 
-    Arguments:
-        previewset -- _description_
-        modelinfo -- _description_
-    """
     path = os.getcwd()
     plotdata = dict()
     plotdata["coord"] = modelinfo["coord"]
@@ -140,12 +135,8 @@ def preview_plot(previewset, modelinfo):
         mesh.mesh_numbering()
 
 # @profile
-def build_preview(previewset):
-    """_summary_
+def build_preview(previewset: dict):
 
-    Arguments:
-        previewset -- _description_
-    """
     path = os.getcwd()
     file_name = str(path + "/" + previewset["RENDER"]["filename"] + ".vtk")
     renderer = vtk.vtkRenderer()

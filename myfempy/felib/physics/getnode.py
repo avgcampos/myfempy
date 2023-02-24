@@ -5,16 +5,16 @@ get nodes
 import numpy as np
 
 
-def search_edgex(edge_coordX, coord, erro):
-    """_summary_
+def search_edgex(edge_coordX: float, coord: np.ndarray, erro: float):
+    """serch. node  on x dir. edge
 
     Arguments:
-        edge_coordX -- _description_
-        coord -- _description_
-        erro -- _description_
+        edge_coordX:float   -- number coord in x dir.
+        coord :np.array     -- nodes coordinates list in mesh
+        erro:float          -- erro to conver.
 
     Returns:
-        _description_
+        node                -- node loc.
     """
     dif = abs(edge_coordX * np.ones_like(coord[:, 1]) - coord[:, 1])
     node_posi = (np.asarray(np.where(dif < erro)))[0][:]
@@ -22,16 +22,16 @@ def search_edgex(edge_coordX, coord, erro):
     return node
 
 
-def search_edgey(edge_coordY, coord, erro):
-    """_summary_
+def search_edgey(edge_coordY: float, coord: np.ndarray, erro: float):
+    """serch. node  on y dir. edge
 
     Arguments:
-        edge_coordY -- _description_
-        coord -- _description_
-        erro -- _description_
+        edge_coordY:float   -- number coord in y dir.
+        coord :np.array     -- nodes coordinates list in mesh
+        erro:float          -- erro to conver.
 
     Returns:
-        _description_
+        node                -- node loc.
     """
     dif = abs(edge_coordY * np.ones_like(coord[:, 2]) - coord[:, 2])
     node_posi = (np.asarray(np.where(dif < erro)))[0][:]
@@ -39,16 +39,16 @@ def search_edgey(edge_coordY, coord, erro):
     return node
 
 
-def search_edgez(edge_coordZ, coord, erro):
-    """_summary_
+def search_edgez(edge_coordZ: float, coord: np.ndarray, erro: float):
+    """serch. node  on z dir. edge
 
     Arguments:
-        edge_coordZ -- _description_
-        coord -- _description_
-        erro -- _description_
+        edge_coordY:float   -- number coord in z dir.
+        coord :np.array     -- nodes coordinates list in mesh
+        erro:float          -- erro to conver.
 
     Returns:
-        _description_
+        node                -- node loc.
     """
     dif = abs(edge_coordZ * np.ones_like(coord[:, 3]) - coord[:, 3])
     node_posi = (np.asarray(np.where(dif < erro)))[0][:]
@@ -56,16 +56,16 @@ def search_edgez(edge_coordZ, coord, erro):
     return node
 
 
-def search_surfxy(orthg_coordZ, coord, erro):
-    """_summary_
+def search_surfxy(orthg_coordZ: float, coord: np.ndarray, erro: float):
+    """serch. node on z dir. surf
 
     Arguments:
-        orthg_coordZ -- _description_
-        coord -- _description_
-        erro -- _description_
+        orthg_coordZ:float  -- number coord in z dir.
+        coord :np.array     -- nodes coordinates list in mesh
+        erro:float          -- erro to conver.
 
     Returns:
-        _description_
+        node                -- node loc.
     """
     dif = abs(orthg_coordZ * np.ones_like(coord[:, 3]) - coord[:, 3])
     node_posi = (np.asarray(np.where(dif < erro)))[0][:]
@@ -73,16 +73,16 @@ def search_surfxy(orthg_coordZ, coord, erro):
     return node
 
 
-def search_surfyz(orthg_coordX, coord, erro):
-    """_summary_
+def search_surfyz(orthg_coordX: float, coord: np.ndarray, erro: float):
+    """serch. node on x dir. surf
 
     Arguments:
-        orthg_coordX -- _description_
-        coord -- _description_
-        erro -- _description_
+        orthg_coordX:float  -- number coord in x dir.
+        coord :np.array     -- nodes coordinates list in mesh
+        erro:float          -- erro to conver.
 
     Returns:
-        _description_
+        node                -- node loc.
     """
     dif = abs(orthg_coordX * np.ones_like(coord[:, 1]) - coord[:, 1])
     node_posi = (np.asarray(np.where(dif < erro)))[0][:]
@@ -90,16 +90,16 @@ def search_surfyz(orthg_coordX, coord, erro):
     return node
 
 
-def search_surfzx(orthg_coordY, coord, erro):
-    """_summary_
+def search_surfzx(orthg_coordY: float, coord: np.ndarray, erro: float):
+    """serch. node ony dir. surf
 
     Arguments:
-        orthg_coordY -- _description_
-        coord -- _description_
-        erro -- _description_
+        orthg_coordY:float  -- number coord in y dir.
+        coord :np.array     -- nodes coordinates list in mesh
+        erro:float          -- erro to conver.
 
     Returns:
-        _description_
+        node                -- node loc.
     """
     dif = abs(orthg_coordY * np.ones_like(coord[:, 2]) - coord[:, 2])
     node_posi = (np.asarray(np.where(dif < erro)))[0][:]
@@ -107,18 +107,18 @@ def search_surfzx(orthg_coordY, coord, erro):
     return node
 
 
-def search_nodexyz(node_coordX, node_coordY, node_coordZ, coord, erro):
-    """_summary_
+def search_nodexyz(node_coordX: float, node_coordY: float, node_coordZ: float, coord: np.ndarray, erro: float):
+    """serch. node on coord mesh
 
     Arguments:
-        node_coordX -- _description_
-        node_coordY -- _description_
-        node_coordZ -- _description_
-        coord -- _description_
-        erro -- _description_
+        node_coordX:float  -- number coord in x dir.
+        node_coordY:float  -- number coord in y dir.
+        node_coordZ:float  -- number coord in z dir.
+        coord :np.array     -- nodes coordinates list in mesh
+        erro:float          -- erro to conver.
 
     Returns:
-        _description_
+        node                -- node loc.
     """
     difx = abs(node_coordX * np.ones_like(coord[:, 1]) - coord[:, 1])
     dify = abs(node_coordY * np.ones_like(coord[:, 2]) - coord[:, 2])
@@ -130,14 +130,14 @@ def search_nodexyz(node_coordX, node_coordY, node_coordZ, coord, erro):
     return node
 
 
-def nodes_from_regions(regionlist):
-    """_summary_
+def nodes_from_regions(regionlist: dict):
+    """nodes from regions tag list
 
     Arguments:
-        regionlist -- _description_
+        regionlist:dict    -- regions from tag list (gmsh mesh only)
 
     Returns:
-        _description_
+        regions:dict
     """
     pointlist = regionlist["point"]
     points = [[None] * 2]

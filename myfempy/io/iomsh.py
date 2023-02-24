@@ -5,14 +5,6 @@ I/O MESH GMSH
 
 
 def gmsh_elm_type(elemid):
-    """_summary_
-
-    Arguments:
-        elemid -- _description_
-
-    Returns:
-        _description_
-    """
     # 'vtkkey' >>' Type "elem" in myfempy':CellType --> https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
     celltype = {
         "110": 1,
@@ -38,14 +30,6 @@ def gmsh_elm_type(elemid):
 
 
 def convert_from_msh1(filename):
-    """_summary_
-
-    Arguments:
-        filename -- _description_
-
-    Returns:
-        _description_
-    """
     file_imp = filename + ".msh1"
     with open(file_imp, "r") as file_object:
         file_object.readline()

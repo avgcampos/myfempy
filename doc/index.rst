@@ -134,14 +134,18 @@ Many **Examples** are available
 Documentation
 =============
 
-*The myfempy is documented using Sphinx under ``docs/``. The downloads
-built versions can be found in pdf, html or epub.*
+The myfempy is documented using Sphinx under **\doc**. The myfempy's documents versions can be found in html, pdf or epub.
 
-The **Web Documentation** is available on `Read the
-Docs <https://myfempy.readthedocs.io/>`__.
+The **Web Documentation** is available on [Read the Docs](https://myfempy.readthedocs.io/).
 
-The **User’s Manual [pdf]** is available
-`here <https://github.com/easycae-3d/myfempy/blob/main/docs/Users%20Manual.pdf>`__.
+To compile the documentation use *sphinx* in the **\doc** folder. Do,
+
+.. code:: bash
+
+	>> make html {in the root folder where the index.rst file is} --> This command generates *.html* files
+
+	>> make latexpdf # [optional] todo doc pdf
+
 
 Release
 =======

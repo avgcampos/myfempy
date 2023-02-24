@@ -7,17 +7,17 @@ planestrain.py: Plane Strain Isotropic material
 
 
 class Elasticity:
-    """_summary_"""
+    """elasticity set class""" 
 
-    def __init__(self, tabmat, inci, num_elm):
+    def __init__(self, tabmat: np.ndarray, inci: np.ndarray, num_elm: int):
         self.E = tabmat[int(inci[num_elm, 2]) - 1, 0]  # material elasticity
         self.v = tabmat[int(inci[num_elm, 2]) - 1, 1]  # material poisson ratio
 
     def isotropic(self):
-        """_summary_
+        """_sotropic def
 
         Returns:
-            _description_
+            D:list[]  -- elasticity matrix
         """
         D = np.zeros((3, 3))
         D[0, 0] = self.E * (1.0 - self.v) / ((1 + self.v) * (1.0 - 2.0 * self.v))

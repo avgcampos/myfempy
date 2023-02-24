@@ -1,17 +1,17 @@
 #!/usr/bin/env python
-"""
+__doc__ = """
 Material Setting
 """
+import numpy as np
 
-
-def mat_def(keymatdef):
-    """_summary_
+def mat_def(keymatdef: str):
+    """material def
 
     Arguments:
-        keymatdef -- _description_
+       keymatdef:str -- key material def
 
     Returns:
-        _description_
+       idmatdef:int  -- id number of cross section 
     """
     matdef = {
         "springlinear": 10,
@@ -23,14 +23,14 @@ def mat_def(keymatdef):
     return idmatdef
 
 
-def mat_beh(keymatbeh):
-    """_summary_
+def mat_beh(keymatbeh: str):
+    """material behavior
 
     Arguments:
-        keymatbeh -- _description_
+        keymatbeh:str -- key material behavior
 
     Returns:
-        _description_
+        idmatbeh:int  -- id mat. beh.
     """
     matbeh = {
         "lumped": 1,
@@ -43,16 +43,16 @@ def mat_beh(keymatbeh):
     return idmatbeh
 
 
-def get_elasticity(tabmat, inci, num_elm):
-    """_summary_
+def get_elasticity(tabmat: np.ndarray, inci: np.ndarray, num_elm: int):
+    """get elasticity matrix D
 
     Arguments:
-        tabmat -- _description_
-        inci -- _description_
-        num_elm -- _description_
+        tabmat:list[] -- table of material prop.
+        inci:list[]   -- elements conection and prop. list
+        num_elm:int   -- element(in mesh) number
 
     Returns:
-        _description_
+       elasticity class
     """
     if tabmat[int(inci[num_elm, 2]) - 1, -1] == 1:
         if tabmat[int(inci[num_elm, 2]) - 1, -2] == 10:
@@ -94,3 +94,5 @@ def get_elasticity(tabmat, inci, num_elm):
             return mat.isotropic()
         elif tabmat[int(inci[num_elm, 2]) - 1, -2] == 30:
             print("Not implemented yet")
+    else:
+        print('erro')

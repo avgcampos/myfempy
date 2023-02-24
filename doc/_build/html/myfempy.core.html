@@ -52,13 +52,9 @@
 <li class="toctree-l2"><a class="reference internal" href="theory.html">Theory Basic</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="modules.html">myfempy</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="myfempy.html">myfempy package</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="myfempy.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="myfempy.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="myfempy.html#module-myfempy.version">myfempy.version module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="myfempy.html#module-myfempy">Module contents</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myfempy.html#submodules">Submodules</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="setup.html">setup module</a></li>
 </ul>
 </li>
 </ul>
@@ -100,33 +96,34 @@
 </section>
 <section id="module-myfempy.core.assembler">
 <span id="myfempy-core-assembler-module"></span><h2>myfempy.core.assembler module<a class="headerlink" href="#module-myfempy.core.assembler" title="Permalink to this heading"></a></h2>
-<p>Assembly stiffness and mass, assembly of loads vector</p>
+<p>Assembly matrix</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="myfempy.core.assembler.Assembler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.core.assembler.</span></span><span class="sig-name descname"><span class="pre">Assembler</span></span><a class="headerlink" href="#myfempy.core.assembler.Assembler" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.core.assembler.Assembler.assembler">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">assembler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.assembler.Assembler.assembler" title="Permalink to this definition"></a></dt>
-<dd><p>montagem de matrizes</p>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">assembler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.assembler.Assembler.assembler" title="Permalink to this definition"></a></dt>
+<dd><p>class assembly matrix</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>modelinfo – _description_
-key – _description_</p>
+<dt>Args:</dt><dd><p>modelinfo:dict:   – F.E. model dict with full information needed
+key:str           – key type of assembly</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>matrix:np.ndarray – assembly matrix</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.core.assembler.Assembler.loads">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">KG</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.assembler.Assembler.loads" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">KG</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.assembler.Assembler.loads" title="Permalink to this definition"></a></dt>
 <dd><p>_summary_</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>modelinfo – _description_
-KG – _description_</p>
+<dt>Args:</dt><dd><p>modelinfo:dict     – F.E. model dict with full information needed
+KG:np.ndarray      – stiffness matrix</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>forcevec          – forces vector
+KG                – stiffness matrix updated</p>
 </dd>
 </dl>
 </dd></dl>
@@ -141,33 +138,34 @@ KG – _description_</p>
 <dt class="sig sig-object py" id="myfempy.core.solver.Solver">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.core.solver.</span></span><span class="sig-name descname"><span class="pre">Solver</span></span><a class="headerlink" href="#myfempy.core.solver.Solver" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>_summary_</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<p>class solver</p>
+<p>SLD     – scipy sparse linear solver 
+SLI     – scipy sparse biconjugate gradient stabilized iteration solver 
+SLIPRE  – scipy generalized minimal residual iteration solver
+EIG     – scipy eigenvalues and eigenvectors solver
+FRF     – scipy sparse linear steps(frequency) solver</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.core.solver.Solver.get_modal_solve">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_modal_solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solverset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.solver.Solver.get_modal_solve" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_modal_solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solverset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.solver.Solver.get_modal_solve" title="Permalink to this definition"></a></dt>
+<dd><p>get a modal solution</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>solverset – _description_
-modelinfo – _description_</p>
+<dt>Arguments:</dt><dd><p>solverset:dict  – solver setting
+modelinfo:dict  – F.E. model dict with full information needed</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>solution:dict   – solution</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myfempy.core.solver.Solver.get_static_solve">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_static_solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solverset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.solver.Solver.get_static_solve" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_static_solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solverset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.solver.Solver.get_static_solve" title="Permalink to this definition"></a></dt>
+<dd><p>get a static solution</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>solverset – _description_
-modelinfo – _description_</p>
+<dt>Arguments:</dt><dd><p>solverset:dict  – solver setting
+modelinfo:dict  – F.E. model dict with full information needed</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>solution:dict   – solution</p>
 </dd>
 </dl>
 </dd></dl>
@@ -180,38 +178,32 @@ modelinfo – _description_</p>
 <p>Solver Setting</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.core.solverset.get_constrains_dofs">
-<span class="sig-prename descclassname"><span class="pre">myfempy.core.solverset.</span></span><span class="sig-name descname"><span class="pre">get_constrains_dofs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.solverset.get_constrains_dofs" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<span class="sig-prename descclassname"><span class="pre">myfempy.core.solverset.</span></span><span class="sig-name descname"><span class="pre">get_constrains_dofs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.solverset.get_constrains_dofs" title="Permalink to this definition"></a></dt>
+<dd><p>get constrains dofs in model</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>modelinfo – _description_</p>
+<dt>Arguments:</dt><dd><p>modelinfo:dict      – F.E. model dict with full information needed</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>freedof:np.ndarray  – free dofs vector
+fixedof:np.ndarray  – fixed dofs vector</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.core.solverset.get_solve">
-<span class="sig-prename descclassname"><span class="pre">myfempy.core.solverset.</span></span><span class="sig-name descname"><span class="pre">get_solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.solverset.get_solve" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>solver_type – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">myfempy.core.solverset.</span></span><span class="sig-name descname"><span class="pre">get_solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.solverset.get_solve" title="Permalink to this definition"></a></dt>
+<dd><p>get solver type</p>
+<p>SLD     – scipy sparse linear solver 
+SLI     – scipy sparse biconjugate gradient stabilized iteration solver 
+SLIPRE  – scipy generalized minimal residual iteration solver
+EIG     – scipy eigenvalues and eigenvectors solver
+FRF     – scipy sparse linear steps(frequency) solver</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.core.solverset.step_setting">
-<span class="sig-prename descclassname"><span class="pre">myfempy.core.solverset.</span></span><span class="sig-name descname"><span class="pre">step_setting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.solverset.step_setting" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>steps – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">myfempy.core.solverset.</span></span><span class="sig-name descname"><span class="pre">step_setting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.solverset.step_setting" title="Permalink to this definition"></a></dt>
+<dd><p>steps setting</p>
 </dd></dl>
 
 </section>
@@ -220,50 +212,20 @@ modelinfo – _description_</p>
 <p>Static Linear Solver</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.core.staticlinear.sld">
-<span class="sig-prename descclassname"><span class="pre">myfempy.core.staticlinear.</span></span><span class="sig-name descname"><span class="pre">sld</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fulldofs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stiffness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcelist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freedof</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solverset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.staticlinear.sld" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>fulldofs – _description_
-stiffness – _description_
-forcelist – _description_
-freedof – _description_
-solverset – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">myfempy.core.staticlinear.</span></span><span class="sig-name descname"><span class="pre">sld</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fulldofs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stiffness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcelist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freedof</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solverset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.staticlinear.sld" title="Permalink to this definition"></a></dt>
+<dd><p>scipy sparse linear solver</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.core.staticlinear.sli">
-<span class="sig-prename descclassname"><span class="pre">myfempy.core.staticlinear.</span></span><span class="sig-name descname"><span class="pre">sli</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fulldofs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stiffness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcelist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freedof</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solverset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.staticlinear.sli" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>fulldofs – _description_
-stiffness – _description_
-forcelist – _description_
-freedof – _description_
-solverset – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">myfempy.core.staticlinear.</span></span><span class="sig-name descname"><span class="pre">sli</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fulldofs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stiffness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcelist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freedof</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solverset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.staticlinear.sli" title="Permalink to this definition"></a></dt>
+<dd><p>scipy sparse biconjugate gradient stabilized iteration solver</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.core.staticlinear.slipre">
-<span class="sig-prename descclassname"><span class="pre">myfempy.core.staticlinear.</span></span><span class="sig-name descname"><span class="pre">slipre</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fulldofs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stiffness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcelist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freedof</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solverset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.staticlinear.slipre" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>fulldofs – _description_
-stiffness – _description_
-forcelist – _description_
-freedof – _description_
-solverset – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">myfempy.core.staticlinear.</span></span><span class="sig-name descname"><span class="pre">slipre</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fulldofs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stiffness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcelist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freedof</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solverset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.staticlinear.slipre" title="Permalink to this definition"></a></dt>
+<dd><p>scipy generalized minimal residual iteration solver</p>
 </dd></dl>
 
 </section>
@@ -272,78 +234,19 @@ solverset – _description_</p>
 <p>Vibration/Dynamic Linear Solver</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.core.vibralinear.eig">
-<span class="sig-prename descclassname"><span class="pre">myfempy.core.vibralinear.</span></span><span class="sig-name descname"><span class="pre">eig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fulldofs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stiffness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcelist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freedof</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solverset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.vibralinear.eig" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>fulldofs – _description_
-stiffness – _description_
-mass – _description_
-forcelist – _description_
-freedof – _description_
-solverset – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">myfempy.core.vibralinear.</span></span><span class="sig-name descname"><span class="pre">eig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fulldofs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stiffness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcelist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freedof</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solverset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.vibralinear.eig" title="Permalink to this definition"></a></dt>
+<dd><p>scipy eigenvalues and eigenvectors solver</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.core.vibralinear.frf">
-<span class="sig-prename descclassname"><span class="pre">myfempy.core.vibralinear.</span></span><span class="sig-name descname"><span class="pre">frf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fulldofs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stiffness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcelist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freedof</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solverset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.vibralinear.frf" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>fulldofs – _description_
-stiffness – _description_
-mass – _description_
-forcelist – _description_
-freedof – _description_
-solverset – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">myfempy.core.vibralinear.</span></span><span class="sig-name descname"><span class="pre">frf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fulldofs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stiffness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcelist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freedof</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solverset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.vibralinear.frf" title="Permalink to this definition"></a></dt>
+<dd><p>scipy sparse linear steps(frequency) solver</p>
 </dd></dl>
 
 </section>
 <section id="module-myfempy.core">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-myfempy.core" title="Permalink to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="myfempy.core.Solver">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.core.</span></span><span class="sig-name descname"><span class="pre">Solver</span></span><a class="headerlink" href="#myfempy.core.Solver" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>_summary_</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="myfempy.core.Solver.get_modal_solve">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_modal_solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solverset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.Solver.get_modal_solve" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>solverset – _description_
-modelinfo – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="myfempy.core.Solver.get_static_solve">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_static_solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solverset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.core.Solver.get_static_solve" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>solverset – _description_
-modelinfo – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 

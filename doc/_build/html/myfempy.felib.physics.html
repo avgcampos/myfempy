@@ -52,13 +52,9 @@
 <li class="toctree-l2"><a class="reference internal" href="theory.html">Theory Basic</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="modules.html">myfempy</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="myfempy.html">myfempy package</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="myfempy.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="myfempy.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="myfempy.html#module-myfempy.version">myfempy.version module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="myfempy.html#module-myfempy">Module contents</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="myfempy.html#submodules">Submodules</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="setup.html">setup module</a></li>
 </ul>
 </li>
 </ul>
@@ -101,52 +97,54 @@
 </section>
 <section id="module-myfempy.felib.physics.force2node">
 <span id="myfempy-felib-physics-force2node-module"></span><h2>myfempy.felib.physics.force2node module<a class="headerlink" href="#module-myfempy.felib.physics.force2node" title="Permalink to this heading"></a></h2>
-<p>forces to nodes</p>
+<p>forces list to nodes vector</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.force2node.force_beam">
-<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.force2node.</span></span><span class="sig-name descname"><span class="pre">force_beam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_dirc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_fc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_list_fc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_fc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.force2node.force_beam" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.force2node.</span></span><span class="sig-name descname"><span class="pre">force_beam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_dirc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fc_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_list_fc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.force2node.force_beam" title="Permalink to this definition"></a></dt>
+<dd><p>force in line beam appl.</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>modelinfo – _description_
-force_value – _description_
-force_dirc – _description_
-dir_fc – _description_
-node_list_fc – _description_
-line_fc – _description_</p>
+<dt>Arguments:</dt><dd><p>modelinfo:dict        – F.E. model dict with full information needed
+force_value:float     – force value
+force_dirc:str        – force direction
+node_list_fc:list     – list of node with force applied
+fc_set:str            – force set direction</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>force_value_vector:np.array  – force vecto
+fc_type_dof:list             – force list dofs</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.force2node.force_edge">
-<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.force2node.</span></span><span class="sig-name descname"><span class="pre">force_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_dirc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_list_fc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_fc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.force2node.force_edge" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.force2node.</span></span><span class="sig-name descname"><span class="pre">force_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_dirc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_list_fc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fc_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.force2node.force_edge" title="Permalink to this definition"></a></dt>
+<dd><p>force in edge appl.</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>modelinfo – _description_
-force_value – _description_
-force_dirc – _description_
-node_list_fc – _description_
-dir_fc – _description_</p>
+<dt>Arguments:</dt><dd><p>modelinfo:dict        – F.E. model dict with full information needed
+force_value:float     – force value
+force_dirc:str        – force direction
+node_list_fc:list     – list of node with force applied
+fc_set:str            – force set direction</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>force_value_vector:np.array  – force vecto
+fc_type_dof:list             – force list dofs</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.force2node.force_surf">
-<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.force2node.</span></span><span class="sig-name descname"><span class="pre">force_surf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_dirc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_list_fc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_fc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.force2node.force_surf" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.force2node.</span></span><span class="sig-name descname"><span class="pre">force_surf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_dirc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_list_fc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fc_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.force2node.force_surf" title="Permalink to this definition"></a></dt>
+<dd><p>force in surface appl.</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>modelinfo – _description_
-force_value – _description_
-force_dirc – _description_
-node_list_fc – _description_
-dir_fc – _description_</p>
+<dt>Arguments:</dt><dd><p>modelinfo:dict        – F.E. model dict with full information needed
+force_value:float     – force value
+force_dirc:str        – force direction
+node_list_fc:list     – list of node with force applied
+fc_set:str            – force set direction</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>force_value_vector:np.array  – force vecto
+fc_type_dof:list             – force list dofs</p>
 </dd>
 </dl>
 </dd></dl>
@@ -154,28 +152,12 @@ dir_fc – _description_</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.force2node.poly_area">
 <span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.force2node.</span></span><span class="sig-name descname"><span class="pre">poly_area</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">poly</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.force2node.poly_area" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>poly – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.force2node.unit_normal">
 <span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.force2node.</span></span><span class="sig-name descname"><span class="pre">unit_normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.force2node.unit_normal" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>a – _description_
-b – _description_
-c – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 </section>
 <section id="module-myfempy.felib.physics.getnode">
@@ -183,112 +165,112 @@ c – _description_</p>
 <p>get nodes</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.getnode.nodes_from_regions">
-<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">nodes_from_regions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regionlist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.nodes_from_regions" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">nodes_from_regions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regionlist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.nodes_from_regions" title="Permalink to this definition"></a></dt>
+<dd><p>nodes from regions tag list</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>regionlist – _description_</p>
+<dt>Arguments:</dt><dd><p>regionlist:dict    – regions from tag list (gmsh mesh only)</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>regions:dict</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.getnode.search_edgex">
-<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_edgex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_coordX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_edgex" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_edgex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_coordX</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_edgex" title="Permalink to this definition"></a></dt>
+<dd><p>serch. node  on x dir. edge</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>edge_coordX – _description_
-coord – _description_
-erro – _description_</p>
+<dt>Arguments:</dt><dd><p>edge_coordX:float   – number coord in x dir.
+coord :np.array     – nodes coordinates list in mesh
+erro:float          – erro to conver.</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>node                – node loc.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.getnode.search_edgey">
-<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_edgey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_coordY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_edgey" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_edgey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_coordY</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_edgey" title="Permalink to this definition"></a></dt>
+<dd><p>serch. node  on y dir. edge</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>edge_coordY – _description_
-coord – _description_
-erro – _description_</p>
+<dt>Arguments:</dt><dd><p>edge_coordY:float   – number coord in y dir.
+coord :np.array     – nodes coordinates list in mesh
+erro:float          – erro to conver.</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>node                – node loc.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.getnode.search_edgez">
-<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_edgez</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_coordZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_edgez" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_edgez</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_coordZ</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_edgez" title="Permalink to this definition"></a></dt>
+<dd><p>serch. node  on z dir. edge</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>edge_coordZ – _description_
-coord – _description_
-erro – _description_</p>
+<dt>Arguments:</dt><dd><p>edge_coordY:float   – number coord in z dir.
+coord :np.array     – nodes coordinates list in mesh
+erro:float          – erro to conver.</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>node                – node loc.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.getnode.search_nodexyz">
-<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_nodexyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_coordX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_coordY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_coordZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_nodexyz" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_nodexyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_coordX</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_coordY</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_coordZ</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_nodexyz" title="Permalink to this definition"></a></dt>
+<dd><p>serch. node on coord mesh</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>node_coordX – _description_
-node_coordY – _description_
-node_coordZ – _description_
-coord – _description_
-erro – _description_</p>
+<dt>Arguments:</dt><dd><p>node_coordX:float  – number coord in x dir.
+node_coordY:float  – number coord in y dir.
+node_coordZ:float  – number coord in z dir.
+coord :np.array     – nodes coordinates list in mesh
+erro:float          – erro to conver.</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>node                – node loc.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.getnode.search_surfxy">
-<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_surfxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orthg_coordZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_surfxy" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_surfxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orthg_coordZ</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_surfxy" title="Permalink to this definition"></a></dt>
+<dd><p>serch. node on z dir. surf</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>orthg_coordZ – _description_
-coord – _description_
-erro – _description_</p>
+<dt>Arguments:</dt><dd><p>orthg_coordZ:float  – number coord in z dir.
+coord :np.array     – nodes coordinates list in mesh
+erro:float          – erro to conver.</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>node                – node loc.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.getnode.search_surfyz">
-<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_surfyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orthg_coordX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_surfyz" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_surfyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orthg_coordX</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_surfyz" title="Permalink to this definition"></a></dt>
+<dd><p>serch. node on x dir. surf</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>orthg_coordX – _description_
-coord – _description_
-erro – _description_</p>
+<dt>Arguments:</dt><dd><p>orthg_coordX:float  – number coord in x dir.
+coord :np.array     – nodes coordinates list in mesh
+erro:float          – erro to conver.</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>node                – node loc.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.getnode.search_surfzx">
-<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_surfzx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orthg_coordY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_surfzx" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
+<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.getnode.</span></span><span class="sig-name descname"><span class="pre">search_surfzx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orthg_coordY</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.getnode.search_surfzx" title="Permalink to this definition"></a></dt>
+<dd><p>serch. node ony dir. surf</p>
 <dl class="simple">
-<dt>Arguments:</dt><dd><p>orthg_coordY – _description_
-coord – _description_
-erro – _description_</p>
+<dt>Arguments:</dt><dd><p>orthg_coordY:float  – number coord in y dir.
+coord :np.array     – nodes coordinates list in mesh
+erro:float          – erro to conver.</p>
 </dd>
-<dt>Returns:</dt><dd><p>_description_</p>
+<dt>Returns:</dt><dd><p>node                – node loc.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -299,28 +281,14 @@ erro – _description_</p>
 <p>calculate loads and constrains</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.loadsconstr.get_constrain">
-<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.loadsconstr.</span></span><span class="sig-name descname"><span class="pre">get_constrain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.loadsconstr.get_constrain" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>modelinfo – _description_
-blist – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.loadsconstr.</span></span><span class="sig-name descname"><span class="pre">get_constrain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.loadsconstr.get_constrain" title="Permalink to this definition"></a></dt>
+<dd><p>get bound. cond.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="myfempy.felib.physics.loadsconstr.get_forces">
-<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.loadsconstr.</span></span><span class="sig-name descname"><span class="pre">get_forces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.loadsconstr.get_forces" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="simple">
-<dt>Arguments:</dt><dd><p>modelinfo – _description_
-flist – _description_</p>
-</dd>
-<dt>Returns:</dt><dd><p>_description_</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">myfempy.felib.physics.loadsconstr.</span></span><span class="sig-name descname"><span class="pre">get_forces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinfo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.felib.physics.loadsconstr.get_forces" title="Permalink to this definition"></a></dt>
+<dd><p>get forces</p>
 </dd></dl>
 
 </section>

@@ -5,14 +5,14 @@ cross section
 import numpy as np
 
 
-def sec_def(keysecdef):
-    """_summary_
+def sec_def(keysecdef: str):
+    """cross section def
 
     Arguments:
-        keysecdef -- _description_
+        keysecdef:str -- key section def
 
     Returns:
-        _description_
+        idsecdef:int  -- id number of cross section 
     """
     matdef = {
         "rectangle": 10,
@@ -32,46 +32,49 @@ def sec_def(keysecdef):
     return idsecdef
 
 
-def sect_prop(sec_def, dim_sec):
-    """_summary_
+def sect_prop(sec_set: str, dim_sec: dict):
+    """cross section property
 
     Arguments:
-        sec_def -- _description_
-        dim_sec -- _description_
+        sec_set:str -- section setting
+        dim_sec:dict{} -- section's dimensions
 
     Returns:
-        _description_
+        A:float   -- area
+        Izz:float -- inercia zz
+        Iyy:float -- inercia yy
+        Jxx:float -- inercia xx
     """
     b = dim_sec["b"]
     h = dim_sec["h"]
     t = dim_sec["t"]
     d = dim_sec["d"]
-    if (sec_def == "rectangle") or (sec_def == "R"):
+    if (sec_set == "rectangle") or (sec_set == "R"):
         A = b * h
         Izz = (1 / 12) * b * h**3
         Iyy = (1 / 12) * h * b**3
         Jxx = Iyy + Izz
-    elif (sec_def == "rectangletube") or (sec_def == "Rt"):
+    elif (sec_set == "rectangletube") or (sec_set == "Rt"):
         A = b * h - ((b - 2 * t) * (h - 2 * t))
         Izz = (1 / 12) * (b * h**3) - (1 / 12) * ((b - 2 * t) * (h - 2 * t) ** 3)
         Iyy = (1 / 12) * (h * b**3) - (1 / 12) * ((h - 2 * t) * (b - 2 * t) ** 3)
         Jxx = Iyy + Izz
-    elif (sec_def == "circle") or (sec_def == "Ci"):
+    elif (sec_set == "circle") or (sec_set == "Ci"):
         A = (1 / 4) * np.pi * d**2
         Izz = (1 / 64) * np.pi * d**4
         Iyy = Izz
         Jxx = Iyy + Izz
-    elif (sec_def == "circletube") or (sec_def == "Ct"):
+    elif (sec_set == "circletube") or (sec_set == "Ct"):
         A = (1 / 4) * np.pi * (d**2 - (d - 2 * t) ** 2)
         Izz = (1 / 64) * np.pi * (d**4 - (d - 2 * t) ** 4)
         Iyy = Izz
         Jxx = Iyy + Izz
-    elif (sec_def == "isection") or (sec_def == "I"):
+    elif (sec_set == "isection") or (sec_set == "I"):
         A = 2 * b * d + t * (h - 2 * d)
         Izz = (b * h**3) / 12 - ((b - t) * (h - 2 * d) ** 3) / 12
         Iyy = ((h - 2 * d) * t**3) / 12 + 2 * (d * b**3) / 12
         Jxx = Iyy + Izz
-    elif (sec_def == "spring") or (sec_def == "S"):
+    elif (sec_set == "spring") or (sec_set == "S"):
         A = 1
         Izz = 1
         Iyy = 1
@@ -79,16 +82,16 @@ def sect_prop(sec_def, dim_sec):
     return A, Izz, Iyy, Jxx
 
 
-def cg_coord(tabgeo, inci, num_elm):
-    """_summary_
+def cg_coord(tabgeo: np.ndarray, inci: np.ndarray, num_elm: int):
+    """coord cg compute
 
     Arguments:
-        tabgeo -- _description_
-        inci -- _description_
-        num_elm -- _description_
+        tabgeo:list[]  -- table of geometry prop.
+        inci:list[]    -- elements conection and prop. list
+        num_elm:int    -- element(in mesh) number
 
     Returns:
-        _description_
+        CG:np.array  -- coord of CG
     """
     b = tabgeo[int(inci[num_elm, 3]) - 1, 5]
     h = tabgeo[int(inci[num_elm, 3]) - 1, 6]

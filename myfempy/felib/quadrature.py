@@ -1,20 +1,20 @@
 #!/usr/bin/env python
-"""
+__doc__ = """
 Quadrature
 """
 import numpy as np
 
 sqrt3 = np.sqrt(3.0)
 
-
-def no_interpol(npp):
-    """_summary_
+def no_interpol(npp: int):
+    """no integration
 
     Arguments:
-        npp -- _description_
+        npp          -- number_of_points
 
     Returns:
-        _description_
+        xp:np.array  -- points
+        wp:np.array  -- weights
     """
     if npp == 1:
         xp = np.array([[1.0], [1.0], [1.0]])
@@ -22,14 +22,15 @@ def no_interpol(npp):
         return xp, wp
 
 
-def gaussian(npp):
-    """_summary_
+def gaussian(npp: int):
+    """integration gauss
 
     Arguments:
-        npp -- _description_
-
+        npp -- number_of_points
+        
     Returns:
-        _description_
+        xp:np.array  -- points
+        wp:np.array  -- weights
     """
     if npp == 1:
         xp = np.array([[1 / 3], [1 / 3]])

@@ -9,7 +9,7 @@ frame22.py: Frame 3D 2-node linear Finite Element
 
 
 class Frame22:
-    """_summary_"""
+    """class Frame 3D 2-node linear Finite Element"""
 
     def __init__(self, modelinfo):
         self.dofe = modelinfo["nodecon"][0] * modelinfo["nodedof"][0]
@@ -21,13 +21,27 @@ class Frame22:
         self.coord = modelinfo["coord"]
         self.tabmat = modelinfo["tabmat"]
         self.tabgeo = modelinfo["tabgeo"]
+        
+        """
+        Arguments:
+           modelinfo:dict     -- F.E. model dict with full information needed
+
+        Parameters:
+            dofe              -- element dof
+            fulldof           -- total dof of model
+            nodedof           -- node dof 
+            nelem             -- total number of elements in mesh
+            nnode             -- number of degree of freedom per node
+            inci              -- elements conection and prop. list
+            coord             -- nodes coordinates list in mesh
+            tabmat            -- table of material prop.
+            tabgeo            -- table of geometry prop.
+            
+        """   
 
     def elemset(self):
-        """_summary_
-
-        Returns:
-            _description_
-        """
+        """element setting"""
+        
         dofelem = {
             "key": "frame22",
             "id": 141,
@@ -39,14 +53,8 @@ class Frame22:
         return dofelem
 
     def lockey(self, list_node):
-        """_summary_
-
-        Arguments:
-            list_node -- _description_
-
-        Returns:
-            _description_
-        """
+        """element lockey(dof)"""
+        
         noi = list_node[0]
         noj = list_node[1]
         loc = np.array(
@@ -68,14 +76,8 @@ class Frame22:
         return loc
 
     def stiff_linear(self, ee):
-        """_summary_
-
-        Arguments:
-            ee -- _description_
-
-        Returns:
-            _description_
-        """
+        """stiffness linear matrix"""
+        
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
         noix = self.coord[noi - 1, 1]
@@ -153,14 +155,8 @@ class Frame22:
         return kef3d2t, loc
 
     def mass(self, ee):
-        """_summary_
-
-        Arguments:
-            ee -- _description_
-
-        Returns:
-            _description_
-        """
+        """consistent mass matrix"""
+        
         noi = int(self.inci[ee, 4])
         noj = int(self.inci[ee, 5])
         noix = self.coord[noi - 1, 1]
@@ -220,15 +216,8 @@ class Frame22:
         return mef3d, loc
 
     def intforces(self, U, lines):
-        """_summary_
-
-        Arguments:
-            U -- _description_
-            lines -- _description_
-
-        Returns:
-            _description_
-        """
+        """internal forces balance calc."""
+        
         Fint = np.zeros((self.fulldof), dtype=float)
         Nx = np.zeros((len(lines[0][1]), len(lines)), dtype=float)
         Vy = np.zeros((len(lines[0][1]), len(lines)), dtype=float)
@@ -303,15 +292,14 @@ class Frame22:
         return ifb, title
 
     def matrix_b(self, ee, csc):
-        """_summary_
-
-        Arguments:
-            ee -- _description_
-            csc -- _description_
-
-        Returns:
-            _description_
+        """shape function derivatives
+        
+        csc:list[y,z,r]    -- cross section center(CG)
+            y(max,min)     -- y coord.
+            z(max,min)     -- z coord.
+            r(max,min)     -- r(radius) coord.
         """
+        
         y = csc[0]
         z = csc[1]
         r = csc[2]

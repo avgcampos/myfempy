@@ -6,14 +6,15 @@ Solver Setting
 """
 
 
-def get_constrains_dofs(modelinfo):
-    """_summary_
+def get_constrains_dofs(modelinfo: dict):
+    """get constrains dofs in model
 
     Arguments:
-        modelinfo -- _description_
+        modelinfo:dict      -- F.E. model dict with full information needed
 
     Returns:
-        _description_
+        freedof:np.ndarray  -- free dofs vector
+        fixedof:np.ndarray  -- fixed dofs vector
     """
     ntbc = modelinfo["constrains"].shape[0]
     fixedof = np.zeros((1, modelinfo["nodedof"][0] * len(modelinfo["coord"])))
@@ -164,16 +165,17 @@ def get_constrains_dofs(modelinfo):
     return freedof, fixedof
 
 
-def get_solve(solver_type):
-    """_summary_
-
-    Arguments:
-        solver_type -- _description_
-
-    Returns:
-        _description_
+def get_solve(solver_type: str):
+    """get solver type
+    
+    SLD     -- scipy sparse linear solver 
+    SLI     -- scipy sparse biconjugate gradient stabilized iteration solver 
+    SLIPRE  -- scipy generalized minimal residual iteration solver
+    EIG     -- scipy eigenvalues and eigenvectors solver
+    FRF     -- scipy sparse linear steps(frequency) solver 
+    
     """
-    if solver_type == "SLD":
+    if solver_type == "SLD": 
         from myfempy.core.staticlinear import sld
 
         return sld
@@ -197,15 +199,8 @@ def get_solve(solver_type):
         print("Erro Import Solver")
 
 
-def step_setting(steps):
-    """_summary_
-
-    Arguments:
-        steps -- _description_
-
-    Returns:
-        _description_
-    """
+def step_setting(steps: dict):
+    """steps setting"""
     start = steps["start"]
     end = steps["end"]
     substep = steps["step"]

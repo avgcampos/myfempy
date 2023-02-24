@@ -12,23 +12,28 @@ Solver Manager
 
 
 class Solver:
-    """_summary_
-
-    Returns:
-        _description_
+    """class solver
+    
+    SLD     -- scipy sparse linear solver 
+    SLI     -- scipy sparse biconjugate gradient stabilized iteration solver 
+    SLIPRE  -- scipy generalized minimal residual iteration solver
+    EIG     -- scipy eigenvalues and eigenvectors solver
+    FRF     -- scipy sparse linear steps(frequency) solver 
+    
     """
 
     @staticmethod
-    def get_static_solve(solverset, modelinfo):
-        """_summary_
+    def get_static_solve(solverset: dict, modelinfo: dict):
+        """get a static solution
 
         Arguments:
-            solverset -- _description_
-            modelinfo -- _description_
+            solverset:dict  -- solver setting
+            modelinfo:dict  -- F.E. model dict with full information needed
 
         Returns:
-            _description_
+            solution:dict   -- solution
         """
+        
         # print_console("solver")
         solve = get_solve(solverset["SOLVER"])
         start = time.time()
@@ -60,16 +65,17 @@ class Solver:
         return solution
 
     @staticmethod
-    def get_modal_solve(solverset, modelinfo):
-        """_summary_
+    def get_modal_solve(solverset: dict, modelinfo: dict):
+        """get a modal solution
 
         Arguments:
-            solverset -- _description_
-            modelinfo -- _description_
+            solverset:dict  -- solver setting
+            modelinfo:dict  -- F.E. model dict with full information needed
 
         Returns:
-            _description_
+            solution:dict   -- solution
         """
+        
         # print_console("solver")
         solve = get_solve(solverset["SOLVER"])
         start = time.time()

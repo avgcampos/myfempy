@@ -8,17 +8,17 @@ planestress.py: Plane Stress Isotropic and Elasticity Material
 
 
 class Elasticity:
-    """_summary_"""
+    """elasticity set class"""  
 
-    def __init__(self, tabmat, inci, ee):
-        self.E = tabmat[int(inci[ee, 2]) - 1, 0]  # material elasticity
-        self.v = tabmat[int(inci[ee, 2]) - 1, 1]  # material poisson ratio
+    def __init__(self, tabmat: np.ndarray, inci: np.ndarray, num_elm: int):
+        self.E = tabmat[int(inci[num_elm, 2]) - 1, 0]  # material elasticity
+        self.v = tabmat[int(inci[num_elm, 2]) - 1, 1]  # material poisson ratio
 
     def isotropic(self):
-        """_summary_
+        """isotropic def
 
         Returns:
-            _description_
+            D:list[]  -- elasticity matrix
         """
         D = np.zeros((3, 3))
         D[0, 0] = self.E / (1.0 - self.v * self.v)
@@ -30,9 +30,9 @@ class Elasticity:
 
 
 class Tensor:
-    """_summary_"""
+    """_material tensor stress-strain relat."""
 
-    def __init__(self, modelinfo, U, ee):
+    def __init__(self, modelinfo: dict, U: np.ndarray, ee: int):
         self.ee = ee
         self.U = U
         self.modelinfo = modelinfo
@@ -51,10 +51,12 @@ class Tensor:
         self.wp = [2.0]
 
     def strain(self):
-        """_summary_
+        """strain in element
 
         Returns:
-            _description_
+            epsilon:list[]  -- list of strain calc. [e] = [B]*{U}
+            strain:float    -- list of strain tensor
+            title:list[]    -- tensor set names myfempy
         """
         B = np.zeros((self.ntensor, self.dofe))
         for pp in range(0, self.npp):
@@ -76,14 +78,15 @@ class Tensor:
         title = ["STRAIN_VM", "STRAIN_XX", "STRAIN_YY", "STRAIN_XY"]
         return epsilon, strain, title
 
-    def stress(self, epsilon):
-        """_summary_
-
+    def stress(self, epsilon: np.ndarray):
+        """stress in element
+        
         Arguments:
-            epsilon -- _description_
+            epsilon:np.array[] -- strain in element
 
         Returns:
-            _description_
+            stress:list[]   -- list of stress calc. [s] = [D]*[e]
+            title:list[]    -- tensor set names myfempy
         """
         M = Elasticity(self.tabmat, self.inci, self.ee)
         D = M.isotropic()

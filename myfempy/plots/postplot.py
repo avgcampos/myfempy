@@ -10,14 +10,7 @@ Plotter Post Process
 """
 
 
-def postproc_plot(postprocset, postporc_result, modelinfo):
-    """_summary_
-
-    Arguments:
-        postprocset -- _description_
-        postporc_result -- _description_
-        modelinfo -- _description_
-    """
+def postproc_plot(postprocset: dict, postporc_result: dict, modelinfo: dict):
     plotset = dict()
     hist_X = []
     hist_Y = []
