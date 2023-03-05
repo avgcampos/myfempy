@@ -104,13 +104,14 @@ The myfempy is documented using Sphinx under `doc/`. The myfempy's documents ver
 
 The **Web Documentation** is available on [Read the Docs](https://myfempy.readthedocs.io/).
 
+The **User's Manual**(pdf) is available on [manual_myfempy](https://github.com/easycae-3d/myfempy/blob/main/doc/manual%20myfempy.pdf).
+
 To compile the documentation use *sphinx* in the **\doc** folder. Do,
 
 ```bash
 
 >> make html {in the root folder where the index.rst file is} --> This command generates *.html* files
 
->> make latexpdf # [optional] todo doc pdf
 ```
 
 ## Release
