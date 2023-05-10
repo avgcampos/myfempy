@@ -1,0 +1,7 @@
+site_name: Myfempy Documentation
+site_url: 
+nav:
+    - Home: index.md
+    - Myfempy: myfempy.md
+plugins:
+  - mkdocstrings
