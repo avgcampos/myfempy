@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>myfempy.mesh package &mdash; myfempy latest documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="myfempy.felib.struct package" href="myfempy.felib.struct.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            myfempy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Basic Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="documentation.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html">User’s Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory.html">Theory Basic</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="modules.html">myfempy</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="myfempy.html">myfempy package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="myfempy.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/easycae-3d/myfempy">Source Code</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">myfempy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="documentation.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">myfempy</a></li>
+          <li class="breadcrumb-item"><a href="myfempy.html">myfempy package</a></li>
+      <li class="breadcrumb-item active">myfempy.mesh package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/myfempy.mesh.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="myfempy-mesh-package">
+<h1>myfempy.mesh package<a class="headerlink" href="#myfempy-mesh-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-myfempy.mesh.genmesh">
+<span id="myfempy-mesh-genmesh-module"></span><h2>myfempy.mesh.genmesh module<a class="headerlink" href="#module-myfempy.mesh.genmesh" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="myfempy.mesh.genmesh.MeshGen">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.mesh.genmesh.</span></span><span class="sig-name descname"><span class="pre">MeshGen</span></span><a class="headerlink" href="#myfempy.mesh.genmesh.MeshGen" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>generate mesh</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="myfempy.mesh.genmesh.MeshGen.get_data_mesh">
+<span class="sig-name descname"><span class="pre">get_data_mesh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.genmesh.MeshGen.get_data_mesh" title="Permalink to this definition"></a></dt>
+<dd><p>get mesh data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>meshdata</strong> – dict – data model</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="myfempy.mesh.genmesh.MeshSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.mesh.genmesh.</span></span><span class="sig-name descname"><span class="pre">MeshSet</span></span><a class="headerlink" href="#myfempy.mesh.genmesh.MeshSet" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>class mesh set</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="myfempy.mesh.genmesh.MeshSet.get_coord">
+<span class="sig-name descname"><span class="pre">get_coord</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.genmesh.MeshSet.get_coord" title="Permalink to this definition"></a></dt>
+<dd><p>get coord nodes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="myfempy.mesh.genmesh.MeshSet.get_inci">
+<span class="sig-name descname"><span class="pre">get_inci</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geo_lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.genmesh.MeshSet.get_inci" title="Permalink to this definition"></a></dt>
+<dd><p>get incidence conection</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="myfempy.mesh.genmesh.MeshSet.get_tabgeo">
+<span class="sig-name descname"><span class="pre">get_tabgeo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.genmesh.MeshSet.get_tabgeo" title="Permalink to this definition"></a></dt>
+<dd><p>get geometry table</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="myfempy.mesh.genmesh.MeshSet.get_tabmat">
+<span class="sig-name descname"><span class="pre">get_tabmat</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.genmesh.MeshSet.get_tabmat" title="Permalink to this definition"></a></dt>
+<dd><p>get material table</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="myfempy.mesh.genmesh.MeshSet.mesh2elem_key">
+<span class="sig-name descname"><span class="pre">mesh2elem_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.genmesh.MeshSet.mesh2elem_key" title="Permalink to this definition"></a></dt>
+<dd><p>mesh to elem. key</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="myfempy.mesh.genmesh.ModelGen">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myfempy.mesh.genmesh.</span></span><span class="sig-name descname"><span class="pre">ModelGen</span></span><a class="headerlink" href="#myfempy.mesh.genmesh.ModelGen" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>generate the model F.E.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="myfempy.mesh.genmesh.ModelGen.get_model">
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.genmesh.ModelGen.get_model" title="Permalink to this definition"></a></dt>
+<dd><p>get model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>meshdata</strong> – dict – data model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="myfempy.mesh.genmesh.ModelGen.get_quadra">
+<span class="sig-name descname"><span class="pre">get_quadra</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.genmesh.ModelGen.get_quadra" title="Permalink to this definition"></a></dt>
+<dd><p>get quadrature</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-myfempy.mesh.gmsh">
+<span id="myfempy-mesh-gmsh-module"></span><h2>myfempy.mesh.gmsh module<a class="headerlink" href="#module-myfempy.mesh.gmsh" title="Permalink to this heading"></a></h2>
+<p>GMSH GEN MESH</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="myfempy.mesh.gmsh.get_gmsh_geo">
+<span class="sig-prename descclassname"><span class="pre">myfempy.mesh.gmsh.</span></span><span class="sig-name descname"><span class="pre">get_gmsh_geo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meshdata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.gmsh.get_gmsh_geo" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="myfempy.mesh.gmsh.get_gmsh_msh">
+<span class="sig-prename descclassname"><span class="pre">myfempy.mesh.gmsh.</span></span><span class="sig-name descname"><span class="pre">get_gmsh_msh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meshdata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.gmsh.get_gmsh_msh" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="myfempy.mesh.gmsh.gmsh_key">
+<span class="sig-prename descclassname"><span class="pre">myfempy.mesh.gmsh.</span></span><span class="sig-name descname"><span class="pre">gmsh_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meshtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.gmsh.gmsh_key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-myfempy.mesh.legacy">
+<span id="myfempy-mesh-legacy-module"></span><h2>myfempy.mesh.legacy module<a class="headerlink" href="#module-myfempy.mesh.legacy" title="Permalink to this heading"></a></h2>
+<p>LEGACY MESH GEN</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="myfempy.mesh.legacy.get_legacy_line2">
+<span class="sig-prename descclassname"><span class="pre">myfempy.mesh.legacy.</span></span><span class="sig-name descname"><span class="pre">get_legacy_line2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">GEOMETRY</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.legacy.get_legacy_line2" title="Permalink to this definition"></a></dt>
+<dd><p>get a line 2 nodes mesh</p>
+<p>(i)—{1}—(j)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="myfempy.mesh.legacy.get_legacy_quad4">
+<span class="sig-prename descclassname"><span class="pre">myfempy.mesh.legacy.</span></span><span class="sig-name descname"><span class="pre">get_legacy_quad4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">GEOMETRY</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.legacy.get_legacy_quad4" title="Permalink to this definition"></a></dt>
+<dd><p>get a quadrangular 4 nodes mesh</p>
+<dl>
+<dt>(l)—————(k)</dt><dd><div class="line-block">
+<div class="line-block">
+<div class="line"><a href="#id1"><span class="problematic" id="id2">|</span></a></div>
+<div class="line"><a href="#id3"><span class="problematic" id="id4">|</span></a></div>
+</div>
+<div class="line">{1}        |</div>
+<div class="line-block">
+<div class="line"><a href="#id5"><span class="problematic" id="id6">|</span></a></div>
+<div class="line"><a href="#id7"><span class="problematic" id="id8">|</span></a></div>
+</div>
+</div>
+</dd>
+</dl>
+<p>(i)—————(j)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="myfempy.mesh.legacy.get_legacy_tria3">
+<span class="sig-prename descclassname"><span class="pre">myfempy.mesh.legacy.</span></span><span class="sig-name descname"><span class="pre">get_legacy_tria3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">GEOMETRY</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#myfempy.mesh.legacy.get_legacy_tria3" title="Permalink to this definition"></a></dt>
+<dd><p>get a triagular 3 nodes mesh</p>
+<ol class="loweralpha simple" start="11">
+<li><p><a href="#id9"><span class="problematic" id="id10">|</span></a>| |       |        |         |          |  {1} |            |             |              |          </p></li>
+</ol>
+<p>(i)——–(j)</p>
+</dd></dl>
+
+</section>
+<section id="module-myfempy.mesh">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-myfempy.mesh" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="myfempy.felib.struct.html" class="btn btn-neutral float-left" title="myfempy.felib.struct package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Campos, A. V. G..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
