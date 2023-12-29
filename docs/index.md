@@ -1,6 +1,6 @@
 **Under Development**
 
-![myfempy_logo](figures\logoB.png)
+![myfempy_logo](figures\logo.png)
 
 # Welcome to myfempy\'s web documentation!
 

@@ -2,6 +2,13 @@ site_name: Myfempy Documentation
 site_url: 
 nav:
     - Home: index.md
-    - Myfempy: myfempy.md
+    - Myfempy: myfempy.md\
+theme: readthedocs
 plugins:
-  - mkdocstrings
+    - mkdocstrings
+    - search
+    # - pdf-export
+extra_javascript:
+    - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+markdown_extensions:
+    - mdx_math

@@ -1,3 +1,3 @@
 # mymfempy modules
 
-::: myfempy
+myfempy
