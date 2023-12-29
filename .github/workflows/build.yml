@@ -5,6 +5,9 @@ on:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
+#----------------------------------------------
+# check-out repo and set-up python
+#----------------------------------------------
 jobs:
   sonarcloud:
     name: SonarCloud
@@ -13,23 +16,24 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      #----------------------------------------------
+      # install your root project, if required
+      #----------------------------------------------
       - name: Install myfempy
-        run: |
-            python -m pip install --upgrade pip
-            pip install numpy
-            pip install cython
-            pip install scipy
-            pip install vedo 
-            pip install .
-      - name: Lint with flake8
-        run: |
-            pip install flake8
-            flake8 --extend-ignore=E501 . 
-        continue-on-error: true
-      - name: Test with pytest
-        run: |
-            pip install pytest
-            pytest tests --doctest-modules --junitxml=junit/test-results.xml
+        run: pip install .
+      #----------------------------------------------
+      # run lint and test suite
+      #----------------------------------------------
+      - name: Run lint
+        run: make lint
+
+      - name: Run tests
+        run: make test
+
+      - uses: actions/upload-artifact@v2
+        with:
+            name: code-coverage
+            path: htmlcov
         continue-on-error: true
       - uses: actions/upload-artifact@v2
         with:

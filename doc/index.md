@@ -197,88 +197,69 @@ The changelog is available
 
 ``` bash
 /myfempy
-|   version.py
-|   __init__.py
-|
-+---core
-|       assembler.py
-|       solver.py
-|       solverset.py
-|       staticlinear.py
-|       vibralinear.py
-|       __init__.py
-|
-+---felib
-|   |   crossec.py
-|   |   felemset.py
-|   |   materset.py
-|   |   physicset.py
-|   |   quadrature.py
-|   |   __init__.py
-|   |
-|   +---fluid
-|   |       __init__.py
-|   |
-|   +---fsi
-|   |       __init__.py
-|   |
-|   +---materials
-|   |       axial.py
-|   |       lumped.py
-|   |       planestrain.py
-|   |       planestress.py
-|   |       solid.py
-|   |       __init__.py
-|   |
-|   +---physics
-|   |       force2node.py
-|   |       getnode.py
-|   |       loadsconstr.py
-|   |       __init__.py
-|   |
-|   \---struct
-|           beam21.py
-|           frame21.py
-|           frame22.py
-|           plane31.py
-|           plane41.py
-|           solid41.py
-|           solid81.py
-|           spring21.py
-|           truss21.py
-|           __init__.py
-|
-+---io
-|       filters.py
-|       iomsh.py
-|       iovtk.py
-|       __init__.py
-|
-+---mesh
-|       genmesh.py
-|       gmsh.py
-|       legacy.py
-|       __init__.py
-|
-+---plots
-|       meshquality.py
-|       physics.py
-|       plotmesh.py
-|       plotxy.py
-|       postplot.py
-|       prevplot.py
-|       __init__.py
-|
-+---postprc
-|       displcalc.py
-|       postcomp.py
-|       postset.py
-|       __init__.py
-|
-\---tools
-        logo.png
-        logo.txt
-        path.py
-        tools.py
-        __init__.py
+│
+├───core
+│      alglin.py
+│      harmonicforced.py
+│      mesh.py
+│      modallinear.py
+│      solver.py
+│      staticlinear.py
+│      utils.py
+│   
+│
+├───felib
+│   │
+│   ├───elements
+│   │     element.py
+│   │     plane.py
+│   │     platekc.py
+│   │     solid.py
+│   │
+│   ├───geometry
+│   │     geometry.py
+│   │     rectangle.py
+│   │     thickness.py
+│   │   
+│   │
+│   ├───material
+│   │     material.py
+│   │     planestrain.py
+│   │     planestress.py
+│   │     solid.py
+│   │
+│   ├───physic
+│   │     bcstruct.py
+│   │     loadstruct.py
+│   │     structural.py
+│   │
+│   ├───shapes
+│         hexa8.py
+│         line.py
+│         line2.py
+│         quad4.py
+│         shape.py
+│         tetr4.py
+│         tria3.py
+│
+├───io
+│      iocsv.py
+│      iogmsh.py
+│      iovtk.py
+│   
+│
+├───misc
+│      logo.png
+│      logo.txt
+│      path.py
+│      utils.py
+│
+├───plots
+│     meshquality.py
+│     physics.py
+│     plotmesh.py
+│     plotxy.py
+│     postplot.py
+
+
 ```
