@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-from myfempy.felib.physics.getnode import search_nodexyz
-from myfempy.io.iocsv import writer2csv
 import matplotlib.pyplot as plt
 import numpy as np
+
+from myfempy.felib.physics.getnode import search_nodexyz
+from myfempy.io.iocsv import writer2csv
 
 __doc__ = """
 Plot XY

@@ -7,48 +7,44 @@ import numpy as np
 
 
 # @cython.cfunc
-def vtk_CellType(elemid: cython.char):
-    # 'vtkkey' >>' Type "elem" in myfempy':CellType --> https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
+def meshid2vtkid(elemid):
+    # https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
+    # space + dofnode + numbconecelem + firstorder(1)/secondorder(2)
     CellType = {
-        "110": 3,
-        "120": 3,
-        "130": 3,
-        "131": 21,
-        "140": 3,
-        "141": 3,
-        "142": 21,
-        "210": 5,
-        "211": 22,
-        "220": 9,
-        "221": 23,
-        "230": 23,
-        "231": 23,
-        "240": 23,
-        "310": 10,
-        "320": 12,
-        "321": 25,
+        "1621": 3,
+        "1632": 21,
+        "2231": 5,
+        "2331": 5,
+        "2262": 22,
+        "2241": 9,
+        "2341": 9,
+        "2282": 23,
+        "3341": 10,
+        "33102": 24,
+        "3381": 12,
+        "33202": 25,
     }
     vtkCT = CellType[elemid]
     return vtkCT
 
 
-# @cython.cfunc
+@cython.cfunc
 def convert_to_vtk(plotdata):
     """_summary_
 
     Arguments:
         plotdata -- _description_
     """
-    ii: cython.int
-    jj: cython.int
-    md: cython.int
-    numnodes: cython.int
-    numelem: cython.int
-    numdsp_pntdata: cython.int
-    numstr_pntdata: cython.int
-    nummds_pntdata: cython.int
-    num_modes: cython.int
-    numstr_clldata: cython.int
+    # ii: cython.int
+    # jj: cython.int
+    # md: cython.int
+    # numnodes: cython.int
+    # numelem: cython.int
+    # numdsp_pntdata: cython.int
+    # numstr_pntdata: cython.int
+    # nummds_pntdata: cython.int
+    # num_modes: cython.int
+    # numstr_clldata: cython.int
 
     numnodes = int(len(plotdata["coord"]))
     numelem = int(len(plotdata["inci"]))
@@ -57,6 +53,7 @@ def convert_to_vtk(plotdata):
     nummds_pntdata = int(len(plotdata["modes_POINT_DATA"]))
 
     numstr_clldata = int(len(plotdata["stress_CELL_DATA_title"]))
+    # numstreng_clldata = int(len(plotdata["strain_energy_CELL_DATA_title"]))
 
     with open(plotdata["filename"] + ".vtk", "w") as file_object:
         file_object.write("# vtk DataFile Version 4.0\n")
@@ -73,7 +70,7 @@ def convert_to_vtk(plotdata):
             + " "
             + str(int(len(plotdata["inci"])))
             + " "
-            + str((max(plotdata["nodecon"]) + 1) * int(len(plotdata["inci"])))
+            + str((plotdata["nodecon"] + 1) * int(len(plotdata["inci"])))
             + "\n"
         )
         for ii in range(0, numelem):
@@ -88,7 +85,7 @@ def convert_to_vtk(plotdata):
         file_object.write("\n")
         file_object.write("CELL_TYPES" + " " + str(int(len(plotdata["inci"]))) + "\n")
         for ii in range(0, numelem):
-            vtkCT = vtk_CellType(str(int(plotdata["inci"][ii, 1])))
+            vtkCT = meshid2vtkid(str(int(plotdata["inci"][ii, 1])))
             file_object.write(str(vtkCT) + "\n")
         file_object.write("\n")
         # -----------------------------------------------------
@@ -106,6 +103,7 @@ def convert_to_vtk(plotdata):
                 file_object.write("\n".join(list2write) + "\n")
                 file_object.write("\n")
         file_object.write("\n")
+       
         if len(plotdata["displ_POINT_DATA_val"]) > 0:
             file_object.write("FIELD FieldData 1\n")
             file_object.write(
@@ -119,6 +117,7 @@ def convert_to_vtk(plotdata):
                     plotdata["displ_POINT_DATA_val"][ii, :].astype(str).tolist()
                 )
                 file_object.write(" ".join(list2write) + "\n")
+        
         if len(plotdata["modes_POINT_DATA"]) > 0:
             for md in range(0, nummds_pntdata):
                 file_object.write("\n")
@@ -138,6 +137,7 @@ def convert_to_vtk(plotdata):
                         .tolist()
                     )
                     file_object.write(" ".join(list2write) + "\n")
+        
         # POINT DATA FUTURE...
         file_object.write("\n")
         # -----------------------------------------------------
@@ -153,7 +153,18 @@ def convert_to_vtk(plotdata):
                     plotdata["stress_CELL_DATA_val"][:, jj].astype(str).tolist()
                 )
                 file_object.write("\n".join(list2write) + "\n")
-        # POINT DATA FUTURE...
+        # if len(plotdata["strain_energy_CELL_DATA_val"]) > 0:
+        #     for jj in range(0, numstreng_clldata):
+        #         file_object.write(
+        #             "SCALARS " + plotdata["strain_energy_CELL_DATA_title"][jj] + " float 1\n"
+        #         )
+        #         file_object.write("LOOKUP_TABLE default\n")
+        #         list2write = (
+        #             plotdata["strain_energy_CELL_DATA_val"][:, jj].astype(str).tolist()
+        #         )
+        #         file_object.write("\n".join(list2write) + "\n")
+
+        # CELL DATA FUTURE...
 
 
 # @cython.cfunc

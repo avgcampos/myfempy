@@ -1,3 +1,3 @@
 # Examples
 
-Exemplos de uso
+Exemplos com uso de códigos do git

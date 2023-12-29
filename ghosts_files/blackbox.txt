@@ -1,0 +1,7 @@
+							### myfempy solver blackbox structure ###
+input\										solver\					    outputs\									
+											
+	model set (.py)						+---------------+					post plots (.vtk)
+	cad import (.step/.stp)		-->		        |    myfempy	|		--->   		       post table (.txt)
+	mesh gen (.msh)						+---------------+	 		 		outputlog (.txt)
+											  

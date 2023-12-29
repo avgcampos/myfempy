@@ -1,0 +1,61 @@
++ Exportar solve results in .VTK - OK!
++ Read a .vtk and convert to myfempy files - OK!
++ Mesh gen from .step to .msh1 (gmsh 'bash') - OK!
++ Gerador interno de malha (legacy):  
+	+ line2 - OK!
+	+ tria3 - OK!
+	+ quad4 - OK!
++ Input filter to 'python card' - DESCONTINUADA!
++ Add spring(stiff, mass lumped) local - OK!
++ ForcesBalance Check - OK!
++ Calc beam interforces - OK!
++ Plot interforces MATPLOTLIB - OK
++ Test all elements - OK!
++ Test all forces type and BC - OK!
++ Select nodes from lines and planes - OK!
++ Forces equivalents in edges and planes - OK!
++ Plate elements
++ Preview plot with BD and forces, and a option to plot the mesh quality(VEDO) - OK!
++ Gerar animação em vtk - DESCONTINUADA!
++ Matriz de massa - OK!
++ Testar eig e harmonico - OK!
++ Versão 1.0.0:
+	+ estatico linear - OK!
+	+ freq. natural - OK!
+	+ frf - OK!
+	+ truss, beam, frame2d, frame3d, tria3, quad4, hexa8, tetr4 - OK!
+	+ axial stress, plane stress, plane strain, solid - OK!
+
+
++ Assembler with multi-material and geometry in domain
++ Def. domain: structural, fluid...
+
+
+to future
+-------------------
++ Versão 2.0.0:
++ Plate model, tria3, quad4
++ H.O. elements:
+	+ frame3d(3-nodes, iso),
+	+ tria6(iso),
+	+ quad8(iso),
+	+ hexa20,
+	+ tetr10(iso)
+
+
+
+to future
+-------------------
+
+https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
+
++ integrador CAD: openCASCADE, OpenSCAD, Blender, pyOCCT, cadquery ?
++ gerador externo de malha: gmsh?/ netgen?
+
+~ MESH from CAD ~
+CAD model  --> mesh.step --> {gmsh} --> mesh.msh --> {myfempy} --> solver model --> .vtk --> {paraview/glance}
+Mesh model --> mesh.stl --> {meshIO} --> mesh.msh --> {myfempy} --> solver model --> .vtk --> {paraview/glance}
+
++ Solver CPU Parallel: mpi4py
++ Myfempy GUI: tkinter, panel, vedo and flask, streamlit(https://docs.streamlit.io/), plotly/Dash?
+

@@ -1,0 +1,210 @@
+##########################################################################
+> MYFEMPY VARIABLES
+##########################################################################
+
+## modelinfo{model family} - F.E. model dict with full information needed
+	>type: dict{
+	'constrains'
+	'coord'
+	'domain'
+	'elemid'
+	'forces'
+	'inci'
+	'nodecon'
+	'nodedof'
+	'ntensor'
+	'quadra'
+	'regions'
+	'tabgeo'
+	'tabmat'
+	}
+
+
+## elemid{element family} - element ID keymesh
+	>type: list[
+	id_number{'keyelem'} -> view details in documentation(link: !!!)
+	]
+	
+	...keyelem list{myfempy latest version}:
+		110{'spring21's}	-- spring 2D 2-node linear Finite Element
+		120{'truss21'} 	-- truss 2D 2-node linear Finite Element
+		130{'beam21'} 	-- beam 1D 2-node linear Finite Element
+		140{'frame21'}	-- frame 2D 2-node linear Finite Element
+		141{'frame22'}	-- frame 3D 2-node linear Finite Element
+		210{'plane31'}	-- triagular Plane 3-node linear Finite Element
+		220{'plane41'}	-- quatrangular Isoparametric Plane 4-node linear Finite Element
+		221{'plate41'}	-- quatrangular Isoparametric Plate Mindlin 4-node linear Finite Element [dev]
+		310{'solid41'}	-- tetrahedron Isoparametric Solid 8-node linear Finite Element
+		320{'solid81'}	-- hexahedron Isoparametric Solid 8-node linear Finite Element
+
+
+## nodecon{element family} - number of node conect per element
+	>type: list[
+	node_con
+	]
+	
+	
+## nodedof{element family} - number of degree of freedom per node
+	>type: list[
+	node_dof
+	]
+
+
+## ntensor{element family} - dimension of tensor in element set
+	>type: list[
+	dim_tensor{stress vector}
+	]
+	
+	...dim_tensor list{myfempy latest version}:
+		1{sxx} 							-- 1D tensor
+		2{sxx, syy, sxy} 				-- 2D tensor
+		3{sxx, syy, szz, sxy, syz, szx} -- 3D tensor
+
+
+## quadra{element family} - quadrature integration set, only used in isoparametric elements
+	>type: list[
+	integration_type, number_of_points
+	]
+
+	...integration_type list{myfempy latest version}:
+		0 -- no integration
+		1 -- gauss {link: https://en.wikipedia.org/wiki/Gaussian_quadrature}	
+	
+	
+## coord{mesh family} - nodes coordinates list in mesh
+	>type: array([
+	[node_1, coord_x_1, coord_y_1, coord_z_1]
+	[node_n, coord_x_n, coord_y_n, coord_z_n]
+	])
+	
+	
+## inci{mesh family} - elements conection and prop. list
+	>type: array([
+	[elem_1, keyelem_1, set_mat_1, set_geo_1, nodes_list_conec_1...]
+	[elem_n, keyelem_n, set_mat_n, set_geo_n, nodes_list_conec_n...]
+	])
+
+
+## regions{mesh family} - tags of regions on mesh, used with gmsh mesh gen, to plot only!
+	>type: list[
+	[1, [nodes_list]] --> 'points'
+	[2, [nodes_list]] --> 'edges
+	[3, [nodes_list]] --> 'surfaces'
+	]
+
+
+## domain{mesh family} - domains types in model
+	>type: dict{
+	'domain_1_name': 'structural'
+	'domain_n_name': 'fluid'...
+	}
+
+
+## forces{physics family} - force list in boundary conditions
+	>type: array([
+	[node_1, force_dof_1, value, step_1]
+	[node_n, force_dof_n, value, step_n]
+	])
+	
+
+## constraints{physics family} - nodes constraints list in boundary conditions
+	>type: array([
+	[const_dof_1, nodes_list_const_1...]
+	[const_dof_n, nodes_list_const_n...]
+	])
+
+
+## tabgeo{geometry family} - table of geometry prop.
+	>type: array([
+	[area, inercia_yy, inercia_zz, inercia_xx, thickness, b_dim, h_dim, t_dim, d_dim, id_section{'type'}] --> set_geo_1                  
+	[area, inercia_yy, inercia_zz, inercia_xx, thickness, b_dim, h_dim, t_dim, d_dim, id_section{'type'}] --> set_geo_n
+	])
+	
+	...id_section list{myfempy latest version}: {link: https://en.wikipedia.org/wiki/List_of_moments_of_inertia}
+		10{"rectangle"/"R"}		-- rectangle cross section
+		11{"rectangletube"/"Rt"}-- rect. tube cross section
+		20{"circle"/"Ci"}		-- circle cross section
+		21{"circletube"/"Ct"}	-- circle tube cross section
+		30{"isection"/"I"}		-- I beam cross section
+		40{"spring"/"Sp"}		-- spring, plot only!
+		
+	...axis diretions in myfempy
+		     
+			|
+			[Y]
+			|		P1 -- principal plane
+			|		P2 -- secondary plane
+			|__edgey__
+		   /|		  |
+		  / |   P1    |
+		 /	| surfxy  edgex
+		/  f|		  |
+	   /  r |_________|____________[X]__
+	   | u  /          /
+	   |s z/   P2     /
+	   | y/	 surfzx  edgez
+	   | /          /
+	   |/__________/		
+	   /		 
+	  [Z]
+	 /
+		
+	...eg. cross section definition in myfempy
+		                
+							|
+							[Y]
+							|
+	   ___		 ___________|___________
+		| 		|_______    |    _______|
+		|				|	|	|		
+		|				|	|	|
+		|			 -->|	|	|<-------------(t)
+		|				|	|	|
+		|				|	|	|
+		|				|	|	|
+	   (h)				|  (CG)-|----------------[Z]--
+		|				|		|
+		|				|		|
+		|				|		|
+		|				|		|
+		|		 _______|		|_______	___	 
+	   _|_		|_______________________|  	_|_(d)
+										
+										
+				|-----------(b)---------|						
+								
+								
+								
+								
+								
+## tabmat{material family} -  table of material prop.
+	>type: array([
+	[exx, vxx, gxx, eyy, vyy, gyy, rho, stif, damp, mat_def{'type'}, mat_beh{'type'}] --> set_mat_1 
+	[exx, vxx, gxx, eyy, vyy, gyy, rho, stif, damp, mat_def{'type'}, mat_beh{'type'}] --> set_mat_n
+	])
+	
+	...mat_def list{myfempy latest version}:
+		10{"springlinear"} 	-- spring linear lumped 
+        11{"springnonlin"} 	-- spring non linear lumped 
+        20{"isotropic"} 	-- isotropic stress/strain material
+        30{"orthotropic"}	-- orthotropic stress/strain material
+
+	...mat_beh list{myfempy latest version}:
+		1{"lumped"} 		-- lumped material
+        2{"axial"} 			-- axial{rod, beams...} behavior material
+        3{"planestress"}	-- plane stress behavior
+        4{"planestrain"}	-- plane strain behavior
+		5{"solid"}			-- solid behavior material
+		
+	...material prop list{myfempy latest version}:
+		exx		-- 'E' elasticity modulus {link: https://en.wikipedia.org/wiki/Young%27s_modulus}
+		vxx		-- 'nu' poisson's ratio {link: https://en.wikipedia.org/wiki/Poisson%27s_ratio}
+		gxx		-- 'G' shear modulus {link: https://en.wikipedia.org/wiki/Shear_modulus}
+		rho		-- 'rho' density {link: https://en.wikipedia.org/wiki/Density}
+		stif	-- stiffness lumped
+		damp	-- damping lumped
+		
+		
+		
+		
+

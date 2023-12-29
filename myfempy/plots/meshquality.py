@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-from myfempy.utils.utils import get_version
 import numpy as np
 import vedo as vd
+
+# from myfempy.utils.utils import get_version
 
 __doc__ = """
 Mesh Quality Calc.
@@ -23,32 +24,38 @@ class MeshProp:
             mesh = vd.Mesh(self.plotset["RENDER"]["filename"] + ".vtk")
         else:
             pass
-        mesh.cmap("RdYlBu", on="cells", n=4)
+        mesh.cmap("RdYlBu", on="cells")
+        
         text = vd.Text2D(
-            "MYFEMPY " + get_version() + " < mesh numb. > ",
+            "MYFEMPY " + " < mesh numb. > ",
             s=1,
             font="Arial",
             c="white",
         )
+        
         nodes = self.plotset["inci"][:, 4 : 4 + self.plotset["nodecon"]].reshape(
             (self.plotset["nnode"] * self.plotset["nodecon"],)
         )
+
         noduni, idx = np.unique(nodes, return_index=True)
+        
         labs0 = mesh.labels(
-            content=nodes[np.sort(idx)].astype(int),  # 'id'
+            content= nodes[np.sort(idx)].astype(int),  # 'id'
             cells=False,
             scale=self.plotset["LABELS"]["scale"],
             font="Arial",
-            c="white",
+            c="black",
         )
+        
         labs1 = mesh.labels(
-            "cellid",  # content=self.plotset['inci'][:,0].astype(int), # 'cellid'
+            content= self.plotset['inci'][:, 0].astype(int), # 'cellid'
             cells=True,
             scale=self.plotset["LABELS"]["scale"],
             font="Arial",
-            c="green",
+            c="red",
         )
-        win.show(text, mesh, labs0, viewup="y", bg="black", axes=4)
+        
+        win.show(text, mesh, labs0, labs1, viewup="y", bg="white", axes=2)
 
     def mesh_quality(self):
         """_summary_"""
@@ -56,18 +63,19 @@ class MeshProp:
         mesh = (
             vd.Mesh(self.plotset["RENDER"]["filename"] + ".vtk").lineWidth(0.1).flat()
         )
-        if self.plotset["QUALITY"]["lines"] == False:
-            mesh = vd.Mesh(self.plotset["RENDER"]["filename"] + ".vtk")
-        else:
-            pass
+        # if self.plotset["QUALITY"]["lines"] == False:
+        #     mesh = vd.Mesh(self.plotset["RENDER"]["filename"] + ".vtk")
+        # else:
+        #     pass
         mesh.cmap("RdYlBu", on="cells", n=16).addScalarBar()
         text = vd.Text2D(
-            "MYFEMPY " + get_version() + " < mesh quality > ",
+            "MYFEMPY < mesh quality > ",
             s=1,
             font="Arial",
             c="white",
         )
-        mesh.addQuality(measure=self.plotset["QUALITY"]["method"]).cmap(
+        # https://vedo.embl.es/docs/vedo/mesh.html#Mesh.compute_quality
+        mesh.compute_quality(metric=self.plotset["QUALITY"]["method"]).cmap(
             "RdYlBu", on="cells"
         ).print()
         mesh.addScalarBar3D(

@@ -1,3 +1,3 @@
 # Introduction
 
-Introdução ao projeto
+Introdução ao projeto, organização e objetivos

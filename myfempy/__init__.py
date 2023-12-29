@@ -19,29 +19,26 @@
 # ==========================================================================#
 """
 myfempy -- MultiphYsics Finite Element Method with PYthon
-Copyright (C) 2022 Antonio Vinicius Garcia Campos
+Copyright (C) 2023 Antonio Vinicius Garcia Campos
 """
 # ==========================================================
 from __future__ import absolute_import
-from . import core
-from .core.solver import Solver
-from . import mesh
-from .mesh.genmesh import ModelGen
-from . import postprc
-from .postprc.postcomp import PostProcess
-from . import plots
-from .plots.prevplot import preview_plot
-from .plots.postplot import postproc_plot
-from . import version
+import pkg_resources
+
+# solvers
+from .core.staticlinear import StaticLinear
+from .core.modallinear import ModalLinear
+from .core.harmonicforced import HarmonicForced
+
+# fea analysis
+from .setup.feaanalysis import FEANewAnalysis
 
 # ==========================================================
-__author__ = "Antonio Vinicius Garcia Campos"
-__copyright__ = "Copyright @ 2022, Antonio Vinicius Garcia Campos"
-__credits__ = ["Antonio Vinicius Garcia Campos", "3D EasyCAE"]
-__license__ = "GPL-3.0"
-__status__ = "Development"
-__website__ = "https://github.com/easycae-3d/myfempy"
-__version__ = version.__version__
+# __author__ = pkg_resources.get_distribution('myfempy').authors
+# __copyright__ = "Copyright @ 2023, Antonio Vinicius Garcia Campos"
+# __license__ = pkg_resources.get_distribution('myfempy').license
+# __website__ = pkg_resources.get_distribution('myfempy').homepage
+__version__ = 'dev' #pkg_resources.get_distribution('myfempy').version
 # ==========================================================
-__all__ = ["Solver", "ModelGen", "PostProcess",  "preview_plot", "postproc_plot", "__version__"]
+__all__ = ["FEANewAnalysis", "StaticLinear", "ModalLinear", "HarmonicForced", "__version__"]
 # ==========================================================

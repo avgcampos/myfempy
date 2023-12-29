@@ -3,7 +3,8 @@ __doc__ = """
 Physics Vtk Plot.
 """
 import vedo as vd
-from myfempy.utils.utils import get_version, get_logo
+
+# from myfempy.utils.utils import get_logo, get_version
 
 
 def post_show_mesh(file2plot: str, plotset: dict):
@@ -21,7 +22,7 @@ def post_show_mesh(file2plot: str, plotset: dict):
     )
     text = vd.Text2D(
         "MYFEMPY "
-        + get_version()
+        # + get_version()
         + " < "
         + plotset["text_plot"]
         + ' >\nPress "q" to continue...',

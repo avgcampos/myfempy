@@ -6,19 +6,19 @@ import numpy as np
 import vtk
 
 
-def view_listforce(coord: np.ndarray, frcApy_vet: np.ndarray, scala_view: float, num_lf: int):
+def view_listforce(coord: np.ndarray, frcApy_vet: np.ndarray, scala_view: float):
     """vtk code"""
     
-    coordX_force = coord[int(frcApy_vet[num_lf][0]) - 1, 1]
-    coordY_force = coord[int(frcApy_vet[num_lf][0]) - 1, 2]
-    coordZ_force = coord[int(frcApy_vet[num_lf][0]) - 1, 3]
+    coordX_force = coord[int(frcApy_vet[0]) - 1, 1]
+    coordY_force = coord[int(frcApy_vet[0]) - 1, 2]
+    coordZ_force = coord[int(frcApy_vet[0]) - 1, 3]
     fr_text = vtk.vtkVectorText()
-    if frcApy_vet[num_lf][2] == 0.0:
+    if frcApy_vet[2] == 0.0:
         height_cone = 0.0
     else:
         # 2.3*scala_view*abs((frcApy_vet[num_lf][2])/(max(abs(frcApy_vet[:,2])))) #abs((scala_view*frcApy_vet[num_lf][2])/(0.5*max(abs(frcApy_vet[:,2]))))
         height_cone = scala_view
-    if frcApy_vet[num_lf][1] == 0:
+    if frcApy_vet[1] == 0:
         dir_cone1 = (0, 0, 0)
         dir_cone2 = dir_cone1
         center_cone1 = (0, 0, 0)
@@ -27,69 +27,69 @@ def view_listforce(coord: np.ndarray, frcApy_vet: np.ndarray, scala_view: float,
         height_cone = 0
         fr_text.SetText(" ")
         fr_text.Update()
-    if frcApy_vet[num_lf][1] == 1:  # fx
-        dir_cone1 = (np.sign(frcApy_vet[num_lf][2]), 0, 0)
+    if frcApy_vet[1] == 1:  # fx
+        dir_cone1 = (np.sign(frcApy_vet[2]), 0, 0)
         dir_cone2 = dir_cone1
         center_cone1 = (coordX_force + height_cone / 2, coordY_force, coordZ_force)
         center_cone2 = center_cone1
         color_fr = (1, 0, 0)
-    elif frcApy_vet[num_lf][1] == 2:  # fy
-        dir_cone1 = (0, np.sign(frcApy_vet[num_lf][2]), 0)
+    elif frcApy_vet[1] == 2:  # fy
+        dir_cone1 = (0, np.sign(frcApy_vet[2]), 0)
         dir_cone2 = dir_cone1
         center_cone1 = (coordX_force, coordY_force + height_cone / 2, coordZ_force)
         center_cone2 = center_cone1
         color_fr = (1, 0, 0)
-    elif frcApy_vet[num_lf][1] == 3:  # fz
-        dir_cone1 = (0, 0, np.sign(frcApy_vet[num_lf][2]))
+    elif frcApy_vet[1] == 3:  # fz
+        dir_cone1 = (0, 0, np.sign(frcApy_vet[2]))
         dir_cone2 = dir_cone1
         center_cone1 = (coordX_force, coordY_force, coordZ_force + height_cone / 2)
         center_cone2 = center_cone1
         color_fr = (1, 0, 0)
-    elif frcApy_vet[num_lf][1] == 4:  # tx
+    elif frcApy_vet[1] == 4:  # tx
         height_cone = 1.2 * height_cone
-        dir_cone1 = (np.sign(frcApy_vet[num_lf][2]), 0, 0)
+        dir_cone1 = (np.sign(frcApy_vet[2]), 0, 0)
         dir_cone2 = dir_cone1
         center_cone1 = (coordX_force + height_cone / 2, coordY_force, coordZ_force)
         center_cone2 = (coordX_force + height_cone, coordY_force, coordZ_force)
         color_fr = (0, 1, 0)
-    elif frcApy_vet[num_lf][1] == 5:  # ty
+    elif frcApy_vet[1] == 5:  # ty
         height_cone = 1.2 * height_cone
-        dir_cone1 = (0, np.sign(frcApy_vet[num_lf][2]), 0)
+        dir_cone1 = (0, np.sign(frcApy_vet[2]), 0)
         dir_cone2 = dir_cone1
         center_cone1 = (coordX_force, coordY_force + height_cone / 2, coordZ_force)
         center_cone2 = (coordX_force, coordY_force + height_cone, coordZ_force)
         color_fr = (0, 1, 0)
-    elif frcApy_vet[num_lf][1] == 6:  # tz
+    elif frcApy_vet[1] == 6:  # tz
         height_cone = 1.2 * height_cone
-        dir_cone1 = (0, 0, np.sign(frcApy_vet[num_lf][2]))
+        dir_cone1 = (0, 0, np.sign(frcApy_vet[2]))
         dir_cone2 = dir_cone1
         center_cone1 = (coordX_force, coordY_force, coordZ_force + height_cone / 2)
         center_cone2 = (coordX_force, coordY_force, coordZ_force + height_cone)
         color_fr = (0, 1, 0)
-    elif frcApy_vet[num_lf][1] == 15:  # massadd
+    elif frcApy_vet[1] == 15:  # massadd
         height_cone = 1.2 * scala_view
         dir_cone1 = (-1, 0, 0)
         dir_cone2 = (1, 0, 0)
         center_cone1 = (coordX_force, coordY_force, coordZ_force)
         center_cone2 = (coordX_force, coordY_force, coordZ_force)
         color_fr = (0.4, 0.1, 0.8)
-    elif frcApy_vet[num_lf][1] == 16:  # spring2gd
+    elif frcApy_vet[1] == 16:  # spring2gd
         height_cone = 1.2 * scala_view
         dir_cone1 = (0, 1, 0)
         dir_cone2 = (0, -1, 0)
         center_cone1 = (coordX_force, coordY_force - height_cone / 2, coordZ_force)
         center_cone2 = (coordX_force, coordY_force - 3 * height_cone / 2, coordZ_force)
         color_fr = (0, 0.9, 0.8)
-    elif frcApy_vet[num_lf][1] == 17:  # damper2gd
+    elif frcApy_vet[1] == 17:  # damper2gd
         # *(0.5*max(abs(frcApy_vet[:,2])))/(0.5*max(abs(frcApy_vet[:,2])))
         height_cone = 1.2 * scala_view
         dir_cone1 = (0, 1, 0)
         dir_cone2 = (0, -1, 0)
-        center_cone1 = (coordX_force, coordY_force, coordZ_force)
-        center_cone2 = (coordX_force, coordY_force, coordZ_force)
+        center_cone1 = (coordX_force, coordY_force - height_cone / 2, coordZ_force)
+        center_cone2 = (coordX_force, coordY_force - 3 * height_cone / 2, coordZ_force)
         color_fr = (0.9, 0.6, 0.2)
     cone1 = vtk.vtkConeSource()
-    cone1.SetResolution(1)
+    cone1.SetResolution(3)
     cone1.SetHeight(height_cone)
     cone1.SetRadius(0.15 * height_cone)
     cone1.SetCenter(center_cone1)
@@ -101,7 +101,7 @@ def view_listforce(coord: np.ndarray, frcApy_vet: np.ndarray, scala_view: float,
     fr_point_actor_cone1.GetProperty().SetLineWidth(0.5)
     fr_point_actor_cone1.GetProperty().SetColor(color_fr)  # (R,G,B)
     cone2 = vtk.vtkConeSource()
-    cone2.SetResolution(1)
+    cone2.SetResolution(3)
     cone2.SetHeight(height_cone)
     cone2.SetRadius(0.15 * height_cone)
     cone2.SetCenter(center_cone2)
@@ -115,17 +115,17 @@ def view_listforce(coord: np.ndarray, frcApy_vet: np.ndarray, scala_view: float,
     return fr_point_actor_cone1, fr_point_actor_cone2  # , fr_text_actor
 
 
-def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view: float, num_bc: int):
+def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view: float):
     """vtk code"""
     
-    coordX_bc = coord[int(bondCond_vet[num_bc, 1]) - 1, 1]
-    coordY_bc = coord[int(bondCond_vet[num_bc, 1]) - 1, 2]
-    coordZ_bc = coord[int(bondCond_vet[num_bc, 1]) - 1, 3]
+    coordX_bc = coord[int(bondCond_vet[1]) - 1, 1]
+    coordY_bc = coord[int(bondCond_vet[1]) - 1, 2]
+    coordZ_bc = coord[int(bondCond_vet[1]) - 1, 3]
     height_cone = 0.9 * scala_view
     color_rgb = (1, 1, 0)
     max_coordX = max(coord[:, 1])
     bc_text = vtk.vtkVectorText()
-    if int(bondCond_vet[num_bc, 0]) == 0:  # fixed all dofs
+    if int(bondCond_vet[0]) == 0:  # fixed all dofs
         if coordX_bc == max_coordX:
             dir_cone = (-1, 0, 0)
             center_cone = (coordX_bc + height_cone / 2, coordY_bc, coordZ_bc)
@@ -137,9 +137,9 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_text.SetText("F")
         bc_text.Update()
         cube = vtk.vtkCubeSource()
-        cube.SetXLength(2 * height_cone)
-        cube.SetYLength(2 * height_cone)
-        cube.SetZLength(0 * height_cone)
+        cube.SetXLength(1.2 * height_cone)
+        cube.SetYLength(1.2 * height_cone)
+        cube.SetZLength(1.2 * height_cone)
         cube.SetCenter(center_cube)
         bcmap = vtk.vtkPolyDataMapper()
         bcmap.SetInputConnection(cube.GetOutputPort())
@@ -148,7 +148,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_point_actor_tdof.GetProperty().SetLineWidth(0.5)
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
 
-    elif int(bondCond_vet[num_bc, 0]) == 1:  # fixed ux dofs
+    elif int(bondCond_vet[0]) == 1:  # fixed ux dofs
         dir_cone = (1, 0, 0)
         if coordX_bc == max_coordX:
             dir_cone = (-1, 0, 0)
@@ -163,7 +163,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         cube = vtk.vtkCubeSource()
         cube.SetXLength(0.5 * height_cone)
         cube.SetYLength(2.5 * height_cone)
-        cube.SetZLength(0 * height_cone)
+        cube.SetZLength(0.5 * height_cone)
         cube.SetCenter(center_cube)
         bcmap = vtk.vtkPolyDataMapper()
         bcmap.SetInputConnection(cube.GetOutputPort())
@@ -171,7 +171,8 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_point_actor_tdof.SetMapper(bcmap)
         bc_point_actor_tdof.GetProperty().SetLineWidth(0.5)
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
-    elif int(bondCond_vet[num_bc, 0]) == 2:  # fixed uy dofs
+    
+    elif int(bondCond_vet[0]) == 2:  # fixed uy dofs
         dir_cone = (0, 1, 0)
         center_cone = (coordX_bc, coordY_bc - height_cone / 2, coordZ_bc)
         center_cube = (coordX_bc, coordY_bc - 3.5 * height_cone / 2, coordZ_bc)
@@ -180,7 +181,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         cube = vtk.vtkCubeSource()
         cube.SetXLength(2.5 * height_cone)
         cube.SetYLength(0.5 * height_cone)
-        cube.SetZLength(0 * height_cone)
+        cube.SetZLength(0.5 * height_cone)
         cube.SetCenter(center_cube)
         bcmap = vtk.vtkPolyDataMapper()
         bcmap.SetInputConnection(cube.GetOutputPort())
@@ -188,14 +189,14 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_point_actor_tdof.SetMapper(bcmap)
         bc_point_actor_tdof.GetProperty().SetLineWidth(0.5)
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
-    elif int(bondCond_vet[num_bc, 0]) == 3:  # fixed uz dofs
+    elif int(bondCond_vet[0]) == 3:  # fixed uz dofs
         dir_cone = (0, 0, 1)
         center_cone = (coordX_bc, coordY_bc, coordZ_bc - height_cone / 2)
         center_cube = (coordX_bc, coordY_bc, coordZ_bc - 3.5 * height_cone / 2)
         bc_text.SetText("UZ")
         bc_text.Update()
         cube = vtk.vtkCubeSource()
-        cube.SetXLength(0 * height_cone)
+        cube.SetXLength(0.5 * height_cone)
         cube.SetYLength(2.5 * height_cone)
         cube.SetZLength(0.5 * height_cone)
         cube.SetCenter(center_cube)
@@ -205,7 +206,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_point_actor_tdof.SetMapper(bcmap)
         bc_point_actor_tdof.GetProperty().SetLineWidth(0.5)
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
-    elif int(bondCond_vet[num_bc, 0]) == 4:  # fixed rx dofs
+    elif int(bondCond_vet[0]) == 4:  # fixed rx dofs
         dir_cone = (0, 0, 1)
         center_cone = (coordX_bc, coordY_bc, coordZ_bc - height_cone / 2)
         center_cube = (coordX_bc, coordY_bc, coordZ_bc - 3.5 * height_cone / 2)
@@ -213,7 +214,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_text.Update()
 
         cube = vtk.vtkCubeSource()
-        cube.SetXLength(0 * height_cone)
+        cube.SetXLength(0.5 * height_cone)
         cube.SetYLength(2.5 * height_cone)
         cube.SetZLength(0.5 * height_cone)
         cube.SetCenter(center_cube)
@@ -224,7 +225,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_point_actor_tdof.GetProperty().SetLineWidth(0.5)
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
 
-    elif int(bondCond_vet[num_bc, 0]) == 5:  # fixed ry dofs
+    elif int(bondCond_vet[0]) == 5:  # fixed ry dofs
         dir_cone = (1, 0, 0)
         if coordX_bc == max_coordX:
             dir_cone = (-1, 0, 0)
@@ -239,7 +240,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         cube = vtk.vtkCubeSource()
         cube.SetXLength(0.5 * height_cone)
         cube.SetYLength(2.5 * height_cone)
-        cube.SetZLength(0 * height_cone)
+        cube.SetZLength(0.5 * height_cone)
         cube.SetCenter(center_cube)
         bcmap = vtk.vtkPolyDataMapper()
         bcmap.SetInputConnection(cube.GetOutputPort())
@@ -248,7 +249,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_point_actor_tdof.GetProperty().SetLineWidth(0.5)
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
 
-    elif int(bondCond_vet[num_bc, 0]) == 6:  # fixed rz dofs
+    elif int(bondCond_vet[0]) == 6:  # fixed rz dofs
         dir_cone = (0, 1, 0)
         center_cone = (coordX_bc, coordY_bc - height_cone / 2, coordZ_bc)
         center_cube = (coordX_bc, coordY_bc - 3.5 * height_cone / 2, coordZ_bc)
@@ -257,7 +258,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         cube = vtk.vtkCubeSource()
         cube.SetXLength(2.5 * height_cone)
         cube.SetYLength(0.5 * height_cone)
-        cube.SetZLength(0 * height_cone)
+        cube.SetZLength(0.5 * height_cone)
         cube.SetCenter(center_cube)
         bcmap = vtk.vtkPolyDataMapper()
         bcmap.SetInputConnection(cube.GetOutputPort())
@@ -266,7 +267,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_point_actor_tdof.GetProperty().SetLineWidth(0.5)
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
     cone = vtk.vtkConeSource()
-    cone.SetResolution(1)
+    cone.SetResolution(3)
     cone.SetHeight(height_cone)
     cone.SetRadius(0.5 * height_cone)
     cone.SetCenter(center_cone)
@@ -294,7 +295,7 @@ def view_text_point(coord: np.ndarray, coordMax: float, scala_view: float, text:
     coordY = coord[1]
     coordZ = coord[2]
     height_cone = 0.9 * scala_view
-    scala = 0.3 * scala_view
+    scala = 0.5 * scala_view
     bc_text = vtk.vtkVectorText()
     bc_text.SetText(text[0] + "_" + text[1])
     bc_text.Update()
@@ -305,7 +306,7 @@ def view_text_point(coord: np.ndarray, coordMax: float, scala_view: float, text:
     bc_text_actor.SetMapper(bc_text_map)
     bc_text_actor.SetScale(scala, scala, scala)
     bc_text_actor.SetPosition(center_cone)
-    bc_text_actor.GetProperty().SetColor(1, 1, 1)
+    bc_text_actor.GetProperty().SetColor(0, 0, 0)
     return bc_text_actor
 
 

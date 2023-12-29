@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-from myfempy.plots.plotmesh import post_show_mesh
-from myfempy.plots.plotxy import forces_plot, tracker_plot, frf_plot
-from myfempy.felib.physics.getnode import search_nodexyz
-from myfempy.io.iocsv import writer2csv, write2log
 import numpy as np
+
+from myfempy.felib.physics.getnode import search_nodexyz
+from myfempy.io.iocsv import write2log, writer2csv
+from myfempy.plots.plotmesh import post_show_mesh
+from myfempy.plots.plotxy import forces_plot, frf_plot, tracker_plot
 
 __doc__ = """
 Plotter Post Process
