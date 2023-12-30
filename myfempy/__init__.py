@@ -31,14 +31,14 @@ from .core.modallinear import ModalLinear
 from .core.harmonicforced import HarmonicForced
 
 # fea analysis
-from .setup.feaanalysis import FEANewAnalysis
+from .setup.feaanalysis import newAnalysis
 
 # ==========================================================
 # __author__ = pkg_resources.get_distribution('myfempy').authors
 # __copyright__ = "Copyright @ 2023, Antonio Vinicius Garcia Campos"
 # __license__ = pkg_resources.get_distribution('myfempy').license
 # __website__ = pkg_resources.get_distribution('myfempy').homepage
-__version__ = 'dev' #pkg_resources.get_distribution('myfempy').version
+__version__ = '0.2.0' #pkg_resources.get_distribution('myfempy').version
 # ==========================================================
-__all__ = ["FEANewAnalysis", "StaticLinear", "ModalLinear", "HarmonicForced", "__version__"]
+__all__ = ["newAnalysis", "StaticLinear", "ModalLinear", "HarmonicForced", "__version__"]
 # ==========================================================

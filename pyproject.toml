@@ -37,7 +37,7 @@
 
 [project]
 name = "myfempy"
-version = "0.3.0"
+version = "0.2.0"
 description = "This is a simple new version **myfempy** project to analysis only a 2D elasticity plane stress problem with OOP."
 authors = [
     {name = "Antonio Campos", email = "antviniciuscampos@gmail.com"},
