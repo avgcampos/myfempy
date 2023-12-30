@@ -4,7 +4,8 @@ nav:
     - Home: index.md
     - Myfempy: about.md
     - Documentation: documentation.md
-theme: readthedocs
+theme:
+    name: readthedocs
 plugins:
     - mkdocstrings
     - search
