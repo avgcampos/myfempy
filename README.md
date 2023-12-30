@@ -67,14 +67,16 @@ The following python packages are required to run myfempy. Before to install myf
 - [numpy](https://numpy.org/) - The fundamental package for scientific computing with Python
 - [cython](https://cython.org/) - Cython is a language that makes writing C extensions for Python as easy as Python itself
 - [scipy](https://scipy.org/) - Fundamental algorithms for scientific computing in Python
+- [numdifftools](https://pypi.org/project/numdifftools/) - Solves automatic numerical differentiation problems in one or more variables.
 - [vedo](https://vedo.embl.es/) - A python module for scientific analysis and visualization of эd objects
 - [vtk](https://pypi.org/project/vtk/)(optional) - VTK is an open-source toolkit for 3D computer graphics, image processing, and visualization
+
 
 - try
 
 ```bash
 
->> pip install numpy, cython, scipy, vedo
+>> pip install numpy
 
 ```
 

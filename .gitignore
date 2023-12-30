@@ -1,6 +1,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,c,c++,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,c,c++,visualstudiocode
 __dev/
+site/
 requirements.txt
 
 ### C ###
