@@ -205,7 +205,9 @@ O *sphinx* converte arquivos *.rst* {reStruturedText} para *.html/pdf* de uma fo
 
 ```bash
 
->> mkdocs build
+>> mkdocs build  # contruir os arquivos em \site\index.html
+
+>> mmkdocs gh-deploy # deploy para o endereço de hospedagem noo github pages
 
 ```
 

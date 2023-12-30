@@ -1,9 +1,7 @@
-site_name: Myfempy Documentation
+site_name: Myfempy Online Documentation
 site_url: 
 nav:
     - Home: index.md
-    - Myfempy: about.md
-    - Documentation: documentation.md
 theme:
     name: readthedocs
 plugins:
