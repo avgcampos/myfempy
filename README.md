@@ -102,7 +102,7 @@ Many **Examples** are available [here](https://github.com/easycae-3d/myfempy/tre
 
 ## Documentation
 
-The myfempy is documented using Sphinx under `doc/`. The myfempy's documents versions can be found in html, pdf or epub.
+The myfempy is documented using Mkdocs under `docs/`. The myfempy's documents versions can be found in html, pdf or epub.
 
 The **Web Documentation** is available on [Read the Docs](https://myfempy.readthedocs.io/).
 
