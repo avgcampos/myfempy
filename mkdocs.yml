@@ -3,19 +3,15 @@ site_url: https://myfempy.readthedocs.io/
 nav:
     - Home: index.md
 theme:
-  name: readthedocs
-  highlightjs: true
-  hljs_languages:
+    name: readthedocs
+    highlightjs: true
+    hljs_languages:
     - yaml
     - rust
 plugins:
-  - search
-  - mkdocstrings:
-      handlers:
-        # See: https://mkdocstrings.github.io/python/usage/
-        python:
-          options:
-            docstring_style: sphinx
+    - search
+    - mkdocstrings:
+        default_handler: python
     # - pdf-export
 extra_javascript:
     - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML
