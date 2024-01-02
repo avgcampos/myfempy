@@ -1,5 +1,5 @@
 site_name: Myfempy Online Documentation
-site_url: https://myfempy.readthedocs.io/
+site_url: https://avgcampos.github.io/myfempy/
 nav:
     - Home: index.md
 theme:
@@ -12,11 +12,11 @@ plugins:
     - search
     - mkdocstrings:
         default_handler: python
-    # - pdf-export
+    - pdf-export:
+        verbose: true
+        media_type: print
+        enabled_if_env: ENABLE_PDF_EXPORT
 extra_javascript:
     - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML
 markdown_extensions:
-    # - mdx_math
-    - markdown_include.include:
-        base_path: .
-    - admonition
+    - mdx_math
