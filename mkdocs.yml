@@ -1,5 +1,5 @@
 site_name: Myfempy Online Documentation
-site_url: 
+site_url: https://myfempy.readthedocs.io/
 nav:
     - Home: index.md
 theme:
