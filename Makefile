@@ -1,4 +1,4 @@
-#Makefile
+#Makefile to dev user
 .PHONY: install format lint test sec docs
 
 install:

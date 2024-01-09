@@ -3,13 +3,23 @@ site_url: https://avgcampos.github.io/myfempy/
 nav:
     - Home: index.md
     - Documentation: documentation.md
+    - Contribution: about.md
+    - User Guide: user_guide.md
+    - Theory: theory.md
+    - Examples: examples.md
+    - History: history.md
 theme:
     name: material
+    logo: assets/logo.png
+    favicon: assets/logo.png
 plugins:
     - search
     - mkdocstrings:
-        default_handler: python
+        handlers:
+        python:
+            paths: [myfempy]
     # - with-pdf
+    - mermaid2
 extra_javascript:
     - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML
 markdown_extensions:

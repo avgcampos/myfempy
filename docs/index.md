@@ -1,6 +1,6 @@
 **Under Development**
 
-![myfempy_logo](figures\logo.png)
+![myfempy_logo](assets\logo.png)
 
 ## Welcome to myfempy's online documentation
 
@@ -15,6 +15,16 @@ ax^2 + bx + c = 0
 \end{equation}
 
 $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
+
+## FlowChart with mermaid
+
+``` mermaid
+flowchart
+    doc --> abc 
+
+    abc --> 123
+
+```
 
 ## About
 
@@ -116,19 +126,8 @@ Many **Examples** are available
 
 ## Documentation
 
-The myfempy is documented using Sphinx under **doc**. The myfempy\'s
-documents versions can be found in html, pdf or epub.
-
-The **Web Documentation** is available on \[Read the
-Docs\](<https://myfempy.readthedocs.io/>).
-
-To compile the documentation use *sphinx* in the **doc** folder. Do,
-
-``` bash
->> make html {in the root folder where the index.rst file is} --> This command generates *.html* files
-
->> make latexpdf # [optional] todo doc pdf
-```
+The myfempy is documented using Mkdocs under **docs**. The myfempy's
+documents versions can be found in web version and pdf [link]().
 
 ## Release
 
@@ -192,7 +191,7 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
     temperature changes, phase changes, and other external or internal
     agents.*
 -   [PDE](https://en.wikipedia.org/wiki/Partial_differential_equation)
-    \- *In mathematics, a partial differential equation (PDE) is an
+    *In mathematics, a partial differential equation (PDE) is an
     equation which imposes relations between the various partial
     derivatives of a multivariable function.*
 
@@ -265,11 +264,11 @@ The changelog is available
 │      utils.py
 │
 ├───plots
-│     meshquality.py
-│     physics.py
-│     plotmesh.py
-│     plotxy.py
-│     postplot.py
+        meshquality.py
+        physics.py
+        plotmesh.py
+        plotxy.py
+        postplot.py
 
 
 ```
