@@ -1,0 +1,26 @@
+###### 		          To Dev Version       ######
+###### Requirements without Version Specifiers ######
+######      pip install -r requeriment.txt     ######
+numpy
+scipy
+cython
+gmsh
+matplotlib
+vedo
+colorama
+art
+numdifftools
+jax[cpu]
+mkdocs
+mkdocs-material
+python-markdown-math
+mkdocs-with-pdf
+mkdocstrings[python]
+autodoc
+flake8
+black
+isort
+interrogate
+line_profiler
+pytest
+
