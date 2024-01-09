@@ -1,5 +1,5 @@
-name: Build
-on:
+name: Pipeline
+on: [push, pull_request]
   push:
     branches:
       - main
@@ -13,12 +13,19 @@ jobs:
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       #----------------------------------------------
       # install your root project, if required
       #----------------------------------------------
+      - name: copy files to repo
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      
+      - name: install python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.7'
+      
       - name: Install myfempy
         run: make install
       #----------------------------------------------
@@ -29,16 +36,16 @@ jobs:
 
       # - name: Run tests
       #   run: make test
-
+      
+      #----------------------------------------------
+      # SonarCloud Coverage
+      #----------------------------------------------
       - uses: actions/upload-artifact@v2
         with:
             name: code-coverage
             path: htmlcov
         continue-on-error: true
-      - uses: actions/upload-artifact@v2
-        with:
-          name: code-coverage
-          path: htmlcov
+      
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
