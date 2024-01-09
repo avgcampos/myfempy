@@ -17,12 +17,12 @@ jobs:
       #----------------------------------------------
       # install your root project, if required
       #----------------------------------------------
-      - name: copy files to repo
+      - name: Copy files to repo
         uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       
-      - name: install python
+      - name: Install python
         uses: actions/setup-python@v3
         with:
           python-version: '3.7'
