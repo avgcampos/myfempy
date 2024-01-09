@@ -1,18 +1,18 @@
 name: Pipeline
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types: [opened, synchronize, reopened]
+on: [push, pull_request]
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     types: [opened, synchronize, reopened]
 #----------------------------------------------
 # check-out repo and set-up python
 #----------------------------------------------
 jobs:
-  sonarcloud:
-    name: SonarCloud
+  test:
     runs-on: ubuntu-latest
+
     steps:
       #----------------------------------------------
       # install your root project, if required
@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       
       - name: install python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v3
         with:
           python-version: '3.7'
       
