@@ -8,6 +8,10 @@ theme:
     hljs_languages:
     - yaml
     - rust
+    include_homepage_in_sidebar: true
+    analytics:
+        gtag: G-ABC123
+    prev_next_buttons_location: bottom
 plugins:
     - search
     - mkdocstrings:
