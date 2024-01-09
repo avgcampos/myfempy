@@ -2,16 +2,9 @@ site_name: Myfempy Online Documentation
 site_url: https://avgcampos.github.io/myfempy/
 nav:
     - Home: index.md
+    - Documentation: documentation.md
 theme:
-    name: readthedocs
-    highlightjs: true
-    hljs_languages:
-    - yaml
-    - rust
-    include_homepage_in_sidebar: true
-    analytics:
-        gtag: G-ABC123
-    prev_next_buttons_location: bottom
+    name: rtd-dropdown
 plugins:
     - search
     - mkdocstrings:

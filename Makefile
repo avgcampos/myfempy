@@ -1,8 +1,8 @@
 #Makefile
-.PHONY: install format lint test sec
+.PHONY: install format lint test sec docs
 
-# install:
-# 	pip install .
+install:
+	pip install -r requirements.txt
 format:
 	black myfempy
 	isort myfempy
@@ -15,3 +15,5 @@ test:
 	pytest -v
 sec:
 	pip-audit
+docs:
+	mkdocs build

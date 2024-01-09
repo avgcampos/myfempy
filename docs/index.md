@@ -2,11 +2,11 @@
 
 ![myfempy_logo](figures\logo.png)
 
-# Welcome to myfempy's online documentation!
+## Welcome to myfempy's online documentation
 
 Copyright © Antonio Vinicius G. Campos 2022. Processo INPI BR512022001484-0
 
-# MathJax Test Page
+## MathJax Test Page
 
 When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
 
@@ -16,7 +16,7 @@ ax^2 + bx + c = 0
 
 $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
 
-# About
+## About
 
 **Myfempy** is a python package based on finite element method for
 scientific analysis. The code is open source and *intended for
@@ -26,9 +26,9 @@ project page, read the support options. **If you use myfempy in your
 research, the developers would be grateful if you could cite in your
 work.**
 
-# Installation
+## Installation
 
-## To install myfempy manually in your directory, following the steps
+### To install myfempy manually in your directory, following the steps
 
 1.  Clone/ Download the main code \[latest version\] from
     [github/myfempy/main](https://github.com/easycae-3d/myfempy/)
@@ -53,12 +53,12 @@ installation of** myfempy\*\* and dependencies packs. You can use the
 [virtualenv](https://virtualenv.pypa.io/en/latest/) or [conda
 environments](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)\*\*
 
-# Dependencies
+## Dependencies
 
 **Myfempy** can be used in systems based on Linux, MacOS and Windows.
 **Myfempy** requires Python 3.
 
-## Installation prerequisites, required to build **myfempy**
+### Installation prerequisites, required to build **myfempy**
 
 You can use either of two python development environments to run myfempy
 
@@ -69,7 +69,7 @@ You can use either of two python development environments to run myfempy
     way to perform Python/R data science and machine learning on a
     single machine.*
 
-## Python packages required for using **myfempy**
+### Python packages required for using **myfempy**
 
 The following python packages are required to run myfempy. Before to
 install myfempy-main, install this packages. Check if they are already
@@ -92,7 +92,7 @@ installed on your machine
 >> pip install numpy, cython, scipy, vedo
 ```
 
-### Outhers prerequisites
+#### Outhers prerequisites
 
 -   [gmsh/External Generator Mesh](https://gmsh.info/) - Gmsh is an open
     source 3D finite element mesh generator with a built-in CAD engine
@@ -106,7 +106,7 @@ installed on your machine
 
 -   [gmsh PyPi](https://pypi.org/project/gmsh/)
 
-# Tutorial
+## Tutorial
 
 A **Basic Tutorial** is available
 [here](https://myfempy.readthedocs.io/en/1.dev9/tutorial.html).
@@ -114,7 +114,7 @@ A **Basic Tutorial** is available
 Many **Examples** are available
 [here](https://github.com/easycae-3d/myfempy/tree/master/examples).
 
-# Documentation
+## Documentation
 
 The myfempy is documented using Sphinx under **doc**. The myfempy\'s
 documents versions can be found in html, pdf or epub.
@@ -130,19 +130,19 @@ To compile the documentation use *sphinx* in the **doc** folder. Do,
 >> make latexpdf # [optional] todo doc pdf
 ```
 
-# Release
+## Release
 
 The all release versions is available
 [here](https://github.com/easycae-3d/myfempy/releases)
 
-# Features
+## Features
 
 The *main myfempy features* are available here:
 
 -   [Features
     List](https://github.com/easycae-3d/myfempy/blob/main/docs/Myfempy%20Features.pdf)
 
-# License
+## License
 
 **myfempy** is published under the [GPLv3
 license](https://www.gnu.org/licenses/gpl-3.0.en.html). See the
@@ -151,7 +151,7 @@ license](https://www.gnu.org/licenses/gpl-3.0.en.html). See the
 ```{=html}
 <!-- ## >> Acknowledgment -->
 ```
-# Citing
+## Citing
 
 Have you found this software useful for your research? Star the project
 and cite it as:
@@ -177,7 +177,7 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
 }
 ```
 
-# References
+## References
 
 -   [Myfempy](https://myfempy.readthedocs.io/) - *A python package for
     scientific analysis based on finite element method.*
@@ -198,7 +198,7 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
 
 ------------------------------------------------------------------------
 
-# Changelog
+## Changelog
 
 The changelog is available
 [here](https://github.com/easycae-3d/myfempy/wiki/Changelog)
