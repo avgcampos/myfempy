@@ -11,7 +11,7 @@ Copyright Antonio Vinicius G. Campos and 3D EasyCAE, 2022
 [![Documentation Status](https://readthedocs.org/projects/myfempy/badge/?version=latest)](https://avgcampos.github.io/myfempy/)
 [![PyPI]()]() [![conda]()]()
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6958796.svg)](https://doi.org/10.5281/zenodo.6958796)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=easycae-3d_myfempy&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=easycae-3d_myfempy)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=avgcampos_myfempy&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=avgcampos_myfempy)
 [![Downloads]()
 [![lics](https://img.shields.io/badge/license-GPL-blue.svg)](https://en.wikipedia.org/wiki/GNU_General_Public_License)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat&logo=appveyor)]([https://github.com/psf/black](https://github.com/psf/black))
