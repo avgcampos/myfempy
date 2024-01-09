@@ -1,11 +1,11 @@
 name: Pipeline
-on: [push, pull_request]
-# on:
-#   push:
-#     branches:
-#       - main
-#   pull_request:
-#     types: [opened, synchronize, reopened]
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
 #----------------------------------------------
 # check-out repo and set-up python
 #----------------------------------------------
@@ -41,7 +41,7 @@ jobs:
       #----------------------------------------------
       # SonarCloud Coverage
       #----------------------------------------------
-      - uses: actions/upload-artifact@v2
+      - uses: actions/checkout@v3
         with:
             name: code-coverage
             path: htmlcov
