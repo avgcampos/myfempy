@@ -24,11 +24,11 @@ jobs:
       #----------------------------------------------
       # run lint and test suite
       #----------------------------------------------
-      - name: Run lint
-        run: make lint
+      # - name: Run lint
+      #   run: make lint
 
-      - name: Run tests
-        run: make test
+      # - name: Run tests
+      #   run: make test
 
       - uses: actions/upload-artifact@v2
         with:

@@ -4,7 +4,7 @@ nav:
     - Home: index.md
     - Documentation: documentation.md
 theme:
-    name: rtd-dropdown
+    name: material
 plugins:
     - search
     - mkdocstrings:
