@@ -30,6 +30,14 @@ jobs:
       - name: Run tests
         run: make test
 
+      #----------------------------------------------
+      # publish docs
+      #----------------------------------------------
+      - name: Publish docs
+        run: pip install --upgrade pip && pip install mkdocs mkdocs-gen-files
+        run: git config user.name 'github-actions[bot]' && git config user.email 'github-actions[bot]@users.noreply.github.com'
+        run: mkdocs gh-deploy
+
       - uses: actions/upload-artifact@v2
         with:
             name: code-coverage
