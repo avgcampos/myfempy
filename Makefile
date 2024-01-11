@@ -1,5 +1,5 @@
 #Makefile to dev user
-.PHONY: install format lint test sec docs
+.PHONY: install format lint test sec doc
 
 install:
 	pip install -r requirements.txt
@@ -15,5 +15,5 @@ test:
 	pytest -v
 sec:
 	pip-audit
-docs:
-	mkdocs build
+doc:
+	mkdocs serve

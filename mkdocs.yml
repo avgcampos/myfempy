@@ -9,7 +9,7 @@ nav:
     - Examples: examples.md
     - History: history.md
 theme:
-    name: material
+    name: readthedocs
     logo: assets/logo.png
     favicon: assets/logo.png
 plugins:
