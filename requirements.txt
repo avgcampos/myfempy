@@ -15,6 +15,7 @@ mkdocs
 python-markdown-math
 mkdocs-with-pdf
 mkdocstrings[python]
+mkdocstrings-python
 mkdocs-mermaid2-plugin
 flake8
 black
