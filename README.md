@@ -5,7 +5,7 @@
 
 <!-- ![logoB](https://user-images.githubusercontent.com/54820276/181291975-38e2a37e-be4f-40a3-b333-09724c61827b.png) -->
 
-![myfempy_logo](docs\assets\logo.png)
+![myfempy_logo](docs/assets/logo.png)
 
 Copyright Antonio Vinicius G. Campos and 3D EasyCAE, 2022
 
