@@ -12,7 +12,6 @@ art
 numdifftools
 jax[cpu]
 mkdocs
-mkdocs-material
 python-markdown-math
 mkdocs-with-pdf
 mkdocstrings[python]
