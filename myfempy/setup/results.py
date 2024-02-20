@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from myfempy.core.utils import gauss_points, results_average, search_nodexyz
+from myfempy.core.utilities import gauss_points, results_average, search_nodexyz
 from myfempy.io.iocsv import write2log, writer2csv
 from myfempy.io.iovtk import convert_to_vtk
 
@@ -44,9 +44,10 @@ class setPostProcess(ABC):
         postporc_result["balance"] = []
         # postporc_result["modes"] = []
         postporc_result["frf"] = []
+        postporc_result["solverstatus"] = postprocset["SOLVERDATA"]["solverstatus"]
 
         if self.modelinfo['domain'] == "structural":
-            SOLUTION =  postprocset["SOLUTION"]["U"]
+            SOLUTION =  postprocset["SOLVERDATA"]["solution"]['U']
             result_disp = np.zeros((SOLUTION.shape[1], self.modelinfo['coord'].shape[0], 4))
             for ns in range(SOLUTION.shape[1]):
                 result_disp[ns, :, :] = setPostProcess.__displ(self, SOLUTION[:, ns])
@@ -77,47 +78,49 @@ class setPostProcess(ABC):
                         self, SOLUTION[:, ns]
                     )
                 
-                if "average" in postprocset["COMPUTER"]["structural"].keys() and postprocset["COMPUTER"]["structural"]["average"]==True:
+                # if "average" in postprocset["COMPUTER"]["structural"].keys() and postprocset["COMPUTER"]["structural"]["average"]==True:
                 
-                    results_avr = np.zeros(
-                            (
-                            SOLUTION.shape[1],
-                            self.modelinfo['coord'].shape[0],
-                            2 * self.modelinfo['tensor'] + 3))
+                #     results_avr = np.zeros(
+                #             (
+                #             SOLUTION.shape[1],
+                #             self.modelinfo['coord'].shape[0],
+                #             2 * self.modelinfo['tensor'] + 3))
                 
-                    for ns in range(SOLUTION.shape[1]):
-                        for nt in range(2 * self.modelinfo['tensor'] + 2):
-                            # results_avr[ns, :, nt] = PostComputer.results_average(self, result_stress[ns, :, nt])
-                            # results_avr[ns, :, nt] = results_average(self, result_stress[ns, :, nt])
-                            results_avr[ns, :, nt] = results_average(
-                                result_stress[ns, :, nt],
-                                self.modelinfo['nnode'],
-                                self.modelinfo['nelem'],
-                                self.modelinfo['nodedof'],
-                                self.modelinfo['inci'],
-                            )
+                #     for ns in range(SOLUTION.shape[1]):
+                #         for nt in range(2 * self.modelinfo['tensor'] + 2):
+                #             # results_avr[ns, :, nt] = PostComputer.results_average(self, result_stress[ns, :, nt])
+                #             # results_avr[ns, :, nt] = results_average(self, result_stress[ns, :, nt])
+                #             results_avr[ns, :, nt] = results_average(
+                #                 result_stress[ns, :, nt],
+                #                 self.modelinfo['nnode'],
+                #                 self.modelinfo['nelem'],
+                #                 self.modelinfo['nodedof'],
+                #                 self.modelinfo['inci'],
+                #             )
 
                     # results_avr = results_avr
                 
                 for st in range(SOLUTION.shape[1]):
                     postporc_result["stress_elm"].append(
-                        {"val": result_stress[st][:][:], "title": title, "avr": False}
+                        {"val": result_stress[st][:][:],
+                         "title": title,
+                         "avr": False}
                     )
                     
-                    if "average" in postprocset["COMPUTER"]["structural"].keys() and postprocset["COMPUTER"]["structural"]["average"]==True:
-                        postporc_result["stress_avr"].append(
-                            {
-                                "val": results_avr[st][:][:],
-                                "title": title,
-                                "avr": True,
-                            }
-                        )
+                    # if "average" in postprocset["COMPUTER"]["structural"].keys() and postprocset["COMPUTER"]["structural"]["average"]==True:
+                    #     postporc_result["stress_avr"].append(
+                    #         {
+                    #             "val": results_avr[st][:][:],
+                    #             "title": title,
+                    #             "avr": True,
+                    #         }
+                    #     )
             else:
                 pass
         
         if "dynamic" in postprocset["COMPUTER"].keys():
             if "modes" in postprocset["COMPUTER"]["dynamic"].keys():
-                FREQUENCY =  postprocset["SOLUTION"]["FREQ"]
+                FREQUENCY =  postprocset["SOLVERDATA"]["solution"]["FREQ"]
                 for st in range(SOLUTION.shape[1]):
                     postporc_result["solution"].append(
                         {
@@ -135,7 +138,7 @@ class setPostProcess(ABC):
                     )
     
             if "frf" in postprocset["COMPUTER"]["dynamic"].keys():
-                FREQUENCY =  postprocset["SOLUTION"]["FREQ"]
+                FREQUENCY =  postprocset["SOLVERDATA"]["solution"]["FREQ"]
                 for st in range(SOLUTION.shape[1]):
                     postporc_result["solution"].append(
                         {
@@ -182,11 +185,16 @@ class setPostProcess(ABC):
         
         # hist_X = hist_X[1::][::]
         # hist_Y = hist_Y[1::][::]
-        path = os.getcwd()
-        filename = (path + "/" + postprocset["PLOTSET"]["filename"] + "_tracker_csv-file.txt")
-        writer2csv(filename,[hist_X, hist_Y], [xlabel,ylabel])
-        
-    
+        # path = os.getcwd()
+        filename = (str(self.path)+ "/" + postprocset["PLOTSET"]["filename"] + "_myfempy_csv-file.txt")
+        writer2csv(filename, [hist_X, hist_Y], [xlabel,ylabel])
+      
+      
+    def getLog(self, postprocset, postporc_result):
+        # path = os.getcwd()
+        filename = (str(self.path)+ "/" + postprocset["PLOTSET"]["filename"] + "_myfempy_solver-status.txt")
+        write2log(filename, postprocset['OUTPUT'], self.modelinfo, postporc_result)
+          
     
     def __tovtkplot(self, postprocset, postporc_result):
         """_summary_
@@ -195,11 +203,11 @@ class setPostProcess(ABC):
             postporc_result -- _description_
             postprocset -- _description_
         """
-        path = os.getcwd()
+        # path = os.getcwd()
         plotdata = dict()
         plotdata["inci"] = self.modelinfo['inci']
         plotdata["nodecon"] = self.modelinfo['nodecon']
-        plotdata["filename"] = (path + "/" + postprocset["PLOTSET"]["filename"] + "_post_process")
+        plotdata["filename"] = (str(self.path)+ "/" + postprocset["PLOTSET"]["filename"] + "_post_process")
         plotdata["coord"] = self.modelinfo['coord']
         
         plotdata["displ_POINT_DATA_val"] = []
@@ -222,7 +230,7 @@ class setPostProcess(ABC):
         if "structural" in postprocset["COMPUTER"].keys():
             for st in range(len(postporc_result["solution"])):
             
-                plotdata["filename"] = (path + "/" + postprocset["PLOTSET"]["filename"] + "_post_process_step-" + str(st))
+                plotdata["filename"] = (str(self.path)+ "/" + postprocset["PLOTSET"]["filename"] + "_post_process_step-" + str(st))
                 
                 plotdata["displ_POINT_DATA_val"] = postporc_result["solution"][st]["val"][:, 1:]
                 plotdata["displ_POINT_DATA_title"] = postporc_result["solution"][st]["title"]

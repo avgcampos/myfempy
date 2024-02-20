@@ -27,7 +27,6 @@
 #
 #~~~         myfempy -- MultiphYsics Finite Element Method with PYthon    ~~~
 #~~~                     COMPUTATIONAL ANALYSIS PROGRAM                   ~~~
-#~~~                    PROGRAMA DE ANÁLISE COMPUTACIONAL                 ~~~
 #~~~             Copyright (C) 2022 Antonio Vinicius Garcia Campos        ~~~
 #==========================================================================#
 #                            myfempy install script
@@ -37,12 +36,12 @@
 
 [project]
 name = "myfempy"
-version = "0.2.0"
-description = "This is a simple new version **myfempy** project to analysis only a 2D elasticity plane stress problem with OOP."
+description = "Myfempy is a python package based on finite element method to multiphysics analysis."
 authors = [
     {name = "Antonio Campos", email = "antviniciuscampos@gmail.com"},
 ]
 readme = "README.md"
+dynamic = ["version"]
 license = {file = "LICENSE.md"}
 requires-python = ">3.8"
 dependencies = [
@@ -67,6 +66,5 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/avgcampos/myfempy"
-Documentation = "https://myfempy.readthedocs.io/"
+Documentation = "myfempy.readthedocs.io/en/latest/"
 Repository = "https://github.com/avgcampos/myfempy/releases"

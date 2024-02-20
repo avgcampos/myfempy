@@ -18,10 +18,10 @@ class MeshProp:
 
         win = vd.Plotter(title="PRE-PROCESS", sharecam=False, screensize=(1280, 720))
         mesh = (
-            vd.Mesh(self.plotset["RENDER"]["filename"] + ".vtk").lineWidth(0.1).flat()
+            vd.UnstructuredGrid(self.plotset["RENDER"]["filename"] + ".vtk")#.lineWidth(0.1).flat()
         )
         if self.plotset["LABELS"]["lines"] == False:
-            mesh = vd.Mesh(self.plotset["RENDER"]["filename"] + ".vtk")
+            mesh = vd.UnstructuredGrid(self.plotset["RENDER"]["filename"] + ".vtk")
         else:
             pass
         mesh.cmap("RdYlBu", on="cells")
@@ -61,7 +61,7 @@ class MeshProp:
         """_summary_"""
         win = vd.Plotter(title="PRE-PROCESS", sharecam=False, screensize=(1280, 720))
         mesh = (
-            vd.Mesh(self.plotset["RENDER"]["filename"] + ".vtk").lineWidth(0.1).flat()
+            vd.UnstructuredGrid(self.plotset["RENDER"]["filename"] + ".vtk").lineWidth(0.1).flat()
         )
         # if self.plotset["QUALITY"]["lines"] == False:
         #     mesh = vd.Mesh(self.plotset["RENDER"]["filename"] + ".vtk")

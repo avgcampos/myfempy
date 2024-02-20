@@ -14,9 +14,9 @@ from myfempy.plots.physics import view_beam_crossSection, view_bondcond_point, v
 
 
 # @profile
-def preview_plot(previewset: dict, modelinfo: dict):
+def preview_plot(previewset: dict, modelinfo: dict, path: str):
 
-    path = os.getcwd()
+    # path = os.getcwd()
     plotdata = dict()
     plotdata["coord"] = modelinfo["coord"]
     plotdata["inci"] = modelinfo["inci"]
@@ -101,7 +101,7 @@ def preview_plot(previewset: dict, modelinfo: dict):
         previewset["tabcs"]["typSection"].append(int(modelinfo["tabgeo"][gg][-1]))
         previewset["tabcs"]["dimSection"].append(modelinfo["tabgeo"][gg][5:9])
     
-    build_preview(previewset)
+    build_preview(previewset, path)
     
     # if "QUALITY" in previewset.keys():
     #     if previewset["QUALITY"]["show"] == False:
@@ -149,9 +149,9 @@ def preview_plot(previewset: dict, modelinfo: dict):
         pass
 
 # @profile
-def build_preview(previewset: dict):
+def build_preview(previewset: dict, path):
 
-    path = os.getcwd()
+    # path = os.getcwd()
     file_name = str(path + "/" + previewset["RENDER"]["filename"] + ".vtk")
     renderer = vtk.vtkRenderer()
     renderer_window = vtk.vtkRenderWindow()
