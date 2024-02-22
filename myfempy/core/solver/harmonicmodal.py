@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+from os import environ
+environ['OMP_NUM_THREADS'] = '3'
+
 import numpy as np
 from scipy import empty
 
-from myfempy.core.solver.scipy_solve import eigsolve_eigsh
+# from myfempy.core.solver.scipy_solve import eigsolve_eigsh
 from myfempy.core.solver.solver import Solver
 
 

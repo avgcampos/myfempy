@@ -3,7 +3,6 @@ __doc__ = """
 Filters I/O
 """
 import csv
-
 import numpy as np
 
 def write2log(log_file, log_data, modelinfo, solstatus):

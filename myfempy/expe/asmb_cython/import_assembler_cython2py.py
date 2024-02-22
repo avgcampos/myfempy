@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.sparse import coo_matrix
 
-from myfempy.experimental.asmb_cython.assembler_cython import getMatrixAssemblerSym_cy_v2
+from myfempy.expe.asmb_cython.assembler_cython import getMatrixAssemblerSym_cy_v2
 
 # @profile
 def getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler):

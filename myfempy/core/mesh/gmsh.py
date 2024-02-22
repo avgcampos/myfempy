@@ -4,6 +4,7 @@ import numpy as np
 
 from myfempy.core.mesh.mesh import Mesh
 from myfempy.core.utilities import nodes_from_regions
+from myfempy.io.iogmsh import meshid2gmshid
 
 class MeshGmsh(Mesh):
     '''Mesh GMSH Class <ConcreteClassService>'''
@@ -17,7 +18,26 @@ class MeshGmsh(Mesh):
         return nodes
     
     def getElementList(conec, meshset, modeldata):
-        return Mesh.getElementListMeshGMSH(conec, meshset, modeldata)
+
+        meshid = meshid2gmshid(str(meshset))
+        elemlist = [[None] * 5]
+        contelm = 0
+        for ee in range(len(conec)):
+            if int(conec[ee][1]) == meshid:
+                contelm += 1
+                elemlist.append(
+                    [
+                        contelm,
+                        meshset,
+                        modeldata["MATERIAL"]["PROPMAT"][int(conec[ee][3])-1]["NAME"],
+                        modeldata["GEOMETRY"]["PROPGEO"][int(conec[ee][3])-1]["NAME"],
+                        (np.array(conec[ee][5:])).astype(int).tolist(),
+                    ]
+                )
+        
+        elemlist = elemlist[1::][::]
+        
+        return elemlist
     
     def getRegionsList(conec):
         return MeshGmsh.__setregions(conec)
@@ -26,11 +46,11 @@ class MeshGmsh(Mesh):
         
         if "meshimport" in set_mesh.keys():
             conec, nodes = MeshGmsh.__convert_from_msh1(
-                os.getcwd() + "/" + set_mesh["meshimport"]
+                set_mesh['user_path'] + "/" + set_mesh["meshimport"]
             )
         else:         
             conec, nodes = MeshGmsh.__convert_from_msh1(
-                os.getcwd() + "/" + set_mesh["filename"]
+                set_mesh['user_path'] + "/" + set_mesh["filename"]
             )
         return conec, nodes            
 

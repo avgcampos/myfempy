@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-def getMaterial(set_material):
+def setMaterial(set_material):
     if set_material['mat'] == 'axial':
         pass
         
@@ -29,9 +29,7 @@ def getMaterial(set_material):
         else:
             pass
     
-    
-       
-    
+        
 class Material(ABC):
     '''Material API Class <ClassService>'''
     
@@ -39,7 +37,7 @@ class Material(ABC):
         pass
 
     @abstractmethod
-    def MaterialSet():
+    def getMaterialSet():
         pass
     
     @abstractmethod
@@ -53,11 +51,20 @@ class Material(ABC):
     @abstractmethod
     def getElementStress():
         pass
-
+        
     @abstractmethod
-    def setTitleStrain():
+    def getFailureCriteria():
         pass
 
     @abstractmethod
-    def setTitleStress():
+    def getTitleStrain():
         pass
+
+    @abstractmethod
+    def getTitleStress():
+        pass
+        
+    @abstractmethod
+    def getTitleFoS():
+        pass
+        

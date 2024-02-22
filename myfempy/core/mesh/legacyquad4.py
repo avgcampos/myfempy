@@ -57,5 +57,17 @@ class LegacyQuad4(Mesh):
         
         return coord
 
-    def getElementList(conec, elemtype, modeldata):
-        return Mesh.getElementListMeshLEGACY(conec, elemtype, modeldata)
+    def getElementList(conec, meshset, modeldata):
+        elemlist = [[None] * 3]
+        for ee in range(len(conec)):
+            elemlist.append(
+                [
+                    int(conec[ee, 0]),
+                    meshset,
+                    modeldata["MATERIAL"]["PROPMAT"][0]["NAME"],
+                    modeldata["GEOMETRY"]["PROPGEO"][0]["NAME"],
+                    conec[ee, 1:].astype(int).tolist(),
+                ]
+            )
+        elemlist = elemlist[1::][::]
+        return elemlist

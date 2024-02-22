@@ -2,11 +2,8 @@
 """
 I/O VTK
 """
-import cython
 import numpy as np
 
-
-# @cython.cfunc
 def meshid2vtkid(elemid):
     # https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
     # space + dofnode + numbconecelem + firstorder(1)/secondorder(2)
@@ -28,7 +25,6 @@ def meshid2vtkid(elemid):
     return vtkCT
 
 
-@cython.cfunc
 def convert_to_vtk(plotdata):
     """_summary_
 
@@ -166,8 +162,6 @@ def convert_to_vtk(plotdata):
 
         # CELL DATA FUTURE...
 
-
-# @cython.cfunc
 def convert_from_vtk(filename):
     """_summary_
 
@@ -177,8 +171,6 @@ def convert_from_vtk(filename):
     Returns:
         _description_
     """
-    nnod: cython.int
-    nelm: cython.int
 
     file_imp = filename + ".vtk"
     with open(file_imp, "r") as file_object:

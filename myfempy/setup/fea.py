@@ -3,17 +3,19 @@ from __future__ import annotations
 import numpy as np
 import scipy.sparse as sp
 
-from myfempy.core.mesh.mesh import getMesh
+from myfempy.core.mesh.mesh import setMesh
 # from myfempy.core.solver import getSolver
-from myfempy.core.elements.element import getElement
-from myfempy.core.geometry.geometry import getGeometry
-from myfempy.core.material.material import getMaterial
-from myfempy.core.shapes.shape import getShape
+from myfempy.core.elements.element import setElement
+from myfempy.core.geometry.geometry import setGeometry
+from myfempy.core.material.material import setMaterial
+from myfempy.core.shapes.shape import setShape
 from myfempy.plots.prevplot import preview_plot
 from myfempy.setup.model import SetModel
 from myfempy.setup.physics import SetPhysics
 from myfempy.setup.results import setPostProcess
-from myfempy.io.path import newDir
+from myfempy.utils.utils import newDir
+
+from myfempy.core.utilities import addMatrix
 
 import sys
 import logging
@@ -35,29 +37,29 @@ class newAnalysis():
         Arguments:
             modeldata -- data information
         """
-        try:     
-            Mesh = newAnalysis.setMesh(modeldata)
+        try:
+            modeldata['MESH']['user_path'] = self.path
+            Mesh = newAnalysis.__setMesh(modeldata)
             logging.info('TRY SET MESH -- SUCCESS')
         except:
             logging.warning('TRY SET MESH -- FAULT')
-            sys.exit()
         try:     
-            Shape = newAnalysis.setShape(modeldata)
-            logging.info('TRY SET SHAPE -- SUCCESS')
-        except:
-            logging.warning('TRY SET SHAPE -- FAULT')
-        try:     
-            Element = newAnalysis.setElement(modeldata)
+            Element = newAnalysis.__setElement(modeldata)
             logging.info('TRY SET ELEMENT -- SUCCESS')
         except:
             logging.warning('TRY SET ELEMENT -- FAULT')
         try:     
-            Material = newAnalysis.setMaterial(modeldata)
+            Shape = newAnalysis.__setShape(modeldata)
+            logging.info('TRY SET SHAPE -- SUCCESS')
+        except:
+            logging.warning('TRY SET SHAPE -- FAULT')
+        try:     
+            Material = newAnalysis.__setMaterial(modeldata)
             logging.info('TRY SET MATERIAL -- SUCCESS')
         except:
             logging.warning('TRY SET MATERIAL -- FAULT')
         try:     
-            Geometry = newAnalysis.setGeometry(modeldata)
+            Geometry = newAnalysis.__setGeometry(modeldata)
             logging.info('TRY SET GEOMETRY -- SUCCESS')
         except:
             logging.warning('TRY SET GEOMETRY -- FAULT')
@@ -115,13 +117,13 @@ class newAnalysis():
         # if "COUPLING" in physicdata.keys():
         #     coupling = NewAnalysis.setCoupling(physicdata)
         #     Domain.coupling = coupling
-        # try:
-        Loads, BoundCond = newAnalysis.setDomain(physicdata)
+        try:
+            Loads, BoundCond = newAnalysis.__setDomain(physicdata)
+            logging.info('TRY SET PHYSICS -- SUCCESS')
+        except:
+            logging.warning('TRY SET PHYSICS -- FAULT')
         self.physic = SetPhysics(Loads, BoundCond)
         self.physic.physicdata = physicdata
-            # logging.info('TRY SET PHYSICS -- SUCCESS')
-        # except:
-        #     logging.warning('TRY SET PHYSICS -- FAULT')
         self.modelinfo["forces"] = newAnalysis.getLoadApply(self)
         self.modelinfo["constrains"] = newAnalysis.getBCApply(self)
         # self.loadaply = FEANewAnalysis.getLoadApply(self)
@@ -139,12 +141,11 @@ class newAnalysis():
         tabmat = self.modelinfo['tabmat']
         tabgeo = self.modelinfo['tabgeo']
         intgauss = self.modelinfo['intgauss']       
-            
-        # try:
-        matrix = newAnalysis.getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss) #self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo)
-        logging.info('TRY RUN GLOBAL ASSEMBLY -- SUCCESS')     
-        # except:
-        #     logging.warning('TRY RUN GLOBAL ASSEMBLY -- FAULT')
+        try:
+            matrix = newAnalysis.getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss) #self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo)
+            logging.info('TRY RUN GLOBAL ASSEMBLY -- SUCCESS')     
+        except:
+            logging.warning('TRY RUN GLOBAL ASSEMBLY -- FAULT')
         loadaply = newAnalysis.getLoadApply(self)
         try:
             addSpring = np.where(loadaply[:,1]==16)
@@ -156,7 +157,7 @@ class newAnalysis():
                     A_add = addLoad[ii, 2] * np.array([[1, -1], [-1, 1]])
                     loc = np.array([int(self.modelinfo['dofe']*addLoad[ii, 0]-(self.modelinfo['dofe'])),
                                     int(self.modelinfo['dofe']*addLoad[ii, 0]-(self.modelinfo['dofe'] - 1))])
-                    matrix['stiffness'] = self.solver.addMatrix(matrix['stiffness'], A_add, loc)
+                    matrix['stiffness'] = addMatrix(matrix['stiffness'], A_add, loc)
                 logging.info('TRY RUN ADD SPRING -- SUCCESS')
             if addMass[0].size:
                 addLoad = loadaply[addMass, :][0]
@@ -164,7 +165,7 @@ class newAnalysis():
                     A_add = addLoad[ii, 2] * np.array([[1, -1], [-1, 1]])
                     loc = np.array([int(self.modelinfo['dofe']*addLoad[ii, 0]-(self.modelinfo['dofe'])),
                                     int(self.modelinfo['dofe']*addLoad[ii, 0]-(self.modelinfo['dofe'] - 1))])
-                    matrix['mass'] = self.solver.addMatrix(matrix['mass'], A_add, loc) 
+                    matrix['mass'] = addMatrix(matrix['mass'], A_add, loc) 
                 logging.info('TRY RUN ADD MASS -- SUCCESS')
         except:
             logging.warning('TRY RUN ADD ASSEMBLY -- FAULT')           
@@ -201,7 +202,6 @@ class newAnalysis():
             logging.info('TRY RUN CONSTRAINS -- SUCCESS')
         except:
             logging.warning('TRY RUN CONSTRAINS -- FAULT')
-        # forcelist = FEANewAnalysis.getLoadArray(self)
         try:
             starttime = time()
             solvedata['solution'] = self.solver.runSolve(self.modelinfo['fulldofs'], assembly, forcelist, freedof, solvedata)
@@ -264,73 +264,23 @@ class newAnalysis():
             post process arrays 
         """
         postporc_result = []
-        try:
-            if "COMPUTER" in postprocdata.keys(): 
-                postporc_result = setPostProcess.getCompute(self, postprocdata)
-            if "TRACKER" in postprocdata.keys():
-                setPostProcess.getTracker(self, postprocdata, postporc_result)
-            if "OUTPUT" in postprocdata.keys():
-                postporc_result["log"] = []
-                log_file = setPostProcess.getLog(self, postprocdata, postporc_result)
-                postporc_result["log"].append(log_file)
-            logging.info('TRY GET POST PROCESS -- SUCCESS')        
-        except:
-            logging.warning('TRY GET POST PROCESS -- FAULT')
+        # try:
+        if "COMPUTER" in postprocdata.keys(): 
+            postporc_result = setPostProcess.getCompute(self, postprocdata)
+        if "TRACKER" in postprocdata.keys():
+            setPostProcess.getTracker(self, postprocdata, postporc_result)
+        if "OUTPUT" in postprocdata.keys():
+            postporc_result["log"] = []
+            log_file = setPostProcess.getLog(self, postprocdata, postporc_result)
+            postporc_result["log"].append(log_file)
+            # logging.info('TRY GET POST PROCESS -- SUCCESS')        
+        # except:
+        #     logging.warning('TRY GET POST PROCESS -- FAULT')
         return postporc_result
                 
-                
-    # seting
-    def setMesh(modeldata):
-        set_mesh = dict()
-        set_mesh = modeldata['MESH']
-        # set_mesh['type'] = modeldata['MESH']['TYPE'] 
-        set_mesh['shape'] = modeldata['ELEMENT']['SHAPE']
-        return getMesh(set_mesh)
-    
-    def setShape(modeldata):
-        set_shape = dict()
-        set_shape['type'] = modeldata['ELEMENT']['SHAPE']
-        return getShape(set_shape)
-    
-    def setElement(modeldata):
-        set_element = dict()
-        set_element['type'] = modeldata['ELEMENT']['TYPE']
-        return getElement(set_element)
-    
-    def setMaterial(modeldata):
-        set_material = dict()
-        set_material['mat'] = modeldata['MATERIAL']['MAT']
-        set_material['type'] = modeldata['MATERIAL']['TYPE']
-        return getMaterial(set_material)
-    
-    def setGeometry(modeldata):
-        set_geometry = dict()
-        set_geometry['geo'] = modeldata['GEOMETRY']['GEO']
-        return getGeometry(set_geometry)
             
-    
-    def setDomain(physicdata):
-        if physicdata['DOMAIN'] == 'structural':
-            from myfempy.core.physic.bcstruct import BoundCondStruct
-            from myfempy.core.physic.loadstruct import LoadStructural
-            return LoadStructural, BoundCondStruct
-        else:
-            pass 
-    
 
-    def setSolution(self, solvedata):
-        # self.inci = FEANewAnalysis.getInci(self)
-        # self.coord = FEANewAnalysis.getCoord(self)
-        # self.tabmat = FEANewAnalysis.getTabmat(self)
-        # self.tabgeo = FEANewAnalysis.getTabgeo(self)
-        # self.intgauss = FEANewAnalysis.getIntGauss(self)
-        # elem_set = self.model.element.getElementSet()
-        # nodedof = len(elem_set["dofs"])
-        self.solver.fulldofs = (self.modelinfo['dofs']) * len(self.modelinfo['nnode'])
-        self.solver.solvedata = solvedata
-
-
-    # geting    
+    # gettings    
     def getInci(self):
         return self.model.getInci(self.model.modeldata)
     
@@ -344,7 +294,7 @@ class newAnalysis():
         return self.model.getTabGeo(self.model.modeldata)
     
     def getIntGauss(self):
-        return self.model.setIntGauss(self.model.modeldata)
+        return self.model.getIntGauss(self.model.modeldata)
     
     def getElementVolume(self, inci, coord, tabgeo, intgauss):
         vol = np.zeros((len(inci)))
@@ -392,3 +342,57 @@ class newAnalysis():
         # loadaply = FEANewAnalysis.getLoadApply(self)    
         loadvec = self.solver.getLoadAssembler(loadaply, nodetot, self.modelinfo['nodedof'])
         return loadvec
+    
+        
+    # settings FEA ANALYSIS <privates>
+    def __setMesh(modeldata):
+        set_mesh = dict()
+        set_mesh = modeldata['MESH']
+        # set_mesh['type'] = modeldata['MESH']['TYPE'] 
+        set_mesh['shape'] = modeldata['ELEMENT']['SHAPE']
+        return setMesh(set_mesh)
+    
+    def __setShape(modeldata):
+        set_shape = dict()
+        set_shape['type'] = modeldata['ELEMENT']['SHAPE']
+        return setShape(set_shape)
+    
+    def __setElement(modeldata):
+        set_element = dict()
+        set_element['type'] = modeldata['ELEMENT']['TYPE']
+        return setElement(set_element)
+    
+    def __setMaterial(modeldata):
+        set_material = dict()
+        set_material['mat'] = modeldata['MATERIAL']['MAT']
+        set_material['type'] = modeldata['MATERIAL']['TYPE']
+        return setMaterial(set_material)
+    
+    def __setGeometry(modeldata):
+        set_geometry = dict()
+        set_geometry['geo'] = modeldata['GEOMETRY']['GEO']
+        return setGeometry(set_geometry)
+                
+    def __setDomain(physicdata):
+        if physicdata['DOMAIN'] == 'structural':
+            from myfempy.core.physic.bcstruct import BoundCondStruct
+            from myfempy.core.physic.loadstruct import LoadStructural
+            return LoadStructural, BoundCondStruct
+        elif physicdata['DOMAIN'] == 'thermal':
+            pass
+        elif physicdata['DOMAIN'] == 'fluidflow':
+            pass
+        else:
+            pass
+    
+
+    # def __setSolution(self, solvedata):
+    #     # self.inci = FEANewAnalysis.getInci(self)
+    #     # self.coord = FEANewAnalysis.getCoord(self)
+    #     # self.tabmat = FEANewAnalysis.getTabmat(self)
+    #     # self.tabgeo = FEANewAnalysis.getTabgeo(self)
+    #     # self.intgauss = FEANewAnalysis.getIntGauss(self)
+    #     # elem_set = self.model.element.getElementSet()
+    #     # nodedof = len(elem_set["dofs"])
+    #     self.solver.fulldofs = (self.modelinfo['dofs']) * len(self.modelinfo['nnode'])
+    #     self.solver.solvedata = solvedata

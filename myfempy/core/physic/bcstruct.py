@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 
 from myfempy.core.physic.structural import Structural
-
+from myfempy.core.utilities import get_nodes_from_list
 
 class BoundCondStruct(Structural):
     '''Structural Load Class <ConcreteClassService>'''
@@ -22,7 +22,7 @@ class BoundCondStruct(Structural):
         return boncdnodeaply
         
     def setNodes(bclist, coord, regions):
-        return Structural.setNodes(bclist, coord, regions)
+        return get_nodes_from_list(bclist, coord, regions)
     
     def setBCDof(bclist, node_list_bc):
         return Structural.setBCDof(bclist, node_list_bc)

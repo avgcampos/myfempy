@@ -2,8 +2,8 @@
 __doc__ = """
 Plotter Prev Process
 """
-import os
-
+from os import environ
+environ['OMP_NUM_THREADS'] = '3'
 import numpy as np
 import vtk
 

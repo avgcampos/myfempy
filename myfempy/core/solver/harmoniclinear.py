@@ -1,10 +1,16 @@
 from __future__ import annotations
 
-import numpy as np
-from scipy import empty
+from os import environ
+environ['OMP_NUM_THREADS'] = '3'
+
+from numpy import zeros, linspace, pi, float64
+from scipy.sparse.linalg import spsolve, minres 
 
 # from myfempy.core.alglin import linsolve_spsolve
 from myfempy.core.solver.solver import Solver
+from myfempy.core.utilities import setSteps
+from myfempy.expe.asmb_cython.import_assembler_cython2py import getMatrixAssemblerSYMM
+from myfempy.core.solver.assemblersymm import AssemblerSYMM
 
 
 class HarmonicLinear(Solver):
@@ -13,36 +19,41 @@ class HarmonicLinear(Solver):
     Harmonic Forced System Linear Solver Class <ConcreteClassService>
     """
 
-    def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss):
+    def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss):  
         matrix = dict()
-        matrix['stiffness'] = Solver.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss,  type_assembler = 'linear_stiffness')
-        matrix['mass'] = Solver.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss,  type_assembler = 'mass_consistent')
-        return matrix
-    
-    
+        matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
+        # matrix['stiffness'] = getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
+        matrix['mass'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss,  type_assembler = 'mass_consistent')
+        return matrix 
+        
     def getLoadAssembler(loadaply, nodetot, nodedof):
-        return Solver.getLoadAssembler(loadaply, nodetot, nodedof)  
-          
-    def getConstrains(constrains, nodetot, nodedof):
-        return Solver.getConstrains(constrains, nodetot, nodedof)
-    
-    def setSteps(steps):
-        return Solver.setSteps(steps)          
+        return AssemblerSYMM.getLoadAssembler(loadaply, nodetot, nodedof)
 
-    def Solve(fulldofs, assembly, forcelist, freedof, solverset):
+    def getConstrains(constrains, nodetot, nodedof):
+        return AssemblerSYMM.getConstrains(constrains, nodetot, nodedof)
+        
+
+    def runSolve(fulldofs, assembly, forcelist, freedof, solverset):
         solution = dict()
         stiffness = assembly['stiffness']
         mass = assembly['mass']
-        twopi = 2 * np.pi
+        twopi = 2 * pi
         freqStart = (twopi) * solverset["STEPSET"]["start"]
         freqEnd = (twopi) * solverset["STEPSET"]["end"]
-        freqStep = HarmonicLinear.setSteps(solverset["STEPSET"])
-        w_range = np.linspace(freqStart, freqEnd, freqStep)
-        U = np.zeros((fulldofs, freqStep))
+        freqStep = setSteps(solverset["STEPSET"])
+        w_range = linspace(freqStart, freqEnd, freqStep)
+        U = zeros((fulldofs, freqStep), dtype=float64)
+        U0 = U[freedof, 0]
+        sA = stiffness[:, freedof][freedof, :]
+        sM = mass[:, freedof][freedof, :]
         for ww in range(freqStep):
             Wn = w_range[ww]
-            Dw = (stiffness[:, freedof][freedof, :]) - (Wn**2) * (mass[:, freedof][freedof, :])
-            U[freedof, ww] = Solver.getLinSysSolve(Dw, forcelist[freedof, :])
+            Dw = sA - (Wn**2) * sM
+            # U[freedof, ww] = Solver.getLinSysSolve(Dw, forcelist[freedof, :])
+            try:
+                U[freedof, ww], info = minres(A=Dw, b=forcelist[freedof, :].toarray(), x0=U0, tol=1E-10, maxiter=1000)
+            except:
+                raise info    
         solution['U'] = U
         solution['FREQ'] = w_range / (twopi)
         return solution

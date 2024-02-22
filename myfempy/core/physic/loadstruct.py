@@ -4,7 +4,7 @@ import numpy as np
 # from scipy.special import roots_legendre
 
 from myfempy.core.physic.structural import Structural
-from myfempy.core.utilities import poly_area
+from myfempy.core.utilities import poly_area, get_nodes_from_list
 
 class LoadStructural(Structural):
     '''Structural Load Class <ConcreteClassService>'''
@@ -35,7 +35,7 @@ class LoadStructural(Structural):
         return forcenodeaply
         
     def setNodes(forcelist, coord, regions):
-        return Structural.setNodes(forcelist, coord, regions)
+        return get_nodes_from_list(forcelist, coord, regions)
     
     def setLoadDof(forcelist, node_list_fc):
         return Structural.setLoadDof(forcelist, node_list_fc)
@@ -127,8 +127,7 @@ class LoadStructural(Structural):
         
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
-    
-    
+      
     
     
     # def __line_force_distribuition(matN, T, L, coord_l):

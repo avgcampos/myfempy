@@ -87,7 +87,7 @@ class Tria3(Shape):
     
     def detJacobi(shape_function, r_coord, element_coord):
         J = Tria3.getJacobian(shape_function, r_coord, element_coord)
-        return 0.5*np.linalg.det(J)
+        return np.abs(0.5*np.linalg.det(J))
     
     def getNodeList(inci, element_number):
         

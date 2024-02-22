@@ -62,7 +62,7 @@ class SetModel():
     def getCoord(self, modeldata):
         return SetModel.setCoord(self, modeldata)
     
-    def setIntGauss(self, modeldata):
+    def getIntGauss(self, modeldata):
         return SetModel.__intgauss(self, modeldata)
     
     # -----------------------------------------------
@@ -121,7 +121,7 @@ class SetModel():
                     mat_prop[key] = matlist["PROPMAT"][mm][key]
                 else:
                     mat_prop[key] = 0.0
-            matset = self.material.MaterialSet()
+            matset = self.material.getMaterialSet()
             idtyp = matset['idtyp'] #mat_def(matlist[mm]["MAT"])
             idmat = matset['idmat'] #mat_beh(matlist[mm]["DEF"])
             tabmat[mm, :] = [

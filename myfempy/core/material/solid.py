@@ -6,7 +6,7 @@ from myfempy.core.material.material import Material
 class  SolidIsotropic(Material):
     '''Solid Stress Material Class <ConcreteClassService>'''
 
-    def MaterialSet():
+    def getMaterialSet():
         matset = {
             'mat': "solid",
             'idmat': 5,
@@ -77,7 +77,7 @@ class  SolidIsotropic(Material):
         
         return epsilon, strain
     
-    def setTitleStrain():
+    def getTitleStrain():
         title = [
             "STRAIN_VM",
             "STRAIN_XX",
@@ -124,7 +124,7 @@ class  SolidIsotropic(Material):
         
         return sigma, stress
         
-    def setTitleStress():
+    def getTitleStress():
         title = [
             "STRESS_VM",
             "STRESS_XX",

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-def getElement(set_element):
+def setElement(set_element):
     if set_element['type'] == 'plane':
         from myfempy.core.elements.plane import Plane
         return Plane
@@ -26,19 +26,19 @@ class Element(ABC):
         pass
 
     @abstractmethod
-    def setElementShape():
+    def getElementShape():
         pass
 
     @abstractmethod
-    def setElementMesh():
+    def getElementMesh():
         pass
 
     @abstractmethod
-    def setElementMaterial():
+    def getElementMaterial():
         pass
 
     @abstractmethod
-    def setElementGeometry():
+    def getElementGeometry():
         pass
 
     @abstractmethod
@@ -74,7 +74,7 @@ class Element(ABC):
         pass
 
     @abstractmethod
-    def setTitleDeformation():
+    def getTitleDeformation():
         pass
 
     @abstractmethod

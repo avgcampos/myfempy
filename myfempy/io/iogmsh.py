@@ -3,8 +3,8 @@ __doc__ = """
 GMSH GEN MESH
 """
 import os
-
-import numpy as np
+# import numpy as np
+from numpy import abs
 
 
 def meshid2gmshid(elemid):
@@ -173,7 +173,7 @@ def get_gmsh_geo(filename, meshdata):
                         "Curve Loop("
                         + str(npl)
                         + ") = {"
-                        + (str(np.abs(meshdata["planelist"][i][:]).tolist()))[1:-1]
+                        + (str(abs(meshdata["planelist"][i][:]).tolist()))[1:-1]
                         + "};\n"
                     )
                                             

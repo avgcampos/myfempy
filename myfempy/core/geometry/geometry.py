@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-def getGeometry(set_geometry):
+def setGeometry(set_geometry):
     if set_geometry['geo'] == 'thickness':
         from myfempy.core.geometry.thickness import Thickness
         return Thickness

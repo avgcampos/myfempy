@@ -6,7 +6,7 @@ from myfempy.core.material.material import Material
 class  PlaneStrainIsotropic(Material):
     '''Plane Strain Material Class <ConcreteClassService>'''
 
-    def MaterialSet():
+    def getMaterialSet():
         matset = {
             'mat': "planestrain",
             'idmat': 4,
@@ -57,7 +57,7 @@ class  PlaneStrainIsotropic(Material):
         
         return epsilon, strain
     
-    def setTitleStrain():
+    def getTitleStrain():
         title = ["STRAIN_VM", "STRAIN_XX", "STRAIN_YY", "STRAIN_XY"]
         return title
     
@@ -82,7 +82,7 @@ class  PlaneStrainIsotropic(Material):
         
         return stress
         
-    def setTitleStress():
+    def getTitleStress():
         title = ["STRESS_VM", "STRESS_XX", "STRESS_YY", "STRESS_XY"]
         return title
     

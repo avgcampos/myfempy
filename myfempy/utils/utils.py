@@ -24,6 +24,20 @@ def get_logo():
     art.tprint("myfempy", font="ogre")
     print("myfempy version:", get_version())
 
+def newDir(file_dir):
+    """_summary_
+
+    Arguments:
+        file_dir -- _description_
+
+    Returns:
+        _description_
+    """
+    path = os.getcwd()
+    if not os.path.exists(path+'/'+file_dir):
+        os.makedirs(path+'/'+file_dir)
+    path_user = str(path+'/'+file_dir)
+    return path_user
 
 def clear_console():
     """_summary_"""

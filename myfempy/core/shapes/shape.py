@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-def getShape(set_shape):
+def setShape(set_shape):
 
     if set_shape['type'] == 'line2':
         from myfempy.core.shapes.line2 import Line2
@@ -9,11 +9,12 @@ def getShape(set_shape):
     
     elif set_shape['type'] == 'quad4':
         # from myfempy.core.felib.shapes.quad4 import Quad4
-        from myfempy.experimental.ke_numpy.quad4 import Quad4
+        from myfempy.expe.ke_numpy.quad4 import Quad4
         return Quad4
     
     elif set_shape['type'] == 'tria3':
-        from myfempy.core.shapes.tria3 import Tria3
+        from myfempy.expe.ke_numpy.tria3 import Tria3
+        # from myfempy.core.shapes.tria3 import Tria3
         return Tria3
     
     elif set_shape['type'] == 'hexa8':

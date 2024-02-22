@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import numpy as np
 
-from myfempy.core.__utils import search_nodexyz
+from myfempy.core.utilities import search_nodexyz
 from myfempy.io.iocsv import write2log, writer2csv
 from myfempy.plots.plotmesh import post_show_mesh
 from myfempy.plots.plotxy import forces_plot, frf_plot, tracker_plot

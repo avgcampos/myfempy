@@ -4,7 +4,7 @@ import numdifftools as nd
 import numpy as np
 
 from myfempy.core.utilities import gauss_points
-from myfempy.elements.element import Element
+from myfempy.core.elements.element import Element
 
 class PlateKC(Element):
     '''Plate Kirchhoff Structural Element Class <ConcreteClassService>'''
@@ -142,7 +142,7 @@ class PlateKC(Element):
         
         return result
         
-    def setTitleDeformation():
+    def getTitleDeformation():
         title = ["DISPL_X", "DISPL_Y", "DISPL_Z"]
         return title
     

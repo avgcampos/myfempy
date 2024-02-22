@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from numpy import uint32, float64
+from numpy import uint32, float64, abs
 INT32 = uint32
 FLT64 = float64
 
@@ -27,7 +27,6 @@ class Quad4(Shape):
         N[0, 1] = 0.25*(1+r_coord[0])*(1-r_coord[1])
         N[0, 2] = 0.25*(1+r_coord[0])*(1+r_coord[1])
         N[0, 3] = 0.25*(1-r_coord[0])*(1+r_coord[1])
-
         return N
     
    
@@ -69,7 +68,6 @@ class Quad4(Shape):
     # @profile   
     def invJacobi(shape_function, r_coord, element_coord, nodedof):
         J = Quad4.getJacobian(shape_function, r_coord, element_coord)
-        
         # invJ = np.linalg.inv(J)                                 # comando lento!!!
         invJ = inverse(J) #inv(J)
         mat_invJ = getZerosArray(4, 4, FLT64) #zeros((4, 4), dtype=FLT64)  
@@ -81,7 +79,7 @@ class Quad4(Shape):
     def detJacobi(shape_function, r_coord, element_coord):
         J = Quad4.getJacobian(shape_function, r_coord, element_coord)
         detJ = determinant(J)
-        return detJ
+        return abs(detJ)
     
     def getNodeList(inci, element_number):
         

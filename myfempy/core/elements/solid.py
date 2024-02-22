@@ -5,7 +5,7 @@ import numpy as np
 
 # from myfempy.felib.material.setpropmat import getElasticity
 from myfempy.core.utilities import gauss_points
-from myfempy.elements.element import Element
+from myfempy.core.elements.element import Element
 
 # from myfempy.felib.quadrature import gaussian, no_interpol
 # from myfempy.felib.materset import get_elasticity
@@ -131,7 +131,7 @@ class Solid(Element):
         
         return result
         
-    def setTitleDeformation():
+    def getTitleDeformation():
         title = ["DISPL_X", "DISPL_Y", "DISPL_Z"]
         return title 
     

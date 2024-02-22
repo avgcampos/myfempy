@@ -69,7 +69,7 @@ class setPostProcess(ABC):
                     (
                         SOLUTION.shape[1],
                         self.modelinfo['inci'].shape[0],
-                        2 * self.modelinfo['tensor'] + 3,
+                        2 * self.modelinfo['tensor'] + 4,
                     )
                 )
 
@@ -130,7 +130,7 @@ class setPostProcess(ABC):
                                 + str(st + 1)
                                 + "-"
                                 + "FREQ_"
-                                + str(round(FREQUENCY[st][2], 3))
+                                + str(np.round(FREQUENCY[st][2], 3))
                                 + "Hz"
                             ),
                             "avr": True,
@@ -145,7 +145,7 @@ class setPostProcess(ABC):
                             "val": result_disp[st][:][:],
                             "title": (
                                 "FREQUENCY_RESPONSE_"
-                                + str(round(FREQUENCY[st], 3))
+                                + str(np.round(FREQUENCY[st], 3))
                                 + "Hz"
                             ),
                             "freq": FREQUENCY[st],
@@ -287,6 +287,9 @@ class setPostProcess(ABC):
         compliance_list = np.zeros(
             (self.modelinfo['nelem'], 1), dtype=float
         )
+        factor_of_safety = np.zeros(
+            (self.modelinfo['nelem'], 1), dtype=float
+        )
         
         pt, wt = gauss_points(self.modelinfo['type_shape'], 1)
         for ee in range(self.modelinfo['nelem']):
@@ -294,22 +297,25 @@ class setPostProcess(ABC):
             epsilon, strain = self.model.material.getElementStrain(self.model, U, pt, ee)
             sigma, stress = self.model.material.getElementStress(self.model, epsilon, ee)
             strain_energy = self.model.material.getStrainEnergyDensity(sigma, epsilon, self.modelinfo['elemvol'][ee])
+            FoS = 0.0
+            # FoS = self.model.material.getFailureCriteria(...)
             stress_list[ee, :] = stress
             strain_list[ee, :] = strain
             compliance_list[ee, :] = strain_energy
-        result = np.concatenate((stress_list, stress_list, compliance_list), axis=1)
-        tistrs = self.model.material.setTitleStress()
-        tistrn = self.model.material.setTitleStrain()
-        ticomp = self.model.material.setTitleCompliance()
-        title = np.concatenate((tistrs, tistrn, ticomp), axis=0)
+            factor_of_safety[ee, :] = FoS
+        result = np.concatenate((stress_list, stress_list, compliance_list, factor_of_safety), axis=1)
+        tistrs = self.model.material.getTitleStress()
+        tistrn = self.model.material.getTitleStrain()
+        ticomp = self.model.material.getTitleCompliance()
+        tifos = ["FoS_YIELD_VON_MISES"] #self.model.material.getTitleFoS()
+        title = np.concatenate((tistrs, tistrn, ticomp, tifos), axis=0)
         return result, title
     
 
-    def __strain_energy(self, sigma, epsilon, elemvol):
-        result =  self.model.material.getStrainEnergyDensity(sigma, epsilon, elemvol)
-        return result
+    # def __strain_energy(self, sigma, epsilon, elemvol):
+    #     result =  self.model.material.getStrainEnergyDensity(sigma, epsilon, elemvol)
+    #     return result
     
-
 
     def __tracker_value(postporc_result, postprocset, plotset, coord):
         """trancker plot function"""

@@ -30,7 +30,7 @@ class LegacyTria3(Mesh):
         nely = set_mesh["NY"]
         nel = nelx * nely * 2
                         
-        conec = np.zeros((nel, 4))
+        conec = np.zeros((nel, 4), dtype=np.int64)
         for i in range(1, nel, 2):
             linha = int(np.ceil(i / (2 * nelx)))
             y = 2 * linha - 1
@@ -65,7 +65,7 @@ class LegacyTria3(Mesh):
         nny = nely + 1
         nos = nnx * nny
                              
-        coord = np.zeros((nos, 4))
+        coord = np.zeros((nos, 4), dtype=np.float64)
         coord[0, 0] = 1
         for i in range(2, nos + 1):
             linha = int(np.ceil(i / (nelx + 1))) - 1
@@ -74,5 +74,17 @@ class LegacyTria3(Mesh):
             coord[i - 1, 2] = linha * (ly / nely)
         return coord
 
-    def getElementList(conec, elemtype, modeldata):
-        return Mesh.getElementListMeshLEGACY(conec, elemtype, modeldata)
+    def getElementList(conec, meshset, modeldata):
+        elemlist = [[None] * 3]
+        for ee in range(len(conec)):
+            elemlist.append(
+                [
+                    int(conec[ee, 0]),
+                    meshset,
+                    modeldata["MATERIAL"]["PROPMAT"][0]["NAME"],
+                    modeldata["GEOMETRY"]["PROPGEO"][0]["NAME"],
+                    conec[ee, 1:].astype(int).tolist(),
+                ]
+            )
+        elemlist = elemlist[1::][::]
+        return elemlist
