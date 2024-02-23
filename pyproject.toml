@@ -70,6 +70,10 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 py-modules = ["setup_wrap_cy_pyx"]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages]
+find = {}
 
 [tool.setuptools.cmdclass]
 build_ext = "setup_wrap_cy_pyx.build_ext"
