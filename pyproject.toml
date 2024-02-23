@@ -4,8 +4,7 @@
 #  The code is written by A. V. G. Campos                                  #
 #                                                                          #
 #  A github repository, with the most up to date version of the code,      #
-#  can be found here:                                                      #
-#     https://github.com/easycae-3d/myfempy                                #
+#  can be found here: https://github.com/avgcampos/myfempy                 #
 #                                                                          #
 #  The code is open source and intended for educational and scientific     #
 #  purposes only. If you use myfempy in your research, the developers      #
@@ -25,23 +24,23 @@
 #            |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
 #                        |___/                       |_|     |___/ 
 #
-#~~~         myfempy -- MultiphYsics Finite Element Method with PYthon    ~~~
+#~~~         myfempy -- MultiphYsics Finite Element Module with PYthon    ~~~
 #~~~                     COMPUTATIONAL ANALYSIS PROGRAM                   ~~~
 #~~~             Copyright (C) 2022 Antonio Vinicius Garcia Campos        ~~~
 #==========================================================================#
 #                            myfempy install script
 #
-#                  Install myfempy through `python install .`,
+#                Install myfempy through `>> python install .`,
 #                or visit the github page to more information
 
 [project]
 name = "myfempy"
-description = "Myfempy is a python package based on finite element method to multiphysics analysis."
+description = "Myfempy is a python package based on finite element analysis to multiphysics solver."
 authors = [
     {name = "Antonio Campos", email = "antviniciuscampos@gmail.com"},
 ]
 readme = "README.md"
-dynamic = ["version"]
+version = "0.2.3"
 license = {file = "LICENSE.md"}
 requires-python = ">3.8"
 dependencies = [
@@ -64,6 +63,16 @@ classifiers = [
   "License :: OSI Approved :: GPL-3 License",
   "Programming Language :: Python :: 3.8",
 ]
+
+#[build-system]
+#requires = ["setuptools", "numpy", "cython"]
+#build-backend = "setuptools.build_meta"
+
+#[tool.setuptools]
+#py-modules = ["setup_wrap_cy_pyx"]
+
+#[tool.setuptools.cmdclass]
+#build_ext = "setup_wrap_cy_pyx.build_ext"
 
 [project.urls]
 Documentation = "myfempy.readthedocs.io/en/latest/"

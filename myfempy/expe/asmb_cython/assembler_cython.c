@@ -10,19 +10,16 @@
             "D:\\Documetos\\venv_myfempy_dev\\Lib\\site-packages\\numpy\\core\\include\\numpy\\ndarraytypes.h",
             "D:\\Documetos\\venv_myfempy_dev\\Lib\\site-packages\\numpy\\core\\include\\numpy\\ufuncobject.h"
         ],
-        "extra_compile_args": [
-            "/O0"
-        ],
         "include_dirs": [
             "D:\\Documetos\\venv_myfempy_dev\\Lib\\site-packages\\numpy\\core\\include"
         ],
         "language": "c",
-        "name": "myfempy.experimental.asmb_cython.assembler_cython",
+        "name": "myfempy.expe.asmb_cython.assembler_cython",
         "sources": [
-            "./myfempy/experimental/asmb_cython/assembler_cython.pyx"
+            "./myfempy/expe/asmb_cython/assembler_cython.pyx"
         ]
     },
-    "module_name": "myfempy.experimental.asmb_cython.assembler_cython"
+    "module_name": "myfempy.expe.asmb_cython.assembler_cython"
 }
 END: Cython Metadata */
 
@@ -1207,8 +1204,8 @@ static CYTHON_INLINE float __PYX_NAN() {
   #endif
 #endif
 
-#define __PYX_HAVE__myfempy__experimental__asmb_cython__assembler_cython
-#define __PYX_HAVE_API__myfempy__experimental__asmb_cython__assembler_cython
+#define __PYX_HAVE__myfempy__expe__asmb_cython__assembler_cython
+#define __PYX_HAVE_API__myfempy__expe__asmb_cython__assembler_cython
 /* Early includes */
 #include <string.h>
 #include <stdio.h>
@@ -1509,7 +1506,7 @@ static const char *__pyx_filename;
 /* #### Code section: filename_table ### */
 
 static const char *__pyx_f[] = {
-  "myfempy\\\\experimental\\\\asmb_cython\\\\assembler_cython.pyx",
+  "myfempy\\\\expe\\\\asmb_cython\\\\assembler_cython.pyx",
   "<stringsource>",
   "__init__.cython-30.pxd",
   "type.pxd",
@@ -3164,7 +3161,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy_7ndarray_4data_data(PyArrayObject *__p
 
 /* Module declarations from "cython" */
 
-/* Module declarations from "myfempy.experimental.asmb_cython.assembler_cython" */
+/* Module declarations from "myfempy.expe.asmb_cython.assembler_cython" */
 static PyObject *__pyx_collections_abc_Sequence = 0;
 static PyObject *generic = 0;
 static PyObject *strided = 0;
@@ -3211,11 +3208,11 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *, 
 static __Pyx_TypeInfo __Pyx_TypeInfo_double = { "double", NULL, sizeof(double), { 0 }, 0, 'R', 0, 0 };
 static __Pyx_TypeInfo __Pyx_TypeInfo_unsigned_int = { "unsigned int", NULL, sizeof(unsigned int), { 0 }, 0, __PYX_IS_UNSIGNED(unsigned int) ? 'U' : 'I', __PYX_IS_UNSIGNED(unsigned int), 0 };
 /* #### Code section: before_global_var ### */
-#define __Pyx_MODULE_NAME "myfempy.experimental.asmb_cython.assembler_cython"
-extern int __pyx_module_is_main_myfempy__experimental__asmb_cython__assembler_cython;
-int __pyx_module_is_main_myfempy__experimental__asmb_cython__assembler_cython = 0;
+#define __Pyx_MODULE_NAME "myfempy.expe.asmb_cython.assembler_cython"
+extern int __pyx_module_is_main_myfempy__expe__asmb_cython__assembler_cython;
+int __pyx_module_is_main_myfempy__expe__asmb_cython__assembler_cython = 0;
 
-/* Implementation of "myfempy.experimental.asmb_cython.assembler_cython" */
+/* Implementation of "myfempy.expe.asmb_cython.assembler_cython" */
 /* #### Code section: global_var ### */
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin___import__;
@@ -3381,11 +3378,11 @@ static const char __pyx_k_Invalid_mode_expected_c_or_fortr[] = "Invalid mode, ex
 static const char __pyx_k_Out_of_bounds_on_buffer_access_a[] = "Out of bounds on buffer access (axis ";
 static const char __pyx_k_Unable_to_convert_item_to_object[] = "Unable to convert item to object";
 static const char __pyx_k_got_differing_extents_in_dimensi[] = "got differing extents in dimension ";
-static const char __pyx_k_myfempy_experimental_asmb_cython[] = "myfempy\\experimental\\asmb_cython\\assembler_cython.pyx";
+static const char __pyx_k_myfempy_expe_asmb_cython_assembl[] = "myfempy\\expe\\asmb_cython\\assembler_cython.pyx";
 static const char __pyx_k_no_default___reduce___due_to_non[] = "no default __reduce__ due to non-trivial __cinit__";
 static const char __pyx_k_numpy_core_umath_failed_to_impor[] = "numpy.core.umath failed to import";
 static const char __pyx_k_unable_to_allocate_shape_and_str[] = "unable to allocate shape and strides.";
-static const char __pyx_k_myfempy_experimental_asmb_cython_2[] = "myfempy.experimental.asmb_cython.assembler_cython";
+static const char __pyx_k_myfempy_expe_asmb_cython_assembl_2[] = "myfempy.expe.asmb_cython.assembler_cython";
 /* #### Code section: decls ### */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(struct __pyx_array_obj *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
@@ -3428,7 +3425,7 @@ static void __pyx_memoryviewslice___pyx_pf_15View_dot_MemoryView_16_memoryviewsl
 static PyObject *__pyx_pf___pyx_memoryviewslice___reduce_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf___pyx_memoryviewslice_2__setstate_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_15View_dot_MemoryView___pyx_unpickle_Enum(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cython_getMatrixAssemblerSym_cy_v2(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_Model, __Pyx_memviewslice __pyx_v_inci, __Pyx_memviewslice __pyx_v_coord, __Pyx_memviewslice __pyx_v_tabmat, __Pyx_memviewslice __pyx_v_tabgeo, int __pyx_v_elemdof, int __pyx_v_intgauss); /* proto */
+static PyObject *__pyx_pf_7myfempy_4expe_11asmb_cython_16assembler_cython_getMatrixAssemblerSym_cy_v2(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_Model, __Pyx_memviewslice __pyx_v_inci, __Pyx_memviewslice __pyx_v_coord, __Pyx_memviewslice __pyx_v_tabmat, __Pyx_memviewslice __pyx_v_tabgeo, int __pyx_v_elemdof, int __pyx_v_intgauss); /* proto */
 static PyObject *__pyx_tp_new_array(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_Enum(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_memoryview(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -3616,8 +3613,8 @@ typedef struct {
   PyObject *__pyx_n_s_mat;
   PyObject *__pyx_n_s_memview;
   PyObject *__pyx_n_s_mode;
-  PyObject *__pyx_kp_s_myfempy_experimental_asmb_cython;
-  PyObject *__pyx_n_s_myfempy_experimental_asmb_cython_2;
+  PyObject *__pyx_kp_s_myfempy_expe_asmb_cython_assembl;
+  PyObject *__pyx_n_s_myfempy_expe_asmb_cython_assembl_2;
   PyObject *__pyx_n_s_name;
   PyObject *__pyx_n_s_name_2;
   PyObject *__pyx_n_s_ndim;
@@ -3866,8 +3863,8 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_mat);
   Py_CLEAR(clear_module_state->__pyx_n_s_memview);
   Py_CLEAR(clear_module_state->__pyx_n_s_mode);
-  Py_CLEAR(clear_module_state->__pyx_kp_s_myfempy_experimental_asmb_cython);
-  Py_CLEAR(clear_module_state->__pyx_n_s_myfempy_experimental_asmb_cython_2);
+  Py_CLEAR(clear_module_state->__pyx_kp_s_myfempy_expe_asmb_cython_assembl);
+  Py_CLEAR(clear_module_state->__pyx_n_s_myfempy_expe_asmb_cython_assembl_2);
   Py_CLEAR(clear_module_state->__pyx_n_s_name);
   Py_CLEAR(clear_module_state->__pyx_n_s_name_2);
   Py_CLEAR(clear_module_state->__pyx_n_s_ndim);
@@ -4094,8 +4091,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_mat);
   Py_VISIT(traverse_module_state->__pyx_n_s_memview);
   Py_VISIT(traverse_module_state->__pyx_n_s_mode);
-  Py_VISIT(traverse_module_state->__pyx_kp_s_myfempy_experimental_asmb_cython);
-  Py_VISIT(traverse_module_state->__pyx_n_s_myfempy_experimental_asmb_cython_2);
+  Py_VISIT(traverse_module_state->__pyx_kp_s_myfempy_expe_asmb_cython_assembl);
+  Py_VISIT(traverse_module_state->__pyx_n_s_myfempy_expe_asmb_cython_assembl_2);
   Py_VISIT(traverse_module_state->__pyx_n_s_name);
   Py_VISIT(traverse_module_state->__pyx_n_s_name_2);
   Py_VISIT(traverse_module_state->__pyx_n_s_ndim);
@@ -4356,8 +4353,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_mat __pyx_mstate_global->__pyx_n_s_mat
 #define __pyx_n_s_memview __pyx_mstate_global->__pyx_n_s_memview
 #define __pyx_n_s_mode __pyx_mstate_global->__pyx_n_s_mode
-#define __pyx_kp_s_myfempy_experimental_asmb_cython __pyx_mstate_global->__pyx_kp_s_myfempy_experimental_asmb_cython
-#define __pyx_n_s_myfempy_experimental_asmb_cython_2 __pyx_mstate_global->__pyx_n_s_myfempy_experimental_asmb_cython_2
+#define __pyx_kp_s_myfempy_expe_asmb_cython_assembl __pyx_mstate_global->__pyx_kp_s_myfempy_expe_asmb_cython_assembl
+#define __pyx_n_s_myfempy_expe_asmb_cython_assembl_2 __pyx_mstate_global->__pyx_n_s_myfempy_expe_asmb_cython_assembl_2
 #define __pyx_n_s_name __pyx_mstate_global->__pyx_n_s_name
 #define __pyx_n_s_name_2 __pyx_mstate_global->__pyx_n_s_name_2
 #define __pyx_n_s_ndim __pyx_mstate_global->__pyx_n_s_ndim
@@ -19324,7 +19321,7 @@ static CYTHON_INLINE NPY_DATETIMEUNIT __pyx_f_5numpy_get_datetime64_unit(PyObjec
   return __pyx_r;
 }
 
-/* "myfempy/experimental/asmb_cython/assembler_cython.pyx":53
+/* "myfempy/expe/asmb_cython/assembler_cython.pyx":53
  * #     return rowsd, colsd, datad, rowsb, colsb, datab
  * 
  * @cython.exceptval(check=False)             # <<<<<<<<<<<<<<
@@ -19333,15 +19330,15 @@ static CYTHON_INLINE NPY_DATETIMEUNIT __pyx_f_5numpy_get_datetime64_unit(PyObjec
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_7myfempy_12experimental_11asmb_cython_16assembler_cython_1getMatrixAssemblerSym_cy_v2(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_7myfempy_4expe_11asmb_cython_16assembler_cython_1getMatrixAssemblerSym_cy_v2(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_7myfempy_12experimental_11asmb_cython_16assembler_cython_1getMatrixAssemblerSym_cy_v2 = {"getMatrixAssemblerSym_cy_v2", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7myfempy_12experimental_11asmb_cython_16assembler_cython_1getMatrixAssemblerSym_cy_v2, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_7myfempy_12experimental_11asmb_cython_16assembler_cython_1getMatrixAssemblerSym_cy_v2(PyObject *__pyx_self, 
+static PyMethodDef __pyx_mdef_7myfempy_4expe_11asmb_cython_16assembler_cython_1getMatrixAssemblerSym_cy_v2 = {"getMatrixAssemblerSym_cy_v2", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7myfempy_4expe_11asmb_cython_16assembler_cython_1getMatrixAssemblerSym_cy_v2, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_7myfempy_4expe_11asmb_cython_16assembler_cython_1getMatrixAssemblerSym_cy_v2(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -19505,11 +19502,11 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_coord, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_tabmat, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_tabgeo, 1);
-  __Pyx_AddTraceback("myfempy.experimental.asmb_cython.assembler_cython.getMatrixAssemblerSym_cy_v2", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("myfempy.expe.asmb_cython.assembler_cython.getMatrixAssemblerSym_cy_v2", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cython_getMatrixAssemblerSym_cy_v2(__pyx_self, __pyx_v_Model, __pyx_v_inci, __pyx_v_coord, __pyx_v_tabmat, __pyx_v_tabgeo, __pyx_v_elemdof, __pyx_v_intgauss);
+  __pyx_r = __pyx_pf_7myfempy_4expe_11asmb_cython_16assembler_cython_getMatrixAssemblerSym_cy_v2(__pyx_self, __pyx_v_Model, __pyx_v_inci, __pyx_v_coord, __pyx_v_tabmat, __pyx_v_tabgeo, __pyx_v_elemdof, __pyx_v_intgauss);
 
   /* function exit code */
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_inci, 1);
@@ -19526,7 +19523,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cython_getMatrixAssemblerSym_cy_v2(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_Model, __Pyx_memviewslice __pyx_v_inci, __Pyx_memviewslice __pyx_v_coord, __Pyx_memviewslice __pyx_v_tabmat, __Pyx_memviewslice __pyx_v_tabgeo, int __pyx_v_elemdof, int __pyx_v_intgauss) {
+static PyObject *__pyx_pf_7myfempy_4expe_11asmb_cython_16assembler_cython_getMatrixAssemblerSym_cy_v2(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_Model, __Pyx_memviewslice __pyx_v_inci, __Pyx_memviewslice __pyx_v_coord, __Pyx_memviewslice __pyx_v_tabmat, __Pyx_memviewslice __pyx_v_tabgeo, int __pyx_v_elemdof, int __pyx_v_intgauss) {
   unsigned long __pyx_v_KI;
   unsigned long __pyx_v_KJ;
   unsigned long __pyx_v_i;
@@ -19577,7 +19574,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("getMatrixAssemblerSym_cy_v2", 1);
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":70
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":70
  *     cdef unsigned long int elemtot
  *     cdef unsigned long int nodedof
  *     cdef double val=0.0             # <<<<<<<<<<<<<<
@@ -19586,7 +19583,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
  */
   __pyx_v_val = 0.0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":73
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":73
  *     cdef double [:, :] mat
  *     cdef unsigned int [:] loc
  *     cdef int element=0             # <<<<<<<<<<<<<<
@@ -19595,7 +19592,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
  */
   __pyx_v_element = 0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":74
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":74
  *     cdef unsigned int [:] loc
  *     cdef int element=0
  *     cdef list rowsb=[]             # <<<<<<<<<<<<<<
@@ -19607,7 +19604,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
   __pyx_v_rowsb = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":75
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":75
  *     cdef int element=0
  *     cdef list rowsb=[]
  *     cdef list colsb=[]             # <<<<<<<<<<<<<<
@@ -19619,7 +19616,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
   __pyx_v_colsb = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":76
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":76
  *     cdef list rowsb=[]
  *     cdef list colsb=[]
  *     cdef list datab=[]             # <<<<<<<<<<<<<<
@@ -19631,7 +19628,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
   __pyx_v_datab = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":77
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":77
  *     cdef list colsb=[]
  *     cdef list datab=[]
  *     cdef list rowsd=[]             # <<<<<<<<<<<<<<
@@ -19643,7 +19640,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
   __pyx_v_rowsd = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":78
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":78
  *     cdef list datab=[]
  *     cdef list rowsd=[]
  *     cdef list colsd=[]             # <<<<<<<<<<<<<<
@@ -19655,7 +19652,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
   __pyx_v_colsd = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":79
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":79
  *     cdef list rowsd=[]
  *     cdef list colsd=[]
  *     cdef list datad=[]             # <<<<<<<<<<<<<<
@@ -19667,7 +19664,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
   __pyx_v_datad = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":80
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":80
  *     cdef list colsd=[]
  *     cdef list datad=[]
  *     cdef list nodelist=[]             # <<<<<<<<<<<<<<
@@ -19679,7 +19676,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
   __pyx_v_nodelist = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":82
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":82
  *     cdef list nodelist=[]
  * 
  *     elemtot = inci.shape[0]             # <<<<<<<<<<<<<<
@@ -19688,7 +19685,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
  */
   __pyx_v_elemtot = (__pyx_v_inci.shape[0]);
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":83
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":83
  * 
  *     elemtot = inci.shape[0]
  *     elem_set = Model.element.getElementSet()             # <<<<<<<<<<<<<<
@@ -19725,7 +19722,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
   __pyx_v_elem_set = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":84
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":84
  *     elemtot = inci.shape[0]
  *     elem_set = Model.element.getElementSet()
  *     nodedof = len(elem_set["dofs"]['d'])             # <<<<<<<<<<<<<<
@@ -19741,7 +19738,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_nodedof = __pyx_t_5;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":86
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":86
  *     nodedof = len(elem_set["dofs"]['d'])
  * 
  *     for element in range(elemtot):             # <<<<<<<<<<<<<<
@@ -19753,7 +19750,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_7; __pyx_t_4+=1) {
     __pyx_v_element = __pyx_t_4;
 
-    /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":87
+    /* "myfempy/expe/asmb_cython/assembler_cython.pyx":87
  * 
  *     for element in range(elemtot):
  *         nodelist = Model.shape.getNodeList(inci, element)             # <<<<<<<<<<<<<<
@@ -19797,7 +19794,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
     __Pyx_DECREF_SET(__pyx_v_nodelist, ((PyObject*)__pyx_t_3));
     __pyx_t_3 = 0;
 
-    /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":88
+    /* "myfempy/expe/asmb_cython/assembler_cython.pyx":88
  *     for element in range(elemtot):
  *         nodelist = Model.shape.getNodeList(inci, element)
  *         mat = Model.element.getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element)             # <<<<<<<<<<<<<<
@@ -19856,7 +19853,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
     __pyx_t_15.memview = NULL;
     __pyx_t_15.data = NULL;
 
-    /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":89
+    /* "myfempy/expe/asmb_cython/assembler_cython.pyx":89
  *         nodelist = Model.shape.getNodeList(inci, element)
  *         mat = Model.element.getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element)
  *         loc = Model.shape.getShapeKey(nodelist, nodedof)             # <<<<<<<<<<<<<<
@@ -19900,7 +19897,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
     __pyx_t_16.memview = NULL;
     __pyx_t_16.data = NULL;
 
-    /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":90
+    /* "myfempy/expe/asmb_cython/assembler_cython.pyx":90
  *         mat = Model.element.getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element)
  *         loc = Model.shape.getShapeKey(nodelist, nodedof)
  *         for i in range(elemdof):             # <<<<<<<<<<<<<<
@@ -19912,7 +19909,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
     for (__pyx_t_18 = 0; __pyx_t_18 < __pyx_t_17; __pyx_t_18+=1) {
       __pyx_v_i = __pyx_t_18;
 
-      /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":91
+      /* "myfempy/expe/asmb_cython/assembler_cython.pyx":91
  *         loc = Model.shape.getShapeKey(nodelist, nodedof)
  *         for i in range(elemdof):
  *             for j in range(i, elemdof):             # <<<<<<<<<<<<<<
@@ -19924,7 +19921,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
       for (__pyx_t_21 = __pyx_v_i; __pyx_t_21 < __pyx_t_20; __pyx_t_21+=1) {
         __pyx_v_j = __pyx_t_21;
 
-        /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":92
+        /* "myfempy/expe/asmb_cython/assembler_cython.pyx":92
  *         for i in range(elemdof):
  *             for j in range(i, elemdof):
  *                 KI = loc[i]             # <<<<<<<<<<<<<<
@@ -19934,7 +19931,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
         __pyx_t_22 = __pyx_v_i;
         __pyx_v_KI = (*((unsigned int *) ( /* dim=0 */ (__pyx_v_loc.data + __pyx_t_22 * __pyx_v_loc.strides[0]) )));
 
-        /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":93
+        /* "myfempy/expe/asmb_cython/assembler_cython.pyx":93
  *             for j in range(i, elemdof):
  *                 KI = loc[i]
  *                 KJ = loc[j]             # <<<<<<<<<<<<<<
@@ -19944,7 +19941,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
         __pyx_t_22 = __pyx_v_j;
         __pyx_v_KJ = (*((unsigned int *) ( /* dim=0 */ (__pyx_v_loc.data + __pyx_t_22 * __pyx_v_loc.strides[0]) )));
 
-        /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":94
+        /* "myfempy/expe/asmb_cython/assembler_cython.pyx":94
  *                 KI = loc[i]
  *                 KJ = loc[j]
  *                 val = mat[i, j]             # <<<<<<<<<<<<<<
@@ -19955,7 +19952,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
         __pyx_t_23 = __pyx_v_j;
         __pyx_v_val = (*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_mat.data + __pyx_t_22 * __pyx_v_mat.strides[0]) ) + __pyx_t_23 * __pyx_v_mat.strides[1]) )));
 
-        /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":95
+        /* "myfempy/expe/asmb_cython/assembler_cython.pyx":95
  *                 KJ = loc[j]
  *                 val = mat[i, j]
  *                 if KI == KJ:             # <<<<<<<<<<<<<<
@@ -19965,7 +19962,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
         __pyx_t_24 = (__pyx_v_KI == __pyx_v_KJ);
         if (__pyx_t_24) {
 
-          /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":96
+          /* "myfempy/expe/asmb_cython/assembler_cython.pyx":96
  *                 val = mat[i, j]
  *                 if KI == KJ:
  *                     rowsd.append(KI)             # <<<<<<<<<<<<<<
@@ -19977,7 +19974,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
           __pyx_t_25 = __Pyx_PyList_Append(__pyx_v_rowsd, __pyx_t_3); if (unlikely(__pyx_t_25 == ((int)-1))) __PYX_ERR(0, 96, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-          /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":97
+          /* "myfempy/expe/asmb_cython/assembler_cython.pyx":97
  *                 if KI == KJ:
  *                     rowsd.append(KI)
  *                     colsd.append(KJ)             # <<<<<<<<<<<<<<
@@ -19989,7 +19986,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
           __pyx_t_25 = __Pyx_PyList_Append(__pyx_v_colsd, __pyx_t_3); if (unlikely(__pyx_t_25 == ((int)-1))) __PYX_ERR(0, 97, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-          /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":98
+          /* "myfempy/expe/asmb_cython/assembler_cython.pyx":98
  *                     rowsd.append(KI)
  *                     colsd.append(KJ)
  *                     datad.append(val)             # <<<<<<<<<<<<<<
@@ -20001,7 +19998,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
           __pyx_t_25 = __Pyx_PyList_Append(__pyx_v_datad, __pyx_t_3); if (unlikely(__pyx_t_25 == ((int)-1))) __PYX_ERR(0, 98, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-          /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":95
+          /* "myfempy/expe/asmb_cython/assembler_cython.pyx":95
  *                 KJ = loc[j]
  *                 val = mat[i, j]
  *                 if KI == KJ:             # <<<<<<<<<<<<<<
@@ -20011,7 +20008,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
           goto __pyx_L9;
         }
 
-        /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":100
+        /* "myfempy/expe/asmb_cython/assembler_cython.pyx":100
  *                     datad.append(val)
  *                 else:
  *                     rowsb.append(KI)             # <<<<<<<<<<<<<<
@@ -20024,7 +20021,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
           __pyx_t_25 = __Pyx_PyList_Append(__pyx_v_rowsb, __pyx_t_3); if (unlikely(__pyx_t_25 == ((int)-1))) __PYX_ERR(0, 100, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-          /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":101
+          /* "myfempy/expe/asmb_cython/assembler_cython.pyx":101
  *                 else:
  *                     rowsb.append(KI)
  *                     colsb.append(KJ)             # <<<<<<<<<<<<<<
@@ -20036,7 +20033,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
           __pyx_t_25 = __Pyx_PyList_Append(__pyx_v_colsb, __pyx_t_3); if (unlikely(__pyx_t_25 == ((int)-1))) __PYX_ERR(0, 101, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-          /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":102
+          /* "myfempy/expe/asmb_cython/assembler_cython.pyx":102
  *                     rowsb.append(KI)
  *                     colsb.append(KJ)
  *                     datab.append(val)             # <<<<<<<<<<<<<<
@@ -20053,7 +20050,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
     }
   }
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":104
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":104
  *                     datab.append(val)
  * 
  *     return np.array(rowsd, dtype=np.intp), np.array(colsd, dtype=np.intp), np.array(datad), \             # <<<<<<<<<<<<<<
@@ -20137,7 +20134,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":105
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":105
  * 
  *     return np.array(rowsd, dtype=np.intp), np.array(colsd, dtype=np.intp), np.array(datad), \
  *            np.array(rowsb, dtype=np.intp), np.array(colsb, dtype=np.intp), np.array(datab)             # <<<<<<<<<<<<<<
@@ -20220,7 +20217,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":104
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":104
  *                     datab.append(val)
  * 
  *     return np.array(rowsd, dtype=np.intp), np.array(colsd, dtype=np.intp), np.array(datad), \             # <<<<<<<<<<<<<<
@@ -20251,7 +20248,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":53
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":53
  * #     return rowsd, colsd, datad, rowsb, colsb, datab
  * 
  * @cython.exceptval(check=False)             # <<<<<<<<<<<<<<
@@ -20272,7 +20269,7 @@ static PyObject *__pyx_pf_7myfempy_12experimental_11asmb_cython_16assembler_cyth
   __Pyx_XDECREF(__pyx_t_14);
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_15, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_16, 1);
-  __Pyx_AddTraceback("myfempy.experimental.asmb_cython.assembler_cython.getMatrixAssemblerSym_cy_v2", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("myfempy.expe.asmb_cython.assembler_cython.getMatrixAssemblerSym_cy_v2", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_mat, 1);
@@ -20427,7 +20424,7 @@ static PyType_Slot __pyx_type___pyx_array_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_array_spec = {
-  "myfempy.experimental.asmb_cython.assembler_cython.array",
+  "myfempy.expe.asmb_cython.assembler_cython.array",
   sizeof(struct __pyx_array_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_SEQUENCE,
@@ -20473,7 +20470,7 @@ static PyBufferProcs __pyx_tp_as_buffer_array = {
 
 static PyTypeObject __pyx_type___pyx_array = {
   PyVarObject_HEAD_INIT(0, 0)
-  "myfempy.experimental.asmb_cython.assembler_cython.""array", /*tp_name*/
+  "myfempy.expe.asmb_cython.assembler_cython.""array", /*tp_name*/
   sizeof(struct __pyx_array_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_array, /*tp_dealloc*/
@@ -20633,7 +20630,7 @@ static PyType_Slot __pyx_type___pyx_MemviewEnum_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_MemviewEnum_spec = {
-  "myfempy.experimental.asmb_cython.assembler_cython.Enum",
+  "myfempy.expe.asmb_cython.assembler_cython.Enum",
   sizeof(struct __pyx_MemviewEnum_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
@@ -20643,7 +20640,7 @@ static PyType_Spec __pyx_type___pyx_MemviewEnum_spec = {
 
 static PyTypeObject __pyx_type___pyx_MemviewEnum = {
   PyVarObject_HEAD_INIT(0, 0)
-  "myfempy.experimental.asmb_cython.assembler_cython.""Enum", /*tp_name*/
+  "myfempy.expe.asmb_cython.assembler_cython.""Enum", /*tp_name*/
   sizeof(struct __pyx_MemviewEnum_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_Enum, /*tp_dealloc*/
@@ -20940,7 +20937,7 @@ static PyType_Slot __pyx_type___pyx_memoryview_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_memoryview_spec = {
-  "myfempy.experimental.asmb_cython.assembler_cython.memoryview",
+  "myfempy.expe.asmb_cython.assembler_cython.memoryview",
   sizeof(struct __pyx_memoryview_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
@@ -20986,7 +20983,7 @@ static PyBufferProcs __pyx_tp_as_buffer_memoryview = {
 
 static PyTypeObject __pyx_type___pyx_memoryview = {
   PyVarObject_HEAD_INIT(0, 0)
-  "myfempy.experimental.asmb_cython.assembler_cython.""memoryview", /*tp_name*/
+  "myfempy.expe.asmb_cython.assembler_cython.""memoryview", /*tp_name*/
   sizeof(struct __pyx_memoryview_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_memoryview, /*tp_dealloc*/
@@ -21138,7 +21135,7 @@ static PyType_Slot __pyx_type___pyx_memoryviewslice_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_memoryviewslice_spec = {
-  "myfempy.experimental.asmb_cython.assembler_cython._memoryviewslice",
+  "myfempy.expe.asmb_cython.assembler_cython._memoryviewslice",
   sizeof(struct __pyx_memoryviewslice_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC|Py_TPFLAGS_SEQUENCE,
@@ -21148,7 +21145,7 @@ static PyType_Spec __pyx_type___pyx_memoryviewslice_spec = {
 
 static PyTypeObject __pyx_type___pyx_memoryviewslice = {
   PyVarObject_HEAD_INIT(0, 0)
-  "myfempy.experimental.asmb_cython.assembler_cython.""_memoryviewslice", /*tp_name*/
+  "myfempy.expe.asmb_cython.assembler_cython.""_memoryviewslice", /*tp_name*/
   sizeof(struct __pyx_memoryviewslice_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc__memoryviewslice, /*tp_dealloc*/
@@ -21358,8 +21355,8 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_mat, __pyx_k_mat, sizeof(__pyx_k_mat), 0, 0, 1, 1},
     {&__pyx_n_s_memview, __pyx_k_memview, sizeof(__pyx_k_memview), 0, 0, 1, 1},
     {&__pyx_n_s_mode, __pyx_k_mode, sizeof(__pyx_k_mode), 0, 0, 1, 1},
-    {&__pyx_kp_s_myfempy_experimental_asmb_cython, __pyx_k_myfempy_experimental_asmb_cython, sizeof(__pyx_k_myfempy_experimental_asmb_cython), 0, 0, 1, 0},
-    {&__pyx_n_s_myfempy_experimental_asmb_cython_2, __pyx_k_myfempy_experimental_asmb_cython_2, sizeof(__pyx_k_myfempy_experimental_asmb_cython_2), 0, 0, 1, 1},
+    {&__pyx_kp_s_myfempy_expe_asmb_cython_assembl, __pyx_k_myfempy_expe_asmb_cython_assembl, sizeof(__pyx_k_myfempy_expe_asmb_cython_assembl), 0, 0, 1, 0},
+    {&__pyx_n_s_myfempy_expe_asmb_cython_assembl_2, __pyx_k_myfempy_expe_asmb_cython_assembl_2, sizeof(__pyx_k_myfempy_expe_asmb_cython_assembl_2), 0, 0, 1, 1},
     {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
     {&__pyx_n_s_name_2, __pyx_k_name_2, sizeof(__pyx_k_name_2), 0, 0, 1, 1},
     {&__pyx_n_s_ndim, __pyx_k_ndim, sizeof(__pyx_k_ndim), 0, 0, 1, 1},
@@ -21597,7 +21594,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__20);
   __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Enum, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(1, 1, __pyx_L1_error)
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":53
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":53
  * #     return rowsd, colsd, datad, rowsb, colsb, datab
  * 
  * @cython.exceptval(check=False)             # <<<<<<<<<<<<<<
@@ -21607,7 +21604,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__22 = PyTuple_Pack(25, __pyx_n_s_Model, __pyx_n_s_inci, __pyx_n_s_coord, __pyx_n_s_tabmat, __pyx_n_s_tabgeo, __pyx_n_s_elemdof, __pyx_n_s_intgauss, __pyx_n_s_KI, __pyx_n_s_KJ, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_elemtot, __pyx_n_s_nodedof, __pyx_n_s_val, __pyx_n_s_mat, __pyx_n_s_loc, __pyx_n_s_element, __pyx_n_s_rowsb, __pyx_n_s_colsb, __pyx_n_s_datab, __pyx_n_s_rowsd, __pyx_n_s_colsd, __pyx_n_s_datad, __pyx_n_s_nodelist, __pyx_n_s_elem_set); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__22);
   __Pyx_GIVEREF(__pyx_tuple__22);
-  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(7, 0, 0, 25, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_myfempy_experimental_asmb_cython, __pyx_n_s_getMatrixAssemblerSym_cy_v2, 53, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(7, 0, 0, 25, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_myfempy_expe_asmb_cython_assembl, __pyx_n_s_getMatrixAssemblerSym_cy_v2, 53, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -22174,14 +22171,14 @@ if (!__Pyx_RefNanny) {
   #if PY_MAJOR_VERSION < 3 && (__PYX_DEFAULT_STRING_ENCODING_IS_ASCII || __PYX_DEFAULT_STRING_ENCODING_IS_DEFAULT)
   if (__Pyx_init_sys_getdefaultencoding_params() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
-  if (__pyx_module_is_main_myfempy__experimental__asmb_cython__assembler_cython) {
+  if (__pyx_module_is_main_myfempy__expe__asmb_cython__assembler_cython) {
     if (PyObject_SetAttr(__pyx_m, __pyx_n_s_name_2, __pyx_n_s_main) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   }
   #if PY_MAJOR_VERSION >= 3
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(0, 1, __pyx_L1_error)
-    if (!PyDict_GetItemString(modules, "myfempy.experimental.asmb_cython.assembler_cython")) {
-      if (unlikely((PyDict_SetItemString(modules, "myfempy.experimental.asmb_cython.assembler_cython", __pyx_m) < 0))) __PYX_ERR(0, 1, __pyx_L1_error)
+    if (!PyDict_GetItemString(modules, "myfempy.expe.asmb_cython.assembler_cython")) {
+      if (unlikely((PyDict_SetItemString(modules, "myfempy.expe.asmb_cython.assembler_cython", __pyx_m) < 0))) __PYX_ERR(0, 1, __pyx_L1_error)
     }
   }
   #endif
@@ -22715,7 +22712,7 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_pyx_unpickle_Enum, __pyx_t_7) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":1
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":1
  * import numpy as np             # <<<<<<<<<<<<<<
  * cimport numpy as np
  * from cython.parallel cimport prange
@@ -22725,19 +22722,19 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_7) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":53
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":53
  * #     return rowsd, colsd, datad, rowsb, colsb, datab
  * 
  * @cython.exceptval(check=False)             # <<<<<<<<<<<<<<
  * @cython.boundscheck(False) # turn off bounds-checking for entire function
  * @cython.wraparound(False)  # turn off negative index wrapping for entire function
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_7myfempy_12experimental_11asmb_cython_16assembler_cython_1getMatrixAssemblerSym_cy_v2, 0, __pyx_n_s_getMatrixAssemblerSym_cy_v2, NULL, __pyx_n_s_myfempy_experimental_asmb_cython_2, __pyx_d, ((PyObject *)__pyx_codeobj__23)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_7myfempy_4expe_11asmb_cython_16assembler_cython_1getMatrixAssemblerSym_cy_v2, 0, __pyx_n_s_getMatrixAssemblerSym_cy_v2, NULL, __pyx_n_s_myfempy_expe_asmb_cython_assembl_2, __pyx_d, ((PyObject *)__pyx_codeobj__23)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_getMatrixAssemblerSym_cy_v2, __pyx_t_7) < 0) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "myfempy/experimental/asmb_cython/assembler_cython.pyx":1
+  /* "myfempy/expe/asmb_cython/assembler_cython.pyx":1
  * import numpy as np             # <<<<<<<<<<<<<<
  * cimport numpy as np
  * from cython.parallel cimport prange
@@ -22756,7 +22753,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_XDECREF(__pyx_t_7);
   if (__pyx_m) {
     if (__pyx_d && stringtab_initialized) {
-      __Pyx_AddTraceback("init myfempy.experimental.asmb_cython.assembler_cython", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init myfempy.expe.asmb_cython.assembler_cython", __pyx_clineno, __pyx_lineno, __pyx_filename);
     }
     #if !CYTHON_USE_MODULE_STATE
     Py_CLEAR(__pyx_m);
@@ -22770,7 +22767,7 @@ if (!__Pyx_RefNanny) {
     }
     #endif
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init myfempy.experimental.asmb_cython.assembler_cython");
+    PyErr_SetString(PyExc_ImportError, "init myfempy.expe.asmb_cython.assembler_cython");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();

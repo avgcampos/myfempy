@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from numpy import zeros, float64
-from scipy import empty, sparse
+from scipy import sparse
 
 # from myfempy.core.alglin import linsolve_spsolve
 from myfempy.core.solver.assembler import Assembler, setAssembler

@@ -4,6 +4,7 @@
 __dev/
 __shakedown/
 out/
+__dev__setup_wrap_cy_pyx.py
 
 ### C ###
 # Prerequisites
@@ -247,7 +248,7 @@ poetry.toml
 .ruff_cache/
 
 ### VisualStudioCode ###
-.vscode/*
+.vscode/
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
