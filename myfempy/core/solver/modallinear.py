@@ -19,9 +19,11 @@ class ModalLinear(Solver):
     
     def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss):  
         matrix = dict()
-        matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
-        # matrix['stiffness'] = getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
-        matrix['mass'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss,  type_assembler = 'mass_consistent')
+        # matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
+        # matrix['mass'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss,  type_assembler = 'mass_consistent')
+        
+        matrix['stiffness'] = getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
+        matrix['mass'] = getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss,  type_assembler = 'mass_consistent')
         return matrix 
     
     def getLoadAssembler(loadaply, nodetot, nodedof):

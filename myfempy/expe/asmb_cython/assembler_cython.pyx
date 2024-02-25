@@ -3,52 +3,7 @@ cimport numpy as np
 from cython.parallel cimport prange
 cimport cython
 
-# @cython.exceptval(check=False)
-# @cython.boundscheck(False) # turn off bounds-checking for entire function
-# @cython.wraparound(False)  # turn off negative index wrapping for entire function
-# def getMatrixAssemblerSym_cy_v1(Model,
-#                             double [:, :] inci,
-#                             double [:, :] coord,
-#                             double [:, :] tabmat,
-#                             double [:, :] tabgeo,
-#                             int elemdof,
-#                             int intgauss):
-
-#     cdef unsigned long int KI, KJ, i, j, elemtot, nodedof
-#     cdef double [:, :] mat
-#     cdef long [:] loc
-    
-#     cdef list rowsb, colsb, datab, rowsd, colsd, datad
-#     cdef list nodelist
-
-#     elemtot = len(inci)
-#     rowsb = []
-#     colsb = []
-#     datab = []
-#     rowsd = []
-#     colsd = []
-#     datad = []
-
-#     elem_set = Model.element.getElementSet()
-#     nodedof = len(elem_set["dofs"]['d'])
-
-#     for element in range(elemtot):
-#         nodelist = Model.shape.getNodeList(inci, element)
-#         mat = Model.element.getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element)
-#         loc = Model.shape.getShapeKey(nodelist, nodedof)
-#         for i in range(elemdof):
-#             KI = loc[i]         
-#             for j in range(elemdof):
-#                 KJ = loc[j]
-#                 if KI == KJ:
-#                     rowsd.append(KI)
-#                     colsd.append(KJ)
-#                     datad.append(mat[i, j])
-#                 elif KI < KJ:
-#                     rowsb.append(KI)
-#                     colsb.append(KJ)
-#                     datab.append(mat[i, j])
-#     return rowsd, colsd, datad, rowsb, colsb, datab
+from myfempy.core.solver.assembler import setAssembler
 
 @cython.exceptval(check=False)
 @cython.boundscheck(False) # turn off bounds-checking for entire function
@@ -59,7 +14,8 @@ def getMatrixAssemblerSym_cy_v2(Model,
                                  double[:, :] tabmat,
                                  double[:, :] tabgeo,
                                  int elemdof,
-                                 int intgauss):
+                                 int intgauss,
+                                 str type_assembler):
 
     cdef unsigned long int KI
     cdef unsigned long int KJ
@@ -70,7 +26,7 @@ def getMatrixAssemblerSym_cy_v2(Model,
     cdef double val=0.0
     cdef double [:, :] mat
     cdef unsigned int [:] loc
-    cdef int element=0
+    cdef int element
     cdef list rowsb=[]
     cdef list colsb=[]
     cdef list datab=[]
@@ -85,8 +41,9 @@ def getMatrixAssemblerSym_cy_v2(Model,
 
     for element in range(elemtot):
         nodelist = Model.shape.getNodeList(inci, element)
-        mat = Model.element.getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element)
-        loc = Model.shape.getShapeKey(nodelist, nodedof)
+        # mat = Model.element.getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element)
+        # loc = Model.shape.getShapeKey(nodelist, nodedof)
+        mat, loc = setAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, element, type_assembler)
         for i in range(elemdof):
             for j in range(i, elemdof):
                 KI = loc[i]

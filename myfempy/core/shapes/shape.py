@@ -8,12 +8,13 @@ def setShape(set_shape):
         return Line2
     
     elif set_shape['type'] == 'quad4':
-        # from myfempy.core.felib.shapes.quad4 import Quad4
-        from myfempy.expe.ke_numpy.quad4 import Quad4
+        # from myfempy.core.shapes.quad4 import Quad4
+        from myfempy.expe.ke_fast.quad4_v1 import Quad4
+        # from myfempy.expe.ke_fast.quad4_cy import Quad4
         return Quad4
     
     elif set_shape['type'] == 'tria3':
-        from myfempy.expe.ke_numpy.tria3 import Tria3
+        from myfempy.expe.ke_fast.tria3_v1 import Tria3
         # from myfempy.core.shapes.tria3 import Tria3
         return Tria3
     

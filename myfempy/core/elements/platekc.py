@@ -155,5 +155,5 @@ class PlateKC(Element):
         pt, wt = gauss_points(type_shape, intgauss)
         detJ = 0.0
         for pp in range(intgauss):
-            detJ += Model.shape.detJacobi(Model.shape.N, pt[pp], elementcoord)
+            detJ += Model.shape.detJacobi(pt[pp], elementcoord)
         return detJ*L

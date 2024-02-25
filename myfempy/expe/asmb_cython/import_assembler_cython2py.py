@@ -20,7 +20,7 @@ def getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss, type_as
 
     sdof = nodedof * nodetot
     
-    rowsd, colsd, datad, rowsb, colsb, datab = getMatrixAssemblerSym_cy_v2(Model, inci, coord, tabmat, tabgeo, elemdof,  intgauss)
+    rowsd, colsd, datad, rowsb, colsb, datab = getMatrixAssemblerSym_cy_v2(Model, inci, coord, tabmat, tabgeo, elemdof,  intgauss, type_assembler)
     
     # rowsd = data[0]
     # colsd = data[1]

@@ -96,10 +96,8 @@ class Plane(Element):
         for pp in range(intgauss):
             # N = Model.shape.N
             detJ = Model.shape.detJacobi(pt[pp], elementcoord)
-            N = Model.shape.getShapeFunctions(pt[pp], nodedof)
-            NT = N.transpose() #transpose(B)
-            NTR = dot(NT, R)
-            M_elem_mat += dot(NTR, N)*L*detJ*wt[pp]*wt[pp]  
+            matN = Model.shape.getShapeFunctions(pt[pp], nodedof)
+            M_elem_mat += multi_dot([transpose(matN), R, matN])*L*abs(detJ)*wt[pp]*wt[pp] #dot(dot(transpose(matN), R), matN)*L*detJ*wt[pp]*wt[pp]  
         return M_elem_mat
     
     def getElementDeformation(U, modelinfo):

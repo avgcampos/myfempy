@@ -11,6 +11,7 @@ from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
 from myfempy.expe.asmb_cython.import_assembler_cython2py import getMatrixAssemblerSYMM
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
+from myfempy.core.solver.assemblerfull import AssemblerFULL
 
 class StaticLinear(Solver):
 
@@ -20,6 +21,7 @@ class StaticLinear(Solver):
     
     def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss):  
         matrix = dict()
+        # matrix['stiffness'] = AssemblerFULL.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
         # matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
         matrix['stiffness'] = getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
         return matrix
@@ -39,7 +41,6 @@ class StaticLinear(Solver):
         U = zeros((fulldofs, nsteps), dtype=float64) #empty((fulldofs, nsteps))
         sA = stiffness[:, freedof][freedof, :]             
         for step in range(nsteps):
-            # U1[freedof, 0] = StaticLinear.__LinSysSolve(stiffness[:, freedof][freedof, :], forcelist[freedof, step])  
             U1[freedof, 0] = spsolve(sA, forcelist[freedof, step])                  
             U1[freedof, 0] += U0[freedof, 0]
             U[freedof, step] = U1[freedof, 0]

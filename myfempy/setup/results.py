@@ -187,7 +187,7 @@ class setPostProcess(ABC):
         # hist_Y = hist_Y[1::][::]
         # path = os.getcwd()
         filename = (str(self.path)+ "/" + postprocset["PLOTSET"]["filename"] + "_myfempy_csv-file.txt")
-        writer2csv(filename, [hist_X, hist_Y], [xlabel,ylabel])
+        writer2csv(filename, [hist_X, hist_Y], [xlabel, ylabel])
       
       
     def getLog(self, postprocset, postporc_result):

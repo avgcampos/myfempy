@@ -4,6 +4,7 @@ from re import I
 import numpy as np
 import scipy.sparse as sp
 
+# @profile
 def setAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, element_number, type_assembler):
 
     elem_set = Model.element.getElementSet()

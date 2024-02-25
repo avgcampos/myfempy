@@ -141,11 +141,11 @@ class newAnalysis():
         tabmat = self.modelinfo['tabmat']
         tabgeo = self.modelinfo['tabgeo']
         intgauss = self.modelinfo['intgauss']       
-        try:
-            matrix = newAnalysis.getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss) #self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo)
-            logging.info('TRY RUN GLOBAL ASSEMBLY -- SUCCESS')     
-        except:
-            logging.warning('TRY RUN GLOBAL ASSEMBLY -- FAULT')
+        # try:
+        matrix = newAnalysis.getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss) #self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo)
+            # logging.info('TRY RUN GLOBAL ASSEMBLY -- SUCCESS')     
+        # except:
+        #     logging.warning('TRY RUN GLOBAL ASSEMBLY -- FAULT')
         loadaply = newAnalysis.getLoadApply(self)
         try:
             addSpring = np.where(loadaply[:,1]==16)
@@ -264,18 +264,18 @@ class newAnalysis():
             post process arrays 
         """
         postporc_result = []
-        # try:
-        if "COMPUTER" in postprocdata.keys(): 
-            postporc_result = setPostProcess.getCompute(self, postprocdata)
-        if "TRACKER" in postprocdata.keys():
-            setPostProcess.getTracker(self, postprocdata, postporc_result)
-        if "OUTPUT" in postprocdata.keys():
-            postporc_result["log"] = []
-            log_file = setPostProcess.getLog(self, postprocdata, postporc_result)
-            postporc_result["log"].append(log_file)
-            # logging.info('TRY GET POST PROCESS -- SUCCESS')        
-        # except:
-        #     logging.warning('TRY GET POST PROCESS -- FAULT')
+        try:
+            if "COMPUTER" in postprocdata.keys(): 
+                postporc_result = setPostProcess.getCompute(self, postprocdata)
+            if "TRACKER" in postprocdata.keys():
+                setPostProcess.getTracker(self, postprocdata, postporc_result)
+            if "OUTPUT" in postprocdata.keys():
+                postporc_result["log"] = []
+                log_file = setPostProcess.getLog(self, postprocdata, postporc_result)
+                postporc_result["log"].append(log_file)
+                logging.info('TRY GET POST PROCESS -- SUCCESS')        
+        except:
+            logging.warning('TRY GET POST PROCESS -- FAULT')
         return postporc_result
                 
             

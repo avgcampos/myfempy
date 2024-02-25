@@ -1,7 +1,8 @@
-from os import environ
-environ['OMP_NUM_THREADS'] = '3'
+# from os import environ
+# environ['OMP_NUM_THREADS'] = '3'
 
-from numpy import array, zeros, eye, dot, asarray, where, mean, cross, ones_like, unique, less, ix_, uint32, float64
+from numpy import array, zeros, eye, dot, matmul, asarray, where, mean, cross, ones_like, unique, less, ix_, uint32, float64
+from numpy.linalg import multi_dot
 from scipy.linalg import inv, kron, det
 from scipy.sparse import csc_matrix
 INT32 = uint32
@@ -10,33 +11,46 @@ FLT64 = float64
 #==============================================================================
 #                               MYFEMPY UTTILITIES
 #==============================================================================
-def inverse(A):
-    invA = inv(A)
-    return invA
+# def inverse(A):
+#     invA = inv(A, overwrite_a=True, check_finite=False)
+#     return invA
 
-def kronProd(A, B):
-    kronAB = kron(A, B)
-    return kronAB
+# def kronProd(A, B):
+#     kronAB = kron(A, B)
+#     return kronAB
 
-def determinant(A):
-    detA = det(A)
+# def determinant(A):
+#     detA = det(A, overwrite_a=True, check_finite=False)
+#     return detA
+
+# def dotProd(A, B):
+#     dotAB = matmul(A, B) #dot(A, B)tAB
+#     return dotAB
+
+# def dotdotProd(A, B, C):
+#     mdotABC = multi_dot([A, B, C])
+#     return mdotABC
+
+# def getZerosArray(m, n, type):
+#     zeros_array = zeros((m, n), dtype=type)
+#     return zeros_array
+
+# def getNewArray(array_list, type):
+#     new_array = array(array_list, dtype=type)
+#     return new_array
+
+# def getEyeMatrix(n, type):
+#     eyeM = eye(n, dtype=type)
+#     return eyeM
+
+def determinant_dim2(A):
+    detA = A[0]*A[3]-A[1]*A[2]
     return detA
 
-def dotProd(A, B):
-    dotAB = dot(A, B)
-    return dotAB
+def inverse_dim2(A):
+    invA = 1/(A[0]*A[3]-A[1]*A[2])*array([[A[3], -A[1]], [-A[2], A[0]]])
+    return invA
 
-def getZerosArray(m, n, type):
-    A = zeros((m, n), dtype=type)
-    return A
-
-def getNewArray(array_list, type):
-    A = array(array_list, dtype=type)
-    return A
-
-def getEyeMatrix(n, type):
-    A = eye(n, dtype=type)
-    return A
 
 def addMatrix(A, A_add, idx):
     """

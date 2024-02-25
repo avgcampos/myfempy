@@ -13,7 +13,7 @@ class AssemblerSYMM(Assembler):
     """
      Static Linear Solver Class <ConcreteClassService>
     """
-    
+    # @profile
     def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler):
         """
         getMatrixAssembler Assembler Symmertric Matrix System module <ConcreteClassService>

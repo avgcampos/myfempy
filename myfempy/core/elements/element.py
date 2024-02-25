@@ -8,7 +8,7 @@ def setElement(set_element):
         return Plane
     
     elif set_element['type'] == 'platekc':
-        from myfempy.core.elements.platekc import PlateKC
+        from myfempy.core.elements.plateKC import PlateKC
         return PlateKC
     
     elif set_element['type'] == 'solid':
