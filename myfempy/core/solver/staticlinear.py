@@ -9,9 +9,8 @@ from scipy.sparse.linalg import spsolve
 # from myfempy.core.alglin import linsolve_spsolve
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
-from myfempy.expe.asmb_cython.import_assembler_cython2py import getMatrixAssemblerSYMM
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
-from myfempy.core.solver.assemblerfull import AssemblerFULL
+# from myfempy.core.solver.assemblerfull import AssemblerFULL
 
 class StaticLinear(Solver):
 
@@ -22,8 +21,7 @@ class StaticLinear(Solver):
     def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss):  
         matrix = dict()
         # matrix['stiffness'] = AssemblerFULL.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
-        # matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
-        matrix['stiffness'] = getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
+        matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):

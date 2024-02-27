@@ -1,35 +1,43 @@
+# from numpy import array, zeros, sqrt, dot, matmul, abs, ix_, uint32, float64
+
 import numpy as np
+import cython
+# from scipy.linalg import inv, kron, det
 INT32 = np.uint32
 FLT64 = np.float64
 
 from myfempy.core.material.material import Material
 
 
-class  PlaneStrainIsotropic(Material):
-    '''Plane Strain Material Class <ConcreteClassService>'''
+class  PlaneStressIsotropic(Material):
+    '''Plane Stress Material Class <ConcreteClassService>'''
 
     def getMaterialSet():
         matset = {
-            'mat': "planestrain",
-            'idmat': 4,
+            'mat': "planestress",
+            'idmat': 3,
             'type': "isotropic",
             'idtyp': 20,
         }
         return matset
 
+    # def getProMaterial(modeldata):
+    #     tabmat = io.samethings()
+    #     pass
+
     def getElasticTensor(E, v):
         D = np.zeros((3, 3), dtype=FLT64)
-        D[0, 0] = E * (1.0 - v) / ((1 + v) * (1.0 - 2.0 * v))
-        D[0, 1] = D[0, 0] * v / (1.0 - v)
+        D[0, 0] = E / (1.0 - v * v)
+        D[0, 1] = D[0, 0] * v
         D[1, 0] = D[0, 1]
         D[1, 1] = D[0, 0]
-        D[2, 2] = D[0, 0] * 0.5 * (1.0 - 2.0 * v) / (1.0 - v)
+        D[2, 2] = E / (2.0 * (1.0 + v))
         return D
 
     def getElementStrain(Model, U, ptg, element_number):
 
         elem_set = Model.element.getElementSet()
-        nodedof = len(elem_set["dofs"])
+        nodedof = len(elem_set["dofs"]['d'])
         
         nodelist = Model.shape.getNodeList(Model.inci, element_number)
 
@@ -37,7 +45,7 @@ class  PlaneStrainIsotropic(Material):
 
         elementcoord = Model.shape.getNodeCoord(Model.coord, nodelist)
 
-        B = Model.element.getB(Model, elementcoord, ptg)
+        B = Model.element.getB(Model, elementcoord, ptg[0], nodedof)
 
         epsilon = np.dot(B, U[loc]) # B @ (U[loc])
         
@@ -64,7 +72,7 @@ class  PlaneStrainIsotropic(Material):
         E = Model.tabmat[int(Model.inci[element_number, 2]) - 1, 0]  # material elasticity
         v = Model.tabmat[int(Model.inci[element_number, 2]) - 1, 1]  # material poisson ratio
         
-        C = PlaneStrainIsotropic.getElasticTensor(E, v)
+        C = PlaneStressIsotropic.getElasticTensor(E, v)
         
         sigma = np.dot(C, epsilon)
         
@@ -78,9 +86,16 @@ class  PlaneStrainIsotropic(Material):
         
         stress = [strs_elm_vm, strs_elm_xx, strs_elm_yy, strs_elm_xy]
         
-        return stress
+        return sigma, stress
         
     def getTitleStress():
         title = ["STRESS_VM", "STRESS_XX", "STRESS_YY", "STRESS_XY"]
         return title
     
+    def getStrainEnergyDensity(sigma, epsilon, elemvol):
+        strain_energy = 0.5*np.dot(sigma.transpose(), epsilon)/elemvol   
+        return strain_energy
+    
+    def getTitleCompliance():
+        title = ["STRAIN_ENERGY_DENSITY"]
+        return title

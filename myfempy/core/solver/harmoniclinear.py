@@ -9,8 +9,8 @@ from scipy.sparse.linalg import spsolve, minres
 # from myfempy.core.alglin import linsolve_spsolve
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
-from myfempy.expe.asmb_cython.import_assembler_cython2py import getMatrixAssemblerSYMM
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
+# from myfempy.core.solver.assemblerfull import AssemblerFULL
 
 
 class HarmonicLinear(Solver):
@@ -24,8 +24,8 @@ class HarmonicLinear(Solver):
         # matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
         # matrix['mass'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss,  type_assembler = 'mass_consistent')
         
-        matrix['stiffness'] = getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
-        matrix['mass'] = getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss,  type_assembler = 'mass_consistent')
+        matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
+        matrix['mass'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss,  type_assembler = 'mass_consistent')
         return matrix 
         
     def getLoadAssembler(loadaply, nodetot, nodedof):

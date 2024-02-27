@@ -1,9 +1,11 @@
-import numpy as np
+# import numpy as np
 from scipy.sparse import coo_matrix
 
-from myfempy.expe.asmb_cython.assembler_cython import getMatrixAssemblerSym_cy_v2
+from myfempy.expe.asmb_cython.assembler_cython_v2 import getMatrixAssemblerSym_cy_v2
+from myfempy.expe.asmb_cython.assembler_cython_v3 import getMatrixAssemblerSym_cy_parpool
 
 # @profile
+
 def getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler):
         
     
@@ -21,6 +23,7 @@ def getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss, type_as
     sdof = nodedof * nodetot
     
     rowsd, colsd, datad, rowsb, colsb, datab = getMatrixAssemblerSym_cy_v2(Model, inci, coord, tabmat, tabgeo, elemdof,  intgauss, type_assembler)
+    # rowsd, colsd, datad, rowsb, colsb, datab = getMatrixAssemblerSym_cy_parpool(Model, inci, coord, tabmat, tabgeo, elemdof,  intgauss, type_assembler)
     
     # rowsd = data[0]
     # colsd = data[1]
@@ -32,5 +35,4 @@ def getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss, type_as
     mtKG_sp_sym = coo_matrix((datab, (rowsb, colsb)), shape=(sdof, sdof))
     mtKG_sp_sym += mtKG_sp_sym.transpose()
     mtKG_sp_sym += coo_matrix((datad, (rowsd, colsd)), shape=(sdof, sdof))
-    
     return mtKG_sp_sym

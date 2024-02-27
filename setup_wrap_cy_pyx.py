@@ -30,6 +30,10 @@ class build_ext(_build_ext):
 
         extensions=[
             # Extension("*", sources=["./myfempy/expe/utilities.pyx"], **extension_kwargs),
-            Extension("*", sources=["./myfempy/expe/asmb_cython/assembler_cython.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/solver/assembler_cython_v2.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/solver/assembler_cython_v3.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/elements/plane.py"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/quad4.py"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/material/planestress.py"], **extension_kwargs),
         ]
         self.distribution.ext_modules.extend(cythonize(extensions))

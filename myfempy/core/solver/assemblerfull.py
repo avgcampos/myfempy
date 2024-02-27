@@ -5,12 +5,12 @@ from scipy import sparse
 
 # from myfempy.core.alglin import linsolve_spsolve
 from myfempy.core.solver.assembler import Assembler, setAssembler
-from myfempy.expe.asmb_cython.import_assembler_cython2py import getMatrixAssemblerSYMM
+# from myfempy.expe.asmb_cython.import_assembler_cython2py import getMatrixAssemblerSYMM
 
 class AssemblerFULL(Assembler):
 
     """
-     Static Linear Solver Class <ConcreteClassService>
+     Assembler Full System Class <ConcreteClassService>
     """
     
     def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler):

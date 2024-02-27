@@ -1,11 +1,11 @@
 import numpy as np
 cimport numpy as np
-from cython.parallel cimport prange
+# from cython.parallel cimport parallel, prange
 cimport cython
 
 from myfempy.core.solver.assembler import setAssembler
 
-@cython.exceptval(check=False)
+# @cython.exceptval(check=False)
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False)  # turn off negative index wrapping for entire function
 def getMatrixAssemblerSym_cy_v2(Model,
@@ -21,11 +21,11 @@ def getMatrixAssemblerSym_cy_v2(Model,
     cdef unsigned long int KJ
     cdef unsigned long int i
     cdef unsigned long int j
-    cdef unsigned long int elemtot
-    cdef unsigned long int nodedof
+    # cdef unsigned long int elemtot
+    # cdef unsigned long int nodedof
     cdef double val=0.0
-    cdef double [:, :] mat
-    cdef unsigned int [:] loc
+    # cdef double [:, :] mat
+    # cdef unsigned int [:] loc
     cdef int element
     cdef list rowsb=[]
     cdef list colsb=[]
@@ -33,17 +33,12 @@ def getMatrixAssemblerSym_cy_v2(Model,
     cdef list rowsd=[]
     cdef list colsd=[]
     cdef list datad=[]
-    cdef list nodelist=[]
+    cdef list data=[]
 
-    elemtot = inci.shape[0]
-    elem_set = Model.element.getElementSet()
-    nodedof = len(elem_set["dofs"]['d'])
-
-    for element in range(elemtot):
-        nodelist = Model.shape.getNodeList(inci, element)
-        # mat = Model.element.getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element)
-        # loc = Model.shape.getShapeKey(nodelist, nodedof)
-        mat, loc = setAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, element, type_assembler)
+    for element in range(inci.shape[0]):
+        data = setAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, element, type_assembler)
+        mat = data[0]
+        loc = data[1]
         for i in range(elemdof):
             for j in range(i, elemdof):
                 KI = loc[i]

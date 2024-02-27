@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from os import environ
-environ['OMP_NUM_THREADS'] = '3'
+# from os import environ
+# environ['OMP_NUM_THREADS'] = '3'
 from numpy import zeros, float64
 from scipy.sparse.linalg import spsolve, minres
 
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
-from myfempy.expe.asmb_cython.import_assembler_cython2py import getMatrixAssemblerSYMM
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
-from myfempy.core.solver.assemblerfull import AssemblerFULL
+# from myfempy.core.solver.assemblerfull import AssemblerFULL
 
 class StaticLinearIterative(Solver):
 
@@ -19,9 +18,8 @@ class StaticLinearIterative(Solver):
     
     def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss):  
         matrix = dict()
-        matrix['stiffness'] = AssemblerFULL.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
-        # matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
-        # matrix['stiffness'] = getMatrixAssemblerSYMM(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
+        # matrix['stiffness'] = AssemblerFULL.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
+        matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
@@ -42,7 +40,7 @@ class StaticLinearIterative(Solver):
         sU0 = U0[freedof, 0]
         for step in range(nsteps):
             try:
-                U1[freedof, 0], info = minres(A=sA, b=forcelist[freedof, step].toarray(), x0=sU0, rtol=1E-10, maxiter=1000)
+                U1[freedof, 0], info = minres(A=sA, b=forcelist[freedof, step].toarray(), x0=sU0, tol=1E-10, maxiter=1000)
             except:
                 raise info          
             U1[freedof, 0] += U0[freedof, 0]

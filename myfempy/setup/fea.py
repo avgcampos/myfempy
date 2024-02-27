@@ -69,15 +69,7 @@ class newAnalysis():
             logging.info('TRY SET FEMODEL -- SUCCESS')
         except:
             logging.warning('TRY SET FEMODEL -- FAULT')
-        # self.model.element = Element
-        # self.model.shape = Shape
-        # self.model.material = Material
-        # self.model.geoemtry = Geometry
-        # self.inci = FEANewAnalysis.getInci(self)
-        # self.coord = FEANewAnalysis.getCoord(self)
-        # self.tabmat = FEANewAnalysis.getTabmat(self)
-        # self.tabgeo = FEANewAnalysis.getTabgeo(self)
-        # self.intgauss = FEANewAnalysis.getIntGauss(self)
+
         self.modelinfo = dict()
         self.modelinfo['inci'] = newAnalysis.getInci(self)
         self.modelinfo['coord'] = newAnalysis.getCoord(self)
@@ -128,6 +120,7 @@ class newAnalysis():
         self.modelinfo["constrains"] = newAnalysis.getBCApply(self)
         # self.loadaply = FEANewAnalysis.getLoadApply(self)
         # self.constrains = FEANewAnalysis.getBCApply(self)
+    
         
     def Assembly(self):
         """
@@ -141,12 +134,12 @@ class newAnalysis():
         tabmat = self.modelinfo['tabmat']
         tabgeo = self.modelinfo['tabgeo']
         intgauss = self.modelinfo['intgauss']       
-        # try:
-        matrix = newAnalysis.getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss) #self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo)
-            # logging.info('TRY RUN GLOBAL ASSEMBLY -- SUCCESS')     
-        # except:
-        #     logging.warning('TRY RUN GLOBAL ASSEMBLY -- FAULT')
-        loadaply = newAnalysis.getLoadApply(self)
+        try:
+            matrix = newAnalysis.getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss) #self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo)
+            logging.info('TRY RUN GLOBAL ASSEMBLY -- SUCCESS')     
+        except:
+            logging.warning('TRY RUN GLOBAL ASSEMBLY -- FAULT')
+        loadaply = self.modelinfo["forces"] #newAnalysis.getLoadApply(self)
         try:
             addSpring = np.where(loadaply[:,1]==16)
             addMass = np.where(loadaply[:,1]==15)
@@ -168,13 +161,14 @@ class newAnalysis():
                     matrix['mass'] = addMatrix(matrix['mass'], A_add, loc) 
                 logging.info('TRY RUN ADD MASS -- SUCCESS')
         except:
-            logging.warning('TRY RUN ADD ASSEMBLY -- FAULT')           
+            logging.warning('TRY RUN UPDATE ASSEMBLY -- FAULT')           
         try:
             forcelist = newAnalysis.getLoadArray(self, loadaply)
             logging.info('TRY RUN LOAD ASSEMBLY -- SUCCESS')     
         except:
             logging.warning('TRY RUN LOAD ASSEMBLY -- FAULT')                                          
         return matrix, forcelist
+    
     
     def Solve(self, solvedata):
         """
@@ -196,7 +190,7 @@ class newAnalysis():
         endttime = time()
         solvedata["solverstatus"]["timeasb"] = abs(endttime - starttime)
         solvedata["solverstatus"]["memorysize"] = assembly['stiffness'].data.nbytes    
-        constrains = newAnalysis.getBCApply(self)
+        constrains = self.modelinfo["constrains"] #newAnalysis.getBCApply(self)
         try:
             freedof, fixedof = newAnalysis.getConstrains(self, constrains)
             logging.info('TRY RUN CONSTRAINS -- SUCCESS')

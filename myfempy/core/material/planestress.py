@@ -1,4 +1,6 @@
 import numpy as np
+INT32 = np.uint32
+FLT64 = np.float64
 
 from myfempy.core.material.material import Material
 
@@ -20,7 +22,7 @@ class  PlaneStressIsotropic(Material):
     #     pass
 
     def getElasticTensor(E, v):
-        D = np.zeros((3, 3))
+        D = np.zeros((3, 3), dtype=FLT64)
         D[0, 0] = E / (1.0 - v * v)
         D[0, 1] = D[0, 0] * v
         D[1, 0] = D[0, 1]
@@ -87,7 +89,8 @@ class  PlaneStressIsotropic(Material):
         return title
     
     def getStrainEnergyDensity(sigma, epsilon, elemvol):   
-        return 0.5*np.dot(np.transpose(sigma), epsilon)/elemvol
+        strain_energy = 0.5*np.dot(sigma.transpose(), epsilon)/elemvol   
+        return strain_energy
     
     def getTitleCompliance():
         title = ["STRAIN_ENERGY_DENSITY"]

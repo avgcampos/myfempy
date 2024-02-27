@@ -15,17 +15,17 @@ def setAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, element_number, t
     if type_assembler == 'linear_stiffness':
         mat = Model.element.getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number)
         loc = Model.shape.getShapeKey(nodelist, nodedof)
-        return mat, loc
+        return [mat, loc]
     
     elif type_assembler == 'mass_consistent':
         mat = Model.element.getMassConsistentMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number)
         loc = Model.shape.getShapeKey(nodelist, nodedof)
-        return mat, loc
+        return [mat, loc]
     
     elif type_assembler == 'mass_lumped':
         mat = Model.element.getMassLumpedMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number)
         loc = Model.shape.getShapeKey(nodelist, nodedof)
-        return mat, loc
+        return [mat, loc]
 
 class Assembler(ABC):
     

@@ -2,13 +2,11 @@ from __future__ import annotations
 
 from os import environ
 environ['OMP_NUM_THREADS'] = '3'
-from numpy import array, zeros, eye, dot, matmul, abs, ix_, uint32, float64
-# from scipy.linalg import inv, kron, det
-INT32 = uint32
+from numpy import array, zeros, eye, dot, int32, float64
+from scipy.linalg import inv, kron, det
+INT32 = int32
 FLT64 = float64
 
-# from myfempy.core.utilities import inverse_dim2, determinant_dim2 #, kronProd, determinant, dotProd, getZerosArray, getNewArray, getEyeMatrix
-# from myfempy.experimental.utilities import inverse, kronProd, determinant, dotProd, getZerosArray, getNewArray, getEyeMatrix #CYTHON
 from myfempy.core.shapes.shape import Shape
 
 
@@ -25,15 +23,28 @@ class Quad4(Shape):
         return shapeset
     
     def N(r_coord):
+        # if poly_order == '1':
         N = zeros((1,4), dtype=FLT64)
         N[0, 0] = 0.25*(1-r_coord[0])*(1-r_coord[1])
         N[0, 1] = 0.25*(1+r_coord[0])*(1-r_coord[1])
         N[0, 2] = 0.25*(1+r_coord[0])*(1+r_coord[1])
         N[0, 3] = 0.25*(1-r_coord[0])*(1+r_coord[1])
+                    
+        # elif poly_order == '2':
+        #     N = np.zeros((1,8))
+        #     N[0, 0] = 0.25*(1-r_coord[0])*(1-r_coord[1])*(-r_coord[0]-r_coord[1]-1)
+        #     N[0, 1] = 0.25*(1+r_coord[0])*(1-r_coord[1])*(r_coord[0]-r_coord[1]-1)
+        #     N[0, 2] = 0.25*(1+r_coord[0])*(1+r_coord[1])*(+r_coord[0]+r_coord[1]-1)
+        #     N[0, 3] = 0.25*(1-r_coord[0])*(1+r_coord[1])*(-r_coord[0]+r_coord[1]-1)
+        #     N[0, 4] = 0.5*(1-r_coord[0]**2)*(1-r_coord[1])
+        #     N[0, 5] = 0.5*(1+r_coord[0])*(1-r_coord[1]**2)
+        #     N[0, 6] = 0.5*(1-r_coord[0]**2)*(1+r_coord[1])
+        #     N[0, 7] = 0.5*(1-r_coord[0])*(1-r_coord[1]**2)
+        
         return N
     
    
-    def diffN(r):
+    def diffN(N, r):
         dN = zeros((2,4), dtype=FLT64)
         dN[0, 0] = 0.25*(-1+r[1])
         dN[0, 1] = 0.25*(1-r[1])
@@ -47,62 +58,67 @@ class Quad4(Shape):
     
                         
     def getShapeFunctions(r_coord, nodedof):
+
         shape_function =  Quad4.N(r_coord)
-        mat_N = zeros((nodedof, 4*nodedof), dtype=FLT64) 
+    
+        mat_N = zeros((nodedof, 4*nodedof), dtype=FLT64)
         for block in range(4):
             for dof in range(nodedof):
                 mat_N[dof, block*nodedof+dof] = shape_function[0, block]
         return  mat_N
 
-    # @profile
-    def getDiffShapeFuntion(r_coord, nodedof):
-        diff_shape_function = Quad4.diffN(r_coord)
-        mat_diff_N = zeros((2*nodedof, 4*nodedof), dtype=FLT64) 
+    def getDiffShapeFuntion(shape_function, r_coord, nodedof):
+        diff_shape_function = Quad4.diffN(shape_function, r_coord)
+        
+        mat_diff_N = zeros((2*nodedof, 4*nodedof), dtype=FLT64)
+        
         for block in range(4):
             for dof in range(nodedof):
                 mat_diff_N[nodedof*dof-dof*(nodedof-2), block*nodedof+dof] = diff_shape_function[0, block]
                 mat_diff_N[nodedof*dof-dof*(nodedof-2)+1, block*nodedof+dof] = diff_shape_function[1, block]
         return mat_diff_N
-        
-    def getJacobian(r_coord, element_coord):  
-        diffN = Quad4.diffN(r_coord)  
-        jac = dot(diffN, element_coord) #matmul(diffN, element_coord) 
+    
+    
+    def getJacobian(shape_function, r_coord, element_coord):    
+        jac = dot(Quad4.diffN(shape_function, r_coord), element_coord) # comando lento!!!
+        # jac =  Quad4.diffN(shape_function, r_coord) @ element_coord
         return jac
         
     # @profile   
-    def invJacobi(r_coord, element_coord, nodedof):
-        J = Quad4.getJacobian(r_coord, element_coord)
-        invJ = Quad4.__inverse(J.flatten()) #inv(J, overwrite_a=True, check_finite=False) 
-        mat_invJ = zeros((2*nodedof, 2*nodedof), dtype=FLT64)  
-        mat_invJ[0, 0] = invJ[0, 0]
-        mat_invJ[0, 1] = invJ[0, 1]
-        mat_invJ[1, 0] = invJ[1, 0]
-        mat_invJ[1, 1] = invJ[1, 1]
-        mat_invJ[2, 2] = invJ[0, 0]
-        mat_invJ[2, 3] = invJ[0, 1]
-        mat_invJ[3, 2] = invJ[1, 0]
-        mat_invJ[3, 3] = invJ[1, 1]     
+    def invJacobi(shape_function, r_coord, element_coord, nodedof):
+        J = Quad4.getJacobian(shape_function, r_coord, element_coord)
+        
+        # invJ = np.linalg.inv(J)                                 # comando lento!!!
+        invJ = inv(J)
+        mat_invJ = zeros((4, 4), dtype=FLT64)  
+        # mat_invJ = np.kron(np.eye(nodedof, dtype=int), invJ)    # comando lento!!!
+        mat_invJ = kron(eye(nodedof, dtype=INT32), invJ)           
         return mat_invJ
     
-    def detJacobi(r_coord, element_coord):
-        J = Quad4.getJacobian(r_coord, element_coord)
-        detJ = Quad4.__determinant(J.flatten()) #det(J, overwrite_a=True, check_finite=False)
+    def detJacobi(shape_function, r_coord, element_coord):
+        J = Quad4.getJacobian(shape_function, r_coord, element_coord)
+        # detJ = np.linalg.det(J)
+        detJ = det(J)
         return detJ
     
     def getNodeList(inci, element_number):
+        
         noi = int(inci[element_number, 4])
         noj = int(inci[element_number, 5])
         nok = int(inci[element_number, 6])
         nol = int(inci[element_number, 7])
+        
         node_list = [noi, noj, nok, nol]          
         
         return node_list
         
     def getNodeCoord(coord, node_list):
+        
         noi = node_list[0]
         noj = node_list[1]
         nok = node_list[2]
         nol = node_list[3]
+        
         xi = coord[noi - 1, 1]
         yi = coord[noi - 1, 2]
         xj = coord[noj - 1, 1]
@@ -111,23 +127,21 @@ class Quad4(Shape):
         yk = coord[nok - 1, 2]
         xl = coord[nol - 1, 1]
         yl = coord[nol - 1, 2]
-        element_coord = array([[xi, yi], [xj, yj], [xk, yk], [xl, yl]], dtype=FLT64)
+        
+        element_coord = array([[xi, yi],
+                                [xj, yj],
+                                [xk, yk],
+                                [xl, yl]], dtype=FLT64)
         return element_coord
     
     
     def getShapeKey(node_list, nodedof):
         """element lockey(dof)"""
+        
         shape_key = zeros(4*nodedof, dtype=INT32)
+        
         for node in range(len(node_list)):
             for dof in range(nodedof):
                 shape_key[nodedof*node+dof] = nodedof * node_list[node] - (nodedof-dof)
+                
         return shape_key
-    
-
-    def __determinant(A):
-        detA = A[0]*A[3]-A[1]*A[2]
-        return detA
-
-    def __inverse(A):
-        invA = 1/(A[0]*A[3]-A[1]*A[2])*array([[A[3], -A[1]], [-A[2], A[0]]])
-        return invA

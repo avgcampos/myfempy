@@ -1,3 +1,5 @@
+# from numpy import array, zeros, sqrt, dot, abs, concatenate, int32, float64
+
 import numpy as np
 import cython
 INT32 = np.uint32
@@ -6,10 +8,15 @@ FLT64 = np.float64
 from myfempy.core.utilities import gauss_points
 from myfempy.core.elements.element import Element
 
-class Plane(Element):
+from myfempy.expe.ke_fast.quad4_v2 import Quad4
+# from myfempy.core.material.planestress import PlaneStressIsotropic
+from myfempy.expe.ke_fast.planestress import PlaneStressIsotropic
+
+class PlaneStressIsoQuad4(Element):
     '''Plane Structural Element Class <ConcreteClassService>'''
                 
     def getElementSet():
+        
         elemset = {
             "def": "2D-space 2-node_dofs",
             "key": "plane",
@@ -33,55 +40,64 @@ class Plane(Element):
         return L
 
     def getB(Model, elementcoord, ptg, nodedof):
-        diffN = Model.shape.getDiffShapeFuntion(ptg, nodedof)
-        invJ = Model.shape.invJacobi(ptg, elementcoord, nodedof)
+        diffN = Quad4.getDiffShapeFuntion(ptg, nodedof)
+        invJ = Quad4.invJacobi(ptg, elementcoord, nodedof)
         invJdiffN = np.dot(invJ, diffN)
-        L = Plane.getL()
-        B = np.dot(L, invJdiffN)
-        return B
+        L = PlaneStressIsoQuad4.getL()
+        return np.dot(L, invJdiffN)
 
 
     def getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number):
-        elem_set = Plane.getElementSet()
+
+        elem_set = PlaneStressIsoQuad4.getElementSet()
         nodedof = len(elem_set["dofs"]['d'])
-        shape_set = Model.shape.getShapeSet()
+        
+        shape_set = Quad4.getShapeSet()
         nodecon = len(shape_set['nodes'])
-        type_shape = shape_set["key"]      
+        type_shape = shape_set["key"]    
+                
         edof = nodecon * nodedof
-        nodelist = Model.shape.getNodeList(inci, element_number)    
-        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
+        
+        nodelist = Quad4.getNodeList(inci, element_number)    
+        
+        elementcoord = Quad4.getNodeCoord(coord, nodelist)
+
         E = tabmat[int(inci[element_number, 2]) - 1, 0]  # material elasticity
         v = tabmat[int(inci[element_number, 2]) - 1, 1]  # material poisson ratio
-        C = Model.material.getElasticTensor(E, v)
+        C = PlaneStressIsotropic.getElasticTensor(E, v)
+            
         L = tabgeo[int(inci[element_number, 3] - 1), 4]
-        pt, wt = gauss_points(type_shape, intgauss)           
+            
+        pt, wt = gauss_points(type_shape, intgauss)
+               
         K_elem_mat = np.zeros((edof, edof), dtype=FLT64)
         for pp in range(intgauss):
-            detJ = Model.shape.detJacobi(pt[pp], elementcoord)               
-            B = Plane.getB(Model, elementcoord, pt[pp], nodedof)
+            detJ = Quad4.detJacobi(pt[pp], elementcoord)               
+            B = PlaneStressIsoQuad4.getB(Model, elementcoord, pt[pp], nodedof) #np.dot(H, np.dot(invJ, diffN))
             BT = B.transpose() #transpose(B)
             BTC = np.dot(BT, C)
-            K_elem_mat += np.dot(BTC, B)*L*abs(detJ)*wt[pp]*wt[pp]
+            K_elem_mat += np.dot(BTC, B)*L*abs(detJ)*wt[pp]*wt[pp] #multi_dot([BT, C, B])*L*detJ*wt[pp]*wt[pp] #dot(BTC, B)*L*detJ*wt[pp]*wt[pp]     
+            # K_elem_mat += (np.transpose(B) @ C @ B)*L*detJ*wt[pp]*wt[pp]
         return K_elem_mat
     
  
     def getMassConsistentMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number):
-        elem_set = Plane.getElementSet()
+        elem_set = PlaneStressIsoQuad4.getElementSet()
         nodedof = len(elem_set["dofs"]['d'])
-        shape_set = Model.shape.getShapeSet()
+        shape_set = Quad4.getShapeSet()
         nodecon = len(shape_set['nodes'])
         type_shape = shape_set["key"]    
         edof = nodecon * nodedof
-        nodelist = Model.shape.getNodeList(inci, element_number)    
-        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        R = tabmat[int(inci[element_number, 2]) - 1, 6]  
+        nodelist = Quad4.getNodeList(inci, element_number)    
+        elementcoord = Quad4.getNodeCoord(coord, nodelist)
+        R = tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
         L = tabgeo[int(inci[element_number, 3] - 1), 4]
         pt, wt = gauss_points(type_shape, intgauss)
         M_elem_mat = np.zeros((edof, edof),dtype=FLT64)
         for pp in range(intgauss):
-            detJ = Model.shape.detJacobi(pt[pp], elementcoord)
-            N = Model.shape.getShapeFunctions(pt[pp], nodedof)
-            NT = N.transpose()
+            detJ = Quad4.detJacobi(pt[pp], elementcoord)
+            N = Quad4.getShapeFunctions(pt[pp], nodedof)
+            NT = N.transpose() #transpose(B)
             NTR = np.dot(NT, R)
             M_elem_mat += np.dot(NTR, N)*L*detJ*wt[pp]*wt[pp]  
         return M_elem_mat
@@ -105,13 +121,13 @@ class Plane(Element):
 
     def getElementVolume(Model, inci, coord, tabgeo, intgauss, element_number):
         L = tabgeo[int(inci[element_number, 3] - 1), 4]
-        shape_set = Model.shape.getShapeSet()
+        shape_set = Quad4.getShapeSet()
         type_shape = shape_set["key"]
-        nodelist = Model.shape.getNodeList(inci, element_number)
-        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
+        nodelist = Quad4.getNodeList(inci, element_number)
+        elementcoord = Quad4.getNodeCoord(coord, nodelist)
         pt, wt = gauss_points(type_shape, intgauss)
         detJ = 0.0
         for pp in range(intgauss):
-            N = Model.shape.N
-            detJ += Model.shape.detJacobi(pt[pp], elementcoord)
+            N = Quad4.N
+            detJ += Quad4.detJacobi(pt[pp], elementcoord)
         return detJ*L
