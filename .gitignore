@@ -9,6 +9,9 @@ __dev__setup_wrap_cy_pyx.py
 ### C ###
 # Prerequisites
 *.d
+*.c
+*.html
+*.pyd
 
 # Object files
 *.o
@@ -86,6 +89,7 @@ __pycache__/
 *$py.class
 
 # C extensions
+*.c
 
 # Distribution / packaging
 .Python
