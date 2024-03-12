@@ -58,18 +58,18 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
     else:
         previewset["RENDER"]["lines"] = True
     
-    if "plottag" in previewset["RENDER"].keys():
-        if "point" in previewset["RENDER"]["plottag"].keys() and previewset["RENDER"]["plottag"]["point"]==True:
+    if "plottags" in previewset["RENDER"].keys():
+        if "point" in previewset["RENDER"]["plottags"].keys() and previewset["RENDER"]["plottags"]["point"]==True:
             previewset["regions"] = modelinfo["regions"][0]
         else:
             pass
         
-        if "line" in previewset["RENDER"]["plottag"].keys() and previewset["RENDER"]["plottag"]["line"] == True:
+        if "line" in previewset["RENDER"]["plottags"].keys() and previewset["RENDER"]["plottags"]["line"] == True:
             previewset["regions"] = modelinfo["regions"][1]
         else:
             pass
         
-        if "plane" in previewset["RENDER"]["plottag"].keys() and previewset["RENDER"]["plottag"]["plane"] == True:
+        if "plane" in previewset["RENDER"]["plottags"].keys() and previewset["RENDER"]["plottags"]["plane"] == True:
             previewset["regions"] = modelinfo["regions"][2]
         else:
             pass
@@ -143,7 +143,7 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
             )
         else:
             previewset["LABELS"]["scale"] = 1
-        mesh = MeshProp(previewset)
+        mesh = MeshProp(previewset, path)
         mesh.mesh_numbering()
     else:
         pass
@@ -286,7 +286,7 @@ def build_preview(previewset: dict, path):
     for ff in range(dimfrlist):
         exec(f"renderer.AddActor(fr_point_actor_cone1_{ff})")
         exec(f"renderer.AddActor(fr_point_actor_cone2_{ff})")
-    if "plottag" in previewset["RENDER"].keys():
+    if "plottags" in previewset["RENDER"].keys():
         for txt in range(objs):
             exec(f"renderer.AddActor(bc_text_actor_{txt})")
     else:

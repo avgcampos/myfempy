@@ -11,20 +11,21 @@ Mesh Quality Calc.
 
 class MeshProp:
 
-    def __init__(self, plotset: dict):
+    def __init__(self, plotset: dict, path):
         self.plotset = plotset
+        self.filename = path + "/" + plotset["RENDER"]["filename"]
 
     def mesh_numbering(self):
 
         win = vd.Plotter(title="PRE-PROCESS", sharecam=False, screensize=(1280, 720))
         mesh = (
-            vd.UnstructuredGrid(self.plotset["RENDER"]["filename"] + ".vtk")#.lineWidth(0.1).flat()
+            vd.UnstructuredGrid(self.filename + ".vtk")#.lineWidth(0.1).flat()
         )
         if self.plotset["LABELS"]["lines"] == False:
-            mesh = vd.UnstructuredGrid(self.plotset["RENDER"]["filename"] + ".vtk")
+            mesh = vd.UnstructuredGrid(self.filename + ".vtk")
         else:
             pass
-        mesh.cmap("RdYlBu", on="cells")
+        # mesh.cmap("RdYlBu", on="cells")
         
         text = vd.Text2D(
             "MYFEMPY " + " < mesh numb. > ",
@@ -37,21 +38,21 @@ class MeshProp:
             (self.plotset["nnode"] * self.plotset["nodecon"],)
         )
 
-        noduni, idx = np.unique(nodes, return_index=True)
+        # noduni, idx = np.unique(nodes, return_index=True)
         
-        labs0 = mesh.labels(
-            content= nodes[np.sort(idx)].astype(int),  # 'id'
-            cells=False,
-            scale=self.plotset["LABELS"]["scale"],
-            font="Arial",
+        labs0 = mesh.labels2d(
+            content= 'id', #nodes[np.sort(idx)].astype(int),  # 'id'
+            on='points',
+            scale= self.plotset["LABELS"]["scale"],
+            # font="Arial",
             c="black",
         )
         
-        labs1 = mesh.labels(
-            content= self.plotset['inci'][:, 0].astype(int), # 'cellid'
-            cells=True,
+        labs1 = mesh.labels2d(
+            content= 'cellid', #self.plotset['inci'][:, 0].astype(int), # 'cellid'
+            on='cells',
             scale=self.plotset["LABELS"]["scale"],
-            font="Arial",
+            # font="Arial",
             c="red",
         )
         
@@ -59,7 +60,7 @@ class MeshProp:
 
     def mesh_quality(self):
         """_summary_"""
-        win = vd.Plotter(title="PRE-PROCESS", sharecam=False, screensize=(1280, 720))
+        win = vd.Plotter(title="PRE-PROCESS", sharecam=False, screensize=(1280, 720), interactive=True)
         mesh = (
             vd.UnstructuredGrid(self.plotset["RENDER"]["filename"] + ".vtk").lineWidth(0.1).flat()
         )

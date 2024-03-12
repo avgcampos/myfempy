@@ -4,8 +4,9 @@ import numpy as np
 from scipy import sparse
 
 # from myfempy.core.alglin import linsolve_spsolve
-from myfempy.core.solver.assembler import Assembler, setAssembler
-# from myfempy.expe.asmb_cython.import_assembler_cython2py import getMatrixAssemblerSYMM
+from myfempy.core.solver.assembler import Assembler, getMatrix, getLoc
+# from myfempy.core.solver.assemblerfull_numpy_v1 import getMatrixAssembler_Full
+from myfempy.core.solver.assemblerfull_cython_v4 import getMatrixAssembler_Full
 
 class AssemblerFULL(Assembler):
 
@@ -13,7 +14,7 @@ class AssemblerFULL(Assembler):
      Assembler Full System Class <ConcreteClassService>
     """
     
-    def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler):
+    def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler, MP):
         """
         getMatrixAssembler Assembler module <ConcreteClassService>
 
@@ -25,17 +26,15 @@ class AssemblerFULL(Assembler):
         shape_set = Model.shape.getShapeSet()
         nodecon = len(shape_set['nodes'])
         elemdof = nodecon * nodedof
-        elemtot = len(inci)
-        nodetot = len(coord)
-        ith = np.zeros((elemtot * (elemdof * elemdof)), dtype=int)
-        jth = np.zeros((elemtot * (elemdof * elemdof)), dtype=int)
-        val = np.zeros((elemtot * (elemdof * elemdof)), dtype=float)
-        for ee in range(elemtot):
-            mat, loc = setAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, ee, type_assembler)
-            ith[(elemdof*elemdof)*ee:(elemdof*elemdof)*(ee+1)] = np.tile(loc.reshape(1, elemdof).T, (1, elemdof)).flatten("F")
-            jth[(elemdof*elemdof)*ee:(elemdof*elemdof)*(ee+1)] = np.transpose(np.tile(loc.reshape(1, elemdof).T, (1, elemdof))).flatten("F")
-            val[(elemdof*elemdof)*ee:(elemdof*elemdof)*(ee+1)] = mat.flatten("F")       
-        A_sp_scipy_csc = sparse.csc_matrix((val, (ith, jth)), shape=(nodedof * nodetot, nodedof * nodetot),)        
+        nodetot = coord.shape[0]
+        sdof = nodedof * nodetot
+        
+        # if MP>0:
+        #     ith, jth, val = getMatrixAssemblerSym_cy_mp(Model, inci, coord, tabmat, tabgeo, elemdof,  intgauss, type_assembler, MP)
+        # else:        
+        ith, jth, val = getMatrixAssembler_Full(Model, inci, coord, tabmat, tabgeo, elemdof,  intgauss, type_assembler)
+
+        A_sp_scipy_csc = sparse.csc_matrix((val, (ith, jth)), shape=(sdof, sdof),)        
         return A_sp_scipy_csc
     
     

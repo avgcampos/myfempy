@@ -69,7 +69,6 @@ class newAnalysis():
             logging.info('TRY SET FEMODEL -- SUCCESS')
         except:
             logging.warning('TRY SET FEMODEL -- FAULT')
-
         self.modelinfo = dict()
         self.modelinfo['inci'] = newAnalysis.getInci(self)
         self.modelinfo['coord'] = newAnalysis.getCoord(self)
@@ -77,7 +76,7 @@ class newAnalysis():
         self.modelinfo['tabgeo'] = newAnalysis.getTabgeo(self)
         self.modelinfo['intgauss'] = newAnalysis.getIntGauss(self)
         try:
-            self.modelinfo["regions"] = self.model.mesh.getRegionsList(self.model.mesh.getElementConection(self.model.modeldata['MESH']))
+            self.modelinfo["regions"] = newAnalysis.getRegions(self) #self.model.mesh.getRegionsList(self.model.mesh.getElementConection(self.model.modeldata['MESH']))
         except:
             self.modelinfo["regions"] = []
         elem_set = self.model.element.getElementSet()
@@ -121,7 +120,7 @@ class newAnalysis():
         # self.loadaply = FEANewAnalysis.getLoadApply(self)
         # self.constrains = FEANewAnalysis.getBCApply(self)
     
-        
+       
     def Assembly(self):
         """
         Assembly assembly of fe model algebric system
@@ -134,12 +133,12 @@ class newAnalysis():
         tabmat = self.modelinfo['tabmat']
         tabgeo = self.modelinfo['tabgeo']
         intgauss = self.modelinfo['intgauss']       
-        try:
-            matrix = newAnalysis.getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss) #self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo)
-            logging.info('TRY RUN GLOBAL ASSEMBLY -- SUCCESS')     
-        except:
-            logging.warning('TRY RUN GLOBAL ASSEMBLY -- FAULT')
-        loadaply = self.modelinfo["forces"] #newAnalysis.getLoadApply(self)
+        # try:
+        matrix = newAnalysis.getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss, self.symm, self.mp) #self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo)
+        #     logging.info('TRY RUN GLOBAL ASSEMBLY -- SUCCESS')     
+        # except:
+        #     logging.warning('TRY RUN GLOBAL ASSEMBLY -- FAULT')
+        loadaply = self.modelinfo["forces"] 
         try:
             addSpring = np.where(loadaply[:,1]==16)
             addMass = np.where(loadaply[:,1]==15)
@@ -170,7 +169,7 @@ class newAnalysis():
         return matrix, forcelist
     
     
-    def Solve(self, solvedata):
+    def Solve(self, solverset):
         """
         runSolve run the solver set
 
@@ -184,12 +183,20 @@ class newAnalysis():
         # self.modelinfo = dict()
         # self.modelinfo['coord'] = self.coord
         # self.modelinfo['regions'] = self.regions
-        solvedata["solverstatus"] = dict()
+        try:
+            self.symm = solverset['SYMM']
+        except:
+            self.symm = False
+        try:
+            self.mp = solverset['MP']
+        except:
+            self.mp = 0
+        solverset["solverstatus"] = dict()
         starttime = time()
         assembly, forcelist = newAnalysis.Assembly(self)
         endttime = time()
-        solvedata["solverstatus"]["timeasb"] = abs(endttime - starttime)
-        solvedata["solverstatus"]["memorysize"] = assembly['stiffness'].data.nbytes    
+        solverset["solverstatus"]["timeasb"] = abs(endttime - starttime)
+        solverset["solverstatus"]["memorysize"] = assembly['stiffness'].data.nbytes    
         constrains = self.modelinfo["constrains"] #newAnalysis.getBCApply(self)
         try:
             freedof, fixedof = newAnalysis.getConstrains(self, constrains)
@@ -198,13 +205,13 @@ class newAnalysis():
             logging.warning('TRY RUN CONSTRAINS -- FAULT')
         try:
             starttime = time()
-            solvedata['solution'] = self.solver.runSolve(self.modelinfo['fulldofs'], assembly, forcelist, freedof, solvedata)
+            solverset['solution'] = self.solver.runSolve(self.modelinfo['fulldofs'], assembly, forcelist, freedof, solverset)
             endttime = time()
-            solvedata["solverstatus"]["timesim"] = abs(endttime - starttime)
+            solverset["solverstatus"]["timesim"] = abs(endttime - starttime)
             logging.info('TRY RUN SOLVER -- SUCCESS') 
         except:
             logging.warning('TRY RUN SOLVER -- FAULT')
-        return solvedata
+        return solverset
     
 
     def PreviewAnalysis(self, previewdata):
@@ -291,8 +298,8 @@ class newAnalysis():
         return self.model.getIntGauss(self.model.modeldata)
     
     def getElementVolume(self, inci, coord, tabgeo, intgauss):
-        vol = np.zeros((len(inci)))
-        for ee in range(len(inci)):
+        vol = np.zeros((inci.shape[0]))
+        for ee in range(inci.shape[0]):
             vol[ee] = self.model.element.getElementVolume(self.model, inci, coord, tabgeo, intgauss, ee)
         return vol
 
@@ -302,8 +309,8 @@ class newAnalysis():
     def getElemMassConsistentMat(self, inci, coord, tabmat, tabgeo, intgauss, element_number):        
         return self.model.element.getMassConsistentMat(self.model, inci, coord, tabmat, tabgeo, intgauss, element_number)
                      
-    def getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss):
-        return self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo, intgauss)
+    def getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss, SYMM, MP):
+        return self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo, intgauss, SYMM=SYMM, MP=MP)
     
     def getForceList(self):
         return self.physic.getForceList(self.physic.physicdata)
@@ -337,7 +344,23 @@ class newAnalysis():
         loadvec = self.solver.getLoadAssembler(loadaply, nodetot, self.modelinfo['nodedof'])
         return loadvec
     
+    def getRegions(self):
+        return self.model.mesh.getRegionsList(self.model.mesh.getElementConection(self.model.modeldata['MESH']))
         
+    def getNodesFromRegions(self, set: int, type: str):
+        if type == 'point':
+            domain_nodelist = newAnalysis.getRegions(self)[0][1][set-1][1]
+        elif type == 'line':
+            domain_nodelist = newAnalysis.getRegions(self)[1][1][set-1][1]
+        elif type == 'plane':
+            domain_nodelist = newAnalysis.getRegions(self)[2][1][set-1][1]
+        else:
+            domain_nodelist = []
+        return domain_nodelist
+
+    def getElementFromNodesList(self, nodelist):
+        return self.physic.getElementList(self.modelinfo['inci'], nodelist)
+            
     # settings FEA ANALYSIS <privates>
     def __setMesh(modeldata):
         set_mesh = dict()

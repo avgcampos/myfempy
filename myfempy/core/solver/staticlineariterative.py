@@ -8,7 +8,7 @@ from scipy.sparse.linalg import spsolve, minres
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
-# from myfempy.core.solver.assemblerfull import AssemblerFULL
+from myfempy.core.solver.assemblerfull import AssemblerFULL
 
 class StaticLinearIterative(Solver):
 
@@ -16,11 +16,17 @@ class StaticLinearIterative(Solver):
      Static Linear Solver Iterative Class <ConcreteClassService>
     """
     
-    def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss):  
-        matrix = dict()
-        # matrix['stiffness'] = AssemblerFULL.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
-        matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
-        return matrix
+    
+    def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, SYMM, MP):  
+        if SYMM:
+            matrix = dict()
+            matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness', MP=MP)
+            return matrix
+        else:
+            matrix = dict()
+            matrix['stiffness'] = AssemblerFULL.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness', MP=MP)
+            return matrix
+        
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
         return AssemblerSYMM.getLoadAssembler(loadaply, nodetot, nodedof)

@@ -4,7 +4,7 @@ import numpy as np
 # from scipy.special import roots_legendre
 
 from myfempy.core.physic.structural import Structural
-from myfempy.core.utilities import poly_area, get_nodes_from_list
+from myfempy.core.utilities import poly_area, get_nodes_from_list, get_elemen_from_nodelist
 
 class LoadStructural(Structural):
     '''Structural Load Class <ConcreteClassService>'''
@@ -15,17 +15,17 @@ class LoadStructural(Structural):
         for fc_index in range(len(forcelist)):
             if forcelist[fc_index][0] == "forcenode":
                 flist = forcelist[fc_index]
-                fapp = LoadStructural.getForceNodeLoadApply(modelinfo, flist)
+                fapp = LoadStructural.__ForceNodeLoadApply(modelinfo, flist)
                 forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
             
             elif forcelist[fc_index][0] == "forceedge":
                 flist = forcelist[fc_index]
-                fapp = LoadStructural.getForceEdgeLoadApply(modelinfo, flist)
+                fapp = LoadStructural.__ForceEdgeLoadApply(modelinfo, flist)
                 forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
                 
             elif forcelist[fc_index][0] == "forcesurf":
                 flist = forcelist[fc_index]
-                fapp = LoadStructural.getForceSurfLoadApply(modelinfo, flist)
+                fapp = LoadStructural.__ForceSurfLoadApply(modelinfo, flist)
                 forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
             
             else:
@@ -33,19 +33,16 @@ class LoadStructural(Structural):
         
         forcenodeaply = forcenodeaply[1::][::]
         return forcenodeaply
-        
-    def setNodes(forcelist, coord, regions):
-        return get_nodes_from_list(forcelist, coord, regions)
     
     def setLoadDof(forcelist, node_list_fc):
         return Structural.setLoadDof(forcelist, node_list_fc)
     
-    def getForceNodeLoadApply(modelinfo, forcelist):
+    def __ForceNodeLoadApply(modelinfo, forcelist):
 
         forcenodedof = np.zeros((1, 4))      
        
         nodelist = forcelist[3:]
-        node_list_fc, dir_fc = LoadStructural.setNodes(nodelist, modelinfo['coord'], modelinfo['regions'])
+        node_list_fc, dir_fc = get_nodes_from_list(nodelist, modelinfo['coord'], modelinfo['regions'])
 
         force_value_vector = np.ones_like(node_list_fc) * float(forcelist[2])
         # fc_dof = forcelist[1]
@@ -67,11 +64,11 @@ class LoadStructural(Structural):
         return forcenodedof
 
     
-    def getForceEdgeLoadApply(modelinfo, forcelist):
+    def __ForceEdgeLoadApply(modelinfo, forcelist):
         forcenodedof = np.zeros((1, 4))      
        
         nodelist = forcelist[3:]
-        node_list_fc, dir_fc = LoadStructural.setNodes(nodelist, modelinfo['coord'], modelinfo['regions'])
+        node_list_fc, dir_fc = get_nodes_from_list(nodelist, modelinfo['coord'], modelinfo['regions'])
 
         force_value = float(forcelist[2])
         force_dirc = forcelist[1]
@@ -99,11 +96,11 @@ class LoadStructural(Structural):
         return forcenodedof
     
 
-    def getForceSurfLoadApply(modelinfo, forcelist):
+    def __ForceSurfLoadApply(modelinfo, forcelist):
         forcenodedof = np.zeros((1, 4))      
        
         nodelist = forcelist[3:]
-        node_list_fc, dir_fc = LoadStructural.setNodes(nodelist, modelinfo['coord'], modelinfo['regions'])
+        node_list_fc, dir_fc = get_nodes_from_list(nodelist, modelinfo['coord'], modelinfo['regions'])
 
         force_value = float(forcelist[2])
         force_dirc = forcelist[1]
@@ -149,15 +146,15 @@ class LoadStructural(Structural):
 
     def __line_force_distribuition(inci, coord, tabgeo, node_list_fc, force_value, force_dirc, elemid, nodedof):
         
-        elmlist = [None]
-        for ii in range(len(node_list_fc)):
-            elm2list = inci[
-                (np.asarray(np.where(inci[:, 4:] == node_list_fc[ii])))[0][:],
-                0,
-            ]
-            elmlist.extend(elm2list)
-        elmlist = elmlist[1::][::]
-        elmlist = np.unique(elmlist)
+        # elmlist = [None]
+        # for ii in range(len(node_list_fc)):
+        #     elm2list = inci[
+        #         (np.asarray(np.where(inci[:, 4:] == node_list_fc[ii])))[0][:],
+        #         0,
+        #     ]
+        #     elmlist.extend(elm2list)
+        # elmlist = elmlist[1::][::]
+        # elmlist = np.unique(elmlist)
         
         # if (fc_set == "x") or (fc_set == "y_x") or (fc_set == "z_x"):
         #     coord_fc = 1
@@ -165,6 +162,8 @@ class LoadStructural(Structural):
         #     coord_fc = 2
         # elif (fc_set == "z") or (fc_set == "x_z") or (fc_set == "y_z"):
         #     coord_fc = 3
+        
+        elmlist = get_elemen_from_nodelist(inci, node_list_fc)
 
         if elemid == 2231:
             force_value_vector = np.zeros((nodedof * len(node_list_fc), 1))
@@ -441,12 +440,15 @@ class LoadStructural(Structural):
             force_value_vector:np.array  -- force vecto
             fc_type_dof:list             -- force list dofs
         """
-        elmlist = np.array([0], dtype=int)
-        for ii in range(len(node_list_fc)):
-            elm2list = inci[(np.asarray(np.where(inci[:, 4:] == node_list_fc[ii])))[0][:], 0,]
-            elmlist = np.append(elmlist, elm2list)
-        elmlist = np.unique(elmlist)
-        elmlist = elmlist[1::][::]
+        # elmlist = np.array([0], dtype=int)
+        # for ii in range(len(node_list_fc)):
+        #     elm2list = inci[(np.asarray(np.where(inci[:, 4:] == node_list_fc[ii])))[0][:], 0,]
+        #     elmlist = np.append(elmlist, elm2list)
+        # elmlist = np.unique(elmlist)
+        # elmlist = elmlist[1::][::]
+        
+        elmlist = get_elemen_from_nodelist(inci, node_list_fc)
+       
         if elemid == 3381:
             force_value_vector = np.zeros((nodedof * len(node_list_fc), 1))
             for i in range(len(elmlist)):

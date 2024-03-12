@@ -13,7 +13,7 @@ class BoundCondStruct(Structural):
         for bc_index in range(len(bclist)):
             if bclist[bc_index][0] == "fixed":
                 bcl = bclist[bc_index]
-                bcapp = BoundCondStruct.getBCFixed(modelinfo, bcl)
+                bcapp = BoundCondStruct.__BCFixed(modelinfo, bcl)
                 boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
             else:
                 pass
@@ -21,18 +21,18 @@ class BoundCondStruct(Structural):
         boncdnodeaply = boncdnodeaply[1::][::]
         return boncdnodeaply
         
-    def setNodes(bclist, coord, regions):
-        return get_nodes_from_list(bclist, coord, regions)
+    # def setNodes(bclist, coord, regions):
+    #     return get_nodes_from_list(bclist, coord, regions)
     
     def setBCDof(bclist, node_list_bc):
         return Structural.setBCDof(bclist, node_list_bc)
                
-    def getBCFixed(modelinfo, bclist):
+    def __BCFixed(modelinfo, bclist):
         
         boncdnodeaply = np.zeros((1, 2))
        
         nodelist = bclist[2:]
-        node_list_bc, dir_fc = BoundCondStruct.setNodes(nodelist, modelinfo['coord'], modelinfo['regions'])
+        node_list_bc, dir_fc = get_nodes_from_list(nodelist, modelinfo['coord'], modelinfo['regions'])
         
         if bclist[1] == 'all':
             bcdof = 0

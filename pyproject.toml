@@ -40,7 +40,7 @@ authors = [
     {name = "Antonio Campos", email = "antviniciuscampos@gmail.com"},
 ]
 readme = "README.md"
-version = "0.2.6"
+version = "0.2.7"
 license = {file = "LICENSE.md"}
 requires-python = ">3.8"
 dependencies = [
@@ -64,6 +64,11 @@ classifiers = [
   "Programming Language :: Python :: 3.8",
 ]
 
+[project.urls]
+Documentation = "myfempy.readthedocs.io/en/latest/"
+Repository = "https://github.com/avgcampos/myfempy/releases"
+
+# Cython Compiler
 [build-system]
 requires = ["setuptools", "numpy", "cython"]
 build-backend = "setuptools.build_meta"
@@ -77,7 +82,3 @@ find = {}
 
 [tool.setuptools.cmdclass]
 build_ext = "setup_wrap_cy_pyx.build_ext"
-
-[project.urls]
-Documentation = "myfempy.readthedocs.io/en/latest/"
-Repository = "https://github.com/avgcampos/myfempy/releases"

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
-
+from myfempy.core.utilities import get_nodes_from_list, get_elemen_from_nodelist
 
 class SetPhysics():
     '''Set Physics Class <ClassOrder>'''
@@ -35,16 +35,20 @@ class SetPhysics():
             forcelist = flist[np.where(flist[:, 7] == str(step + 1))[0], :]
             fapp = self.loads.getForceApply(modelinfo, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
-        
         forcenodeaply = forcenodeaply[1::][::]
         return forcenodeaply
     
     def getBoundCondApply(self, physicdata, modelinfo):
         bclist = SetPhysics.setBoundCondList(self, physicdata)
-        
         boncdnodeaply = self.boundcond.getBCApply(modelinfo, bclist)
-
         return boncdnodeaply
+    
+    def getNodeList(self, domain_nodelist, coord, regions):
+        return get_nodes_from_list(domain_nodelist, coord, regions)
+    
+    def getElementList(self, inci, nodelist):
+        return get_elemen_from_nodelist(inci, nodelist)
+    
     
     #-----------------------------------------------
     # privates methods

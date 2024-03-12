@@ -308,7 +308,7 @@ def view_text_point(coord: np.ndarray, coordMax: float, scala_view: float, text:
     bc_text_actor.SetMapper(bc_text_map)
     bc_text_actor.SetScale(scala, scala, scala)
     bc_text_actor.SetPosition(center_cone)
-    bc_text_actor.GetProperty().SetColor(0, 0, 0)
+    bc_text_actor.GetProperty().SetColor(0.0, 0.0, 0.0)
     return bc_text_actor
 
 

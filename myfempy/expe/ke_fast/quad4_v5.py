@@ -1,7 +1,8 @@
 
 from myfempy.core.shapes.shape import Shape
 
-from myfempy.core.shapes.quad4_tasks import ShapeFunctions, DiffShapeFuntion, Jacobian, invJacobi, detJacobi, NodeList, NodeCoord, LocKey
+# from myfempy.expe.ke_fast.quad4_tasks import ShapeFunctions, DiffShapeFuntion, Jacobian, invJacobi, detJacobi, NodeList, NodeCoord, LocKey
+from myfempy.expe.ke_fast.quad4_tasks_cy_v1 import ShapeFunctions, DiffShapeFuntion, Jacobian, invJacobi, detJacobi, NodeList, NodeCoord, LocKey
 
 class Quad4(Shape):
     '''Quadrilateral 4-Node Shape Class <ConcreteClassService>'''

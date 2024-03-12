@@ -37,7 +37,7 @@ class  PlaneStressIsotropic(Material):
         
         nodelist = Model.shape.getNodeList(Model.inci, element_number)
 
-        loc = Model.shape.getShapeKey(nodelist, nodedof)
+        loc = Model.shape.getLocKey(nodelist, nodedof)
 
         elementcoord = Model.shape.getNodeCoord(Model.coord, nodelist)
 

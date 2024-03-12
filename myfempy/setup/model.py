@@ -220,8 +220,8 @@ class SetModel():
         MAXCONECELM = int(20)  # Max 20-Nodes (hexa20)
         inci = [[None] * (1 + 3 + MAXCONECELM)]
         nelem = len(elemlist)
-        conec_elm = np.zeros((nelem, MAXCONECELM + 1))
-        prop_elm = np.zeros((nelem, 3))
+        conec_elm = np.zeros((nelem, MAXCONECELM + 1), dtype=np.int32)
+        prop_elm = np.zeros((nelem, 3), dtype=np.int32)
         mesh_type_list = dict()
         contelm = int(0)
         for kk in range(nelem):

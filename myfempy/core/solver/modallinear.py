@@ -9,7 +9,7 @@ from scipy.sparse.linalg import eigsh
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
-# from myfempy.core.solver.assemblerfull import AssemblerFULL
+from myfempy.core.solver.assemblerfull import AssemblerFULL
 
 class ModalLinear(Solver):
     
@@ -17,13 +17,14 @@ class ModalLinear(Solver):
      Modal(eig problem) Linear Solver Class <ConcreteClassService>
     """
     
-    def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss):  
+    def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, SYMM=None, MP=None):  
         matrix = dict()
-        # matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
-        # matrix['mass'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss,  type_assembler = 'mass_consistent')
-        
-        matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
-        matrix['mass'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss,  type_assembler = 'mass_consistent')
+        if SYMM:
+            matrix['stiffness'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness', MP=MP)
+            matrix['mass'] = AssemblerSYMM.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss,  type_assembler = 'mass_consistent', MP=MP)
+        else:
+            matrix['stiffness'] = AssemblerFULL.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler = 'linear_stiffness')
+            matrix['mass'] = AssemblerFULL.getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss,  type_assembler = 'mass_consistent')
         return matrix 
     
     def getLoadAssembler(loadaply, nodetot, nodedof):
