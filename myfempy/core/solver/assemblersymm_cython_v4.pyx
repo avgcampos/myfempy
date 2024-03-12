@@ -22,7 +22,7 @@ from myfempy.core.solver.assembler import getMatrix, getLoc
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False)  # turn off negative index wrapping for entire function           
 @cython.nonecheck(False)     
-def getMatrixAssemblerSym(Model,
+def getMatrixAssemblerSymm(Model,
                                  INT32_t [:, ::1] inci,
                                  FLT64_t [:, ::1] coord,
                                  FLT64_t [:, ::1] tabmat,
