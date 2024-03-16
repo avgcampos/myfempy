@@ -10,6 +10,11 @@ FLT64 = float64
 from myfempy.core.elements.element import Element
 from myfempy.core.utilities import gauss_points
 
+def HDIFFNINVJ(H, diffN, invJ):
+    invJdiffN = dot(invJ, diffN)
+    B = dot(H, invJdiffN)
+    return B
+
 def BTCB(diffN, H, invJ, C):              
     B = HDIFFNINVJ(H, diffN, invJ)
     BT = B.transpose()
@@ -22,11 +27,6 @@ def NTRN(N, R):
     NTR = dot(NT, R)
     NRN = dot(NTR, N)
     return NRN
-
-def HDIFFNINVJ(H, diffN, invJ):
-    invJdiffN = dot(invJ, diffN)
-    B = dot(H, invJdiffN)
-    return B
 
 class Plane(Element):
     '''Plane Structural Element Class <ConcreteClassService>'''
@@ -73,7 +73,7 @@ class Plane(Element):
         E = tabmat[int(inci[element_number, 2]) - 1, 0]  # material elasticity
         v = tabmat[int(inci[element_number, 2]) - 1, 1]  # material poisson ratio
         C = Model.material.getElasticTensor(E, v)
-        L = tabgeo[int(inci[element_number, 3] - 1), 4]
+        t = tabgeo[int(inci[element_number, 3] - 1), 4]
         H = Plane.getH()
         pt, wt = gauss_points(type_shape, intgauss)
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
@@ -82,7 +82,7 @@ class Plane(Element):
             diffN = Model.shape.getDiffShapeFuntion(pt[pp], nodedof)                
             invJ = Model.shape.getinvJacobi(pt[pp], elementcoord, nodedof)     
             BCB = BTCB(diffN, H, invJ, C)                                          
-            K_elem_mat += BCB*L*abs(detJ)*wt[pp]*wt[pp]
+            K_elem_mat += BCB*t*abs(detJ)*wt[pp]*wt[pp]
         return K_elem_mat
     
     def getMassConsistentMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number):
@@ -95,14 +95,14 @@ class Plane(Element):
         nodelist = Model.shape.getNodeList(inci, element_number)    
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
         R = tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
-        L = tabgeo[int(inci[element_number, 3] - 1), 4]
+        t = tabgeo[int(inci[element_number, 3] - 1), 4]
         pt, wt = gauss_points(type_shape, intgauss)
         M_elem_mat = zeros((edof, edof),dtype=FLT64)
         for pp in range(intgauss):
             detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
             N = Model.shape.getShapeFunctions(pt[pp], nodedof)
             NRN = NTRN(N, R)
-            M_elem_mat += NRN*L*abs(detJ)*wt[pp]*wt[pp]  
+            M_elem_mat += NRN*t*abs(detJ)*wt[pp]*wt[pp]  
         return M_elem_mat
     
     def getElementDeformation(U, modelinfo):
@@ -120,7 +120,7 @@ class Plane(Element):
         return ["DISPL_X", "DISPL_Y", "DISPL_Z"] 
     
     def getElementVolume(Model, inci, coord, tabgeo, intgauss, element_number):
-        L = tabgeo[int(inci[element_number, 3] - 1), 4]
+        t = tabgeo[int(inci[element_number, 3] - 1), 4]
         shape_set = Model.shape.getShapeSet()
         type_shape = shape_set["key"]
         nodelist = Model.shape.getNodeList(inci, element_number)
@@ -128,5 +128,5 @@ class Plane(Element):
         pt, wt = gauss_points(type_shape, intgauss)
         detJ = 0.0
         for pp in range(intgauss):
-            detJ += Model.shape.getdetJacobi(pt[pp], elementcoord)
-        return detJ*L
+            detJ += abs(Model.shape.getdetJacobi(pt[pp], elementcoord))
+        return detJ*t

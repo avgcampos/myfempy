@@ -1,6 +1,6 @@
+from __future__ import annotations
 
 from myfempy.core.shapes.shape import Shape
-
 from myfempy.core.shapes.quad4_tasks import ShapeFunctions, DiffShapeFuntion, Jacobian, invJacobi, detJacobi, NodeList, NodeCoord, LocKey
 
 class Quad4(Shape):
@@ -14,6 +14,7 @@ class Quad4(Shape):
             "nodes": ["i", "j", "k", "l"],
         }
         return shapeset
+                       
                              
     def getShapeFunctions(r_coord, nodedof):
         return ShapeFunctions(r_coord, nodedof)
@@ -30,7 +31,7 @@ class Quad4(Shape):
     def getinvJacobi(r_coord, element_coord, nodedof):
         return invJacobi(r_coord, element_coord, nodedof)
     
-    # @profile
+
     def getdetJacobi(r_coord, element_coord):
         return detJacobi(r_coord, element_coord)
     

@@ -68,7 +68,7 @@ classifiers = [
 Documentation = "myfempy.readthedocs.io/en/latest/"
 Repository = "https://github.com/avgcampos/myfempy/releases"
 
-# Cython Compiler
+### Cython Compiler
 [build-system]
 requires = ["setuptools", "numpy", "cython"]
 build-backend = "setuptools.build_meta"

@@ -247,8 +247,7 @@ class newAnalysis():
         # modelinfo["forces"] = FEANewAnalysis.getLoadApply(self)
         # modelinfo["constrains"] = FEANewAnalysis.getBCApply(self)
         try:
-            path=str(self.path)
-            preview_plot(previewdata, self.modelinfo, path)
+            preview_plot(previewdata, self.modelinfo, str(self.path))
             logging.info('TRY RUN PREVIEW PLOT -- SUCCESS')
         except:
             logging.warning('TRY RUN PREVIEW PLOT -- FAULT')
