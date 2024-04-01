@@ -38,7 +38,7 @@ cdef double DET(double [:] A):
     return det
  
 cdef double [:,:] INV(double [:] A):
-    cdef double [:,:] invA = (1/A[0]*A[3]-A[1]*A[2])*np.array([[A[3], -A[1]], [-A[2], A[0]]])
+    cdef double [:,:] invA = (1/(A[0]*A[3]-A[1]*A[2]))*np.array([[A[3], -A[1]], [-A[2], A[0]]])
     return invA
     
 

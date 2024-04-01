@@ -382,11 +382,11 @@ Notes: 1 - Gmsh is NOT part of myfempy projects;
 |----------|----------|-------------|
 | length   | m        | mm          |
 | force    | N        | N           |
-| mass     | kg       | ton(kg E03) |
+| mass     | kg       | kg          |
 | time     | s        | s           |
-| stress   | Pa(N/m^2) | MPa(N/mm^2)  |
-| energy   | J        | mJ(J E-03)  |
-| density  | kg/m^3   | ton/mm^3     |
+| stress   | Pa(N/m^2)| MPa(N/mm^2) |
+| energy   | J        | mJ(J E-3)   |
+| density  | kg/m^3   | kg/mm^3(kg/m^3 E-9)|
 |          |          |             |
 
 ## Axis Diretions

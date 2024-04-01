@@ -2,11 +2,11 @@ from __future__ import annotations
 
 # from os import environ
 # environ['OMP_NUM_THREADS'] = '3'
-from numpy import zeros, float64
-from scipy.sparse.linalg import spsolve, minres
+from numpy import zeros, float64, dot
+from scipy.sparse.linalg import minres
 
-from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
+from myfempy.core.solver.solver import Solver
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
 from myfempy.core.solver.assemblerfull import AssemblerFULL
 
@@ -29,29 +29,38 @@ class StaticLinearIterative(Solver):
         
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
-        return AssemblerSYMM.getLoadAssembler(loadaply, nodetot, nodedof)
+        return AssemblerFULL.getLoadAssembler(loadaply, nodetot, nodedof)
 
     def getConstrains(constrains, nodetot, nodedof):
-        return AssemblerSYMM.getConstrains(constrains, nodetot, nodedof)
+        return AssemblerFULL.getConstrains(constrains, nodetot, nodedof)
+    
+    def getDirichletNH(constrains, nodetot, nodedof):
+        return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
         
-    def runSolve(fulldofs, assembly, forcelist, freedof, solverset):
+    def runSolve(assembly, constrainsdof, fulldofs, solverset):
         solution = dict()
-        
         nsteps = setSteps(solverset["STEPSET"])
-        U0 = zeros((fulldofs, 1), dtype=float64)     #empty((fulldofs, 1))
-        U1 = zeros((fulldofs, 1), dtype=float64)     #empty((fulldofs, 1))
-        U = zeros((fulldofs, nsteps), dtype=float64) #empty((fulldofs, nsteps))
+        
         stiffness = assembly['stiffness']
-        sA = stiffness[:, freedof][freedof, :]
-        sU0 = U0[freedof, 0]
+        forcelist = assembly['loads']
+        
+        U0 = zeros((fulldofs), dtype=float64)           #empty((fulldofs, 1))
+        U1 = zeros((fulldofs), dtype=float64)           #empty((fulldofs, 1))
+        U = zeros((fulldofs, nsteps), dtype=float64)    #empty((fulldofs, nsteps))
+        Uc = assembly['bcdirnh']
+        
+        freedof = constrainsdof['freedof']
+        constdof = constrainsdof['constdof']
+                        
         for step in range(nsteps):
+            forcelist[freedof, step] = forcelist[freedof, step] - dot(stiffness[:,constdof][freedof,:].toarray(), Uc[constdof, step])
             try:
-                U1[freedof, 0], info = minres(A=sA, b=forcelist[freedof, step].toarray(), x0=sU0, tol=1E-10, maxiter=1000)
+                U1[freedof], info = minres(A=stiffness[:,freedof][freedof,:], b=forcelist[freedof, step], tol=1E-10, maxiter=1000)
             except:
-                raise info          
-            U1[freedof, 0] += U0[freedof, 0]
-            U[freedof, step] = U1[freedof, 0]
-            U0[freedof, 0] = U1[freedof, 0]
+                raise info
+            U1[constdof] = Uc[constdof, step]
+            U1[:] += U0[:]
+            U[:, step] = U1
+            U0[:] = U1[:]
         solution['U'] = U
-        solution['INFO'] = info
         return solution

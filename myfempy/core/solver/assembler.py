@@ -19,7 +19,8 @@ def getLoc(Model, inci, element_number):
     elem_set = Model.element.getElementSet()
     nodedof = len(elem_set["dofs"]['d'])
     nodelist = Model.shape.getNodeList(inci, element_number)
-    return Model.shape.getLocKey(nodelist, nodedof)
+    loc = Model.shape.getLocKey(nodelist, nodedof)
+    return np.array(loc)
 
 class Assembler(ABC):
     
@@ -38,4 +39,9 @@ class Assembler(ABC):
     @abstractmethod
     def getConstrains():
         pass
+    
+    @abstractmethod
+    def getDirichletNH():
+        pass
+    
     

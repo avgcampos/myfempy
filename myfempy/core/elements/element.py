@@ -4,8 +4,7 @@ import numpy as np
 
 def setElement(set_element):
     if set_element['type'] == 'plane':
-        from myfempy.expe.ke_fast.plane import Plane
-        # from myfempy.core.elements.plane import Plane
+        from myfempy.core.elements.plane import Plane
         return Plane
     
     elif set_element['type'] == 'platekc':

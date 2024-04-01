@@ -80,27 +80,30 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
         pass
     else:
         previewset["RENDER"]["cs"] = False
-    previewset["coord"] = modelinfo["coord"]
-    previewset["inci"] = modelinfo["inci"]
-    previewset["nnode"] = len(modelinfo["inci"])
-    previewset["nodecon"] = modelinfo["nodecon"]
-    previewset["dofs"] = modelinfo["dofs"]
-    
-    if "forces" in modelinfo.keys():
-        previewset["forces"] = modelinfo["forces"]
-    
-    if "constrains" in modelinfo.keys():
-        previewset["constrains"] = modelinfo["constrains"]
-    else:
-        pass
-    
+        
     previewset["tabcs"] = dict()
     previewset["tabcs"]["typSection"] = []
     previewset["tabcs"]["dimSection"] = []
     for gg in range(len(modelinfo["tabgeo"])):
         previewset["tabcs"]["typSection"].append(int(modelinfo["tabgeo"][gg][-1]))
         previewset["tabcs"]["dimSection"].append(modelinfo["tabgeo"][gg][5:9])
+        
+    if "forces" in modelinfo.keys():
+        previewset["forces"] = modelinfo["forces"]
+    else:
+        pass
     
+    if "constrains" in modelinfo.keys():
+        previewset["constrains"] = modelinfo["constrains"]
+    else:
+        pass
+    
+    previewset["coord"] = modelinfo["coord"]
+    previewset["inci"] = modelinfo["inci"]
+    previewset["nnode"] = modelinfo["nnode"]
+    previewset["nodecon"] = modelinfo["nodecon"]
+    previewset["dofs"] = modelinfo["dofs"]
+        
     build_preview(previewset, path)
     
     # if "QUALITY" in previewset.keys():
@@ -194,10 +197,10 @@ def build_preview(previewset: dict, path):
         dimbclist = previewset["constrains"].shape[0]
         for num_bc in range(dimbclist):
             bondCond_vet = previewset['constrains'][[num_bc]][0]
-            if int(bondCond_vet[0]) == 0:
+            if int(bondCond_vet[1]) == 0:
                 pass
             else:
-                bondCond_vet[0] = __setBCDof(key_list_bc[val_list_bc.index(int(bondCond_vet[0]))])
+                bondCond_vet[1] = __setBCDof(key_list_bc[val_list_bc.index(int(bondCond_vet[1]))])
             exec(
                 f'bc_point_actor_cone_{num_bc}, bc_point_actor_tdof_{num_bc} = view_bondcond_point(previewset["coord"],bondCond_vet,scala_view)'
             )
@@ -327,6 +330,7 @@ def __setLoadDof(forcedof):
         "masspoint": 15,
         "spring2ground": 16,
         "damper2ground": 17,
+        "cg": 18,
     }
     return fdoftype[forcedof]
 

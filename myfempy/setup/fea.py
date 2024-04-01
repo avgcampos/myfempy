@@ -14,8 +14,7 @@ from myfempy.setup.model import SetModel
 from myfempy.setup.physics import SetPhysics
 from myfempy.setup.results import setPostProcess
 from myfempy.utils.utils import newDir
-
-from myfempy.core.utilities import addMatrix
+from myfempy.core.utilities import addMatrix, setSteps
 
 import sys
 import logging
@@ -113,7 +112,7 @@ class newAnalysis():
             logging.info('TRY SET PHYSICS -- SUCCESS')
         except:
             logging.warning('TRY SET PHYSICS -- FAULT')
-        self.physic = SetPhysics(Loads, BoundCond)
+        self.physic = SetPhysics(self.model, Loads, BoundCond)
         self.physic.physicdata = physicdata
         self.modelinfo["forces"] = newAnalysis.getLoadApply(self)
         self.modelinfo["constrains"] = newAnalysis.getBCApply(self)
@@ -133,18 +132,17 @@ class newAnalysis():
         tabmat = self.modelinfo['tabmat']
         tabgeo = self.modelinfo['tabgeo']
         intgauss = self.modelinfo['intgauss']       
-        # try:
-        matrix = newAnalysis.getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss, self.symm, self.mp) #self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo)
-        #     logging.info('TRY RUN GLOBAL ASSEMBLY -- SUCCESS')     
-        # except:
-        #     logging.warning('TRY RUN GLOBAL ASSEMBLY -- FAULT')
+        try:
+            matrix = newAnalysis.getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss, self.symm, self.mp) #self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo)
+            logging.info('TRY RUN GLOBAL ASSEMBLY -- SUCCESS')     
+        except:
+            logging.warning('TRY RUN GLOBAL ASSEMBLY -- FAULT')
         loadaply = self.modelinfo["forces"] 
         try:
             addSpring = np.where(loadaply[:,1]==16)
             addMass = np.where(loadaply[:,1]==15)
             if addSpring[0].size:
                 addLoad = loadaply[addSpring, :][0]
-                print(len(addLoad))
                 for ii in range(len(addLoad)):
                     A_add = addLoad[ii, 2] * np.array([[1, -1], [-1, 1]])
                     loc = np.array([int(self.modelinfo['dofe']*addLoad[ii, 0]-(self.modelinfo['dofe'])),
@@ -183,32 +181,63 @@ class newAnalysis():
         # self.modelinfo = dict()
         # self.modelinfo['coord'] = self.coord
         # self.modelinfo['regions'] = self.regions
+        solverset["solverstatus"] = dict()
+        
         try:
             self.symm = solverset['SYMM']
+            solverset["solverstatus"]["typeasmb"] = 'SYMMETRIC'
         except:
             self.symm = False
+            solverset["solverstatus"]["typeasmb"] = 'FULL'
+        
         try:
             self.mp = solverset['MP']
+            solverset["solverstatus"]["ncpu"] = 'OPENMP_'+str(solverset['MP'])+'_CORES'
         except:
             self.mp = 0
-        solverset["solverstatus"] = dict()
+            solverset["solverstatus"]["ncpu"] = 'OPENMP_'+str(1)+'_CORES'
+        
         starttime = time()
         assembly, forcelist = newAnalysis.Assembly(self)
         endttime = time()
         solverset["solverstatus"]["timeasb"] = abs(endttime - starttime)
         solverset["solverstatus"]["memorysize"] = assembly['stiffness'].data.nbytes    
-        constrains = self.modelinfo["constrains"] #newAnalysis.getBCApply(self)
+                
+        constrains = self.modelinfo["constrains"]
+        nsteps = setSteps(solverset["STEPSET"])
+        constrainsdof = dict()
         try:
-            freedof, fixedof = newAnalysis.getConstrains(self, constrains)
+            freedof, fixedof, constdof = newAnalysis.getConstrains(self, constrains)
             logging.info('TRY RUN CONSTRAINS -- SUCCESS')
         except:
             logging.warning('TRY RUN CONSTRAINS -- FAULT')
+        constrainsdof['freedof'] = freedof
+        constrainsdof['constdof'] = constdof
+        
+        try:
+            Uc = newAnalysis.getDirichletNH(self, constrains)
+            logging.info('TRY SET DNH CONSTRAINS -- SUCCESS')
+        except:
+            logging.warning('TRY SET DNH CONSTRAINS -- FAULT')
+            
+        if forcelist.shape[1] != nsteps:
+            forcelist = np.repeat(forcelist,nsteps,axis=1)
+        else:
+            pass
+        assembly['loads'] = forcelist
+            
+        if Uc.shape[1] != nsteps:
+            Uc = np.repeat(Uc,nsteps,axis=1)
+        else:
+            pass
+        assembly['bcdirnh'] = Uc
+               
         try:
             starttime = time()
-            solverset['solution'] = self.solver.runSolve(self.modelinfo['fulldofs'], assembly, forcelist, freedof, solverset)
+            solverset['solution'] = self.solver.runSolve(assembly, constrainsdof, self.modelinfo['fulldofs'], solverset)
             endttime = time()
             solverset["solverstatus"]["timesim"] = abs(endttime - starttime)
-            logging.info('TRY RUN SOLVER -- SUCCESS') 
+            logging.info('TRY RUN SOLVER -- SUCCESS')
         except:
             logging.warning('TRY RUN SOLVER -- FAULT')
         return solverset
@@ -318,30 +347,23 @@ class newAnalysis():
         return self.physic.getBoundCondList(self.physic.physicdata)
     
     def getLoadApply(self):
-        # coord = FEANewAnalysis.getCoord(self)
         return self.physic.getLoadApply(self.physic.physicdata, self.modelinfo)
     
     def getBCApply(self):
-        # coord = FEANewAnalysis.getCoord(self)
         return self.physic.getBoundCondApply(self.physic.physicdata, self.modelinfo)
         
     def getConstrains(self, constrains):
-        # coord = FEANewAnalysis.getCoord(self) 
-        # constrains = FEANewAnalysis.getBCApply(self)
         nodetot = len(self.modelinfo['coord'])
-        # elem_set = self.model.element.getElementSet()
-        # nodedof = len(elem_set["dofs"])
-        freedof, fixedof = self.solver.getConstrains(constrains, nodetot, self.modelinfo['nodedof'])
-        return freedof, fixedof
+        freedof, fixedof, constdof = self.solver.getConstrains(constrains, nodetot, self.modelinfo['nodedof'])
+        return freedof, fixedof, constdof
+    
+    def getDirichletNH(self, constrains):
+        nodetot = len(self.modelinfo['coord'])
+        return self.solver.getDirichletNH(constrains, nodetot, self.modelinfo['nodedof'])
     
     def getLoadArray(self, loadaply):
-        # coord = FEANewAnalysis.getCoord(self)     
         nodetot = len(self.modelinfo['coord'])
-        # elem_set = self.model.element.getElementSet()
-        # nodedof = len(elem_set["dofs"])
-        # loadaply = FEANewAnalysis.getLoadApply(self)    
-        loadvec = self.solver.getLoadAssembler(loadaply, nodetot, self.modelinfo['nodedof'])
-        return loadvec
+        return self.solver.getLoadAssembler(loadaply, nodetot, self.modelinfo['nodedof'])
     
     def getRegions(self):
         return self.model.mesh.getRegionsList(self.model.mesh.getElementConection(self.model.modeldata['MESH']))
@@ -364,7 +386,6 @@ class newAnalysis():
     def __setMesh(modeldata):
         set_mesh = dict()
         set_mesh = modeldata['MESH']
-        # set_mesh['type'] = modeldata['MESH']['TYPE'] 
         set_mesh['shape'] = modeldata['ELEMENT']['SHAPE']
         return setMesh(set_mesh)
     
@@ -392,7 +413,8 @@ class newAnalysis():
     def __setDomain(physicdata):
         if physicdata['DOMAIN'] == 'structural':
             from myfempy.core.physic.bcstruct import BoundCondStruct
-            from myfempy.core.physic.loadstruct import LoadStructural
+            # from myfempy.core.physic.loadstruct import LoadStructural
+            from myfempy.expe.new_bc.loadstruct import LoadStructural
             return LoadStructural, BoundCondStruct
         elif physicdata['DOMAIN'] == 'thermal':
             pass

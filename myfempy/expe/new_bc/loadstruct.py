@@ -1,223 +1,224 @@
 from __future__ import annotations
 
-# import numpy as np
-from numpy import append, ones_like, repeat, unique, equal, any, sqrt, array, uint32, float64
+import numpy as np
 # from scipy.special import roots_legendre
 
 from myfempy.core.physic.structural import Structural
-from myfempy.core.utilities import getZerosArray, getNewArray, get_nodes_from_list, search_edgex, search_edgey, search_edgez, search_surfxy, search_surfyz, search_surfzx, search_nodexyz, poly_area
+from myfempy.core.utilities import poly_area, get_nodes_from_list, get_elemen_from_nodelist
+from myfempy.core.utilities import gauss_points
 
 class LoadStructural(Structural):
     '''Structural Load Class <ConcreteClassService>'''
 
-    def getForceApply(modelinfo, forcelist):
-        forcenodeaply = getZerosArray(1, 4, type=float64) #np.zeros((1, 4))
+    def getLoadApply(Model, modelinfo, forcelist):
+        forcenodeaply = np.zeros((1, 4))
                 
         for fc_index in range(len(forcelist)):
             if forcelist[fc_index][0] == "forcenode":
                 flist = forcelist[fc_index]
                 fapp = LoadStructural.__ForceNodeLoadApply(modelinfo, flist)
-                forcenodeaply = append(forcenodeaply, fapp, axis=0)
+                forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
             
             elif forcelist[fc_index][0] == "forceedge":
                 flist = forcelist[fc_index]
                 fapp = LoadStructural.__ForceEdgeLoadApply(modelinfo, flist)
-                forcenodeaply = append(forcenodeaply, fapp, axis=0)
+                forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
                 
             elif forcelist[fc_index][0] == "forcesurf":
                 flist = forcelist[fc_index]
                 fapp = LoadStructural.__ForceSurfLoadApply(modelinfo, flist)
-                forcenodeaply = append(forcenodeaply, fapp, axis=0)
-            
+                forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
+                
+            elif forcelist[fc_index][0] == "forcebody":
+                flist = forcelist[fc_index]
+                fapp = LoadStructural.__ForceBodyLoadApply(Model, modelinfo, flist)
+                forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
             else:
                 pass
         
         forcenodeaply = forcenodeaply[1::][::]
         return forcenodeaply
+    
+    def setLoadDof(forcelist, node_list_fc):
+        return Structural.setLoadDof(forcelist, node_list_fc)
+    
+    def __ForceBodyLoadApply(Model, modelinfo, forcelist):
+        forcenodedof = np.zeros((1, 4))      
+       
+        gravity_value = float(forcelist[2])
+
+        inci = modelinfo['inci']
+        coord = modelinfo['coord']
+        tabmat = modelinfo['tabmat']
+        tabgeo = modelinfo['tabgeo']
+        intgauss = modelinfo['intgauss']
+
+        fc_type_dof = modelinfo['dofs']['f'][forcelist[1]]
+
+        for ee in range(inci.shape[0]):
+            force_value_vector, nodelist = LoadStructural.__body_force_volumetric(Model, inci, coord, tabmat, tabgeo, intgauss, ee, gravity_value, fc_type_dof)
+                        
+            for j in range(len(nodelist)):
+                fcdof = np.array(
+                    [[
+                        int(nodelist[j]),
+                        fc_type_dof,
+                        force_value_vector[j],
+                        int(forcelist[7]),
+                        ]])
+                forcenodedof = np.append(forcenodedof, fcdof, axis=0)
         
-    def setNodes(nodelist, coord, regions):
-      return get_nodes_from_list(nodelist, coord, regions)
-    
-    
-    def setLoadDof(forcedof, node_list_fc):
-        if forcedof == "fx":
-            fcdof = 1 * ones_like(node_list_fc)
-        elif forcedof == "fy":
-            fcdof = 2 * ones_like(node_list_fc)
-        elif forcedof == "fz":
-            fcdof = 3 * ones_like(node_list_fc)
-        elif forcedof == "tx":
-            fcdof = 4 * ones_like(node_list_fc)
-        elif forcedof == "ty":
-            fcdof = 5 * ones_like(node_list_fc)
-        elif forcedof == "tz":
-            fcdof = 6 * ones_like(node_list_fc)
-        elif forcedof == "masspoint":
-            fcdof = 15 * ones_like(node_list_fc)
-        elif forcedof == "spring2ground":
-            fcdof = 16 * ones_like(node_list_fc)
-        elif forcedof == "damper2ground":
-            fcdof = 17 * ones_like(node_list_fc)
-        else:
-            print("input erro: force_opt_dir don't defined")
-        return fcdof
+        forcenodedof = forcenodedof[1::][::]
+        return forcenodedof
     
     def __ForceNodeLoadApply(modelinfo, forcelist):
 
-        forcenodedof = getZerosArray(1, 4, type=float64) #np.zeros((1, 4))      
+        forcenodedof = np.zeros((1, 4))      
        
         nodelist = forcelist[3:]
-        node_list_fc, dir_fc = LoadStructural.setNodes(nodelist, modelinfo['coord'], modelinfo['regions'])
+        node_list_fc, dir_fc = get_nodes_from_list(nodelist, modelinfo['coord'], modelinfo['regions'])
 
-        force_value_vector = ones_like(node_list_fc) * forcelist[2].astype(float64)
+        force_value_vector = np.ones_like(node_list_fc) * float(forcelist[2])
         # fc_dof = forcelist[1]
-        fc_type_dof = modelinfo['dofs']['f'][forcelist[1]]*ones_like(node_list_fc)
+        fc_type_dof = modelinfo['dofs']['f'][forcelist[1]]*np.ones_like(node_list_fc)
         # fc_type_dof = LoadStructural.setLoadDof(fc_dof, node_list_fc)
 
         for j in range(len(node_list_fc)):
 
-            list =[[
+            fcdof = np.array(
+                [[
                     int(node_list_fc[j]),
                     fc_type_dof[j],
                     force_value_vector[j],
                     int(forcelist[7]),
-                    ]]
-            fcdof = getNewArray(list, type=float64)
-            forcenodedof = append(forcenodedof, fcdof, axis=0)
+                    ]])
+            forcenodedof = np.append(forcenodedof, fcdof, axis=0)
         
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
 
     
     def __ForceEdgeLoadApply(modelinfo, forcelist):
-        forcenodedof = getZerosArray(1, 4, type=float64) #zeros((1, 4))      
+        forcenodedof = np.zeros((1, 4))      
        
         nodelist = forcelist[3:]
-        node_list_fc, dir_fc = LoadStructural.setNodes(nodelist, modelinfo['coord'], modelinfo['regions'])
+        node_list_fc, dir_fc = get_nodes_from_list(nodelist, modelinfo['coord'], modelinfo['regions'])
 
-        force_value = forcelist[2].astype(float64)
+        force_value = float(forcelist[2])
         force_dirc = forcelist[1]
 
         force_value_vector = LoadStructural.__line_force_distribuition(modelinfo['inci'], modelinfo['coord'], modelinfo['tabgeo'], node_list_fc, force_value, force_dirc, modelinfo['elemid'], modelinfo['nodedof'])
         
 
-        node_list_fc = repeat(node_list_fc, modelinfo["nodedof"], axis=0)
+        node_list_fc = np.repeat(node_list_fc, modelinfo["nodedof"], axis=0)
 
-        fc_type_dof = modelinfo['dofs']['f'][forcelist[1]]*ones_like(node_list_fc)       
+        fc_type_dof = modelinfo['dofs']['f'][forcelist[1]]*np.ones_like(node_list_fc)       
 
         # fc_type_dof = LoadStructural.setLoadDof(forcelist[1], node_list_fc)
         for j in range(len(node_list_fc)):
 
-            lsit =[[
+            fcdof = np.array(
+                [[
                     int(node_list_fc[j]),
                     fc_type_dof[j],
                     force_value_vector[j, 0],
                     int(forcelist[7]),
-                    ]]
-            fcdof = getNewArray(list, type=float64)
-            forcenodedof = append(forcenodedof, fcdof, axis=0)
+                    ]])
+            forcenodedof = np.append(forcenodedof, fcdof, axis=0)
         
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
     
 
     def __ForceSurfLoadApply(modelinfo, forcelist):
-        forcenodedof = getZerosArray(1, 4, type=float64) # np.zeros((1, 4))      
+        forcenodedof = np.zeros((1, 4))      
        
         nodelist = forcelist[3:]
-        node_list_fc, dir_fc = LoadStructural.setNodes(nodelist, modelinfo['coord'], modelinfo['regions'])
+        node_list_fc, dir_fc = get_nodes_from_list(nodelist, modelinfo['coord'], modelinfo['regions'])
 
         force_value = float(forcelist[2])
         force_dirc = forcelist[1]
 
         force_value_vector = LoadStructural.__plane_force_distribuition(modelinfo['inci'], modelinfo['coord'], node_list_fc, force_value, force_dirc, modelinfo['elemid'], modelinfo['nodedof'])
     
-        node_list_fc = repeat(node_list_fc, modelinfo["nodedof"], axis=0)
+        node_list_fc = np.repeat(node_list_fc, modelinfo["nodedof"], axis=0)
 
-        fc_type_dof = modelinfo['dofs']['f'][forcelist[1]]*ones_like(node_list_fc)       
+        fc_type_dof = modelinfo['dofs']['f'][forcelist[1]]*np.ones_like(node_list_fc)       
 
         for j in range(len(node_list_fc)):
 
-            list = [[
+            fcdof = np.array(
+                [[
                     int(node_list_fc[j]),
                     fc_type_dof[j],
                     force_value_vector[j, 0],
                     int(forcelist[7]),
-                    ]]
-            fcdof = getNewArray(list, type=float64)
-            forcenodedof = append(forcenodedof, fcdof, axis=0)
+                    ]])
+            forcenodedof = np.append(forcenodedof, fcdof, axis=0)
         
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
-    
-    # def __line_force_distribuition(matN, T, L, coord_l):
-    #     T = np.array([[2000], [1000]])
-
-    #     F = np.zeros((edof, 1))
-
-    #     npp = 2
-    #     pt, wp = roots_legendre(npp)
-
-    #     for pp in range(npp):
-
-    #         # N = matN(Nsf([+1, pt[pp]]))
-    #         # N = matN(Nsf([pt[pp], +1]))
-
-    #         detJ = np.sqrt(((coord_l[0,0]-coord_l[1,0])/2)**2 + ((coord_l[0,1]-coord_l[1,1])/2)**2)
-
-    #         F += np.dot(np.transpose(N), T)*t*detJ*wp[pp]
-
+      
+      
+    def __body_force_volumetric(Model, inci, coord, tabmat, tabgeo, intgauss, element_number, gravity_value, fc_type_dof):
+        # body force
+        elem_set = Model.element.getElementSet()
+        nodedof = len(elem_set["dofs"]['d'])
+        shape_set = Model.shape.getShapeSet()
+        nodecon = len(shape_set['nodes'])
+        type_shape = shape_set["key"]    
+        edof = nodecon * nodedof
+        nodelist = Model.shape.getNodeList(inci, element_number)    
+        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
+        R = tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
+        t = tabgeo[int(inci[element_number, 3] - 1), 4]
+        pt, wt = gauss_points(type_shape, intgauss)
+        G = gravity_value
+        W = np.zeros((nodedof,1))
+        W[fc_type_dof-1, 0] = R*G
+        force_value_vector = np.zeros((edof, 1))
+        for pp in range(intgauss):
+            detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
+            N = Model.shape.getShapeFunctions(pt[pp], nodedof)            
+            force_value_vector  += np.dot(N.transpose(), W)*t*abs(detJ)*wt[pp]
+        force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
+        return force_value_vector, nodelist
+      
     def __line_force_distribuition(inci, coord, tabgeo, node_list_fc, force_value, force_dirc, elemid, nodedof):
-        
-        elmlist = [None]
-        for ii in range(len(node_list_fc)):
-            idx = equal(inci[:, 4:], node_list_fc[ii])
-            elm2list = inci[idx, 0].astype(uint32) #inci[(np.asarray(np.where(inci[:, 4:] == node_list_fc[ii])))[0][:], 0,]
-            elmlist.extend(elm2list)
-        elmlist = elmlist[1::][::]
-        elmlist = unique(elmlist)
-        
-        # if (fc_set == "x") or (fc_set == "y_x") or (fc_set == "z_x"):
-        #     coord_fc = 1
-        # elif (fc_set == "y") or (fc_set == "x_y") or (fc_set == "z_y"):
-        #     coord_fc = 2
-        # elif (fc_set == "z") or (fc_set == "x_z") or (fc_set == "y_z"):
-        #     coord_fc = 3
+                
+        elmlist = get_elemen_from_nodelist(inci, node_list_fc)
 
         if elemid == 2231:
-            force_value_vector = getZerosArray(nodedof*len(node_list_fc), 1, type=float64) #np.zeros((nodedof * len(node_list_fc), 1))
+            force_value_vector = np.zeros((nodedof * len(node_list_fc), 1))
             for i in range(len(elmlist)):
                 noi = int(inci[int(elmlist[i] - 1), 4])
                 noj = int(inci[int(elmlist[i] - 1), 5])
                 nok = int(inci[int(elmlist[i] - 1), 6])
-                if any([noi == node_list_fc[:]]):
+                if np.any([noi == node_list_fc[:]]):
                     no1 = noi
-                    if any([noj == node_list_fc[:]]):
+                    if np.any([noj == node_list_fc[:]]):
                         no2 = noj
-                    elif any([nok == node_list_fc[:]]):
+                    elif np.any([nok == node_list_fc[:]]):
                         no2 = nok
                     else:
                         continue
-                elif any([noj == node_list_fc[:]]):
+                elif np.any([noj == node_list_fc[:]]):
                     no1 = noj
-                    if any([nok == node_list_fc[:]]):
+                    if np.any([nok == node_list_fc[:]]):
                         no2 = nok
                     else:
                         continue
                 else:
                     continue
                                
-                L = sqrt(
+                L = np.sqrt(
                     (coord[no1 - 1, 1] - coord[no2 - 1, 1]) ** 2
                     + (coord[no1 - 1, 2] - coord[no2 - 1, 2]) ** 2
                     + (coord[no1 - 1, 3] - coord[no2 - 1, 3]) ** 2
                 )
-                idx1 = equal(no1, node_list_fc) #where(no1 == node_list_fc)[0][0]
-                no1dof = node_list_fc[idx1]
-                # no2dof = #where(no2 == node_list_fc)[0][0]
-                idx2 = equal(no2, node_list_fc) #where(no1 == node_list_fc)[0][0]
-                no2dof = node_list_fc[idx2]
-                loc = array(
+                no1dof = np.where(no1 == node_list_fc)[0][0]
+                no2dof = np.where(no2 == node_list_fc)[0][0]
+                loc = np.array(
                     [
                         nodedof * no1dof,
                         nodedof * no1dof + 1,
@@ -230,12 +231,12 @@ class LoadStructural(Structural):
                 ]
                 
                 if force_dirc == "fx":
-                    force_value_vector[loc, 0] += array(
+                    force_value_vector[loc, 0] += np.array(
                         [force_value * tck * L / 2, 0, force_value * tck * L / 2, 0]
                     )
                 
                 elif force_dirc == "fy":
-                    force_value_vector[loc, 0] += array(
+                    force_value_vector[loc, 0] += np.array(
                         [0, force_value * tck * L / 2, 0, force_value * tck * L / 2]
                     )
                 
@@ -256,46 +257,44 @@ class LoadStructural(Structural):
                     pass
                     
         elif elemid == 2241:
-            force_value_vector = getZerosArray(nodedof*len(node_list_fc), 1, type=float64) #force_value_vector = np.zeros((nodedof * len(node_list_fc), 1))
+            force_value_vector = np.zeros((nodedof * len(node_list_fc), 1))
             for i in range(len(elmlist)):
                 noi = int(inci[int(elmlist[i] - 1), 4])
                 noj = int(inci[int(elmlist[i] - 1), 5])
                 nok = int(inci[int(elmlist[i] - 1), 6])
                 nol = int(inci[int(elmlist[i] - 1), 7])
-                if any([noi == node_list_fc[:]]):
+                if np.any([noi == node_list_fc[:]]):
                     no1 = noi
-                    if any([noj == node_list_fc[:]]):
+                    if np.any([noj == node_list_fc[:]]):
                         no2 = noj
-                    elif any([nol == node_list_fc[:]]):
+                    elif np.any([nol == node_list_fc[:]]):
                         no2 = nol
                     else:
                         continue
-                elif any([noj == node_list_fc[:]]):
+                elif np.any([noj == node_list_fc[:]]):
                     no1 = noj
-                    if any([nok == node_list_fc[:]]):
+                    if np.any([nok == node_list_fc[:]]):
                         no2 = nok
                     else:
                         continue
-                elif any([nok == node_list_fc[:]]):
+                elif np.any([nok == node_list_fc[:]]):
                     no1 = nok
-                    if any([nol == node_list_fc[:]]):
+                    if np.any([nol == node_list_fc[:]]):
                         no2 = nol
                     else:
                         continue
                 else:
                     continue
                 
-                L = sqrt(
+                L = np.sqrt(
                     (coord[no1 - 1, 1] - coord[no2 - 1, 1]) ** 2
                     + (coord[no1 - 1, 2] - coord[no2 - 1, 2]) ** 2
                     + (coord[no1 - 1, 3] - coord[no2 - 1, 3]) ** 2
                 )
-                idx1 = equal(no1, node_list_fc) #where(no1 == node_list_fc)[0][0]
-                no1dof = node_list_fc[idx1]
-                # no2dof = #where(no2 == node_list_fc)[0][0]
-                idx2 = equal(no2, node_list_fc) #where(no1 == node_list_fc)[0][0]
-                no2dof = node_list_fc[idx2]
-                loc = array(
+                no1dof = np.where(no1 == node_list_fc)[0][0]
+                no2dof = np.where(no2 == node_list_fc)[0][0]
+                
+                loc = np.array(
                     [
                         nodedof * no1dof,
                         nodedof * no1dof + 1,
@@ -308,12 +307,12 @@ class LoadStructural(Structural):
                 ]
                 
                 if force_dirc == "fx":
-                    force_value_vector[loc, 0] += array(
+                    force_value_vector[loc, 0] += np.array(
                         [force_value * tck * L / 2, 0, force_value * tck * L / 2, 0]
                     )
                 
                 elif force_dirc == "fy":
-                    force_value_vector[loc, 0] += array(
+                    force_value_vector[loc, 0] += np.array(
                         [0, force_value * tck * L / 2, 0, force_value * tck * L / 2]
                     )
                 
@@ -386,46 +385,44 @@ class LoadStructural(Structural):
                 #     fc_type_dof = np.array([1, 2])
         
         elif elemid == 2341:
-            force_value_vector = getZerosArray(nodedof*len(node_list_fc), 1, type=float64) #force_value_vector = np.zeros((nodedof * len(node_list_fc), 1))
+            force_value_vector = np.zeros((nodedof * len(node_list_fc), 1))
             for i in range(len(elmlist)):
                 noi = int(inci[int(elmlist[i] - 1), 4])
                 noj = int(inci[int(elmlist[i] - 1), 5])
                 nok = int(inci[int(elmlist[i] - 1), 6])
                 nol = int(inci[int(elmlist[i] - 1), 7])
-                if any([noi == node_list_fc[:]]):
+                if np.any([noi == node_list_fc[:]]):
                     no1 = noi
-                    if any([noj == node_list_fc[:]]):
+                    if np.any([noj == node_list_fc[:]]):
                         no2 = noj
-                    elif any([nol == node_list_fc[:]]):
+                    elif np.any([nol == node_list_fc[:]]):
                         no2 = nol
                     else:
                         continue
-                elif any([noj == node_list_fc[:]]):
+                elif np.any([noj == node_list_fc[:]]):
                     no1 = noj
-                    if any([nok == node_list_fc[:]]):
+                    if np.any([nok == node_list_fc[:]]):
                         no2 = nok
                     else:
                         continue
-                elif any([nok == node_list_fc[:]]):
+                elif np.any([nok == node_list_fc[:]]):
                     no1 = nok
-                    if any([nol == node_list_fc[:]]):
+                    if np.any([nol == node_list_fc[:]]):
                         no2 = nol
                     else:
                         continue
                 else:
                     continue
                 
-                L = sqrt(
+                L = np.sqrt(
                     (coord[no1 - 1, 1] - coord[no2 - 1, 1]) ** 2
                     + (coord[no1 - 1, 2] - coord[no2 - 1, 2]) ** 2
                     + (coord[no1 - 1, 3] - coord[no2 - 1, 3]) ** 2
                 )
-                idx1 = equal(no1, node_list_fc) #where(no1 == node_list_fc)[0][0]
-                no1dof = node_list_fc[idx1]
-                # no2dof = #where(no2 == node_list_fc)[0][0]
-                idx2 = equal(no2, node_list_fc) #where(no1 == node_list_fc)[0][0]
-                no2dof = node_list_fc[idx2]
-                loc = array(
+                no1dof = np.where(no1 == node_list_fc)[0][0]
+                no2dof = np.where(no2 == node_list_fc)[0][0]
+                
+                loc = np.array(
                     [
                         nodedof * no1dof,
                         nodedof * no1dof + 1,
@@ -440,7 +437,7 @@ class LoadStructural(Structural):
                 ]
                 
                 if force_dirc == "fz":
-                    force_value_vector[loc, 0] += array(
+                    force_value_vector[loc, 0] += np.array(
                         [force_value * tck * L / 2, 0, 0, force_value * tck * L / 2, 0, 0]
                     )
                 
@@ -466,14 +463,17 @@ class LoadStructural(Structural):
             force_value_vector:np.array  -- force vecto
             fc_type_dof:list             -- force list dofs
         """
-        elmlist = array([0], dtype=int)
-        for ii in range(len(node_list_fc)):
-            idx = equal(inci[:, 4:], node_list_fc[ii])
-            elm2list = inci[idx, 0].astype(uint32) #inci[(np.asarray(np.where(inci[:, 4:] == node_list_fc[ii])))[0][:], 0,]
-        elmlist = unique(elmlist)
-        elmlist = elmlist[1::][::]
+        # elmlist = np.array([0], dtype=int)
+        # for ii in range(len(node_list_fc)):
+        #     elm2list = inci[(np.asarray(np.where(inci[:, 4:] == node_list_fc[ii])))[0][:], 0,]
+        #     elmlist = np.append(elmlist, elm2list)
+        # elmlist = np.unique(elmlist)
+        # elmlist = elmlist[1::][::]
+        
+        elmlist = get_elemen_from_nodelist(inci, node_list_fc)
+       
         if elemid == 3381:
-            force_value_vector = getZerosArray(nodedof*len(node_list_fc), 1, type=float64) #force_value_vector = np.zeros((nodedof * len(node_list_fc), 1))
+            force_value_vector = np.zeros((nodedof * len(node_list_fc), 1))
             for i in range(len(elmlist)):
                 noi = int(inci[int(elmlist[i] - 1), 4])
                 noj = int(inci[int(elmlist[i] - 1), 5])
@@ -483,45 +483,45 @@ class LoadStructural(Structural):
                 non = int(inci[int(elmlist[i] - 1), 9])
                 noo = int(inci[int(elmlist[i] - 1), 10])
                 nop = int(inci[int(elmlist[i] - 1), 11])
-                if any([noi == node_list_fc[:]]):
+                if np.any([noi == node_list_fc[:]]):
                     no1 = noi
-                    if any([noj == node_list_fc[:]]):
+                    if np.any([noj == node_list_fc[:]]):
                         no2 = noj
-                        if any([nok == node_list_fc[:]]):
+                        if np.any([nok == node_list_fc[:]]):
                             no3 = nok
                             no4 = nol
                         else:
                             continue
-                    elif any([nom == node_list_fc[:]]):
+                    elif np.any([nom == node_list_fc[:]]):
                         no2 = nom
-                        if any([nop == node_list_fc[:]]):
+                        if np.any([nop == node_list_fc[:]]):
                             no3 = nop
                             no4 = nol
-                        elif any([non == node_list_fc[:]]):
+                        elif np.any([non == node_list_fc[:]]):
                             no3 = non
                             no4 = noj
                         else:
                             continue
-                elif any([nom == node_list_fc[:]]):
+                elif np.any([nom == node_list_fc[:]]):
                     no1 = nom
-                    if any([non == node_list_fc[:]]):
+                    if np.any([non == node_list_fc[:]]):
                         no2 = non
-                        if any([noo == node_list_fc[:]]):
+                        if np.any([noo == node_list_fc[:]]):
                             no3 = non
                             no4 = nop
                         else:
                             continue
                     else:
                         continue
-                elif any([non == node_list_fc[:]]):
+                elif np.any([non == node_list_fc[:]]):
                     no1 = non
-                    if any([noo == node_list_fc[:]]):
+                    if np.any([noo == node_list_fc[:]]):
                         no2 = noo
                         no3 = nok
                         no4 = noj
                     else:
                         continue
-                elif any([noo == node_list_fc[:]]):
+                elif np.any([noo == node_list_fc[:]]):
                     no1 = noo
                     if np.any([nok == node_list_fc[:]]):
                         no2 = nok
@@ -543,7 +543,7 @@ class LoadStructural(Structural):
                 coord_x_no4 = coord[no4 - 1, 1]
                 coord_y_no4 = coord[no4 - 1, 2]
                 coord_z_no4 = coord[no4 - 1, 3]
-                poly = array(
+                poly = np.array(
                     [
                         [coord_x_no1, coord_y_no1, coord_z_no1],
                         [coord_x_no2, coord_y_no2, coord_z_no2],
@@ -552,19 +552,11 @@ class LoadStructural(Structural):
                     ]
                 )
                 A = poly_area(poly)
-                # no1dof = np.where(no1 == node_list_fc)[0][0]
-                # no2dof = np.where(no2 == node_list_fc)[0][0]
-                # no3dof = np.where(no3 == node_list_fc)[0][0]
-                # no4dof = np.where(no4 == node_list_fc)[0][0]
-                idx = equal(no1, node_list_fc)
-                no1dof = node_list_fc[idx]
-                idx = equal(no2, node_list_fc)
-                no2dof = node_list_fc[idx]
-                idx = equal(no2, node_list_fc)
-                no3dof = node_list_fc[idx]
-                idx = equal(no3, node_list_fc)
-                no4dof = node_list_fc[idx]
-                loc = array(
+                no1dof = np.where(no1 == node_list_fc)[0][0]
+                no2dof = np.where(no2 == node_list_fc)[0][0]
+                no3dof = np.where(no3 == node_list_fc)[0][0]
+                no4dof = np.where(no4 == node_list_fc)[0][0]
+                loc = np.array(
                     [
                         nodedof * no1dof,
                         nodedof * no1dof + 1,
@@ -581,7 +573,7 @@ class LoadStructural(Structural):
                     ]
                 )
                 if force_dirc == "fx":
-                    force_value_vector[loc, 0] += array(
+                    force_value_vector[loc, 0] += np.array(
                         [
                             force_value * A / 4,
                             0.0,
@@ -599,7 +591,7 @@ class LoadStructural(Structural):
                     )
 
                 elif force_dirc == "fy":
-                    force_value_vector[loc, 0] += array(
+                    force_value_vector[loc, 0] += np.array(
                         [
                             0.0,
                             force_value * A / 4,
@@ -617,7 +609,7 @@ class LoadStructural(Structural):
                     )
 
                 elif force_dirc == "fz":
-                    force_value_vector[loc, 0] += array(
+                    force_value_vector[loc, 0] += np.array(
                         [
                             0.0,
                             0.0,
@@ -635,35 +627,35 @@ class LoadStructural(Structural):
                     )
                     
         elif elemid == 3341:
-            force_value_vector = getZerosArray(nodedof*len(node_list_fc), 1, type=float64) #force_value_vector = np.zeros((nodedof * len(node_list_fc), 1))
+            force_value_vector = np.zeros((nodedof * len(node_list_fc), 1))
             for i in range(len(elmlist)):
                 noi = int(inci[int(elmlist[i] - 1), 4])
                 noj = int(inci[int(elmlist[i] - 1), 5])
                 nok = int(inci[int(elmlist[i] - 1), 6])
                 nol = int(inci[int(elmlist[i] - 1), 7])
-                if any([noi == node_list_fc[:]]):
+                if np.any([noi == node_list_fc[:]]):
                     no1 = noi
-                    if any([noj == node_list_fc[:]]):
+                    if np.any([noj == node_list_fc[:]]):
                         no2 = noj
-                        if any([nok == node_list_fc[:]]):
+                        if np.any([nok == node_list_fc[:]]):
                             no3 = nok
-                        elif any([nol == node_list_fc[:]]):
+                        elif np.any([nol == node_list_fc[:]]):
                             no3 = nol
                         else:
                             continue
-                    elif any([nok == node_list_fc[:]]):
+                    elif np.any([nok == node_list_fc[:]]):
                         no2 = nok
-                        if any([nol == node_list_fc[:]]):
+                        if np.any([nol == node_list_fc[:]]):
                             no3 = nol
                         else:
                             continue
                     else:
                         continue
-                elif any([noj == node_list_fc[:]]):
+                elif np.any([noj == node_list_fc[:]]):
                     no1 = noj
-                    if any([nok == node_list_fc[:]]):
+                    if np.any([nok == node_list_fc[:]]):
                         no2 = nok
-                        if any([nol == node_list_fc[:]]):
+                        if np.any([nol == node_list_fc[:]]):
                             no3 = nol
                         else:
                             continue
@@ -688,12 +680,9 @@ class LoadStructural(Structural):
                     ]
                 )
                 A = poly_area(poly)
-                idx = equal(no1, node_list_fc)
-                no1dof = node_list_fc[idx]
-                idx = equal(no2, node_list_fc)
-                no2dof = node_list_fc[idx]
-                idx = equal(no2, node_list_fc)
-                no3dof = node_list_fc[idx]
+                no1dof = np.where(no1 == node_list_fc)[0][0]
+                no2dof = np.where(no2 == node_list_fc)[0][0]
+                no3dof = np.where(no3 == node_list_fc)[0][0]
                 loc = np.array(
                     [
                         nodedof * no1dof,
@@ -708,7 +697,7 @@ class LoadStructural(Structural):
                     ]
                 )
                 if force_dirc == "fx":
-                    force_value_vector[loc, 0] += array(
+                    force_value_vector[loc, 0] += np.array(
                         [
                             force_value * A / 3,
                             0.0,
@@ -722,7 +711,7 @@ class LoadStructural(Structural):
                         ]
                     )
                 elif force_dirc == "fy":
-                    force_value_vector[loc, 0] += array(
+                    force_value_vector[loc, 0] += np.array(
                         [
                             0.0,
                             force_value * A / 3,
@@ -736,7 +725,7 @@ class LoadStructural(Structural):
                         ]
                     )
                 elif force_dirc == "fz":
-                    force_value_vector[loc, 0] += array(
+                    force_value_vector[loc, 0] += np.array(
                         [
                             0.0,
                             0.0,

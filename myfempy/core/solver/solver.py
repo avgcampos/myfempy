@@ -8,10 +8,6 @@ class Solver(ABC):
         
     @abstractmethod
     def runSolve():
-        
-        """
-        Solve Solve FE System: Model + Physics
-        """
         pass
     
     @abstractmethod
@@ -26,4 +22,8 @@ class Solver(ABC):
     
     @abstractmethod
     def getConstrains():
+        pass
+    
+    @abstractmethod
+    def getDirichletNH():
         pass

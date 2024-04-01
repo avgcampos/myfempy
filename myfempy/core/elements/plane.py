@@ -50,8 +50,8 @@ class Plane(Element):
     
     def getH():
         return array([[1, 0, 0, 0],
-                    [0, 0, 0, 1],
-                    [0, 1, 1, 0]], dtype=INT32)
+                      [0, 0, 0, 1],
+                      [0, 1, 1, 0]], dtype=INT32)
     
     def getB(Model, elementcoord, ptg, nodedof):
         diffN = Model.shape.getDiffShapeFuntion(ptg, nodedof)
@@ -82,7 +82,7 @@ class Plane(Element):
             diffN = Model.shape.getDiffShapeFuntion(pt[pp], nodedof)                
             invJ = Model.shape.getinvJacobi(pt[pp], elementcoord, nodedof)     
             BCB = BTCB(diffN, H, invJ, C)                                          
-            K_elem_mat += BCB*t*abs(detJ)*wt[pp]*wt[pp]
+            K_elem_mat += BCB*t*abs(detJ)*wt[pp]
         return K_elem_mat
     
     def getMassConsistentMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number):
@@ -92,7 +92,7 @@ class Plane(Element):
         nodecon = len(shape_set['nodes'])
         type_shape = shape_set["key"]    
         edof = nodecon * nodedof
-        nodelist = Model.shape.getNodeList(inci, element_number)    
+        nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
         R = tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
         t = tabgeo[int(inci[element_number, 3] - 1), 4]
@@ -102,7 +102,7 @@ class Plane(Element):
             detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
             N = Model.shape.getShapeFunctions(pt[pp], nodedof)
             NRN = NTRN(N, R)
-            M_elem_mat += NRN*t*abs(detJ)*wt[pp]*wt[pp]  
+            M_elem_mat += NRN*t*abs(detJ)*wt[pp]
         return M_elem_mat
     
     def getElementDeformation(U, modelinfo):

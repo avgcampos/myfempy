@@ -6,15 +6,7 @@ class Structural(ABC):
     @abstractmethod 
     def getForceApply():
         pass
- 
-    @abstractmethod
-    def setLoadDof():
-        pass
     
     @abstractmethod
     def getBCApply():
         pass 
-
-    @abstractmethod
-    def setBCDof():
-        pass

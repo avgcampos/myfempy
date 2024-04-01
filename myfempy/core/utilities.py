@@ -258,19 +258,19 @@ def get_nodes_from_list(nodelist, coord, regions):
         
     # ----- SEEKERS WITH TAG -----
     elif nodelist[0] == "point":
-        nodes = regions[0][1][int(nodelist[-1]) - 1][1][:]
+        nodes = regions[0][1][int(nodelist[4]) - 1][1][:]
         dir_fc = "x"
         # nodesapply.append(nodes)
         return nodes, dir_fc
     
     elif nodelist[0] == "line":
-        nodes = regions[1][1][int(nodelist[-1]) - 1][1][:]
+        nodes = regions[1][1][int(nodelist[4]) - 1][1][:]
         dir_fc = "x"
         # nodesapply.append(nodes)
         return nodes, dir_fc
     
     elif nodelist[0] == "plane":
-        nodes = regions[2][1][int(nodelist[-1]) - 1][1][:]
+        nodes = regions[2][1][int(nodelist[4]) - 1][1][:]
         dir_fc = "x"
         # nodesapply.append(nodes)
         return nodes, dir_fc

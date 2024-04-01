@@ -265,6 +265,15 @@ def write2log(log_file, log_data, modelinfo, solstatus):
             file_object.write(
                 "{0:<30} : {1:<10} BYTES\n".format("STIFFNESS SIZE ", str(solstatus["solverstatus"]["memorysize"]))
             )
+            file_object.write(
+                "{0:<30} : {1:<10} SET\n".format("TYPE ASSEMBLER ", str(solstatus["solverstatus"]["typeasmb"]))
+            )
+            file_object.write(
+                "{0:<30} : {1:<10} INT\n".format("CPU CORE ", str(solstatus["solverstatus"]["ncpu"]))
+            )
+            
+            
+            
 
 
 def writer2csv(csv2write_file, csv2write_data, label):

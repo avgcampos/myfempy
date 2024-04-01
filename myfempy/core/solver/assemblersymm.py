@@ -37,5 +37,8 @@ class AssemblerSYMM(Assembler):
     def getLoadAssembler(loadaply, nodetot, nodedof):
         return AssemblerFULL.getLoadAssembler(loadaply, nodetot, nodedof)
     
-    def getConstrains(constrains, nodetot, nodedof):
-        return AssemblerFULL.getConstrains(constrains, nodetot, nodedof)
+    def getConstrains(constrains, nodetot, nodedof, Uc):
+        return AssemblerFULL.getConstrains(constrains, nodetot, nodedof, Uc)
+    
+    def getDirichletNH(constrains, nodetot, nodedof): 
+        return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)

@@ -3,7 +3,7 @@ from __future__ import annotations
 from os import environ
 environ['OMP_NUM_THREADS'] = '3'
 
-from numpy import zeros, float64
+from numpy import zeros, float64, dot
 from scipy.sparse.linalg import spsolve 
 
 # from myfempy.core.alglin import linsolve_spsolve
@@ -27,23 +27,38 @@ class StaticLinear(Solver):
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
-        return AssemblerSYMM.getLoadAssembler(loadaply, nodetot, nodedof)
+        return AssemblerFULL.getLoadAssembler(loadaply, nodetot, nodedof)
 
     def getConstrains(constrains, nodetot, nodedof):
-        return AssemblerSYMM.getConstrains(constrains, nodetot, nodedof)
+        return AssemblerFULL.getConstrains(constrains, nodetot, nodedof)
+    
+    def getDirichletNH(constrains, nodetot, nodedof):
+        return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
        
-    def runSolve(fulldofs, assembly, forcelist, freedof, solverset):    
-        solution = dict()    
-        stiffness = assembly['stiffness']
+    def runSolve(assembly, constrainsdof, fulldofs, solverset):    
+        solution = dict()
         nsteps = setSteps(solverset["STEPSET"])
-        U0 = zeros((fulldofs, 1), dtype=float64)     #empty((fulldofs, 1))
-        U1 = zeros((fulldofs, 1), dtype=float64)     #empty((fulldofs, 1))
-        U = zeros((fulldofs, nsteps), dtype=float64) #empty((fulldofs, nsteps))
-        sA = stiffness[:, freedof][freedof, :]             
+        
+        stiffness = assembly['stiffness']
+        forcelist = assembly['loads']
+        
+        U0 = zeros((fulldofs), dtype=float64)           #empty((fulldofs, 1))
+        U1 = zeros((fulldofs), dtype=float64)           #empty((fulldofs, 1))
+        U = zeros((fulldofs, nsteps), dtype=float64)    #empty((fulldofs, nsteps))
+        Uc = assembly['bcdirnh']
+        
+        freedof = constrainsdof['freedof']
+        constdof = constrainsdof['constdof']
+        
         for step in range(nsteps):
-            U1[freedof, 0] = spsolve(sA, forcelist[freedof, step])                  
-            U1[freedof, 0] += U0[freedof, 0]
-            U[freedof, step] = U1[freedof, 0]
-            U0[freedof, 0] = U1[freedof, 0]        
+            forcelist[freedof, step] = forcelist[freedof, step] - dot(stiffness[:,constdof][freedof,:].toarray(), Uc[constdof, step])
+            try:
+                U1[freedof] = spsolve(stiffness[:,freedof][freedof,:], forcelist[freedof, step])      
+            except:
+                pass            
+            U1[constdof] = Uc[constdof, step]
+            U1[:] += U0[:]
+            U[:, step] = U1
+            U0[:] = U1[:]      
         solution['U'] = U
         return solution

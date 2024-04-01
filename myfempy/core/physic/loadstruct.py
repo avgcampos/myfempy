@@ -5,11 +5,12 @@ import numpy as np
 
 from myfempy.core.physic.structural import Structural
 from myfempy.core.utilities import poly_area, get_nodes_from_list, get_elemen_from_nodelist
+from myfempy.core.utilities import gauss_points
 
 class LoadStructural(Structural):
     '''Structural Load Class <ConcreteClassService>'''
 
-    def getForceApply(modelinfo, forcelist):
+    def getLoadApply(Model, modelinfo, forcelist):
         forcenodeaply = np.zeros((1, 4))
                 
         for fc_index in range(len(forcelist)):
@@ -27,15 +28,45 @@ class LoadStructural(Structural):
                 flist = forcelist[fc_index]
                 fapp = LoadStructural.__ForceSurfLoadApply(modelinfo, flist)
                 forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
-            
+                
+            elif forcelist[fc_index][0] == "forcebody":
+                flist = forcelist[fc_index]
+                fapp = LoadStructural.__ForceBodyLoadApply(Model, modelinfo, flist)
+                forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
             else:
                 pass
         
         forcenodeaply = forcenodeaply[1::][::]
         return forcenodeaply
-    
-    def setLoadDof(forcelist, node_list_fc):
-        return Structural.setLoadDof(forcelist, node_list_fc)
+        
+    def __ForceBodyLoadApply(Model, modelinfo, forcelist):
+        forcenodedof = np.zeros((1, 4))      
+       
+        gravity_value = float(forcelist[2])
+
+        inci = modelinfo['inci']
+        coord = modelinfo['coord']
+        tabmat = modelinfo['tabmat']
+        tabgeo = modelinfo['tabgeo']
+        intgauss = modelinfo['intgauss']
+
+        fc_type_dof = modelinfo['dofs']['f'][forcelist[1]]
+
+        for ee in range(inci.shape[0]):
+            force_value_vector, nodelist = LoadStructural.__body_force_volumetric(Model, inci, coord, tabmat, tabgeo, intgauss, ee, gravity_value, fc_type_dof)
+                        
+            for j in range(len(nodelist)):
+                fcdof = np.array(
+                    [[
+                        int(nodelist[j]),
+                        fc_type_dof,
+                        force_value_vector[j],
+                        int(forcelist[7]),
+                        ]])
+                forcenodedof = np.append(forcenodedof, fcdof, axis=0)
+        
+        forcenodedof = forcenodedof[1::][::]
+        return forcenodedof
     
     def __ForceNodeLoadApply(modelinfo, forcelist):
 
@@ -125,44 +156,33 @@ class LoadStructural(Structural):
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
       
-    
-    
-    # def __line_force_distribuition(matN, T, L, coord_l):
-    #     T = np.array([[2000], [1000]])
-
-    #     F = np.zeros((edof, 1))
-
-    #     npp = 2
-    #     pt, wp = roots_legendre(npp)
-
-    #     for pp in range(npp):
-
-    #         # N = matN(Nsf([+1, pt[pp]]))
-    #         # N = matN(Nsf([pt[pp], +1]))
-
-    #         detJ = np.sqrt(((coord_l[0,0]-coord_l[1,0])/2)**2 + ((coord_l[0,1]-coord_l[1,1])/2)**2)
-
-    #         F += np.dot(np.transpose(N), T)*t*detJ*wp[pp]
-
+      
+    def __body_force_volumetric(Model, inci, coord, tabmat, tabgeo, intgauss, element_number, gravity_value, fc_type_dof):
+        # body force
+        elem_set = Model.element.getElementSet()
+        nodedof = len(elem_set["dofs"]['d'])
+        shape_set = Model.shape.getShapeSet()
+        nodecon = len(shape_set['nodes'])
+        type_shape = shape_set["key"]    
+        edof = nodecon * nodedof
+        nodelist = Model.shape.getNodeList(inci, element_number)    
+        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
+        R = tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
+        t = tabgeo[int(inci[element_number, 3] - 1), 4]
+        pt, wt = gauss_points(type_shape, intgauss)
+        G = gravity_value
+        W = np.zeros((nodedof,1))
+        W[fc_type_dof-1, 0] = R*G
+        force_value_vector = np.zeros((edof, 1))
+        for pp in range(intgauss):
+            detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
+            N = Model.shape.getShapeFunctions(pt[pp], nodedof)            
+            force_value_vector  += np.dot(N.transpose(), W)*t*abs(detJ)*wt[pp]
+        force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
+        return force_value_vector, nodelist
+      
     def __line_force_distribuition(inci, coord, tabgeo, node_list_fc, force_value, force_dirc, elemid, nodedof):
-        
-        # elmlist = [None]
-        # for ii in range(len(node_list_fc)):
-        #     elm2list = inci[
-        #         (np.asarray(np.where(inci[:, 4:] == node_list_fc[ii])))[0][:],
-        #         0,
-        #     ]
-        #     elmlist.extend(elm2list)
-        # elmlist = elmlist[1::][::]
-        # elmlist = np.unique(elmlist)
-        
-        # if (fc_set == "x") or (fc_set == "y_x") or (fc_set == "z_x"):
-        #     coord_fc = 1
-        # elif (fc_set == "y") or (fc_set == "x_y") or (fc_set == "z_y"):
-        #     coord_fc = 2
-        # elif (fc_set == "z") or (fc_set == "x_z") or (fc_set == "y_z"):
-        #     coord_fc = 3
-        
+                
         elmlist = get_elemen_from_nodelist(inci, node_list_fc)
 
         if elemid == 2231:

@@ -3,7 +3,7 @@ from __future__ import annotations
 from os import environ
 environ['OMP_NUM_THREADS'] = '3'
 
-from numpy import zeros, linspace, pi, float64
+from numpy import zeros, empty, unique, linspace, pi, float64
 from scipy.sparse.linalg import spsolve, minres 
 
 # from myfempy.core.alglin import linsolve_spsolve
@@ -30,31 +30,38 @@ class HarmonicLinear(Solver):
         return matrix  
         
     def getLoadAssembler(loadaply, nodetot, nodedof):
-        return AssemblerSYMM.getLoadAssembler(loadaply, nodetot, nodedof)
+        return AssemblerFULL.getLoadAssembler(loadaply, nodetot, nodedof)
 
     def getConstrains(constrains, nodetot, nodedof):
-        return AssemblerSYMM.getConstrains(constrains, nodetot, nodedof)
-        
+        return AssemblerFULL.getConstrains(constrains, nodetot, nodedof)
+    
+    def getDirichletNH(constrains, nodetot, nodedof):
+        return empty((nodedof * nodetot, len(unique(constrains[:,3][constrains[:,3]!=0]))), dtype=float64)    
 
-    def runSolve(fulldofs, assembly, forcelist, freedof, solverset):
+    def runSolve(assembly, constrainsdof, fulldofs, solverset):
         solution = dict()
         stiffness = assembly['stiffness']
         mass = assembly['mass']
+        forcelist = assembly['loads']
+        
+        freedof = constrainsdof['freedof']
+        
         twopi = 2 * pi
         freqStart = (twopi) * solverset["STEPSET"]["start"]
         freqEnd = (twopi) * solverset["STEPSET"]["end"]
         freqStep = setSteps(solverset["STEPSET"])
         w_range = linspace(freqStart, freqEnd, freqStep)
+        
         U = zeros((fulldofs, freqStep), dtype=float64)
         U0 = U[freedof, 0]
+               
         sA = stiffness[:, freedof][freedof, :]
         sM = mass[:, freedof][freedof, :]
         for ww in range(freqStep):
             Wn = w_range[ww]
             Dw = sA - (Wn**2) * sM
-            # U[freedof, ww] = Solver.getLinSysSolve(Dw, forcelist[freedof, :])
             try:
-                U[freedof, ww], info = minres(A=Dw, b=forcelist[freedof, :].toarray(), x0=U0, tol=1E-10, maxiter=1000)
+                U[freedof, ww], info = minres(A=Dw, b=forcelist[freedof, 0], x0=U0, tol=1E-10, maxiter=1000)
             except:
                 raise info    
         solution['U'] = U
