@@ -93,7 +93,7 @@ The following python packages are required to run myfempy. Before to install myf
 
 A **Basic Tutorial** is available [here]().
 
-Many **Examples** are available [here]().
+Many **Examples** are available [here](https://github.com/avgcampos/myfempy/tree/main/examples).
 
 ## Documentation
 
@@ -101,7 +101,7 @@ The myfempy is documented using Mkdocs under `docs/`. The myfempy's documents ve
 
 The **Web Documentation** is available on [Read the Docs](https://myfempy.readthedocs.io/).
 
-The **User's Manual**(pdf) is available on [manual_myfempy](https://github.com/easycae-3d/myfempy/blob/main/doc/manual%20myfempy.pdf).
+The **User's Manual**(pdf) is available on [manual_myfempy](https://myfempy.readthedocs.io/en/latest/user_guide/).
 
 To compile the documentation use *sphinx* in the **\doc** folder. Do,
 

@@ -6,8 +6,8 @@ nav:
     - Contribution: about.md
     - User Guide: user_guide.md
     - Theory: theory.md
-    - Examples: examples.md
-    - History: history.md
+    - Tutorial: tutorial.md
+    - Deployment: history.md
 theme:
     name: readthedocs
     logo: assets/logo.png
