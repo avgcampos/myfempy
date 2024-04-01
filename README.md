@@ -91,7 +91,7 @@ The following python packages are required to run myfempy. Before to install myf
 
 ## Tutorial
 
-A **Basic Tutorial** is available [here]().
+A **Basic Tutorial** is available [here](https://myfempy.readthedocs.io/en/latest/tutorial/).
 
 Many **Examples** are available [here](https://github.com/avgcampos/myfempy/tree/main/examples).
 
@@ -103,23 +103,20 @@ The **Web Documentation** is available on [Read the Docs](https://myfempy.readth
 
 The **User's Manual**(pdf) is available on [manual_myfempy](https://myfempy.readthedocs.io/en/latest/user_guide/).
 
-To compile the documentation use *sphinx* in the **\doc** folder. Do,
+To compile the documentation use *mkdocs* in the **\docs** folder.
 
 ```bash
 
->> make html {in the root folder where the index.rst file is} --> This command generates *.html* files
+>> make doc
 
 ```
 
+This command generates *.html* files
+
 ## Release
 
-The all release versions is available [here](https://github.com/easycae-3d/myfempy/releases)
+The all release versions is available [here](https://github.com/avgcampos/myfempy/releases)
 
-## Features
-
-The *main myfempy features* are available here:
-
-- [Features List](https://github.com/easycae-3d/myfempy/blob/main/docs/Myfempy%20Features.pdf)
 
 ## License
 
@@ -167,10 +164,6 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
 - [PDE](https://en.wikipedia.org/wiki/Partial_differential_equation) - *In mathematics, a partial differential equation (PDE) is an equation which imposes relations between the various partial derivatives of a multivariable function.*
 
 -----------
-
-## Changelog
-
-The changelog is available [here](https://github.com/easycae-3d/myfempy/wiki/Changelog)
 
 # Project tree structure
 
