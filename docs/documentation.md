@@ -2,4 +2,4 @@
 
 Descrição da documentação do código, links para acessar docstring dos principais módulos
 
-::: myfempy.felib.elements.plane.Plane
+::: myfempy.core.elements.plane.Plane

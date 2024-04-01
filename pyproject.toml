@@ -51,8 +51,6 @@ dependencies = [
 	"vedo",
 	"matplotlib",
 	"colorama",
-	"numdifftools",
-	"jax[cpu]",
 ]
 keywords = ["FEM", "FEA", "FSI", "Engineering"]
 

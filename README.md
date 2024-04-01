@@ -41,12 +41,6 @@ Developed by Antonio Vinicius G. Campos, 2024
 
 >> pip install .
 
-or
-
->> python -m pip install --upgrade build
-
->> python -m build
-
 ```
 
 **Note: is recommend to create a virtual environment previously the installation of **myfempy** and dependencies packs. You can use the [virtualenv](https://virtualenv.pypa.io/en/latest/) or [conda environments](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)**
@@ -67,11 +61,10 @@ You can use either of two python development environments to run myfempy
 The following python packages are required to run myfempy. Before to install myfempy-main, install this packages. Check if they are already installed on your machine
 
 - [numpy](https://numpy.org/) - The fundamental package for scientific computing with Python
-- [cython](https://cython.org/) - Cython is a language that makes writing C extensions for Python as easy as Python itself
 - [scipy](https://scipy.org/) - Fundamental algorithms for scientific computing in Python
-- [numdifftools](https://pypi.org/project/numdifftools/) - Solves automatic numerical differentiation problems in one or more variables.
-- [vedo](https://vedo.embl.es/) - A python module for scientific analysis and visualization of эd objects
+- [cython](https://cython.org/) - Cython is a language that makes writing C extensions for Python as easy as Python itself
 - [vtk](https://pypi.org/project/vtk/)(optional) - VTK is an open-source toolkit for 3D computer graphics, image processing, and visualization
+- [vedo](https://vedo.embl.es/) - A python module for scientific analysis and visualization of эd objects
 
 
 - try
@@ -98,9 +91,9 @@ The following python packages are required to run myfempy. Before to install myf
 
 ## Tutorial
 
-A **Basic Tutorial** is available [here](https://myfempy.readthedocs.io/en/1.dev9/tutorial.html).
+A **Basic Tutorial** is available [here]().
 
-Many **Examples** are available [here](https://github.com/easycae-3d/myfempy/tree/master/examples).
+Many **Examples** are available [here]().
 
 ## Documentation
 
