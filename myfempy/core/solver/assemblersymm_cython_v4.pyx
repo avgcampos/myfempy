@@ -1,9 +1,9 @@
 cimport cython
 cimport openmp
 
+import numpy as np
 from cython.parallel import parallel, prange
 
-import numpy as np
 cimport numpy as np
 
 # DTYPE = np.int64
@@ -15,7 +15,8 @@ FLT64 = np.float64
 ctypedef np.int32_t INT32_t
 ctypedef np.float64_t FLT64_t
 
-from myfempy.core.solver.assembler import getMatrix, getLoc
+from myfempy.core.solver.assembler import getLoc, getMatrix
+
 
 @cython.cdivision(True)
 @cython.exceptval(check=False)

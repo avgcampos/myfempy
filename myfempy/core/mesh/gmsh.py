@@ -1,24 +1,24 @@
-
 import os
+
 import numpy as np
 
 from myfempy.core.mesh.mesh import Mesh
 from myfempy.core.utilities import nodes_from_regions
 from myfempy.io.iogmsh import meshid2gmshid
 
+
 class MeshGmsh(Mesh):
-    '''Mesh GMSH Class <ConcreteClassService>'''
+    """Mesh GMSH Class <ConcreteClassService>"""
 
     def getElementConection(set_mesh):
         conec, nodes = MeshGmsh.__setmesh_from_gmsh(set_mesh)
         return conec
-    
+
     def getNodesCoord(set_mesh):
         conec, nodes = MeshGmsh.__setmesh_from_gmsh(set_mesh)
         return nodes
-    
-    def getElementList(conec, meshset, modeldata):
 
+    def getElementList(conec, meshset, modeldata):
         meshid = meshid2gmshid(str(meshset))
         elemlist = [[None] * 5]
         contelm = 0
@@ -29,30 +29,29 @@ class MeshGmsh(Mesh):
                     [
                         contelm,
                         meshset,
-                        modeldata["MATERIAL"]["PROPMAT"][int(conec[ee][3])-1]["NAME"],
-                        modeldata["GEOMETRY"]["PROPGEO"][int(conec[ee][3])-1]["NAME"],
+                        modeldata["MATERIAL"]["PROPMAT"][int(conec[ee][3]) - 1]["NAME"],
+                        modeldata["GEOMETRY"]["PROPGEO"][int(conec[ee][3]) - 1]["NAME"],
                         (np.array(conec[ee][5:])).astype(int).tolist(),
                     ]
                 )
-        
+
         elemlist = elemlist[1::][::]
-        
+
         return elemlist
-    
+
     def getRegionsList(conec):
         return MeshGmsh.__setregions(conec)
-    
+
     def __setmesh_from_gmsh(set_mesh):
-        
         if "meshimport" in set_mesh.keys():
             conec, nodes = MeshGmsh.__convert_from_msh1(
-                set_mesh['user_path'] + "/" + set_mesh["meshimport"]
+                set_mesh["user_path"] + "/" + set_mesh["meshimport"]
             )
-        else:         
+        else:
             conec, nodes = MeshGmsh.__convert_from_msh1(
-                set_mesh['user_path'] + "/" + set_mesh["filename"]
+                set_mesh["user_path"] + "/" + set_mesh["filename"]
             )
-        return conec, nodes            
+        return conec, nodes
 
     def __convert_from_msh1(filename):
         file_imp = filename + ".msh1"
@@ -81,12 +80,10 @@ class MeshGmsh(Mesh):
                 line = file_object.readline()
                 lineaux = line.split()
                 conec_elm.append(list(map(float, lineaux[:])))
-        
+
         return conec_elm, nodelist
 
-
     def __setregions(conec):
-
         reglist = dict()
         reglist["reglist"] = []
         contptn = 0
@@ -140,14 +137,10 @@ class MeshGmsh(Mesh):
             name.capitalize(): {key: [] for key in keys} for name in list_point
         }
         list_edge = (np.arange(1, contedg + 1).astype(str)).tolist()
-        edgelist = {
-            name.capitalize(): {key: [] for key in keys} for name in list_edge
-        }
+        edgelist = {name.capitalize(): {key: [] for key in keys} for name in list_edge}
         list_surf = (np.arange(1, contsfr + 1).astype(str)).tolist()
-        surflist = {
-            name.capitalize(): {key: [] for key in keys} for name in list_surf
-        }
-        
+        surflist = {name.capitalize(): {key: [] for key in keys} for name in list_surf}
+
         for rr in range(len(reglist["reglist"])):
             reg = reglist["reglist"][rr]
             if reg["type"] == "point":
@@ -158,12 +151,12 @@ class MeshGmsh(Mesh):
                 surflist[reg["list"]]["nodes"].extend(reg["nodes"])
             else:
                 pass
-        
+
         regionlist = dict()
         regionlist["point"] = pointlist
         regionlist["line"] = edgelist
         regionlist["plane"] = surflist
-        
+
         regions = nodes_from_regions(regionlist)
-        
+
         return regions

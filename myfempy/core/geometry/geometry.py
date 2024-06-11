@@ -2,17 +2,17 @@ from abc import ABC, abstractmethod
 
 
 def setGeometry(set_geometry):
-    if set_geometry['geo'] == 'thickness':
+    if set_geometry["geo"] == "thickness":
         from myfempy.core.geometry.thickness import Thickness
+
         return Thickness
     else:
         pass
 
 
-
 class Geometry(ABC):
-    '''Geoemtry API Class <ClassService>'''
-    
+    """Geoemtry API Class <ClassService>"""
+
     def __init__(self) -> None:
         pass
 
@@ -23,7 +23,7 @@ class Geometry(ABC):
     @abstractmethod
     def getSectionProp():
         pass
-    
+
     @abstractmethod
     def getCGCoord():
         pass

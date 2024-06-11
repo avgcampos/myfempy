@@ -9,8 +9,10 @@ import vedo as vd
 
 def post_show_mesh(file2plot: str, plotset: dict):
     """vedo code"""
-    
-    win = vd.Plotter(title="POST-PROCESS", sharecam=False, screensize=(1280, 720), interactive=True)
+
+    win = vd.Plotter(
+        title="POST-PROCESS", sharecam=False, screensize=(1280, 720), interactive=True
+    )
     if plotset["edge"] == True:
         mesh = vd.UnstructuredGrid(file2plot + ".vtk").lineWidth(1).flat().c("blue7")
     else:
@@ -23,9 +25,7 @@ def post_show_mesh(file2plot: str, plotset: dict):
     text = vd.Text2D(
         "MYFEMPY "
         # + get_version()
-        + " < "
-        + plotset["text_plot"]
-        + ' >\nPress "q" to continue...',
+        + " < " + plotset["text_plot"] + ' >\nPress "q" to continue...',
         s=1,
         font="Arial",
         c="white",

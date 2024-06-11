@@ -3,6 +3,7 @@ __doc__ = """
 GMSH GEN MESH
 """
 import os
+
 # import numpy as np
 from numpy import abs
 
@@ -94,15 +95,15 @@ def get_gmsh_geo(filename, meshdata):
                     + "};"
                     + "\n"
                 )
-            if "arc" in meshdata.keys():
-                numincl = len(meshdata["arc"])
+            if "circle" in meshdata.keys():
+                numincl = len(meshdata["circle"])
                 for inl in range(numincl):
-                    d = meshdata["arc"][inl][0]
-                    cx = meshdata["arc"][inl][1][0]
-                    cy = meshdata["arc"][inl][1][1]
-                    cz = meshdata["arc"][inl][1][2]
-                    arc0 = meshdata["arc"][inl][2][0]
-                    arc1 = meshdata["arc"][inl][2][1]
+                    d = meshdata["circle"][inl][0]
+                    cx = meshdata["circle"][inl][1][0]
+                    cy = meshdata["circle"][inl][1][1]
+                    cz = meshdata["circle"][inl][1][2]
+                    arc0 = meshdata["circle"][inl][2][0]
+                    arc1 = meshdata["circle"][inl][2][1]
                     file_object.write(
                         "Circle("
                         + str(numlinlist + inl + 1)
@@ -122,6 +123,22 @@ def get_gmsh_geo(filename, meshdata):
                     )
             else:
                 numincl = 0
+            if "arc" in meshdata.keys():
+                numarcs = len(meshdata["arc"])
+                for iarc in range(numarcs):
+                    file_object.write(
+                        "Circle("
+                        + str(numlinlist + numincl + iarc + 1)
+                        + ") = {"
+                        + str(meshdata["arc"][iarc][0])
+                        + ","
+                        + str(meshdata["arc"][iarc][1])
+                        + ","
+                        + str(meshdata["arc"][iarc][2])
+                        + "};\n"
+                    )
+                else:
+                    numarcs = 0
             for i in range(0, numlinlist):
                 file_object.write(
                     "Line("
@@ -161,9 +178,7 @@ def get_gmsh_geo(filename, meshdata):
                 pass
         elif meshdata["meshconfig"]["mesh"] != "line2":
             if "cadimport" in meshdata.keys():
-                file_object.write(
-                    'Merge "' + meshdata["cadimport"] + '";\n'
-                )
+                file_object.write('Merge "' + meshdata["cadimport"] + '";\n')
             else:
                 npl = 0
                 phl = 0
@@ -176,14 +191,14 @@ def get_gmsh_geo(filename, meshdata):
                         + (str(abs(meshdata["planelist"][i][:]).tolist()))[1:-1]
                         + "};\n"
                     )
-                                            
+
                 npladd = 0
                 lplrm = []
                 nplrm = 0
                 for i in range(0, numplalistP):
                     if any(jj < 0 for jj in meshdata["planelist"][i][:]):
                         nplrm += 1
-                        lplrm.append(npladd+i)
+                        lplrm.append(npladd + i)
                     else:
                         npladd += 1
                         lplrm.append(npladd)
@@ -192,50 +207,61 @@ def get_gmsh_geo(filename, meshdata):
                 if nplrm > 0:
                     addpl = 1
                     file_object.write(
-                            "Plane Surface(" + str(addpl) + ") = {" + str(lplrm)[1:-1] +"};\n"
-                        )
+                        "Plane Surface("
+                        + str(addpl)
+                        + ") = {"
+                        + str(list(set(lplrm)))[1:-1]
+                        + "};\n"
+                    )
                 if npladd >= 1:
                     for iap in range(addpl, npladd):
                         file_object.write(
-                                "Plane Surface(" + str(iap+1) + ") = {" + str(iap+1) + "};\n"
-                            )
+                            "Plane Surface("
+                            + str(iap + 1)
+                            + ") = {"
+                            + str(addpl + iap + 1)
+                            + "};\n"
+                        )
 
                 file_object.write(
                     "Characteristic Length {:} = "
                     + str(meshdata["meshconfig"]["sizeelement"])
                     + ";\n"
                 )
-            
-            if "meshmap" in meshdata["meshconfig"].keys(): 
+
+            if "meshmap" in meshdata["meshconfig"].keys():
                 if meshdata["meshconfig"]["meshmap"]["on"] == True:
                     file_object.write("//FACE MAPPING \n")
                     if "numbernodes" in meshdata["meshconfig"]["meshmap"].keys():
                         if meshdata["meshconfig"]["meshmap"]["edge"] == "all":
                             file_object.write(
                                 "Transfinite Curve {:} = "
-                                + str(
-                                    meshdata["meshconfig"]["meshmap"]["numbernodes"]
-                                )
+                                + str(meshdata["meshconfig"]["meshmap"]["numbernodes"])
                                 + " Using Progression 1;\n"
                             )
                         else:
-                            file_object.write(
-                                "Transfinite Curve {"
-                                + str(meshdata["meshconfig"]["meshmap"]["edge"])[
-                                    1:-1
-                                ]
-                                + "} = "
-                                + str(
-                                    meshdata["meshconfig"]["meshmap"]["numbernodes"]
+                            for ed in range(
+                                len(meshdata["meshconfig"]["meshmap"]["edge"])
+                            ):
+                                file_object.write(
+                                    "Transfinite Curve {"
+                                    + str(
+                                        meshdata["meshconfig"]["meshmap"]["edge"][ed]
+                                    )[1:-1]
+                                    + "} = "
+                                    + str(
+                                        meshdata["meshconfig"]["meshmap"][
+                                            "numbernodes"
+                                        ][ed]
+                                    )
+                                    + " Using Progression 1;\n"
                                 )
-                                + " Using Progression 1;\n"
-                            )
                     file_object.write("Transfinite Surface {:};\n")
                 else:
                     pass
             else:
                 pass
-            
+
             if meshdata["meshconfig"]["mesh"] == "tria3":
                 file_object.write("// MESH CONFIGURATION\n")
                 file_object.write("Mesh.CharacteristicLengthExtendFromBoundary = 1;\n")
@@ -250,7 +276,7 @@ def get_gmsh_geo(filename, meshdata):
                 file_object.write("Mesh.HighOrderOptimize = 0;\n")
                 file_object.write("Mesh.Algorithm = 8;\n")
                 file_object.write("Mesh.ElementOrder = 1;\n")
-            
+
             elif meshdata["meshconfig"]["mesh"] == "quad4":
                 file_object.write("Recombine Surface {:};\n")
                 file_object.write("// MESH CONFIGURATION\n")
@@ -269,7 +295,7 @@ def get_gmsh_geo(filename, meshdata):
                 file_object.write("Mesh.HighOrderOptimize = 0;\n")
                 file_object.write("Mesh.Algorithm = 8;\n")
                 file_object.write("Mesh.ElementOrder = 1;\n")
-            
+
             elif meshdata["meshconfig"]["mesh"] == "tetr4":
                 if "extrude" in meshdata["meshconfig"].keys():
                     thck = meshdata["meshconfig"]["extrude"]
@@ -289,7 +315,7 @@ def get_gmsh_geo(filename, meshdata):
                 file_object.write("Mesh.ElementOrder = 1;\n")
                 file_object.write("Mesh.Optimize = 1;\n")
                 file_object.write("Mesh.HighOrderOptimize = 0;\n")
-            
+
             elif meshdata["meshconfig"]["mesh"] == "hexa8":
                 if "extrude" in meshdata["meshconfig"].keys():
                     thck = meshdata["meshconfig"]["extrude"]

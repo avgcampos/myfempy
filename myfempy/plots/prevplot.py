@@ -3,19 +3,21 @@ __doc__ = """
 Plotter Prev Process
 """
 from os import environ
-environ['OMP_NUM_THREADS'] = '3'
+
+environ["OMP_NUM_THREADS"] = "3"
 import numpy as np
 import vtk
 
 from myfempy.io.iovtk import convert_to_vtk
 from myfempy.plots.meshquality import MeshProp
-from myfempy.plots.physics import view_beam_crossSection, view_bondcond_point, view_listforce, view_text_point
+from myfempy.plots.physics import (view_beam_crossSection, view_bondcond_point,
+                                   view_listforce, view_text_point)
+
 # from myfempy.utils.utils import get_version
 
 
 # @profile
 def preview_plot(previewset: dict, modelinfo: dict, path: str):
-
     # path = os.getcwd()
     plotdata = dict()
     plotdata["coord"] = modelinfo["coord"]
@@ -29,9 +31,11 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
     plotdata["displ_POINT_DATA_val"] = []
     plotdata["displ_POINT_DATA_name"] = []
     plotdata["displ_POINT_DATA_title"] = []
-    plotdata["stress_CELL_DATA_val"] = ((np.array([(modelinfo["inci"][:,2])])).T).astype(int)
-    plotdata["stress_CELL_DATA_name"] = ['Model']
-    plotdata["stress_CELL_DATA_title"] = ['Model']
+    plotdata["stress_CELL_DATA_val"] = (
+        (np.array([(modelinfo["inci"][:, 2])])).T
+    ).astype(int)
+    plotdata["stress_CELL_DATA_name"] = ["Model"]
+    plotdata["stress_CELL_DATA_title"] = ["Model"]
     plotdata["stress_POINT_DATA_val"] = []
     plotdata["stress_POINT_DATA_name"] = []
     plotdata["stress_POINT_DATA_title"] = []
@@ -39,9 +43,9 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
     plotdata["strain_energy_CELL_DATA_val"] = []
     plotdata["strain_energy_CELL_DATA_name"] = []
     plotdata["strain_energy_CELL_DATA_title"] = []
-    
+
     convert_to_vtk(plotdata)
-    
+
     if "scale" in previewset["RENDER"].keys():
         previewset["RENDER"]["scale"] = (previewset["RENDER"]["scale"] / 100) * max(
             [
@@ -52,60 +56,69 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
         )
     else:
         previewset["RENDER"]["scale"] = 1
-    
+
     if "lines" in previewset["RENDER"].keys():
         pass
     else:
         previewset["RENDER"]["lines"] = True
-    
+
     if "plottags" in previewset["RENDER"].keys():
-        if "point" in previewset["RENDER"]["plottags"].keys() and previewset["RENDER"]["plottags"]["point"]==True:
+        if (
+            "point" in previewset["RENDER"]["plottags"].keys()
+            and previewset["RENDER"]["plottags"]["point"] == True
+        ):
             previewset["regions"] = modelinfo["regions"][0]
         else:
             pass
-        
-        if "line" in previewset["RENDER"]["plottags"].keys() and previewset["RENDER"]["plottags"]["line"] == True:
+
+        if (
+            "line" in previewset["RENDER"]["plottags"].keys()
+            and previewset["RENDER"]["plottags"]["line"] == True
+        ):
             previewset["regions"] = modelinfo["regions"][1]
         else:
             pass
-        
-        if "plane" in previewset["RENDER"]["plottags"].keys() and previewset["RENDER"]["plottags"]["plane"] == True:
+
+        if (
+            "plane" in previewset["RENDER"]["plottags"].keys()
+            and previewset["RENDER"]["plottags"]["plane"] == True
+        ):
             previewset["regions"] = modelinfo["regions"][2]
         else:
             pass
     else:
         previewset["regions"] = [[], []]
-    
+
     if "cs" in previewset["RENDER"].keys():
         pass
     else:
         previewset["RENDER"]["cs"] = False
-        
+
     previewset["tabcs"] = dict()
     previewset["tabcs"]["typSection"] = []
     previewset["tabcs"]["dimSection"] = []
     for gg in range(len(modelinfo["tabgeo"])):
         previewset["tabcs"]["typSection"].append(int(modelinfo["tabgeo"][gg][-1]))
         previewset["tabcs"]["dimSection"].append(modelinfo["tabgeo"][gg][5:9])
-        
+
     if "forces" in modelinfo.keys():
         previewset["forces"] = modelinfo["forces"]
     else:
         pass
-    
+
     if "constrains" in modelinfo.keys():
         previewset["constrains"] = modelinfo["constrains"]
     else:
         pass
-    
+
     previewset["coord"] = modelinfo["coord"]
     previewset["inci"] = modelinfo["inci"]
     previewset["nnode"] = modelinfo["nnode"]
     previewset["nodecon"] = modelinfo["nodecon"]
     previewset["dofs"] = modelinfo["dofs"]
-        
+
     build_preview(previewset, path)
-    
+
     # if "QUALITY" in previewset.keys():
     #     if previewset["QUALITY"]["show"] == False:
     #         pass
@@ -129,13 +142,13 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
     #     #     previewset["QUALITY"]["scale"] = 1
     #     mesh = MeshProp(previewset)
     #     mesh.mesh_quality()
-    
+
     if "LABELS" in previewset.keys() and previewset["LABELS"]["show"] == True:
         if "lines" in previewset["LABELS"].keys():
             pass
         else:
             previewset["LABELS"]["lines"] = False
-        
+
         if "scale" in previewset["LABELS"].keys():
             previewset["LABELS"]["scale"] = (previewset["LABELS"]["scale"] / 100) * max(
                 [
@@ -151,9 +164,9 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
     else:
         pass
 
+
 # @profile
 def build_preview(previewset: dict, path):
-
     # path = os.getcwd()
     file_name = str(path + "/" + previewset["RENDER"]["filename"] + ".vtk")
     renderer = vtk.vtkRenderer()
@@ -177,30 +190,30 @@ def build_preview(previewset: dict, path):
     scala_view = previewset["RENDER"]["scale"]
     dimfrlist = 0
     if "forces" in previewset.keys():
-        
-        key_list_fc = list(previewset["dofs"]['f'].keys())
-        val_list_fc = list(previewset["dofs"]['f'].values())
-        
+        key_list_fc = list(previewset["dofs"]["f"].keys())
+        val_list_fc = list(previewset["dofs"]["f"].values())
+
         dimfrlist = previewset["forces"].shape[0]
         for num_lf in range(dimfrlist):
-            frcApy_vet = previewset['forces'][[num_lf]][0]
+            frcApy_vet = previewset["forces"][[num_lf]][0]
             frcApy_vet[1] = __setLoadDof(key_list_fc[val_list_fc.index(frcApy_vet[1])])
             exec(
                 f'fr_point_actor_cone1_{num_lf},fr_point_actor_cone2_{num_lf} = view_listforce(previewset["coord"],frcApy_vet,scala_view)'
             )
     dimbclist = 0
     if "constrains" in previewset.keys():
-        
-        key_list_bc = list(previewset["dofs"]['d'].keys())
-        val_list_bc = list(previewset["dofs"]['d'].values())
-        
+        key_list_bc = list(previewset["dofs"]["d"].keys())
+        val_list_bc = list(previewset["dofs"]["d"].values())
+
         dimbclist = previewset["constrains"].shape[0]
         for num_bc in range(dimbclist):
-            bondCond_vet = previewset['constrains'][[num_bc]][0]
+            bondCond_vet = previewset["constrains"][[num_bc]][0]
             if int(bondCond_vet[1]) == 0:
                 pass
             else:
-                bondCond_vet[1] = __setBCDof(key_list_bc[val_list_bc.index(int(bondCond_vet[1]))])
+                bondCond_vet[1] = __setBCDof(
+                    key_list_bc[val_list_bc.index(int(bondCond_vet[1]))]
+                )
             exec(
                 f'bc_point_actor_cone_{num_bc}, bc_point_actor_tdof_{num_bc} = view_bondcond_point(previewset["coord"],bondCond_vet,scala_view)'
             )
@@ -258,7 +271,8 @@ def build_preview(previewset: dict, path):
         actor.GetProperty().SetLineWidth(3.0)
     text_logo = vtk.vtkTextActor()
     text_logo.SetInput(
-        "MYFEMPY " + ' < PreProc--Model >\nPress "w" to wireframe view \nPress "q" to exit\continue'
+        "MYFEMPY "
+        + ' < PreProc--Model >\nPress "w" to wireframe view \nPress "q" to exit\continue'
     )
     txtprop = text_logo.GetTextProperty()
     txtprop.SetFontFamilyToArial()
@@ -319,7 +333,8 @@ def build_preview(previewset: dict, path):
         interactor.Start()
         interactor.GetRenderWindow().Finalize()
 
-def __setLoadDof(forcedof):           
+
+def __setLoadDof(forcedof):
     fdoftype = {
         "fx": 1,
         "fy": 2,
@@ -334,7 +349,8 @@ def __setLoadDof(forcedof):
     }
     return fdoftype[forcedof]
 
-def __setBCDof(bcdof):           
+
+def __setBCDof(bcdof):
     bcdoftype = {
         "ux": 1,
         "uy": 2,

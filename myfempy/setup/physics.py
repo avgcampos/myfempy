@@ -1,43 +1,46 @@
 from __future__ import annotations
 
 import numpy as np
-from myfempy.core.utilities import get_nodes_from_list, get_elemen_from_nodelist
 
-class SetPhysics():
-    '''Set Physics Class <ClassOrder>'''
-    
+from myfempy.core.utilities import (get_elemen_from_nodelist,
+                                    get_nodes_from_list)
+
+
+class SetPhysics:
+    """Set Physics Class <ClassOrder>"""
+
     def __init__(self, Model, Loads, BoundCond):
         self.loads = Loads
         self.boundcond = BoundCond
         self.model = Model
         # self.domain = Domain
-                   
+
     def getForceList(self, physicdata):
         return SetPhysics.setForceList(self, physicdata)
-    
+
     def setForceList(self, physicdata):
         forcelist = SetPhysics.__forcelist(physicdata["LOAD"])
         self.forcelist = forcelist
         return forcelist
-    
+
     def getBoundCondList(self, physicdata):
         return SetPhysics.setBoundCondList(self, physicdata)
-    
+
     def setBoundCondList(self, physicdata):
         boundlist = SetPhysics.__boundcondlist(physicdata["BOUNDCOND"])
         self.boundcondlist = boundlist
         return boundlist
-        
+
     def getLoadApply(self, physicdata, modelinfo):
         flist = SetPhysics.setForceList(self, physicdata)
         forcenodeaply = np.zeros((1, 4))
-        for step in range(int(len(np.unique([flist[:, 7]])))):
-            forcelist = flist[np.where(flist[:, 7] == str(step + 1))[0], :]
+        for step in range(int(len(np.unique([flist[:, 8]])))):
+            forcelist = flist[np.where(flist[:, 8] == str(step + 1))[0], :]
             fapp = self.loads.getLoadApply(self.model, modelinfo, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         forcenodeaply = forcenodeaply[1::][::]
         return forcenodeaply
-    
+
     def getBoundCondApply(self, physicdata, modelinfo):
         bclist = SetPhysics.setBoundCondList(self, physicdata)
         boncdnodeaply = np.zeros((1, 4))
@@ -47,15 +50,14 @@ class SetPhysics():
             boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
         boncdnodeaply = boncdnodeaply[1::][::]
         return boncdnodeaply
-    
+
     def getNodeList(self, domain_nodelist, coord, regions):
         return get_nodes_from_list(domain_nodelist, coord, regions)
-    
+
     def getElementList(self, inci, nodelist):
         return get_elemen_from_nodelist(inci, nodelist)
-    
-    
-    #-----------------------------------------------
+
+    # -----------------------------------------------
     # privates methods
     def __forcelist(forcelist):
         """force set"""
@@ -64,7 +66,7 @@ class SetPhysics():
         for fl in range(nforc):
             fap = forcelist[fl]
             for fs in range(len(fap["VAL"])):
-                if "LOC" in fap.keys():                
+                if "LOC" in fap.keys():
                     linearray = np.array(
                         [
                             fap["TYPE"],
@@ -74,8 +76,8 @@ class SetPhysics():
                             fap["LOC"]["x"],
                             fap["LOC"]["y"],
                             fap["LOC"]["z"],
-                            int(fs + 1),
                             0,
+                            int(fs + 1),
                         ]
                     )
                 # else:
@@ -89,8 +91,8 @@ class SetPhysics():
                             0.0,
                             0.0,
                             0.0,
-                            int(fs + 1),
                             fap["TAG"],
+                            int(fs + 1),
                         ]
                     )
                 else:
@@ -103,8 +105,8 @@ class SetPhysics():
                             0.0,
                             0.0,
                             0.0,
-                            int(fs + 1),
                             0,
+                            int(fs + 1),
                         ]
                     )
                 flist = np.append(flist, [linearray], axis=0)
@@ -118,7 +120,7 @@ class SetPhysics():
         for bl in range(nbound):
             bap = boundcondlist[bl]
             if "VAL" in bap.keys():
-                for bv in range(len(bap["VAL"])):
+                for bs in range(len(bap["VAL"])):
                     if "LOC" in bap.keys():
                         linearray = np.array(
                             [
@@ -129,8 +131,8 @@ class SetPhysics():
                                 bap["LOC"]["y"],
                                 bap["LOC"]["z"],
                                 0,
-                                bap["VAL"][bv],
-                                int(bv + 1),
+                                bap["VAL"][bs],
+                                int(bs + 1),
                             ]
                         )
                     elif "TAG" in bap.keys():
@@ -143,8 +145,8 @@ class SetPhysics():
                                 0.0,
                                 0.0,
                                 bap["TAG"],
-                                bap["VAL"][bv],
-                                int(bv + 1),
+                                bap["VAL"][bs],
+                                int(bs + 1),
                             ]
                         )
                     else:
@@ -157,8 +159,8 @@ class SetPhysics():
                                 0.0,
                                 0.0,
                                 0,
-                                bap["VAL"][bv],
-                                int(bv + 1),
+                                bap["VAL"][bs],
+                                int(bs + 1),
                             ]
                         )
                     blist = np.append(blist, [linearray], axis=0)

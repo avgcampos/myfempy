@@ -1,12 +1,11 @@
-
 import numpy as np
 
 from myfempy.core.mesh.mesh import Mesh
 
 
 class LegacyTria3(Mesh):
-    '''Mesh Quad Class <ConcreteClassService>'''
-        
+    """Mesh Quad Class <ConcreteClassService>"""
+
     def getElementConection(set_mesh):
         """get a triagular 3 nodes mesh
   
@@ -25,11 +24,11 @@ class LegacyTria3(Mesh):
         (i)--------(j)
         
         """
-        
+
         nelx = set_mesh["NX"]
         nely = set_mesh["NY"]
         nel = nelx * nely * 2
-                        
+
         conec = np.zeros((nel, 4), dtype=np.int64)
         for i in range(1, nel, 2):
             linha = int(np.ceil(i / (2 * nelx)))
@@ -41,7 +40,7 @@ class LegacyTria3(Mesh):
             conec[i - 1, 1] = n1
             conec[i - 1, 2] = n2
             conec[i - 1, 3] = n3
-        
+
         for i in range(2, nel + 1, 2):
             linha = int(np.ceil(i / (2 * nelx)))
             y = 2 * linha
@@ -60,11 +59,11 @@ class LegacyTria3(Mesh):
         nely = set_mesh["NY"]
         lx = set_mesh["LX"]
         ly = set_mesh["LY"]
-        
+
         nnx = nelx + 1
         nny = nely + 1
         nos = nnx * nny
-                             
+
         coord = np.zeros((nos, 4), dtype=np.float64)
         coord[0, 0] = 1
         for i in range(2, nos + 1):

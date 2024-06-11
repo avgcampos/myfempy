@@ -3,14 +3,15 @@ __doc__ = """
 Physics Vtk Plot.
 """
 from os import environ
-environ['OMP_NUM_THREADS'] = '3'
+
+environ["OMP_NUM_THREADS"] = "3"
 import numpy as np
 import vtk
 
 
 def view_listforce(coord: np.ndarray, frcApy_vet: np.ndarray, scala_view: float):
     """vtk code"""
-    
+
     coordX_force = coord[int(frcApy_vet[0]) - 1, 1]
     coordY_force = coord[int(frcApy_vet[0]) - 1, 2]
     coordZ_force = coord[int(frcApy_vet[0]) - 1, 3]
@@ -119,7 +120,7 @@ def view_listforce(coord: np.ndarray, frcApy_vet: np.ndarray, scala_view: float)
 
 def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view: float):
     """vtk code"""
-    
+
     coordX_bc = coord[int(bondCond_vet[0]) - 1, 1]
     coordY_bc = coord[int(bondCond_vet[0]) - 1, 2]
     coordZ_bc = coord[int(bondCond_vet[0]) - 1, 3]
@@ -173,7 +174,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_point_actor_tdof.SetMapper(bcmap)
         bc_point_actor_tdof.GetProperty().SetLineWidth(0.5)
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
-    
+
     elif int(bondCond_vet[1]) == 2:  # fixed uy dofs
         dir_cone = (0, 1, 0)
         center_cone = (coordX_bc, coordY_bc - height_cone / 2, coordZ_bc)
@@ -292,7 +293,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
 
 def view_text_point(coord: np.ndarray, coordMax: float, scala_view: float, text: str):
     """vtk code"""
-    
+
     coordX = coord[0]
     coordY = coord[1]
     coordZ = coord[2]
@@ -618,5 +619,5 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs):
     beam_extrude_actor.SetMapper(beam_extrude)
     beam_extrude_actor.GetProperty().SetLineWidth(1.0)
     beam_extrude_actor.GetProperty().SetColor(1.0, 1.0, 1.0)  # (R,G,B)
-    
+
     return beam_extrude_actor

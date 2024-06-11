@@ -3,15 +3,15 @@ import numpy as np
 from myfempy.core.material.material import Material
 
 
-class  SolidIsotropic(Material):
-    '''Solid Stress Material Class <ConcreteClassService>'''
+class SolidIsotropic(Material):
+    """Solid Stress Material Class <ConcreteClassService>"""
 
     def getMaterialSet():
         matset = {
-            'mat': "solid",
-            'idmat': 5,
-            'type': "isotropic",
-            'idtyp': 20,
+            "mat": "solid",
+            "idmat": 5,
+            "type": "isotropic",
+            "idtyp": 20,
         }
         return matset
 
@@ -37,10 +37,9 @@ class  SolidIsotropic(Material):
         return D
 
     def getElementStrain(Model, U, ptg, element_number):
-
         elem_set = Model.element.getElementSet()
-        nodedof = len(elem_set["dofs"]['d'])
-        
+        nodedof = len(elem_set["dofs"]["d"])
+
         nodelist = Model.shape.getNodeList(Model.inci, element_number)
 
         loc = Model.shape.getShapeKey(nodelist, nodedof)
@@ -49,8 +48,8 @@ class  SolidIsotropic(Material):
 
         B = Model.element.getB(Model, elementcoord, ptg, nodedof)
 
-        epsilon = np.dot(B, U[loc]) #B @ (U[loc])
-        
+        epsilon = np.dot(B, U[loc])  # B @ (U[loc])
+
         strn_elm_xx = epsilon[0]
         strn_elm_yy = epsilon[1]
         strn_elm_zz = epsilon[2]
@@ -58,13 +57,16 @@ class  SolidIsotropic(Material):
         strn_elm_yz = epsilon[4]
         strn_elm_zx = epsilon[5]
 
-        strn_elm_eqv = np.sqrt(0.5* ((epsilon[0] - epsilon[1]) ** 2
+        strn_elm_eqv = np.sqrt(
+            0.5
+            * (
+                (epsilon[0] - epsilon[1]) ** 2
                 + (epsilon[1] - epsilon[2]) ** 2
                 + (epsilon[2] - epsilon[0]) ** 2
-                + 6 * (epsilon[3] ** 2
-                       + epsilon[4] ** 2 
-                       + epsilon[5] ** 2)))
-        
+                + 6 * (epsilon[3] ** 2 + epsilon[4] ** 2 + epsilon[5] ** 2)
+            )
+        )
+
         strain = [
             strn_elm_eqv,
             strn_elm_xx,
@@ -74,9 +76,9 @@ class  SolidIsotropic(Material):
             strn_elm_yz,
             strn_elm_zx,
         ]
-        
+
         return epsilon, strain
-    
+
     def getTitleStrain():
         title = [
             "STRAIN_VM",
@@ -88,30 +90,35 @@ class  SolidIsotropic(Material):
             "STRAIN_ZX",
         ]
         return title
-    
+
     def getElementStress(Model, epsilon, element_number):
-        
-        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1, 0]  # material elasticity
-        v = Model.tabmat[int(Model.inci[element_number, 2]) - 1, 1]  # material poisson ratio
-        
+        E = Model.tabmat[
+            int(Model.inci[element_number, 2]) - 1, 0
+        ]  # material elasticity
+        v = Model.tabmat[
+            int(Model.inci[element_number, 2]) - 1, 1
+        ]  # material poisson ratio
+
         C = SolidIsotropic.getElasticTensor(E, v)
-        
+
         sigma = np.dot(C, epsilon)
-        
+
         strs_elm_xx = sigma[0]
         strs_elm_yy = sigma[1]
         strs_elm_zz = sigma[2]
         strs_elm_xy = sigma[3]
         strs_elm_yz = sigma[4]
         strs_elm_zx = sigma[5]
-        strs_elm_eqv = np.sqrt(0.5 * (
+        strs_elm_eqv = np.sqrt(
+            0.5
+            * (
                 (sigma[0] - sigma[1]) ** 2
                 + (sigma[1] - sigma[2]) ** 2
                 + (sigma[2] - sigma[0]) ** 2
-                + 6 * (sigma[3] ** 2 
-                       + sigma[4] ** 2 
-                       + sigma[5] ** 2)))
-        
+                + 6 * (sigma[3] ** 2 + sigma[4] ** 2 + sigma[5] ** 2)
+            )
+        )
+
         stress = [
             strs_elm_eqv,
             strs_elm_xx,
@@ -121,9 +128,9 @@ class  SolidIsotropic(Material):
             strs_elm_yz,
             strs_elm_zx,
         ]
-        
+
         return sigma, stress
-        
+
     def getTitleStress():
         title = [
             "STRESS_VM",
@@ -135,10 +142,10 @@ class  SolidIsotropic(Material):
             "STRESS_ZX",
         ]
         return title
-    
-    def getStrainEnergyDensity(sigma, epsilon, elemvol):   
-        return 0.5*np.dot(np.transpose(sigma), epsilon)/elemvol
-    
+
+    def getStrainEnergyDensity(sigma, epsilon, elemvol):
+        return 0.5 * np.dot(np.transpose(sigma), epsilon) / elemvol
+
     def setTitleCompliance():
         title = ["STRAIN_ENERGY_DENSITY"]
         return title

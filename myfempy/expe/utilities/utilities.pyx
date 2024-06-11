@@ -1,10 +1,14 @@
 from os import environ
+
 environ['OMP_NUM_THREADS'] = '3'
 
-from numpy import array, zeros, eye, dot, asarray, where, mean, cross, ones_like, unique, less, uint32, float64
-from scipy.linalg import inv, kron, det
+from numpy import (array, asarray, cross, dot, eye, float64, less, mean,
+                   ones_like, uint32, unique, where, zeros)
+from scipy.linalg import det, inv, kron
 from scipy.sparse import csc_matrix
+
 cimport cython
+
 INT32 = uint32
 FLT64 = float64
 

@@ -3,13 +3,21 @@ __doc__ = """
 Filters I/O
 """
 import csv
+
 import numpy as np
+
 
 def write2log(log_file, log_data, modelinfo, solstatus):
     with open(log_file, "w") as file_object:
-        file_object.write("===============================================================================\n")
-        file_object.write("                                   MYFEMPY                                     \n")
-        file_object.write("===============================================================================\n")
+        file_object.write(
+            "===============================================================================\n"
+        )
+        file_object.write(
+            "                                   MYFEMPY                                     \n"
+        )
+        file_object.write(
+            "===============================================================================\n"
+        )
         if "get" in log_data.keys():
             if "nelem" in log_data["get"].keys():
                 file_object.write("\n")
@@ -242,14 +250,15 @@ def write2log(log_file, log_data, modelinfo, solstatus):
                         )
                     )
         # =============================================================================================================
-        if "log" in log_data.keys(): 
+        if "log" in log_data.keys():
             file_object.write("\n")
             file_object.write(
                 "+------------------S O L V E R   S T A T U S------------------+\n"
             )
             file_object.write(
                 "{0:<30} : {1:<10} SEC\n".format(
-                    "ASSEMBLY FULL TIME SPEND ", str(solstatus["solverstatus"]["timeasb"])
+                    "ASSEMBLY FULL TIME SPEND ",
+                    str(solstatus["solverstatus"]["timeasb"]),
                 )
             )
             file_object.write(
@@ -259,21 +268,24 @@ def write2log(log_file, log_data, modelinfo, solstatus):
             )
             file_object.write(
                 "{0:<30} : {1:<10} DOF\n".format(
-                    "NUMBER OF EQUATION ", str(modelinfo['fulldofs'])
+                    "NUMBER OF EQUATION ", str(modelinfo["fulldofs"])
                 )
             )
             file_object.write(
-                "{0:<30} : {1:<10} BYTES\n".format("STIFFNESS SIZE ", str(solstatus["solverstatus"]["memorysize"]))
+                "{0:<30} : {1:<10} BYTES\n".format(
+                    "STIFFNESS SIZE ", str(solstatus["solverstatus"]["memorysize"])
+                )
             )
             file_object.write(
-                "{0:<30} : {1:<10} SET\n".format("TYPE ASSEMBLER ", str(solstatus["solverstatus"]["typeasmb"]))
+                "{0:<30} : {1:<10} SET\n".format(
+                    "TYPE ASSEMBLER ", str(solstatus["solverstatus"]["typeasmb"])
+                )
             )
             file_object.write(
-                "{0:<30} : {1:<10} INT\n".format("CPU CORE ", str(solstatus["solverstatus"]["ncpu"]))
+                "{0:<30} : {1:<10} INT\n".format(
+                    "CPU CORE ", str(solstatus["solverstatus"]["ncpu"])
+                )
             )
-            
-            
-            
 
 
 def writer2csv(csv2write_file, csv2write_data, label):

@@ -15,25 +15,26 @@ def postproc_plot(postprocset: dict, postporc_result: dict, modelinfo: dict):
     plotset = dict()
     hist_X = []
     hist_Y = []
-    
+
     if "TRACKER" in postprocset.keys():
         if postprocset["TRACKER"]["show"]:
-            for st in range(len(postporc_result['displ'])):
+            for st in range(len(postporc_result["displ"])):
                 plotset["step"] = st + 1
-                plotset["val_list"] = postporc_result['displ'][st]['val']
+                plotset["val_list"] = postporc_result["displ"][st]["val"]
                 plotset["fignumb"] = 99
                 plotset["rstl"] = [0, modelinfo["ntensor"][0] + 1]
-                val_X, val_Y, xlabel, ylabel = tracker_plot(postprocset, plotset, modelinfo["coord"], modelinfo["nodedof"])
+                val_X, val_Y, xlabel, ylabel = tracker_plot(
+                    postprocset, plotset, modelinfo["coord"], modelinfo["nodedof"]
+                )
                 hist_X.append(val_X)
                 hist_Y.append(val_Y)
-            
+
             # hist_X = hist_X[1::][::]
             # hist_Y = hist_Y[1::][::]
-            writer2csv_file('TRACKER_csvfile.txt',[hist_X,hist_Y],[xlabel,ylabel])
-    
+            writer2csv_file("TRACKER_csvfile.txt", [hist_X, hist_Y], [xlabel, ylabel])
+
     if "PLOTSET" in postprocset.keys():
         if postprocset["PLOTSET"]["show"]:
-            
             if "step" in postprocset["PLOTSET"].keys():
                 step = int(postprocset["PLOTSET"]["step"])
             else:
@@ -43,12 +44,12 @@ def postproc_plot(postprocset: dict, postporc_result: dict, modelinfo: dict):
             file2plot = (
                 postprocset["PLOTSET"]["filename"] + "_results_step-" + str(step)
             )
-            
+
             if "edge" in postprocset["PLOTSET"].keys():
                 plotset["edge"] = postprocset["PLOTSET"]["edge"]
             else:
                 plotset["edge"] = False
-            
+
             if "average" in postprocset["PLOTSET"]["data"].keys():
                 if postprocset["COMPUTER"]["average"]:
                     plotset["apply"] = "points"
@@ -59,10 +60,10 @@ def postproc_plot(postprocset: dict, postporc_result: dict, modelinfo: dict):
 
             if "displ" in postprocset["PLOTSET"]["data"].keys():
                 post_show_mesh(file2plot, plotset)
-            
+
             if "intforces_plot" in postprocset["PLOTSET"]["data"].keys():
-                if "beam" in postprocset["PLOTSET"]['data']['intforces'].keys():
-                    nbeam = postprocset["PLOTSET"]['data']['intforces']["beam"]
+                if "beam" in postprocset["PLOTSET"]["data"]["intforces"].keys():
+                    nbeam = postprocset["PLOTSET"]["data"]["intforces"]["beam"]
                 else:
                     nbeam = [1]
                 lenx = np.around(
@@ -77,15 +78,9 @@ def postproc_plot(postprocset: dict, postporc_result: dict, modelinfo: dict):
                 forces_plot(lenx, leny, xlabel, ylabel, size, nbeam)
 
             if "frf" in postprocset["PLOTSET"]["data"].keys():
-                node_coordX = float(
-                    postprocset["PLOTSET"]["data"]["frf"]["point"]["x"]
-                )
-                node_coordY = float(
-                    postprocset["PLOTSET"]["data"]["frf"]["point"]["y"]
-                )
-                node_coordZ = float(
-                    postprocset["PLOTSET"]["data"]["frf"]["point"]["z"]
-                )
+                node_coordX = float(postprocset["PLOTSET"]["data"]["frf"]["point"]["x"])
+                node_coordY = float(postprocset["PLOTSET"]["data"]["frf"]["point"]["y"])
+                node_coordZ = float(postprocset["PLOTSET"]["data"]["frf"]["point"]["z"])
                 hist_node = search_nodexyz(
                     node_coordX, node_coordY, node_coordZ, modelinfo["coord"], 2e-3
                 )
@@ -96,14 +91,21 @@ def postproc_plot(postprocset: dict, postporc_result: dict, modelinfo: dict):
                     modelinfo["nodedof"][0]
                     - postprocset["PLOTSET"]["data"]["frf"]["dof"]
                 )
-                plotset["val_y"] = 20*np.log((abs(postporc_result["frf"][0]["val"][plotset["rstl"], :]))/10E-12)
+                plotset["val_y"] = 20 * np.log(
+                    (abs(postporc_result["frf"][0]["val"][plotset["rstl"], :])) / 10e-12
+                )
                 plotset["val_x"] = postporc_result["frf"][0]["freqlog"]
                 frf_plot(plotset, hist_node)
             else:
                 pass
-    
+
     if "OUTPUT" in postprocset.keys():
-        write2log('OUTPUT_logfile.txt', postprocset['OUTPUT'], modelinfo, postprocset['SOLUTION']['solvestatus'])
-    
+        write2log(
+            "OUTPUT_logfile.txt",
+            postprocset["OUTPUT"],
+            modelinfo,
+            postprocset["SOLUTION"]["solvestatus"],
+        )
+
     else:
         pass

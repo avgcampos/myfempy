@@ -24,6 +24,7 @@ def get_logo():
     art.tprint("myfempy", font="ogre")
     print("myfempy version:", get_version())
 
+
 def newDir(file_dir):
     """_summary_
 
@@ -34,10 +35,11 @@ def newDir(file_dir):
         _description_
     """
     path = os.getcwd()
-    if not os.path.exists(path+'/'+file_dir):
-        os.makedirs(path+'/'+file_dir)
-    path_user = str(path+'/'+file_dir)
+    if not os.path.exists(path + "/" + file_dir):
+        os.makedirs(path + "/" + file_dir)
+    path_user = str(path + "/" + file_dir)
     return path_user
+
 
 def clear_console():
     """_summary_"""
@@ -45,6 +47,7 @@ def clear_console():
         _ = os.system("clear")
     else:  # windows
         _ = os.system("cls")
+
 
 def loading_bar_v1(pct, name):
     """_summary_

@@ -3,9 +3,9 @@ from __future__ import annotations
 import numpy as np
 
 
-class SetModel():
-    '''Model Class <ClassOrder>'''
-    
+class SetModel:
+    """Model Class <ClassOrder>"""
+
     def __init__(self, Mesh, Element, Shape, Material, Geometry):
         self.mesh = Mesh
         self.shape = Shape
@@ -13,30 +13,30 @@ class SetModel():
         self.geometry = Geometry
         self.element = Element
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     def setElemList(self, modeldata):
         elemlist = SetModel.__elemlist(self, modeldata)
         self.elemlist = elemlist
         return elemlist
-    
+
     def getElemList(self, modeldata):
         return SetModel.setElemList(self, modeldata)
-        
+
     def setTabMat(self, modeldata):
         tabmat, mat_lib = SetModel.__tabmat(self, modeldata["MATERIAL"])
         self.tabmat = tabmat
         self.mat_lib = mat_lib
         return tabmat
-        
+
     def getTabMat(self, modeldata):
         return SetModel.setTabMat(self, modeldata)
-    
+
     def setTabGeo(self, modeldata):
         tabgeo, geo_lib = SetModel.__tabgeo(self, modeldata["GEOMETRY"])
         self.tabgeo = tabgeo
         self.geo_lib = geo_lib
         return tabgeo
-        
+
     def getTabGeo(self, modeldata):
         return SetModel.setTabGeo(self, modeldata)
 
@@ -45,14 +45,16 @@ class SetModel():
         SetModel.setTabMat(self, modeldata)
         SetModel.setTabGeo(self, modeldata)
 
-        inci, mesh_type_list = SetModel.__inci(self, self.elemlist, self.mat_lib, self.geo_lib)
+        inci, mesh_type_list = SetModel.__inci(
+            self, self.elemlist, self.mat_lib, self.geo_lib
+        )
         self.inci = inci
         self.mesh_type_list = mesh_type_list
         return inci
 
     def getInci(self, modeldata):
         return SetModel.setInci(self, modeldata)
-        
+
     def setCoord(self, modeldata):
         coordlist = SetModel.__coordlist(self, modeldata)
         coord = SetModel.__coord(self, coordlist)
@@ -61,43 +63,41 @@ class SetModel():
 
     def getCoord(self, modeldata):
         return SetModel.setCoord(self, modeldata)
-    
+
     def getIntGauss(self, modeldata):
         return SetModel.__intgauss(self, modeldata)
-    
+
     # -----------------------------------------------
     # privates methods
     def __elemlist(self, modeldata):
-        set_mesh = modeldata['MESH']
+        set_mesh = modeldata["MESH"]
         conec = self.mesh.getElementConection(set_mesh)
 
         elemset = self.element.getElementSet()
         shapset = self.shape.getShapeSet()
         meshset = int(f'{elemset["id"]}{shapset["id"]}')
-        
+
         elemlist = self.mesh.getElementList(conec, meshset, modeldata)
 
         return elemlist
-    
+
     def __coordlist(self, modeldata):
         # self.mesh(modeldata)
-        set_mesh = modeldata['MESH']
+        set_mesh = modeldata["MESH"]
         coord = self.mesh.getNodesCoord(set_mesh)
 
         coordlist = [[None] * 4]
         nodes = [[None] * 4]
         for nn in range(len(coord)):
-            nodes.append(
-                [int(coord[nn][0]), coord[nn][1], coord[nn][2], coord[nn][3]]
-            )
+            nodes.append([int(coord[nn][0]), coord[nn][1], coord[nn][2], coord[nn][3]])
         nodes = nodes[1::][::]
         coordlist.extend(nodes)
         coordlist = coordlist[1::][::]
         return coordlist
-    
+
     def __tabmat(self, matlist):
         """get material table"""
-        
+
         nmat = len(matlist["PROPMAT"])
         mat_lib = dict()
         mat_prop = dict()
@@ -122,8 +122,8 @@ class SetModel():
                 else:
                     mat_prop[key] = 0.0
             matset = self.material.getMaterialSet()
-            idtyp = matset['idtyp'] #mat_def(matlist[mm]["MAT"])
-            idmat = matset['idmat'] #mat_beh(matlist[mm]["DEF"])
+            idtyp = matset["idtyp"]  # mat_def(matlist[mm]["MAT"])
+            idmat = matset["idmat"]  # mat_beh(matlist[mm]["DEF"])
             tabmat[mm, :] = [
                 mat_prop["EXX"],
                 mat_prop["VXX"],
@@ -138,10 +138,10 @@ class SetModel():
                 idmat,
             ]
         return tabmat, mat_lib
-    
+
     def __tabgeo(self, geolist):
         """get geometry table"""
-        
+
         ngeo = len(geolist["PROPGEO"])
         geo_lib = dict()
         geo_prop = dict()
@@ -158,27 +158,25 @@ class SetModel():
         }
         tabgeo = np.zeros((ngeo, len(key_geo_list) + 1))
         for gg in range(ngeo):
-            
             geo_lib[geolist["PROPGEO"][gg]["NAME"]] = gg + 1
-            
+
             if "DIM" in geolist["PROPGEO"][gg].keys():
                 b = geolist["PROPGEO"][gg]["DIM"]["b"]
                 h = geolist["PROPGEO"][gg]["DIM"]["h"]
                 t = geolist["PROPGEO"][gg]["DIM"]["t"]
                 d = geolist["PROPGEO"][gg]["DIM"]["d"]
-                
+
                 dim_sec = {
-                    'b': b,
-                    'h': h,
-                    't': t,
-                    'd': d,
+                    "b": b,
+                    "h": h,
+                    "t": t,
+                    "d": d,
                 }
 
                 geoset = self.geometry.GeoemtrySet()
-                idgeo = geoset['idgeo']
+                idgeo = geoset["idgeo"]
 
                 sect_prop = self.geometry.getSectionProp(dim_sec)
-
 
                 tabgeo[gg, :] = [
                     sect_prop["areacs"],
@@ -192,7 +190,7 @@ class SetModel():
                     d,
                     idgeo,
                 ]
-            
+
             else:
                 for pp in range(len(key_geo_list)):
                     key = list(key_geo_list)[pp]
@@ -214,9 +212,8 @@ class SetModel():
                     idgeo,
                 ]
         return tabgeo, geo_lib
-    
-    def __inci(self, elemlist, mat_lib, geo_lib):
 
+    def __inci(self, elemlist, mat_lib, geo_lib):
         MAXCONECELM = int(20)  # Max 20-Nodes (hexa20)
         inci = [[None] * (1 + 3 + MAXCONECELM)]
         nelem = len(elemlist)
@@ -229,17 +226,19 @@ class SetModel():
             conec_elm[kk, 0] = contelm  # elemlist[dm][kk][0]
             nodes = np.array(elemlist[kk][4])
             if len(nodes) != MAXCONECELM:
-                nodes = np.append(nodes, np.zeros(int(MAXCONECELM - len(nodes))), axis=0)
+                nodes = np.append(
+                    nodes, np.zeros(int(MAXCONECELM - len(nodes))), axis=0
+                )
             conec_elm[kk, 1:] = nodes
-            
+
             elemeset = self.element.getElementSet()
             shapeset = self.shape.getShapeSet()
             keyelem = elemlist[kk][1]
             # elem = get_elemset(keyelem)
             # elemset = elem.elemset()
-            
+
             mesh_type_list[keyelem] = [
-                int(f'{elemeset["id"]}{shapeset["id"]}'),#elemeset["id"],
+                int(f'{elemeset["id"]}{shapeset["id"]}'),  # elemeset["id"],
                 len(elemeset["dofs"]),
                 len(shapeset["nodes"]),
                 len(elemeset["tensor"]),
@@ -253,16 +252,16 @@ class SetModel():
             (conec_elm[:, 0][:, np.newaxis], prop_elm, conec_elm[:, 1:]), axis=1
         )
         return inci, mesh_type_list
-    
+
     def __coord(self, coordlist):
         """get coord nodes"""
-        
+
         nnod = len(coordlist)
         coord = np.zeros((nnod, 4))
         for ii in range(0, nnod):
             coord[ii, :] = np.array(coordlist[ii][:])
         return coord
-    
+
     def __intgauss(self, modeldata):
-        self.intgauss = modeldata["ELEMENT"]['INTGAUSS']
-        return self.intgauss 
+        self.intgauss = modeldata["ELEMENT"]["INTGAUSS"]
+        return self.intgauss

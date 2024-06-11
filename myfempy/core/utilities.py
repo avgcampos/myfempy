@@ -1,16 +1,18 @@
 # from os import environ
 # environ['OMP_NUM_THREADS'] = '3'
 
-from numpy import array, zeros, eye, dot, matmul, asarray, where, mean, cross, ones_like, unique, less, ix_, uint32, float64
+from numpy import (array, asarray, cross, dot, eye, float64, ix_, less, matmul,
+                   mean, ones_like, uint32, unique, where, zeros)
 from numpy.linalg import multi_dot
-from scipy.linalg import inv, kron, det
+from scipy.linalg import det, inv, kron
 from scipy.sparse import csc_matrix
+
 INT32 = uint32
 FLT64 = float64
 
-#==============================================================================
+# ==============================================================================
 #                               MYFEMPY UTTILITIES
-#==============================================================================
+# ==============================================================================
 # def inverse(A):
 #     invA = inv(A, overwrite_a=True, check_finite=False)
 #     return invA
@@ -43,12 +45,14 @@ FLT64 = float64
 #     eyeM = eye(n, dtype=type)
 #     return eyeM
 
+
 def determinant_dim2(A):
-    detA = A[0]*A[3]-A[1]*A[2]
+    detA = A[0] * A[3] - A[1] * A[2]
     return detA
 
+
 def inverse_dim2(A):
-    invA = 1/(A[0]*A[3]-A[1]*A[2])*array([[A[3], -A[1]], [-A[2], A[0]]])
+    invA = 1 / (A[0] * A[3] - A[1] * A[2]) * array([[A[3], -A[1]], [-A[2], A[0]]])
     return invA
 
 
@@ -64,13 +68,12 @@ def addMatrix(A, A_add, idx):
     Returns:
         matrix numpy array
     """
-    
+
     A[ix_(idx, idx)] += A_add
     return A
 
 
 def setSteps(steps):
-    
     """
     setSteps steps setting
 
@@ -80,7 +83,7 @@ def setSteps(steps):
     Returns:
         nsteps -- Number of steps [int]
     """
-    
+
     start = steps["start"]
     end = steps["end"]
     substep = steps["step"]
@@ -90,7 +93,7 @@ def setSteps(steps):
         nsteps = int((end - start) / substep)
     return nsteps
 
-    
+
 def elem2nodes_conec(nnode, nelem, dofe, inci):
     """
     Average Nodes Calculator version 2
@@ -159,94 +162,132 @@ def unit_normal(a, b, c):
     return (x / magnitude, y / magnitude, z / magnitude)
 
 
-
 def get_nodes_from_list(nodelist, coord, regions):
     tol = 1e-10
-    nodes=[]
-    dir_fc=[]
+    nodes = []
+    dir_fc = []
     # ----- SEEKERS WITH LOC -----
     if nodelist[0] == "lengthx":
         coord_0 = float(nodelist[2])
         coord_1 = float(nodelist[3])
-        nodes = coord[where((coord[:, 1] >= coord_0)&(coord[:, 1] <= coord_1)), 0,][0]
+        nodes = coord[
+            where((coord[:, 1] >= coord_0) & (coord[:, 1] <= coord_1)),
+            0,
+        ][0]
         # nodesapply.append(nodes)
         dir_fc = "x"
         return nodes, dir_fc
-    
+
     elif nodelist[0] == "lengthy":
         coord_0 = float(nodelist[2])
         coord_1 = float(nodelist[3])
-        nodes = coord[where((coord[:, 2] >= coord_0)&(coord[:, 2] <= coord_1)), 0,][0]
+        nodes = coord[
+            where((coord[:, 2] >= coord_0) & (coord[:, 2] <= coord_1)),
+            0,
+        ][0]
         # nodesapply.append(nodes)
         dir_fc = "y"
         return nodes, dir_fc
-    
+
     elif nodelist[0] == "lengthz":
         coord_0 = float(nodelist[2])
         coord_1 = float(nodelist[3])
-        nodes = coord[where((coord[:, 3] >= coord_0)&(coord[:, 3] <= coord_1)), 0,][0]
+        nodes = coord[
+            where((coord[:, 3] >= coord_0) & (coord[:, 3] <= coord_1)),
+            0,
+        ][0]
         # nodesapply.append(nodes)
         dir_fc = "z"
         return nodes, dir_fc
-    
+
     elif nodelist[0] == "edgex":
-        edge_coordX = nodelist[1].astype(float) #float(nodelist[1])
+        edge_coordX = nodelist[1].astype(float)  # float(nodelist[1])
         if int(nodelist[2]) == 999:
             dir_fc = "x_y"
-            coord_fc = (coord[where(coord[:, 3] == float(nodelist[3])),:,])[0]
+            coord_fc = (
+                coord[
+                    where(coord[:, 3] == float(nodelist[3])),
+                    :,
+                ]
+            )[0]
         elif int(nodelist[3]) == 999:
             dir_fc = "x_z"
-            coord_fc = (coord[where(coord[:, 2] == float(nodelist[2])),:,])[0]
+            coord_fc = (
+                coord[
+                    where(coord[:, 2] == float(nodelist[2])),
+                    :,
+                ]
+            )[0]
         nodes = search_edgex(edge_coordX, coord_fc, tol)
         # nodesapply.append(nodes)
         return nodes, dir_fc
-    
+
     elif nodelist[0] == "edgey":
         edge_coordY = float(nodelist[2])
         if float(nodelist[1]) == 999:
             dir_fc = "y_x"
-            coord_fc = (coord[where(coord[:, 3] == float(nodelist[3])),:,])[0]
+            coord_fc = (
+                coord[
+                    where(coord[:, 3] == float(nodelist[3])),
+                    :,
+                ]
+            )[0]
         elif float(nodelist[3]) == 999:
             dir_fc = "y_z"
-            coord_fc = (coord[where(coord[:, 1] == float(nodelist[1])),:,])[0]
+            coord_fc = (
+                coord[
+                    where(coord[:, 1] == float(nodelist[1])),
+                    :,
+                ]
+            )[0]
         nodes = search_edgey(edge_coordY, coord_fc, tol)
         # nodesapply.append(nodes)
         return nodes, dir_fc
-    
+
     elif nodelist[0] == "edgez":
         edge_coordZ = float(nodelist[3])
         if float(nodelist[1]) == 999:
             dir_fc = "z_x"
-            coord_fc = (coord[where(coord[:, 2] == float(nodelist[2])),:,])[0]
-            
+            coord_fc = (
+                coord[
+                    where(coord[:, 2] == float(nodelist[2])),
+                    :,
+                ]
+            )[0]
+
         elif float(nodelist[2]) == 999:
             dir_fc = "z_x"
-            coord_fc = (coord[where(coord[:, 1] == float(nodelist[1])), :,])[0]
+            coord_fc = (
+                coord[
+                    where(coord[:, 1] == float(nodelist[1])),
+                    :,
+                ]
+            )[0]
         nodes = search_edgez(edge_coordZ, coord_fc, tol)
         return nodes, dir_fc
         # nodesapply.append(nodes)
-    
+
     elif nodelist[0] == "surfxy":
         orthg_coordZ = float(nodelist[3])
         nodes = search_surfxy(orthg_coordZ, coord, tol)
         # nodesapply.append(nodes)
         dir_fc = "z"
         return nodes, dir_fc
-    
+
     elif nodelist[0] == "surfyz":
         orthg_coordX = float(nodelist[1])
         nodes = search_surfyz(orthg_coordX, coord, tol)
         # nodesapply.append(nodes)
         dir_fc = "x"
         return nodes, dir_fc
-    
+
     elif nodelist[0] == "surfzx":
         orthg_coordY = float(nodelist[2])
         nodes = search_surfzx(orthg_coordY, coord, tol)
         # nodesapply.append(nodes)
         dir_fc = "y"
         return nodes, dir_fc
-    
+
     elif nodelist[0] == "node":
         node_coordX = float(nodelist[1])
         node_coordY = float(nodelist[2])
@@ -255,26 +296,26 @@ def get_nodes_from_list(nodelist, coord, regions):
         # nodesapply.append(nodes)
         dir_fc = "x"
         return nodes, dir_fc
-        
+
     # ----- SEEKERS WITH TAG -----
     elif nodelist[0] == "point":
         nodes = regions[0][1][int(nodelist[4]) - 1][1][:]
         dir_fc = "x"
         # nodesapply.append(nodes)
         return nodes, dir_fc
-    
+
     elif nodelist[0] == "line":
         nodes = regions[1][1][int(nodelist[4]) - 1][1][:]
         dir_fc = "x"
         # nodesapply.append(nodes)
         return nodes, dir_fc
-    
+
     elif nodelist[0] == "plane":
         nodes = regions[2][1][int(nodelist[4]) - 1][1][:]
         dir_fc = "x"
         # nodesapply.append(nodes)
         return nodes, dir_fc
-    
+
     else:
         print("input erro: force_opt don't defined")
         return nodes, dir_fc
@@ -289,6 +330,7 @@ def get_elemen_from_nodelist(inci, node_list):
     elmlist = unique(elmlist)
     return elmlist
 
+
 def search_edgex(edge_coordX, coord, erro):
     """serch. node  on x dir. edge
 
@@ -302,7 +344,9 @@ def search_edgex(edge_coordX, coord, erro):
     """
     dif = abs(edge_coordX * ones_like(coord[:, 1]) - coord[:, 1])
     erroa = erro * ones_like(dif)
-    node_posi = less(dif, erroa) #array(where(dif < erroa)[0][:]).astype(INT32) #(asarray(where(dif < erroa)))[0][:]
+    node_posi = less(
+        dif, erroa
+    )  # array(where(dif < erroa)[0][:]).astype(INT32) #(asarray(where(dif < erroa)))[0][:]
     node = coord[node_posi, 0].astype(INT32)
     return node
 
@@ -320,7 +364,7 @@ def search_edgey(edge_coordY, coord, erro):
     """
     dif = abs(edge_coordY * ones_like(coord[:, 2]) - coord[:, 2])
     erroa = erro * ones_like(dif)
-    node_posi = less(dif, erroa) #(asarray(where(dif < erroa)))[0][:]
+    node_posi = less(dif, erroa)  # (asarray(where(dif < erroa)))[0][:]
     node = coord[node_posi, 0].astype(INT32)
     return node
 
@@ -338,7 +382,7 @@ def search_edgez(edge_coordZ, coord, erro):
     """
     dif = abs(edge_coordZ * ones_like(coord[:, 3]) - coord[:, 3])
     erroa = erro * ones_like(dif)
-    node_posi = less(dif, erroa) #(asarray(where(dif < erroa)))[0][:]
+    node_posi = less(dif, erroa)  # (asarray(where(dif < erroa)))[0][:]
     node = coord[node_posi, 0].astype(INT32)
     return node
 
@@ -356,7 +400,7 @@ def search_surfxy(orthg_coordZ, coord, erro):
     """
     dif = abs(orthg_coordZ * ones_like(coord[:, 3]) - coord[:, 3])
     erroa = erro * ones_like(dif)
-    node_posi = less(dif, erroa) #(asarray(where(dif < erroa)))[0][:]
+    node_posi = less(dif, erroa)  # (asarray(where(dif < erroa)))[0][:]
     node = coord[node_posi, 0].astype(INT32)
     return node
 
@@ -374,7 +418,7 @@ def search_surfyz(orthg_coordX, coord, erro):
     """
     dif = abs(orthg_coordX * ones_like(coord[:, 1]) - coord[:, 1])
     erroa = erro * ones_like(dif)
-    node_posi = less(dif, erroa) #(asarray(where(dif < erroa)))[0][:]
+    node_posi = less(dif, erroa)  # (asarray(where(dif < erroa)))[0][:]
     node = coord[node_posi, 0].astype(INT32)
     return node
 
@@ -392,7 +436,7 @@ def search_surfzx(orthg_coordY, coord, erro):
     """
     dif = abs(orthg_coordY * ones_like(coord[:, 2]) - coord[:, 2])
     erroa = erro * ones_like(dif)
-    node_posi = less(dif, erroa) #(asarray(where(dif < erroa)))[0][:]
+    node_posi = less(dif, erroa)  # (asarray(where(dif < erroa)))[0][:]
     node = coord[node_posi, 0].astype(INT32)
     return node
 
@@ -416,7 +460,9 @@ def search_nodexyz(node_coordX, node_coordY, node_coordZ, coord, erro):
     erroax = erro * ones_like(difx)
     erroay = erro * ones_like(dify)
     erroaz = erro * ones_like(difz)
-    node_posi = (asarray(where((difx < erroax) & (dify < erroay) & (difz < erroaz))))[0][:]
+    node_posi = (asarray(where((difx < erroax) & (dify < erroay) & (difz < erroaz))))[
+        0
+    ][:]
     node = coord[node_posi, 0].astype(INT32)
     return node
 
@@ -453,20 +499,20 @@ def nodes_from_regions(regionlist):
     return regions
 
 
-#integracao numerica
+# integracao numerica
 def gauss_points(type, npp):
-    if type == 'quad4':
+    if type == "quad4":
         return __gauss_points_quad4(npp)
-    
-    elif type == 'tria3':
+
+    elif type == "tria3":
         return __gauss_points_tria3(npp)
-    
-    elif type == 'hexa8':
+
+    elif type == "hexa8":
         return __gauss_points_hexa8(npp)
-    
-    elif type == 'tetr4':
+
+    elif type == "tetr4":
         return __gauss_points_tetr4(npp)
-    
+
     else:
         pass
 
@@ -477,34 +523,55 @@ def __gauss_points_quad4(npp):
         wt = array([1.0])
         return pt, wt
 
+    elif npp == 2:
+        pt = array(
+            [
+                [-0.5773502691896258, -0.5773502691896258],
+                [0.5773502691896258, 0.5773502691896258],
+            ]
+        )
+        wt = array([1.0, 1.0])
+        return pt, wt
+
     elif npp == 4:
-        pt = array([[-0.5773502691896258, -0.5773502691896258],
-            [-0.5773502691896258, 0.5773502691896258],
-            [0.5773502691896258, -0.5773502691896258],
-            [0.5773502691896258, 0.5773502691896258]])
+        pt = array(
+            [
+                [-0.5773502691896258, -0.5773502691896258],
+                [-0.5773502691896258, 0.5773502691896258],
+                [0.5773502691896258, -0.5773502691896258],
+                [0.5773502691896258, 0.5773502691896258],
+            ]
+        )
         wt = array([1.0, 1.0, 1.0, 1.0])
         return pt, wt
 
     elif npp == 9:
-        pt = array([[-0.7745966692414834, -0.7745966692414834],
-            [0.0000000000000000, -0.774596669241483],
-            [0.7745966692414834, -0.7745966692414834],
-            [-0.774596669241483, 0.0000000000000000],
-            [0.0000000000000000, 0.0000000000000000],
-            [0.7745966692414834, 0.0000000000000000],
-            [-0.7745966692414834, 0.7745966692414834],
-            [0.0000000000000000, 0.7745966692414834],
-            [0.7745966692414834, 0.7745966692414834],
-            ])
-        wt = array([0.555555555555556,
-            0.888888888888889,
-            0.555555555555556,
-            0.888888888888889,
-            0.888888888888889,
-            0.888888888888889,
-            0.555555555555556,
-            0.888888888888889,
-            0.555555555555556])
+        pt = array(
+            [
+                [-0.7745966692414834, -0.7745966692414834],
+                [0.0000000000000000, -0.774596669241483],
+                [0.7745966692414834, -0.7745966692414834],
+                [-0.774596669241483, 0.0000000000000000],
+                [0.0000000000000000, 0.0000000000000000],
+                [0.7745966692414834, 0.0000000000000000],
+                [-0.7745966692414834, 0.7745966692414834],
+                [0.0000000000000000, 0.7745966692414834],
+                [0.7745966692414834, 0.7745966692414834],
+            ]
+        )
+        wt = array(
+            [
+                0.555555555555556,
+                0.888888888888889,
+                0.555555555555556,
+                0.888888888888889,
+                0.888888888888889,
+                0.888888888888889,
+                0.555555555555556,
+                0.888888888888889,
+                0.555555555555556,
+            ]
+        )
         return pt, wt
 
 
@@ -514,35 +581,51 @@ def __gauss_points_tria3(npp):
         wt = array([1.0])
         return pt, wt
 
+    elif npp == 2:
+        pt = array([[0.5, 0.5], [0.5, 0.5]])
+        wt = array([1.0, 1.0])
+        return pt, wt
+
     elif npp == 3:
-        pt = array([[0.1666666666666666, 0.1666666666666666],
-              [0.6666666666666666, 0.1666666666666666],
-              [0.1666666666666666, 0.6666666666666666]])
+        pt = array(
+            [
+                [0.1666666666666666, 0.1666666666666666],
+                [0.6666666666666666, 0.1666666666666666],
+                [0.1666666666666666, 0.6666666666666666],
+            ]
+        )
         wt = array([0.3333333333333, 0.3333333333333, 0.3333333333333])
         return pt, wt
 
     elif npp == 7:
-        pt = array([[-0.7745966692414834, -0.7745966692414834],
-            [0.0000000000000000, -0.774596669241483],
-            [0.7745966692414834, -0.7745966692414834],
-            [-0.774596669241483, 0.0000000000000000],
-            [0.0000000000000000, 0.0000000000000000],
-            [0.7745966692414834, 0.0000000000000000],
-            [-0.7745966692414834, 0.7745966692414834],
-            [0.0000000000000000, 0.7745966692414834],
-            [0.7745966692414834, 0.7745966692414834],
-            ])
-        wt = array([0.555555555555556,
-            0.888888888888889,
-            0.555555555555556,
-            0.888888888888889,
-            0.888888888888889,
-            0.888888888888889,
-            0.555555555555556,
-            0.888888888888889,
-            0.555555555555556])
+        pt = array(
+            [
+                [-0.7745966692414834, -0.7745966692414834],
+                [0.0000000000000000, -0.774596669241483],
+                [0.7745966692414834, -0.7745966692414834],
+                [-0.774596669241483, 0.0000000000000000],
+                [0.0000000000000000, 0.0000000000000000],
+                [0.7745966692414834, 0.0000000000000000],
+                [-0.7745966692414834, 0.7745966692414834],
+                [0.0000000000000000, 0.7745966692414834],
+                [0.7745966692414834, 0.7745966692414834],
+            ]
+        )
+        wt = array(
+            [
+                0.555555555555556,
+                0.888888888888889,
+                0.555555555555556,
+                0.888888888888889,
+                0.888888888888889,
+                0.888888888888889,
+                0.555555555555556,
+                0.888888888888889,
+                0.555555555555556,
+            ]
+        )
         return pt, wt
-    
+
 
 def __gauss_points_tetr4(npp):
     if npp == 1:
@@ -551,22 +634,30 @@ def __gauss_points_tetr4(npp):
         return pt, wt
 
     elif npp == 4:
-        pt = array([[0.5854101966249685, 0.1381966011250105, 0.1381966011250105],
-              [0.1381966011250105, 0.1381966011250105, 0.1381966011250105],
-              [0.1381966011250105, 0.1381966011250105, 0.5854101966249685],
-              [0.1381966011250105, 0.5854101966249685, 0.1381966011250105]])
+        pt = array(
+            [
+                [0.5854101966249685, 0.1381966011250105, 0.1381966011250105],
+                [0.1381966011250105, 0.1381966011250105, 0.1381966011250105],
+                [0.1381966011250105, 0.1381966011250105, 0.5854101966249685],
+                [0.1381966011250105, 0.5854101966249685, 0.1381966011250105],
+            ]
+        )
         wt = array([0.25, 0.25, 0.25, 0.25])
         return pt, wt
 
     elif npp == 5:
-        pt = array([[0.25, 0.25, 0.25],
-              [0.5, 0.16666666666666666, 0.16666666666666666],
-              [0.16666666666666666, 0.16666666666666666, 0.16666666666666666],
-              [0.16666666666666666, 0.16666666666666666, 0.5],
-              [0.16666666666666666, 0.5, 0.16666666666666666]])
+        pt = array(
+            [
+                [0.25, 0.25, 0.25],
+                [0.5, 0.16666666666666666, 0.16666666666666666],
+                [0.16666666666666666, 0.16666666666666666, 0.16666666666666666],
+                [0.16666666666666666, 0.16666666666666666, 0.5],
+                [0.16666666666666666, 0.5, 0.16666666666666666],
+            ]
+        )
         wt = array([-0.8, 0.45, 0.45, 0.45, 0.45])
         return pt, wt
-    
+
 
 def __gauss_points_hexa8(npp):
     if npp == 1:
@@ -575,15 +666,18 @@ def __gauss_points_hexa8(npp):
         return pt, wt
 
     elif npp == 8:
-        pt = array([[-0.5773502691896258, -0.5773502691896258, -0.5773502691896258],
-              [0.5773502691896258, -0.5773502691896258, -0.5773502691896258],
-              [0.5773502691896258, 0.5773502691896258, -0.5773502691896258],
-              [-0.5773502691896258, 0.5773502691896258, -0.5773502691896258],
-              [-0.5773502691896258, -0.5773502691896258, 0.5773502691896258],
-              [0.5773502691896258, -0.5773502691896258, 0.5773502691896258],
-              [0.5773502691896258, 0.5773502691896258, 0.5773502691896258],
-              [-0.5773502691896258, 0.5773502691896258, 0.5773502691896258]])
+        pt = array(
+            [
+                [-0.5773502691896258, -0.5773502691896258, -0.5773502691896258],
+                [0.5773502691896258, -0.5773502691896258, -0.5773502691896258],
+                [0.5773502691896258, 0.5773502691896258, -0.5773502691896258],
+                [-0.5773502691896258, 0.5773502691896258, -0.5773502691896258],
+                [-0.5773502691896258, -0.5773502691896258, 0.5773502691896258],
+                [0.5773502691896258, -0.5773502691896258, 0.5773502691896258],
+                [0.5773502691896258, 0.5773502691896258, 0.5773502691896258],
+                [-0.5773502691896258, 0.5773502691896258, 0.5773502691896258],
+            ]
+        )
 
         wt = array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
         return pt, wt
-    
