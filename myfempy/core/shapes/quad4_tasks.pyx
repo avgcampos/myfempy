@@ -137,10 +137,10 @@ def detJacobi(double [:] r_coord, double [:, :] element_coord):
 @cython.wraparound(False)  # turn off negative index wrapping for entire function           
 @cython.nonecheck(False)     
 def NodeList(int [:, :] inci, int element_number):
-    cdef int noi = int(inci[element_number, 4])
-    cdef int noj = int(inci[element_number, 5])
-    cdef int nok = int(inci[element_number, 6])
-    cdef int nol = int(inci[element_number, 7])
+    cdef int noi = inci[element_number, 4]
+    cdef int noj = inci[element_number, 5]
+    cdef int nok = inci[element_number, 6]
+    cdef int nol = inci[element_number, 7]
     cdef int [:] node_list = np.array([noi, noj, nok, nol])                  
     return node_list
             
