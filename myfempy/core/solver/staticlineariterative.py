@@ -54,7 +54,9 @@ class StaticLinearIterative(Solver):
     def getDirichletNH(constrains, nodetot, nodedof):
         return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
 
-    def runSolve(assembly, constrainsdof, fulldofs, solverset):
+    def runSolve(assembly, constrainsdof, modelinfo, solverset):
+        fulldofs = modelinfo["fulldofs"]
+
         solution = dict()
         nsteps = setSteps(solverset["STEPSET"])
 

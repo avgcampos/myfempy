@@ -131,7 +131,19 @@ class newAnalysis:
         self.physic = SetPhysics(self.model, Loads, BoundCond)
         self.physic.physicdata = physicdata
         self.modelinfo["forces"] = newAnalysis.getLoadApply(self)
-        self.modelinfo["constrains"] = newAnalysis.getBCApply(self)
+
+        constrains = newAnalysis.getBCApply(self)
+        if any(constrains[:, 1] == 11):
+            self.modelinfo["csleft"] = constrains[
+                np.where(constrains[:, 1] == 11)[0], 0
+            ]
+            self.modelinfo["csright"] = constrains[
+                np.where(constrains[:, 1] == 12)[0], 0
+            ]
+            self.modelinfo["constrains"] = constrains
+        else:
+            self.modelinfo["constrains"] = constrains
+
         # self.loadaply = FEANewAnalysis.getLoadApply(self)
         # self.constrains = FEANewAnalysis.getBCApply(self)
 
@@ -150,7 +162,8 @@ class newAnalysis:
         try:
             matrix = newAnalysis.getGlobalMatrix(
                 self, inci, coord, tabmat, tabgeo, intgauss, self.symm, self.mp
-            )  # self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo)
+            )
+            # self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo)
             logging.info("TRY RUN GLOBAL ASSEMBLY -- SUCCESS")
         except:
             logging.warning("TRY RUN GLOBAL ASSEMBLY -- FAULT")
@@ -249,7 +262,9 @@ class newAnalysis:
             logging.info("TRY RUN CONSTRAINS -- SUCCESS")
         except:
             logging.warning("TRY RUN CONSTRAINS -- FAULT")
+
         constrainsdof["freedof"] = freedof
+        constrainsdof["fixedof"] = fixedof
         constrainsdof["constdof"] = constdof
 
         try:
@@ -273,7 +288,7 @@ class newAnalysis:
         try:
             starttime = time()
             solverset["solution"] = self.solver.runSolve(
-                assembly, constrainsdof, self.modelinfo["fulldofs"], solverset
+                assembly, constrainsdof, self.modelinfo, solverset
             )
             endttime = time()
             solverset["solverstatus"]["timesim"] = abs(endttime - starttime)
@@ -314,6 +329,7 @@ class newAnalysis:
         #     modelinfo["constrains"] = []
         # modelinfo["forces"] = FEANewAnalysis.getLoadApply(self)
         # modelinfo["constrains"] = FEANewAnalysis.getBCApply(self)
+
         try:
             preview_plot(previewdata, self.modelinfo, str(self.path))
             logging.info("TRY RUN PREVIEW PLOT -- SUCCESS")
@@ -469,9 +485,10 @@ class newAnalysis:
     def __setDomain(physicdata):
         if physicdata["DOMAIN"] == "structural":
             from myfempy.core.physic.bcstruct import BoundCondStruct
-            # from myfempy.core.physic.loadstruct import LoadStructural
+            from myfempy.core.physic.loadstruct import LoadStructural
+
             # from myfempy.expe.new_bc.bcstruct import BoundCondStruct
-            from myfempy.expe.new_bc.loadstruct import LoadStructural
+            # from myfempy.expe.new_bc.loadstruct import LoadStructural
 
             return LoadStructural, BoundCondStruct
         elif physicdata["DOMAIN"] == "thermal":

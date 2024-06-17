@@ -85,7 +85,9 @@ class ModalLinear(Solver):
             dtype=float64,
         )
 
-    def runSolve(assembly, constrainsdof, fulldofs, solverset):
+    def runSolve(assembly, constrainsdof, modelinfo, solverset):
+        fulldofs = modelinfo["fulldofs"]
+
         solution = dict()
         modeEnd = setSteps(solverset["STEPSET"])
 

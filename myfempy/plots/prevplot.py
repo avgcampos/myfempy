@@ -210,6 +210,8 @@ def build_preview(previewset: dict, path):
             bondCond_vet = previewset["constrains"][[num_bc]][0]
             if int(bondCond_vet[1]) == 0:
                 pass
+            elif int(bondCond_vet[1]) == 11 or int(bondCond_vet[1]) == 12:
+                bondCond_vet[1] = 4
             else:
                 bondCond_vet[1] = __setBCDof(
                     key_list_bc[val_list_bc.index(int(bondCond_vet[1]))]
@@ -358,6 +360,6 @@ def __setBCDof(bcdof):
         "rx": 4,
         "ry": 5,
         "rz": 6,
-        "all": 0,
+        "full": 0,
     }
     return bcdoftype[bcdof]

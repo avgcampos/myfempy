@@ -20,6 +20,10 @@ class BoundCondStruct(Structural):
                 bcl = bclist[bc_index]
                 bcapp = BoundCondStruct.__BCDispl(modelinfo, bcl)
                 boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
+            elif bclist[bc_index][0] == "csymm":
+                bcl = bclist[bc_index]
+                bcapp = BoundCondStruct.__BCCS(modelinfo, bcl)
+                boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
             else:
                 pass
         boncdnodeaply = boncdnodeaply[1::][::]
@@ -59,6 +63,28 @@ class BoundCondStruct(Structural):
             bcapp = np.array(
                 [[int(node_list_bc[j]), bcdof, float(bclist[7]), int(bclist[8])]]
             )
+            boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
+
+        boncdnodeaply = boncdnodeaply[1::][::]
+        return boncdnodeaply
+
+    def __BCCS(modelinfo, bclist):
+        boncdnodeaply = np.zeros((1, 4))
+
+        nodelist = bclist[2:]
+        node_list_bc, dir_fc = get_nodes_from_list(
+            nodelist, modelinfo["coord"], modelinfo["regions"]
+        )
+
+        if bclist[1] == "left":
+            bcdof = 11
+        elif bclist[1] == "right":
+            bcdof = 12
+        else:
+            bcdof = 0
+
+        for j in range(len(node_list_bc)):
+            bcapp = np.array([[int(node_list_bc[j]), bcdof, 0.0, int(bclist[8])]])
             boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
 
         boncdnodeaply = boncdnodeaply[1::][::]

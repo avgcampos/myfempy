@@ -206,69 +206,143 @@ The changelog is available
 
 ``` bash
 /myfempy
-│
-├───core
-│      alglin.py
-│      harmonicforced.py
-│      mesh.py
-│      modallinear.py
-│      solver.py
-│      staticlinear.py
-│      utils.py
-│   
-│
-├───felib
-│   │
-│   ├───elements
-│   │     element.py
-│   │     plane.py
-│   │     platekc.py
-│   │     solid.py
-│   │
-│   ├───geometry
-│   │     geometry.py
-│   │     rectangle.py
-│   │     thickness.py
-│   │   
-│   │
-│   ├───material
-│   │     material.py
-│   │     planestrain.py
-│   │     planestress.py
-│   │     solid.py
-│   │
-│   ├───physic
-│   │     bcstruct.py
-│   │     loadstruct.py
-│   │     structural.py
-│   │
-│   ├───shapes
-│         hexa8.py
-│         line.py
-│         line2.py
-│         quad4.py
-│         shape.py
-│         tetr4.py
-│         tria3.py
-│
-├───io
-│      iocsv.py
-│      iogmsh.py
-│      iovtk.py
-│   
-│
-├───misc
-│      logo.png
-│      logo.txt
-│      path.py
-│      utils.py
-│
-├───plots
-        meshquality.py
-        physics.py
-        plotmesh.py
-        plotxy.py
-        postplot.py
-
+|   __about__.py
+|   __init__.py
+|
++---core
+|   |   utilities.py
+|   |   __init__.py
+|   |
+|   +---elements
+|   |   |   acustic2DWP.py
+|   |   |   beamEB.py
+|   |   |   beamNL.py
+|   |   |   element.py
+|   |   |   fluid1DLF.py
+|   |   |   fluid2DLF.py
+|   |   |   heat2DSS.py
+|   |   |   heat2DTR.py
+|   |   |   plane.py
+|   |   |   plateKC.py
+|   |   |   solid.py
+|   |   |   specials.py
+|   |   |   __init__.py
+|   |
+|   +---geometry
+|   |   |   geometry.py
+|   |   |   rectangle.py
+|   |   |   thickness.py
+|   |   |   __init__.py
+|   |
+|   +---material
+|   |   |   fluidplane.py
+|   |   |   material.py
+|   |   |   microscale.py
+|   |   |   planestrain.py
+|   |   |   planestress.py
+|   |   |   solid.py
+|   |   |   __init__.py
+|   |
+|   +---mesh
+|   |   |   gmsh.py
+|   |   |   legacyquad4.py
+|   |   |   legacytria3.py
+|   |   |   mesh.py
+|   |   |   __init__.py
+|   |
+|   +---physic
+|   |   |   acustic.py
+|   |   |   bcstruct.py
+|   |   |   coupling.py
+|   |   |   fluidflow.py
+|   |   |   loadstruct.py
+|   |   |   structural.py
+|   |   |   thermal.py
+|   |
+|   +---shapes
+|   |   |   hexa20.py
+|   |   |   hexa8.py
+|   |   |   line.py
+|   |   |   line2.py
+|   |   |   line3.py
+|   |   |   quad4.py
+|   |   |   quad4_tasks.c
+|   |   |   quad4_tasks.cp311-win_amd64.pyd
+|   |   |   quad4_tasks.html
+|   |   |   quad4_tasks.pyx
+|   |   |   quad8.py
+|   |   |   shape.py
+|   |   |   tetr10.py
+|   |   |   tetr4.py
+|   |   |   tria3.py
+|   |   |   tria3_tasks.c
+|   |   |   tria3_tasks.cp311-win_amd64.pyd
+|   |   |   tria3_tasks.html
+|   |   |   tria3_tasks.pyx
+|   |   |   tria6.py
+|   |   |   __init__.py
+|   |
+|   +---solver
+|   |   |   acustic.py
+|   |   |   assembler.py
+|   |   |   assemblerfull.py
+|   |   |   assemblerfull_cython_v4.c
+|   |   |   assemblerfull_cython_v4.cp311-win_amd64.pyd
+|   |   |   assemblerfull_cython_v4.html
+|   |   |   assemblerfull_cython_v4.pyx
+|   |   |   assemblerfull_numpy_v1.py
+|   |   |   assemblersymm.py
+|   |   |   assemblersymm_cython_v4.c
+|   |   |   assemblersymm_cython_v4.cp311-win_amd64.pyd
+|   |   |   assemblersymm_cython_v4.html
+|   |   |   assemblersymm_cython_v4.pyx
+|   |   |   assemblersymm_numpy_v1.py
+|   |   |   buckling.py
+|   |   |   cyclicsymm.py
+|   |   |   dynamic.py
+|   |   |   fluid.py
+|   |   |   harmoniclinear.py
+|   |   |   harmonicmodal.py
+|   |   |   modallinear.py
+|   |   |   multiphysic.py
+|   |   |   solver.py
+|   |   |   staticlinear.py
+|   |   |   staticlineariterative.py
+|   |   |   staticnonlinear.py
+|   |   |   thermal.py
+|   |   |   __init__.py
+|
+|
++---io
+|   |   iocsv.py
+|   |   iogmsh.py
+|   |   iovtk.py
+|   |   __init__.py
+|
++---plots
+|   |   meshquality.py
+|   |   physics.py
+|   |   plotmesh.py
+|   |   plotxy.py
+|   |   postplot.py
+|   |   prevplot.py
+|   |   __init__.py
+|
++---setup
+|   |   asi.py
+|   |   fea.py
+|   |   fsi.py
+|   |   model.py
+|   |   physics.py
+|   |   results.py
+|   |   topopt.py
+|   |   tsi.py
+|   |   __init__.py
+|
++---utils
+|   |   logo.png
+|   |   logo.txt
+|   |   utils.py
+|   |   __init__.py
 
 ```

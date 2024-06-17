@@ -51,16 +51,17 @@ Esta nova versão permite a inclusão de módulos e códigos escritos em C/Cytho
 		1. Multi-material
 			- [X] Interface de multi-material (multi E, v, ...)
 		2. Acoplamento multi-físico
-			- [ ] Fluid-Structure Interaction 
-			- [ ] Thermal-Structure Interaction
-			- [ ] Acoustic-Structure Interaction
+			- [ ] Fluid-Structure interaction
+			- [ ] Thermal-Structure interaction
+			- [ ] Acoustic-Structure interaction
     5. Comportamento mecânico e material:
         - [X] Plane stress
         - [X] Plane strain
-        - [X] Solid isotropic
+        - [ ] Solid isotropic
         - [ ] Plate Kirchhoff
         - [ ] Plate Reissner-Mindlin
-        - [ ] Cyclic symmetry boundary
+        - [X] Cyclic symmetry boundary
+		- [X] Pressure load application
         - [ ] Homogeinização/ micro escala (tensor)
 
 8. Validar a análise com a implementação seguintes tipos de elementos isoparametrico:
@@ -78,6 +79,5 @@ Esta nova versão permite a inclusão de módulos e códigos escritos em C/Cytho
 
 10. [X] Desenvolver a saida dos resultados por meio de arquivos .vtk;
 
-## 
-
+##
 Após a nova implementação, foi feito um _merge_ no repositório **myfempy_dev** (repositório oficial para desenvolvimento e testes), e após passar por todos os teste foi feito o upload para o repositório principal **myfempy** do projeto.

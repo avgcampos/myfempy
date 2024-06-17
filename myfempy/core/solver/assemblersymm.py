@@ -48,3 +48,6 @@ class AssemblerSYMM(Assembler):
 
     def getDirichletNH(constrains, nodetot, nodedof):
         return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
+
+    def getRotationMatrix(node_list, coord, ndof):
+        return AssemblerFULL.getRotationMatrix(node_list, coord, ndof)

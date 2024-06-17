@@ -80,7 +80,9 @@ class HarmonicLinear(Solver):
             dtype=float64,
         )
 
-    def runSolve(assembly, constrainsdof, fulldofs, solverset):
+    def runSolve(assembly, constrainsdof, modelinfo, solverset):
+        fulldofs = modelinfo["fulldofs"]
+
         solution = dict()
         stiffness = assembly["stiffness"]
         mass = assembly["mass"]

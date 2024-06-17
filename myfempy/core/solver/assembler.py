@@ -54,3 +54,7 @@ class Assembler(ABC):
     @abstractmethod
     def getDirichletNH():
         pass
+
+    @abstractmethod
+    def getRotationMatrix():
+        pass
