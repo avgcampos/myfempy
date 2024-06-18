@@ -1,14 +1,14 @@
 ###### 		          To Dev Version       ######
 ###### Requirements without Version Specifiers ######
-######      pip install -r requeriment.txt     ######
-numpy
+######      pip install -r requirements.txt    ######
+numpy==1.26.4
 scipy
 cython
 gmsh
 matplotlib
 vedo
 numdifftools
-jax[cpu]
+# jax[cpu]
 colorama
 art
 mkdocs

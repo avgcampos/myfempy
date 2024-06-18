@@ -40,17 +40,18 @@ authors = [
     {name = "Antonio Campos", email = "antviniciuscampos@gmail.com"},
 ]
 readme = "README.md"
-version = "0.3.1"
+version = "0.3.2"
 license = {file = "LICENSE.md"}
 requires-python = ">3.8"
 dependencies = [
-	"numpy",
-	"scipy",
-	"cython",
-	"gmsh",
-	"vedo",
-	"matplotlib",
-	"colorama",
+	"numpy == 1.26.4",
+	"scipy == 1.13.1",
+	"cython == 3.0.10",
+	"gmsh == 4.13.1",
+	"vedo == 2024.5.2",
+	"matplotlib == 3.9.0",
+	"colorama == 0.4.6",
+	"art == 6.2",
 ]
 keywords = ["FEM", "FEA", "FSI", "Engineering"]
 
