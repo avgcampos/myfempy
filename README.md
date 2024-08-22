@@ -1,6 +1,8 @@
 
 # Under Development
 
+The **myfempy** project is under development, updates and code modifications may occur in future versions without prior notice from the developers.
+
 <!-- ![logo_v1](https://user-images.githubusercontent.com/54820276/159730160-871ac41a-958a-4398-a014-506619c4cb56.png) -->
 
 <!-- ![logoB](https://user-images.githubusercontent.com/54820276/181291975-38e2a37e-be4f-40a3-b333-09724c61827b.png) -->
@@ -23,7 +25,7 @@ Developed by Antonio Vinicius G. Campos, 2024
 
 ## About
 
-**Myfempy** is a python package based on finite element method to multiphysics analysis. The code is open source and *intended for educational and scientific purposes only, not recommended to commercial use*. You can help us by contributing with a donation on the main project page, send us a email [3deasycaebr.contato@gmail.com]. **If you use myfempy in your research, the  developers would be grateful if you could cite in your work.**
+**myfempy** is a python package based on finite element method to multiphysics analysis. The code is open source and *intended for educational and scientific purposes only, not recommended to commercial use*. You can help us by contributing with a donation on the main project page, send us a email [3deasycaebr.contato@gmail.com]. **If you use myfempy in your research, the  developers would be grateful if you could cite in your work.**
 
 ## Installation
 
@@ -167,71 +169,115 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
 
 # Project tree structure
 
-```bash
-
+``` bash
 /myfempy
-│
-├───core
-│      alglin.py
-│      harmonicforced.py
-│      mesh.py
-│      modallinear.py
-│      solver.py
-│      staticlinear.py
-│      utils.py
-│   
-│
-├───felib
-│   │
-│   ├───elements
-│   │     element.py
-│   │     plane.py
-│   │     platekc.py
-│   │     solid.py
-│   │
-│   ├───geometry
-│   │     geometry.py
-│   │     rectangle.py
-│   │     thickness.py
-│   │   
-│   │
-│   ├───material
-│   │     material.py
-│   │     planestrain.py
-│   │     planestress.py
-│   │     solid.py
-│   │
-│   ├───physic
-│   │     bcstruct.py
-│   │     loadstruct.py
-│   │     structural.py
-│   │
-│   ├───shapes
-│         hexa8.py
-│         line.py
-│         line2.py
-│         quad4.py
-│         shape.py
-│         tetr4.py
-│         tria3.py
-│
-├───io
-│      iocsv.py
-│      iogmsh.py
-│      iovtk.py
-│   
-│
-├───misc
-│      logo.png
-│      logo.txt
-│      path.py
-│      utils.py
-│
-├───plots
-│     meshquality.py
-│     physics.py
-│     plotmesh.py
-│     plotxy.py
-│     postplot.py
+|   __about__.py
+|   __init__.py
+|
++---core
+|   |   utilities.py
+|   |
+|   +---elements
+|   |   |   element.py
+|   |   |   heatPlane.py
+|   |   |   structPlane.py
+|   |   |   structPlate.py
+|   |   |   structSolid.py
+|   |
+|   +---geometry
+|   |   |   geometry.py
+|   |   |   rectangle.py
+|   |   |   thickness.py
+|   |
+|   +---material
+|   |   |   heatplane.py
+|   |   |   material.py
+|   |   |   microscale.py
+|   |   |   planestrain.py
+|   |   |   planestress.py
+|   |   |   solid.py
+|   |
+|   +---mesh
+|   |   |   gmsh.py
+|   |   |   legacyquad4.py
+|   |   |   legacytria3.py
+|   |   |   mesh.py
+|   |
+|   +---physic
+|   |   |   acustic.py
+|   |   |   bcstruct.py
+|   |   |   bcthermal.py
+|   |   |   fluidflow.py
+|   |   |   loadstruct.py
+|   |   |   loadthermal.py
+|   |   |   structural.py
+|   |   |   thermal.py
+|   |   |   thermstructcoup.py
+|   |
+|   +---shapes
+|   |   |   hexa20.py
+|   |   |   hexa8.py
+|   |   |   line.py
+|   |   |   line2.py
+|   |   |   line3.py
+|   |   |   quad4.py
+|   |   |   quad4_tasks.c
+|   |   |   quad4_tasks.pyx
+|   |   |   quad8.py
+|   |   |   shape.py
+|   |   |   tetr10.py
+|   |   |   tetr4.py
+|   |   |   tria3.py
+|   |   |   tria3_tasks.c
+|   |   |   tria3_tasks.pyx
+|   |   |   tria6.py
+|   |
+|   +---solver
+|   |   |   acustic.py
+|   |   |   assembler.py
+|   |   |   assemblerfull.py
+|   |   |   assemblerfull_cython_v4.c
+|   |   |   assemblerfull_cython_v4.pyx
+|   |   |   assemblerfull_numpy_v1.py
+|   |   |   assemblersymm.py
+|   |   |   assemblersymm_cython_v4.c
+|   |   |   assemblersymm_cython_v4.pyx
+|   |   |   assemblersymm_numpy_v1.py
+|   |   |   cyclicsymm.py
+|   |   |   dynamic.py
+|   |   |   dynmodal.py
+|   |   |   dynsteadystatelinear.py
+|   |   |   fluid.py
+|   |   |   solver.py
+|   |   |   steadystatelinear.py
+|   |   |   steadystatelineariterative.py
+|   |   |   steadystatenonlinear.py
+|   |   |   thermal.py
+|
++---io
+|   |   iocsv.py
+|   |   iogmsh.py
+|   |   iovtk.py
+|
++---plots
+|   |   meshquality.py
+|   |   physics.py
+|   |   plotmesh.py
+|   |   plotxy.py
+|   |   postplot.py
+|   |   prevplot.py
+|
++---setup
+|   |   fea.py
+|   |   model.py
+|   |   physics.py
+|   |   results.py
+|   |   topopt.py
+|
++---utils
+|   |   logo.png
+|   |   logo.txt
+|   |   utils.py
 
 ```
+

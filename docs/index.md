@@ -1,34 +1,12 @@
-**Under Development**
+# Under Development
+
+The **myfempy** project is under development, updates and code modifications may occur in future versions without prior notice from the developers.
 
 ![myfempy_logo](assets\logo.png)
 
-## Welcome to myfempy's online documentation
-
-Copyright © Antonio Vinicius G. Campos 2022. Processo INPI BR512022001484-0
-
-## MathJax Test Page
-
-When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
-
-\begin{equation}
-ax^2 + bx + c = 0
-\end{equation}
-
-$$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
-
-## FlowChart with mermaid
-
-``` mermaid
-flowchart
-    doc --> abc 
-
-    abc --> 123
-
-```
-
 ## About
 
-**Myfempy** is a python package based on finite element method for
+**myfempy** is a python package based on finite element method for
 scientific analysis. The code is open source and *intended for
 educational and scientific purposes only, not recommended to commercial
 use*. You can help us by contributing with a donation on the main
@@ -306,5 +284,31 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
 |   |   logo.png
 |   |   logo.txt
 |   |   utils.py
+
+```
+
+
+
+## Welcome to myfempy's online documentation
+
+Copyright © Antonio Vinicius G. Campos 2022. Processo INPI BR512022001484-0
+
+## MathJax Test Page
+
+When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
+
+\begin{equation}
+ax^2 + bx + c = 0
+\end{equation}
+
+$$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
+
+## FlowChart with mermaid
+
+``` mermaid
+flowchart
+    doc --> abc 
+
+    abc --> 123
 
 ```
