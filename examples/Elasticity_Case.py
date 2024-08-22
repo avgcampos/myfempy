@@ -1,20 +1,16 @@
 from myfempy import newAnalysis
-from myfempy import StaticLinear
-
-from time import time
+from myfempy import SteadyStateLinear
 
 # ===============================================================================
 #                                   FEA
 # ===============================================================================
 
-fea = newAnalysis(StaticLinear)
+fea = newAnalysis(SteadyStateLinear)
 
 mat = {
     "NAME": "material",
     "VXX": 0.35,
     "EXX": 5.0E9,
-    "MAT": 'isotropic',
-    "DEF": 'planestress'
     }
 
 geo = {"NAME": "geo1",
@@ -62,7 +58,7 @@ modeldata = {
     },
 
     "ELEMENT": {
-        'TYPE': 'plane',
+        'TYPE': 'structplane',
         'SHAPE': 'quad4',
         'INTGAUSS': 4,
     },
@@ -96,9 +92,10 @@ bc1 = {
     }
 
 physicdata = {
-    "DOMAIN": 'structural',
-    "LOAD": [f1],
-    "BOUNDCOND": [bc1],
+    "PHYSIC": {"DOMAIN": "structural",
+               "LOAD": [f1],
+               "BOUNDCOND": [bc1],
+    },
     }
 
 fea.Physic(physicdata)
@@ -120,12 +117,9 @@ solverset = {"STEPSET": {'type': 'table',
              }
 solverdata = fea.Solve(solverset)
 
-# print(solverdata['solution']['U'])
-
 postprocset = {"SOLVERDATA": solverdata,
-                "PLOTSET": {'show': True, 'filename': 'solution', 'savepng': True},
                 "COMPUTER": {'structural': {'displ': True, 'stress': True}},
-                "TRACKER": {'point': {'x': 0.5*LX, 'y': 0, 'z': 0, 'dof':1}},
-                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True, 'inci': True, 'coord': True}},
+                "PLOTSET": {'show': True, 'filename': 'solution', 'savepng': True},
+                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True}},
             }
 postprocdata = fea.PostProcess(postprocset)
