@@ -2,7 +2,11 @@
 
 The **myfempy** project is under development, updates and code modifications may occur in future versions without prior notice from the developers.
 
+## Welcome to myfempy's online documentation
+
 ![myfempy_logo](assets\logo.png)
+
+Copyright © Antonio Vinicius G. Campos 2022. Processo INPI BR512022001484-0
 
 ## About
 
@@ -286,12 +290,6 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
 |   |   utils.py
 
 ```
-
-
-
-## Welcome to myfempy's online documentation
-
-Copyright © Antonio Vinicius G. Campos 2022. Processo INPI BR512022001484-0
 
 ## MathJax Test Page
 
