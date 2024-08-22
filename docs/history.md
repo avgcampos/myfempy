@@ -44,7 +44,7 @@ Implementar as seguintes soluções de análise:
 			- [ ] Algo. explicito?
 	3. Domínio termico e fluido:
 		1. Condução
-			- [ ] Regime permanente
+			- [X] Regime permanente
 			- [ ] Regime transiente
 		2. Escoamento
 			- [ ] laminar permanente
@@ -56,7 +56,7 @@ Implementar as seguintes soluções de análise:
 			- [X] Interface de multi-material (multi E, v, ...)
 		2. Acoplamento multi-físico
 			- [ ] Fluid-Structure interaction
-			- [ ] Thermal-Structure interaction
+			- [X] Thermal-Structure interaction
 			- [ ] Acoustic-Structure interaction
     5. Comportamento mecânico e material:
         - [X] Plane stress
