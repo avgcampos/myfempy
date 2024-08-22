@@ -4,8 +4,8 @@ from os import environ
 
 environ["OMP_NUM_THREADS"] = "3"
 
-from numpy import dot, float64, zeros
-from scipy.sparse.linalg import spsolve
+from numpy import empty, float64, linspace, pi, unique, zeros
+from scipy.sparse.linalg import minres, spsolve
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
@@ -14,10 +14,10 @@ from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
 
 
-class StaticLinear(Solver):
+class DynamicSteadyStateLinear(Solver):
 
     """
-    Static Linear Solver Class <ConcreteClassService>
+    Dynamic Steady State Harmonic Forced System Linear Solver Class <ConcreteClassService>
     """
 
     def getMatrixAssembler(
@@ -35,6 +35,16 @@ class StaticLinear(Solver):
                 type_assembler="linear_stiffness",
                 MP=MP,
             )
+            matrix["mass"] = AssemblerSYMM.getMatrixAssembler(
+                Model,
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                intgauss,
+                type_assembler="mass_consistent",
+                MP=MP,
+            )
         else:
             matrix["stiffness"] = AssemblerFULL.getMatrixAssembler(
                 Model,
@@ -46,6 +56,16 @@ class StaticLinear(Solver):
                 type_assembler="linear_stiffness",
                 MP=MP,
             )
+            matrix["mass"] = AssemblerFULL.getMatrixAssembler(
+                Model,
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                intgauss,
+                type_assembler="mass_consistent",
+                MP=MP,
+            )
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
@@ -55,38 +75,41 @@ class StaticLinear(Solver):
         return AssemblerFULL.getConstrains(constrains, nodetot, nodedof)
 
     def getDirichletNH(constrains, nodetot, nodedof):
-        return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
+        return empty(
+            (nodedof * nodetot, len(unique(constrains[:, 3][constrains[:, 3] != 0]))),
+            dtype=float64,
+        )
 
     def runSolve(assembly, constrainsdof, modelinfo, solverset):
         fulldofs = modelinfo["fulldofs"]
 
         solution = dict()
-        nsteps = setSteps(solverset["STEPSET"])
-
         stiffness = assembly["stiffness"]
+        mass = assembly["mass"]
         forcelist = assembly["loads"]
 
-        U0 = zeros((fulldofs), dtype=float64)  # empty((fulldofs, 1))
-        U1 = zeros((fulldofs), dtype=float64)  # empty((fulldofs, 1))
-        U = zeros((fulldofs, nsteps), dtype=float64)  # empty((fulldofs, nsteps))
-        Uc = assembly["bcdirnh"]
-
         freedof = constrainsdof["freedof"]
-        constdof = constrainsdof["constdof"]
 
-        for step in range(nsteps):
-            forcelist[freedof, step] = forcelist[freedof, step] - dot(
-                stiffness[:, constdof][freedof, :].toarray(), Uc[constdof, step]
-            )
+        twopi = 2 * pi
+        freqStart = (twopi) * solverset["STEPSET"]["start"]
+        freqEnd = (twopi) * solverset["STEPSET"]["end"]
+        freqStep = setSteps(solverset["STEPSET"])
+        w_range = linspace(freqStart, freqEnd, freqStep)
+
+        U = zeros((fulldofs, freqStep), dtype=float64)
+        U0 = U[freedof, 0]
+
+        sA = stiffness[:, freedof][freedof, :]
+        sM = mass[:, freedof][freedof, :]
+        for ww in range(freqStep):
+            Wn = w_range[ww]
+            Dw = sA - (Wn**2) * sM
             try:
-                U1[freedof] = spsolve(
-                    stiffness[:, freedof][freedof, :], forcelist[freedof, step]
+                U[freedof, ww], info = minres(
+                    A=Dw, b=forcelist[freedof, 0], x0=U0, tol=1e-10, maxiter=1000
                 )
             except:
-                pass
-            U1[constdof] = Uc[constdof, step]
-            U1[:] += U0[:]
-            U[:, step] = U1
-            U0[:] = U1[:]
+                raise info
         solution["U"] = U
+        solution["FREQ"] = w_range / (twopi)
         return solution

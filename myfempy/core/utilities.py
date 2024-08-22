@@ -13,38 +13,6 @@ FLT64 = float64
 # ==============================================================================
 #                               MYFEMPY UTTILITIES
 # ==============================================================================
-# def inverse(A):
-#     invA = inv(A, overwrite_a=True, check_finite=False)
-#     return invA
-
-# def kronProd(A, B):
-#     kronAB = kron(A, B)
-#     return kronAB
-
-# def determinant(A):
-#     detA = det(A, overwrite_a=True, check_finite=False)
-#     return detA
-
-# def dotProd(A, B):
-#     dotAB = matmul(A, B) #dot(A, B)tAB
-#     return dotAB
-
-# def dotdotProd(A, B, C):
-#     mdotABC = multi_dot([A, B, C])
-#     return mdotABC
-
-# def getZerosArray(m, n, type):
-#     zeros_array = zeros((m, n), dtype=type)
-#     return zeros_array
-
-# def getNewArray(array_list, type):
-#     new_array = array(array_list, dtype=type)
-#     return new_array
-
-# def getEyeMatrix(n, type):
-#     eyeM = eye(n, dtype=type)
-#     return eyeM
-
 
 def determinant_dim2(A):
     detA = A[0] * A[3] - A[1] * A[2]
@@ -98,10 +66,6 @@ def elem2nodes_conec(nnode, nelem, dofe, inci):
     """
     Average Nodes Calculator version 2
     """
-    # ith: cython.int[nelem * (dofe * dofe)]
-    # jth: cython.int[nelem * (dofe * dofe)]
-    # val: cython.double[nelem * (dofe * dofe)]
-
     ith = zeros((nelem * (dofe * dofe)), dtype=INT32)
     jth = zeros((nelem * (dofe * dofe)), dtype=INT32)
     val = zeros((nelem * (dofe * dofe)), dtype=INT32)
@@ -201,7 +165,7 @@ def get_nodes_from_list(nodelist, coord, regions):
         return nodes, dir_fc
 
     elif nodelist[0] == "edgex":
-        edge_coordX = nodelist[1].astype(float)  # float(nodelist[1])
+        edge_coordX = float(nodelist[1]) # nodelist[1].astype(float)  # float(nodelist[1])
         if int(nodelist[2]) == 999:
             dir_fc = "x_y"
             coord_fc = (

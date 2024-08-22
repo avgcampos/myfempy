@@ -7,14 +7,12 @@ from myfempy.core.material.material import Material
 
 
 class PlaneStressIsotropic(Material):
-    """Plane Stress Material Class <ConcreteClassService>"""
+    """Plane Stress Isotropic Material Class <ConcreteClassService>"""
 
     def getMaterialSet():
         matset = {
             "mat": "planestress",
-            "idmat": 3,
             "type": "isotropic",
-            "idtyp": 20,
         }
         return matset
 
@@ -48,6 +46,14 @@ class PlaneStressIsotropic(Material):
         strn_elm_xx = epsilon[0]
         strn_elm_yy = epsilon[1]
         strn_elm_xy = epsilon[2]
+        
+        # T = np.array([[1.0, -0.5, 0.0],
+        #               [-0.5, 1.0, 0.0],
+        #               [0.0, 0.0, 3.0]])
+               
+        # strain = np.array([strn_elm_xx, strn_elm_yy, strn_elm_xy])
+        # strn_elm_vm = np.sqrt(np.dot(strain.transpose() ,np.dot(T, strain)))
+        
         strn_elm_vm = np.sqrt(
             epsilon[0] ** 2
             - epsilon[0] * epsilon[1]
@@ -63,13 +69,9 @@ class PlaneStressIsotropic(Material):
         title = ["STRAIN_VM", "STRAIN_XX", "STRAIN_YY", "STRAIN_XY"]
         return title
 
-    def getElementStress(Model, epsilon, element_number):
-        E = Model.tabmat[
-            int(Model.inci[element_number, 2]) - 1, 0
-        ]  # material elasticity
-        v = Model.tabmat[
-            int(Model.inci[element_number, 2]) - 1, 1
-        ]  # material poisson ratio
+    def getElementStress(Model, epsilon, element_number):        
+        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["EXX"] # material elasticity
+        v = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["VXX"] # material poisson ratio
 
         C = PlaneStressIsotropic.getElasticTensor(E, v)
 

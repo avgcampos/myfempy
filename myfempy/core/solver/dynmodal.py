@@ -4,20 +4,20 @@ from os import environ
 
 environ["OMP_NUM_THREADS"] = "3"
 
-from numpy import empty, float64, linspace, pi, unique, zeros
-from scipy.sparse.linalg import minres, spsolve
+from numpy import (arange, concatenate, empty, float64, newaxis, pi, sqrt,
+                   unique, zeros)
+from scipy.sparse.linalg import eigsh
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
-# from myfempy.core.alglin import linsolve_spsolve
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
 
 
-class HarmonicLinear(Solver):
+class DynamicModalLinear(Solver):
 
     """
-    Harmonic Forced System Linear Solver Class <ConcreteClassService>
+    Modal(eig problem) Linear Solver Class <ConcreteClassService>
     """
 
     def getMatrixAssembler(
@@ -69,7 +69,12 @@ class HarmonicLinear(Solver):
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
-        return AssemblerFULL.getLoadAssembler(loadaply, nodetot, nodedof)
+        return empty(
+            (
+                nodedof * nodetot,
+                len(unique(loadaply[:, 3])),
+            )
+        )
 
     def getConstrains(constrains, nodetot, nodedof):
         return AssemblerFULL.getConstrains(constrains, nodetot, nodedof)
@@ -84,32 +89,35 @@ class HarmonicLinear(Solver):
         fulldofs = modelinfo["fulldofs"]
 
         solution = dict()
+        modeEnd = setSteps(solverset["STEPSET"])
+
         stiffness = assembly["stiffness"]
         mass = assembly["mass"]
         forcelist = assembly["loads"]
 
+        U = zeros((fulldofs, modeEnd), dtype=float64)
+
         freedof = constrainsdof["freedof"]
 
-        twopi = 2 * pi
-        freqStart = (twopi) * solverset["STEPSET"]["start"]
-        freqEnd = (twopi) * solverset["STEPSET"]["end"]
-        freqStep = setSteps(solverset["STEPSET"])
-        w_range = linspace(freqStart, freqEnd, freqStep)
+        try:
+            W, U[freedof, :] = eigsh(
+                A=stiffness[:, freedof][freedof, :],
+                M=mass[:, freedof][freedof, :],
+                k=modeEnd,
+                sigma=1,
+                which="LM",
+                maxiter=1000,
+            )
+        except:
+            pass
 
-        U = zeros((fulldofs, freqStep), dtype=float64)
-        U0 = U[freedof, 0]
+        Wlist = arange(0, modeEnd + 1)
+        Wrad = sqrt(W)
+        Whz = Wrad / (2 * pi)
+        w_range = concatenate(
+            (Wlist[1:, newaxis], Wrad[:, newaxis], Whz[:, newaxis]), axis=1
+        )
 
-        sA = stiffness[:, freedof][freedof, :]
-        sM = mass[:, freedof][freedof, :]
-        for ww in range(freqStep):
-            Wn = w_range[ww]
-            Dw = sA - (Wn**2) * sM
-            try:
-                U[freedof, ww], info = minres(
-                    A=Dw, b=forcelist[freedof, 0], x0=U0, tol=1e-10, maxiter=1000
-                )
-            except:
-                raise info
         solution["U"] = U
-        solution["FREQ"] = w_range / (twopi)
+        solution["FREQ"] = w_range
         return solution

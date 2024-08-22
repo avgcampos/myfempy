@@ -109,10 +109,14 @@ class SetModel:
             "VYY": "VYY",
             "GYY": "GYY",
             "RHO": "RHO",
+            "KXX": "KXX",
+            "KYY": "KYY",
+            "CTE": "CTE",
+            "VIS": "VIS",
             "STIF": "STIF",
             "DAMP": "DAMP",
         }
-        tabmat = np.zeros((nmat, len(key_mat_list) + 2))
+        tabmat = [{}]*nmat #np.zeros((nmat, len(key_mat_list)))
         for mm in range(nmat):
             mat_lib[matlist["PROPMAT"][mm]["NAME"]] = mm + 1
             for pp in range(len(key_mat_list)):
@@ -121,22 +125,25 @@ class SetModel:
                     mat_prop[key] = matlist["PROPMAT"][mm][key]
                 else:
                     mat_prop[key] = 0.0
-            matset = self.material.getMaterialSet()
-            idtyp = matset["idtyp"]  # mat_def(matlist[mm]["MAT"])
-            idmat = matset["idmat"]  # mat_beh(matlist[mm]["DEF"])
-            tabmat[mm, :] = [
-                mat_prop["EXX"],
-                mat_prop["VXX"],
-                mat_prop["GXX"],
-                mat_prop["EYY"],
-                mat_prop["VYY"],
-                mat_prop["GYY"],
-                mat_prop["RHO"],
-                mat_prop["STIF"],
-                mat_prop["DAMP"],
-                idtyp,
-                idmat,
-            ]
+            # matset = self.material.getMaterialSet()
+            # idtyp = matset["idtyp"]  # mat_def(matlist[mm]["MAT"])
+            # idmat = matset["idmat"]  # mat_beh(matlist[mm]["DEF"])
+                # tabmat[mm] = {key:mat_prop[key]}
+            tabmat[mm] = {
+                    "EXX":mat_prop["EXX"],
+                    "VXX":mat_prop["VXX"],
+                    "GXX":mat_prop["GXX"],
+                    "EYY":mat_prop["EYY"],
+                    "VYY":mat_prop["VYY"],
+                    "GYY":mat_prop["GYY"],
+                    "RHO":mat_prop["RHO"],
+                    "KXX":mat_prop["KXX"],
+                    "KYY":mat_prop["KYY"],
+                    "CTE":mat_prop["CTE"],
+                    "VIS":mat_prop["VIS"],
+                    "STIF":mat_prop["STIF"],
+                    "DAMP":mat_prop["DAMP"],
+                }
         return tabmat, mat_lib
 
     def __tabgeo(self, geolist):
@@ -151,12 +158,13 @@ class SetModel:
             "INERZZ": "INERZZ",
             "INERXX": "INERXX",
             "THICKN": "THICKN",
-            "b": "b",
-            "h": "h",
-            "t": "t",
-            "d": "d",
+            "B": "b",
+            "H": "h",
+            "T": "t",
+            "D": "d",
+            "ID": "ID",
         }
-        tabgeo = np.zeros((ngeo, len(key_geo_list) + 1))
+        tabgeo = [{}]*ngeo #np.zeros((ngeo, len(key_geo_list) + 1))
         for gg in range(ngeo):
             geo_lib[geolist["PROPGEO"][gg]["NAME"]] = gg + 1
 
@@ -178,18 +186,18 @@ class SetModel:
 
                 sect_prop = self.geometry.getSectionProp(dim_sec)
 
-                tabgeo[gg, :] = [
-                    sect_prop["areacs"],
-                    sect_prop["inerzz"],
-                    sect_prop["ineryy"],
-                    sect_prop["inerxx"],
-                    sect_prop["thickn"],
-                    b,
-                    h,
-                    t,
-                    d,
-                    idgeo,
-                ]
+                tabgeo[gg] = {
+                    "AREACS":sect_prop["areacs"],
+                    "INERYY":sect_prop["inerzz"],
+                    "INERZZ":sect_prop["ineryy"],
+                    "INERXX":sect_prop["inerxx"],
+                    "THICKN":sect_prop["thickn"],
+                    "B":b,
+                    "H":h,
+                    "T":t,
+                    "D":d,
+                    "ID":idgeo,
+                }
 
             else:
                 for pp in range(len(key_geo_list)):
@@ -199,18 +207,18 @@ class SetModel:
                     else:
                         geo_prop[key] = 0.0
                 idgeo = int(0)
-                tabgeo[gg, :] = [
-                    geo_prop["AREACS"],
-                    geo_prop["INERZZ"],
-                    geo_prop["INERYY"],
-                    geo_prop["INERXX"],
-                    geo_prop["THICKN"],
-                    geo_prop["b"],
-                    geo_prop["h"],
-                    geo_prop["t"],
-                    geo_prop["d"],
-                    idgeo,
-                ]
+                tabgeo[gg] = {
+                    "AREACS":geo_prop["AREACS"],
+                    "INERYY":geo_prop["INERZZ"],
+                    "INERZZ":geo_prop["INERYY"],
+                    "INERXX":geo_prop["INERXX"],
+                    "THICKN":geo_prop["THICKN"],
+                    "B":geo_prop["B"],
+                    "H":geo_prop["H"],
+                    "T":geo_prop["T"],
+                    "D":geo_prop["D"],
+                    "ID":idgeo,
+                }
         return tabgeo, geo_lib
 
     def __inci(self, elemlist, mat_lib, geo_lib):

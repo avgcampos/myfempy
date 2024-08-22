@@ -27,22 +27,10 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
     plotdata["filename"] = path + "/" + previewset["RENDER"]["filename"]
     plotdata["title"] = ["UNDEFORM_MESH"]
     plotdata["solution"] = np.ones((len(modelinfo["inci"]), 1))
-    plotdata["average"] = False
-    plotdata["displ_POINT_DATA_val"] = []
-    plotdata["displ_POINT_DATA_name"] = []
-    plotdata["displ_POINT_DATA_title"] = []
     plotdata["stress_CELL_DATA_val"] = (
         (np.array([(modelinfo["inci"][:, 2])])).T
     ).astype(int)
-    plotdata["stress_CELL_DATA_name"] = ["Model"]
     plotdata["stress_CELL_DATA_title"] = ["Model"]
-    plotdata["stress_POINT_DATA_val"] = []
-    plotdata["stress_POINT_DATA_name"] = []
-    plotdata["stress_POINT_DATA_title"] = []
-    plotdata["modes_POINT_DATA"] = []
-    plotdata["strain_energy_CELL_DATA_val"] = []
-    plotdata["strain_energy_CELL_DATA_name"] = []
-    plotdata["strain_energy_CELL_DATA_title"] = []
 
     convert_to_vtk(plotdata)
 
@@ -98,8 +86,10 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
     previewset["tabcs"]["typSection"] = []
     previewset["tabcs"]["dimSection"] = []
     for gg in range(len(modelinfo["tabgeo"])):
-        previewset["tabcs"]["typSection"].append(int(modelinfo["tabgeo"][gg][-1]))
-        previewset["tabcs"]["dimSection"].append(modelinfo["tabgeo"][gg][5:9])
+        previewset["tabcs"]["typSection"].append(int(modelinfo["tabgeo"][gg]["ID"]))
+        # previewset["tabcs"]["dimSection"].append(modelinfo["tabgeo"][gg][5:9])
+        # dim = [modelinfo["tabgeo"][gg]['B'], modelinfo["tabgeo"][gg]['B'], modelinfo["tabgeo"][gg]['B'], modelinfo["tabgeo"][gg]['B']]
+        previewset["tabcs"]["dimSection"].append([modelinfo["tabgeo"][gg]['B'], modelinfo["tabgeo"][gg]['H'], modelinfo["tabgeo"][gg]['T'], modelinfo["tabgeo"][gg]['D']])
 
     if "forces" in modelinfo.keys():
         previewset["forces"] = modelinfo["forces"]
@@ -348,6 +338,8 @@ def __setLoadDof(forcedof):
         "spring2ground": 16,
         "damper2ground": 17,
         "cg": 18,
+        "heatflux": 1,
+        "convection": 15
     }
     return fdoftype[forcedof]
 
@@ -361,5 +353,6 @@ def __setBCDof(bcdof):
         "ry": 5,
         "rz": 6,
         "full": 0,
+        "t": 1,
     }
     return bcdoftype[bcdof]

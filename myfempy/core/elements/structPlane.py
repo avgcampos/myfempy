@@ -4,7 +4,7 @@ from os import environ
 
 environ["OMP_NUM_THREADS"] = "1"
 
-from numpy import abs, array, concatenate, dot, float64, int32, sqrt, zeros
+from numpy import abs, array, concatenate, dot, ix_, float64, int32, sqrt, zeros
 
 INT32 = int32
 FLT64 = float64
@@ -34,7 +34,7 @@ def NTRN(N, R):
     return NRN
 
 
-class Plane(Element):
+class StructuralPlane(Element):
     """Plane Structural Element Class <ConcreteClassService>"""
 
     def getElementSet():
@@ -44,7 +44,8 @@ class Plane(Element):
             "id": 22,
             "dofs": {
                 "d": {"ux": 1, "uy": 2},
-                "f": {"fx": 1, "fy": 2},
+                "f": {"fx": 1, "fy": 2,
+                      "massaadd": 15, "spring2ground": 16, "damper2ground": 17},
             },
             "tensor": ["sxx", "syy", "sxy"],
         }
@@ -56,13 +57,13 @@ class Plane(Element):
     def getB(Model, elementcoord, ptg, nodedof):
         diffN = Model.shape.getDiffShapeFuntion(ptg, nodedof)
         invJ = Model.shape.getinvJacobi(ptg, elementcoord, nodedof)
-        H = Plane.getH()
+        H = StructuralPlane.getH()
         B = HDIFFNINVJ(H, diffN, invJ)
         return B
 
     # @profile
     def getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number):
-        elem_set = Plane.getElementSet()
+        elem_set = StructuralPlane.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
         nodecon = len(shape_set["nodes"])
@@ -70,11 +71,11 @@ class Plane(Element):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        E = tabmat[int(inci[element_number, 2]) - 1, 0]  # material elasticity
-        v = tabmat[int(inci[element_number, 2]) - 1, 1]  # material poisson ratio
+        E = tabmat[int(inci[element_number, 2]) - 1]["EXX"] #tabmat[int(inci[element_number, 2]) - 1, 0]  # material elasticity
+        v = tabmat[int(inci[element_number, 2]) - 1]["VXX"] #tabmat[int(inci[element_number, 2]) - 1, 1]  # material poisson ratio
         C = Model.material.getElasticTensor(E, v)
-        t = tabgeo[int(inci[element_number, 3] - 1), 4]
-        H = Plane.getH()
+        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"] #tabgeo[int(inci[element_number, 3] - 1), 4]
+        H = StructuralPlane.getH()
         pt, wt = gauss_points(type_shape, intgauss)
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
         for pp in range(intgauss):
@@ -88,7 +89,7 @@ class Plane(Element):
     def getMassConsistentMat(
         Model, inci, coord, tabmat, tabgeo, intgauss, element_number
     ):
-        elem_set = Plane.getElementSet()
+        elem_set = StructuralPlane.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
         nodecon = len(shape_set["nodes"])
@@ -96,8 +97,8 @@ class Plane(Element):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        R = tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
-        t = tabgeo[int(inci[element_number, 3] - 1), 4]
+        R = tabmat[int(inci[element_number, 2]) - 1]["RHO"] #tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
+        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"] #tabgeo[int(inci[element_number, 3] - 1), 4]
         pt, wt = gauss_points(type_shape, intgauss)
         M_elem_mat = zeros((edof, edof), dtype=FLT64)
         for pp in range(intgauss):
@@ -107,22 +108,35 @@ class Plane(Element):
             M_elem_mat += NRN * t * abs(detJ) * wt[pp]
         return M_elem_mat
 
+    def getUpdateMatrix(Model, matrix, addval):
+        elem_set = Model.element.getElementSet()
+        shape_set = Model.shape.getShapeSet()
+        dofe = len(shape_set["nodes"]) * len(elem_set["dofs"]["d"])
+        for ii in range(len(addval)):
+            
+            A_add = addval[ii, 2] * array([[1, -1],
+                                           [-1, 1]])
+            
+            loc = array([int(dofe * addval[ii, 0] - (dofe)),
+                        int(dofe * addval[ii, 0]  - (dofe - 1)),])
+           
+            matrix[ix_(loc, loc)] += A_add
+        return matrix
+
     def getElementDeformation(U, modelinfo):
         nodetot = modelinfo["nnode"]
         nodedof = modelinfo["nodedof"]
         Udef = zeros((nodetot, 3), dtype=FLT64)
-        Umag = zeros((nodetot, 1), dtype=FLT64)
         for nn in range(1, nodetot + 1):
             Udef[nn - 1, 0] = U[nodedof * nn - 2]
             Udef[nn - 1, 1] = U[nodedof * nn - 1]
-            Umag[nn - 1, 0] = sqrt(U[nodedof * nn - 2] ** 2 + U[nodedof * nn - 1] ** 2)
-        return concatenate((Umag, Udef), axis=1)
+        return Udef
 
     def setTitleDeformation():
-        return ["DISPL_X", "DISPL_Y", "DISPL_Z"]
+        return "DISPLACEMENT"
 
     def getElementVolume(Model, inci, coord, tabgeo, intgauss, element_number):
-        t = tabgeo[int(inci[element_number, 3] - 1), 4]
+        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"] #tabgeo[int(inci[element_number, 3] - 1), 4]
         shape_set = Model.shape.getShapeSet()
         type_shape = shape_set["key"]
         nodelist = Model.shape.getNodeList(inci, element_number)

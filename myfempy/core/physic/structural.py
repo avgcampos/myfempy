@@ -5,9 +5,17 @@ class Structural(ABC):
     """Load API Class <ClassService>"""
 
     @abstractmethod
-    def getForceApply():
+    def getLoadApply():
         pass
 
     @abstractmethod
     def getBCApply():
+        pass
+
+    @abstractmethod
+    def getUpdateMatrix():
+        pass
+    
+    @abstractmethod
+    def getUpdateLoad():
         pass

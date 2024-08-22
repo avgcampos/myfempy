@@ -108,15 +108,22 @@ def invJacobi(double [:] r_coord, double [:, :] element_coord, int nodedof):
     cdef double [:, :] J = Jacobian(r_coord, element_coord)
     cdef double [:, :] invJ = INV(np.array(J).flatten())
     cdef double [:, :] mat_invJ = np.zeros((2*nodedof, 2*nodedof), dtype=FLT64)  
+
+    cdef Py_ssize_t block, dimr, dimc
+
+    for block in range(nodedof):
+        for dimr in range(2):
+            for dimc in range(2):
+                mat_invJ[block*nodedof+dimr, block*nodedof+dimc] = invJ[dimr, dimc]
    
-    mat_invJ[0, 0] = invJ[0, 0]
-    mat_invJ[0, 1] = invJ[0, 1]
-    mat_invJ[1, 0] = invJ[1, 0]
-    mat_invJ[1, 1] = invJ[1, 1]
-    mat_invJ[2, 2] = invJ[0, 0]
-    mat_invJ[2, 3] = invJ[0, 1]
-    mat_invJ[3, 2] = invJ[1, 0]
-    mat_invJ[3, 3] = invJ[1, 1]     
+    # mat_invJ[0, 0] = invJ[0, 0]
+    # mat_invJ[0, 1] = invJ[0, 1]
+    # mat_invJ[1, 0] = invJ[1, 0]
+    # mat_invJ[1, 1] = invJ[1, 1]
+    # mat_invJ[2, 2] = invJ[0, 0]
+    # mat_invJ[2, 3] = invJ[0, 1]
+    # mat_invJ[3, 2] = invJ[1, 0]
+    # mat_invJ[3, 3] = invJ[1, 1]     
     
     return mat_invJ
 

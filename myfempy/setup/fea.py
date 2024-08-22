@@ -23,7 +23,7 @@ from myfempy.utils.utils import newDir
 
 class newAnalysis:
     """
-    newAnalysis new analysis from fe model to simulation
+    New analysis to FEA model simulation
     """
 
     def __init__(self, FEASolver) -> None:
@@ -118,31 +118,31 @@ class newAnalysis:
         Arguments:
             physicdata -- data information
         """
-        self.modelinfo["domain"] = physicdata["DOMAIN"]
-        # Domain = NewAnalysis.setDomain(physicdata)
-        # if "COUPLING" in physicdata.keys():
-        #     coupling = NewAnalysis.setCoupling(physicdata)
-        #     Domain.coupling = coupling
+        self.modelinfo["physic"] = physicdata["PHYSIC"]
+
         try:
             Loads, BoundCond = newAnalysis.__setDomain(physicdata)
             logging.info("TRY SET PHYSICS -- SUCCESS")
         except:
             logging.warning("TRY SET PHYSICS -- FAULT")
+        
         self.physic = SetPhysics(self.model, Loads, BoundCond)
-        self.physic.physicdata = physicdata
+        # self.physic.physicdata = physicdata
         self.modelinfo["forces"] = newAnalysis.getLoadApply(self)
 
         constrains = newAnalysis.getBCApply(self)
         if any(constrains[:, 1] == 11):
-            self.modelinfo["csleft"] = constrains[
-                np.where(constrains[:, 1] == 11)[0], 0
-            ]
-            self.modelinfo["csright"] = constrains[
-                np.where(constrains[:, 1] == 12)[0], 0
-            ]
+            self.modelinfo["csleft"] = constrains[np.where(constrains[:, 1] == 11)[0], 0]
+            self.modelinfo["csright"] = constrains[np.where(constrains[:, 1] == 12)[0], 0]
             self.modelinfo["constrains"] = constrains
         else:
             self.modelinfo["constrains"] = constrains
+
+        if "COUPLING" in physicdata.keys():
+            self.modelinfo["coupling"] = physicdata["COUPLING"]
+            LoadCoup = newAnalysis.__setCoupling(physicdata)
+            self.physic = SetPhysics(self.model, LoadCoup, BoundCond)
+            self.modelinfo["forces"] = np.append(self.modelinfo["forces"], newAnalysis.getCouplingInterface(self), axis=0)
 
         # self.loadaply = FEANewAnalysis.getLoadApply(self)
         # self.constrains = FEANewAnalysis.getBCApply(self)
@@ -159,6 +159,7 @@ class newAnalysis:
         tabmat = self.modelinfo["tabmat"]
         tabgeo = self.modelinfo["tabgeo"]
         intgauss = self.modelinfo["intgauss"]
+        
         try:
             matrix = newAnalysis.getGlobalMatrix(
                 self, inci, coord, tabmat, tabgeo, intgauss, self.symm, self.mp
@@ -167,46 +168,11 @@ class newAnalysis:
             logging.info("TRY RUN GLOBAL ASSEMBLY -- SUCCESS")
         except:
             logging.warning("TRY RUN GLOBAL ASSEMBLY -- FAULT")
+        
         loadaply = self.modelinfo["forces"]
         try:
-            addSpring = np.where(loadaply[:, 1] == 16)
-            addMass = np.where(loadaply[:, 1] == 15)
-            if addSpring[0].size:
-                addLoad = loadaply[addSpring, :][0]
-                for ii in range(len(addLoad)):
-                    A_add = addLoad[ii, 2] * np.array([[1, -1], [-1, 1]])
-                    loc = np.array(
-                        [
-                            int(
-                                self.modelinfo["dofe"] * addLoad[ii, 0]
-                                - (self.modelinfo["dofe"])
-                            ),
-                            int(
-                                self.modelinfo["dofe"] * addLoad[ii, 0]
-                                - (self.modelinfo["dofe"] - 1)
-                            ),
-                        ]
-                    )
-                    matrix["stiffness"] = addMatrix(matrix["stiffness"], A_add, loc)
-                logging.info("TRY RUN ADD SPRING -- SUCCESS")
-            if addMass[0].size:
-                addLoad = loadaply[addMass, :][0]
-                for ii in range(len(addLoad)):
-                    A_add = addLoad[ii, 2] * np.array([[1, -1], [-1, 1]])
-                    loc = np.array(
-                        [
-                            int(
-                                self.modelinfo["dofe"] * addLoad[ii, 0]
-                                - (self.modelinfo["dofe"])
-                            ),
-                            int(
-                                self.modelinfo["dofe"] * addLoad[ii, 0]
-                                - (self.modelinfo["dofe"] - 1)
-                            ),
-                        ]
-                    )
-                    matrix["mass"] = addMatrix(matrix["mass"], A_add, loc)
-                logging.info("TRY RUN ADD MASS -- SUCCESS")
+            matrix = newAnalysis.getUpdateMatrix(self, matrix, loadaply)  
+            logging.info("TRY RUN UPDATE ASSEMBLY -- SUCCESS")
         except:
             logging.warning("TRY RUN UPDATE ASSEMBLY -- FAULT")
         try:
@@ -336,7 +302,7 @@ class newAnalysis:
         except:
             logging.warning("TRY RUN PREVIEW PLOT -- FAULT")
 
-    def PostProcess(self, postprocdata):
+    def PostProcess(self, postprocset):
         """
         PostProcess prost process the solution
 
@@ -346,22 +312,25 @@ class newAnalysis:
         Returns:
             post process arrays
         """
-        postporc_result = []
+        postprocdata = []
         try:
-            if "COMPUTER" in postprocdata.keys():
-                postporc_result = setPostProcess.getCompute(self, postprocdata)
-            if "TRACKER" in postprocdata.keys():
-                setPostProcess.getTracker(self, postprocdata, postporc_result)
-            if "OUTPUT" in postprocdata.keys():
-                postporc_result["log"] = []
-                log_file = setPostProcess.getLog(self, postprocdata, postporc_result)
-                postporc_result["log"].append(log_file)
+            if "COMPUTER" in postprocset.keys():
+                postprocdata = setPostProcess.getCompute(self, postprocset)
+            if "TRACKER" in postprocset.keys():
+                setPostProcess.getTracker(self, postprocset, postprocdata)
+            if "OUTPUT" in postprocset.keys():
+                postprocdata["log"] = []
+                log_file = setPostProcess.getLog(self, postprocset, postprocdata)
+                postprocdata["log"].append(log_file)
                 logging.info("TRY GET POST PROCESS -- SUCCESS")
         except:
             logging.warning("TRY GET POST PROCESS -- FAULT")
-        return postporc_result
+        return postprocdata
 
     # gettings
+    def getModelInfo(self):
+        return self.modelinfo
+    
     def getInci(self):
         return self.model.getInci(self.model.modeldata)
 
@@ -399,22 +368,22 @@ class newAnalysis:
             self.model, inci, coord, tabmat, tabgeo, intgauss, element_number
         )
 
-    def getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss, SYMM, MP):
+    def getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss, SYMM = None, MP = None):
         return self.solver.getMatrixAssembler(
             self.model, inci, coord, tabmat, tabgeo, intgauss, SYMM=SYMM, MP=MP
         )
 
     def getForceList(self):
-        return self.physic.getForceList(self.physic.physicdata)
+        return self.physic.getForceList(self.modelinfo["domain"])
 
     def getBoundCondList(self):
-        return self.physic.getBoundCondList(self.physic.physicdata)
+        return self.physic.getBoundCondList(self.modelinfo["domain"])
 
     def getLoadApply(self):
-        return self.physic.getLoadApply(self.physic.physicdata, self.modelinfo)
+        return self.physic.getLoadApply(self.modelinfo)
 
     def getBCApply(self):
-        return self.physic.getBoundCondApply(self.physic.physicdata, self.modelinfo)
+        return self.physic.getBoundCondApply(self.modelinfo)
 
     def getConstrains(self, constrains):
         nodetot = len(self.modelinfo["coord"])
@@ -434,6 +403,12 @@ class newAnalysis:
         return self.solver.getLoadAssembler(
             loadaply, nodetot, self.modelinfo["nodedof"]
         )
+        
+    def getCouplingInterface(self):
+        return self.physic.getLoadCoup(self.modelinfo, self.modelinfo["coupling"])
+        
+    def getUpdateMatrix(self, matrix, addval):
+        return self.physic.getUpdateMatrix(matrix, self.modelinfo, addval)
 
     def getRegions(self):
         return self.model.mesh.getRegionsList(
@@ -483,20 +458,39 @@ class newAnalysis:
         return setGeometry(set_geometry)
 
     def __setDomain(physicdata):
-        if physicdata["DOMAIN"] == "structural":
+        if physicdata["PHYSIC"]["DOMAIN"] == "structural":
             from myfempy.core.physic.bcstruct import BoundCondStruct
             from myfempy.core.physic.loadstruct import LoadStructural
-
-            # from myfempy.expe.new_bc.bcstruct import BoundCondStruct
-            # from myfempy.expe.new_bc.loadstruct import LoadStructural
-
+            
             return LoadStructural, BoundCondStruct
-        elif physicdata["DOMAIN"] == "thermal":
-            pass
-        elif physicdata["DOMAIN"] == "fluidflow":
+        
+        elif physicdata["PHYSIC"]["DOMAIN"] == "thermal":
+            from myfempy.core.physic.bcthermal import BoundCondThermal
+            from myfempy.core.physic.loadthermal import LoadThermal          
+            
+            return LoadThermal, BoundCondThermal
+        
+        elif physicdata["PHYSIC"]["DOMAIN"] == "fluidflow":
             pass
         else:
             pass
+        
+    def __setCoupling(physicdata):
+        # themal structural iteration
+        if physicdata["COUPLING"]['TYPE'] == "thermalstress":
+            from myfempy.core.physic.thermstructcoup import ThermalStructuralCoupling
+            
+            return ThermalStructuralCoupling
+                
+        # fluidflow structural iteration
+        # elif physicdata["COUPLING"]['TYPE'] == "fsi":
+
+        # acoustic structural iteration
+        # elif physicdata["COUPLING"]['TYPE'] == "asi":
+        
+        else:
+            pass
+        
 
     # def __setSolution(self, solvedata):
     #     # self.inci = FEANewAnalysis.getInci(self)

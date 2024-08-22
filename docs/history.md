@@ -4,7 +4,7 @@ Este repositório tem como objetivo principal desenvolver testes e configurar um
 
 Com o objetivo de deixar o projeto limpo e claro nesta jornada de desenvolvimento, será utilizado as normativas da _clean archicteture_ e da _bridge design pattern_ para códigos com OOP.
 
-Esta nova versão permite a inclusão de módulos e códigos escritos em C/Cython e os solvers avançados utilizando os pacotes [PETSc](https://petsc.org/release/) e [SLEPc](https://slepc.upv.es/), além da possibilidade de utilizar o processamento em paralelo para a computação de alta performance.
+Esta nova versão permite a inclusão de módulos e códigos escritos em C/Cython além da possibilidade de utilizar o processamento em paralelo para a computação de alta performance.
 
 ## Etapas de desenvolvimento
 
@@ -12,15 +12,19 @@ Esta nova versão permite a inclusão de módulos e códigos escritos em C/Cytho
 
 2. [X] Extender as funcionalidades com OOP para o projeto **myfempy**;
 
-3. [ ] Gerar um mapa UML das clases nas layers do código, disponibilizando estes mapas na documentação do **User's Manual**;
+3. [X] Gerar um mapa UML das clases nas layers do código, disponibilizando estes mapas na documentação do **User's Manual**;
 
 4. [X] Usar _bridge design pattern_ para escrerver as principais classes do sistema, assim como as suas _feacture()_ e _method()_;
 
 5. [X] Desenvolver um código OOP para o projeto **myfempy**;
 
-6. [ ] Testar o programa para resolver o problema  bidimensinais multi-físicos
+6. [ ] Testar o programa para resolver o problema  bidimensinais multi-físicos;
 
-7. Implementar as seguintes soluções de análise:
+7. [ ] Implementação de rotinas para execução em multicore, exe: Montagem das matrizes;
+
+8. [ ] Solvers avançados utilizando os pacotes [PETSc](https://petsc.org/release/) e [SLEPc](https://slepc.upv.es/);
+
+Implementar as seguintes soluções de análise:
 	
 	1. Estrutural estático:
 		1. Linear
@@ -34,17 +38,17 @@ Esta nova versão permite a inclusão de módulos e códigos escritos em C/Cytho
 		1. Domínio frequência
 			- [X] Modal
 			- [X] Força harmônica (direto)
-			- [X] Força harmônica (modal)
+			- [ ] Força harmônica (modal)
 		2. Transiênte linear
 			- [ ] Algo. implicito
 			- [ ] Algo. explicito?
 	3. Domínio termico e fluido:
-		1. Condução e convecção
+		1. Condução
 			- [ ] Regime permanente
 			- [ ] Regime transiente
-		2. Escoamento laminar
-			- [ ] Regime permanente
-			- [ ] Regime transiente
+		2. Escoamento
+			- [ ] laminar permanente
+			- [ ] laminar transiente
 		3. Acústico
 			- [ ] Modal
 	4. Multi-domínio:

@@ -4,20 +4,21 @@ import numpy as np
 
 
 def setElement(set_element):
-    if set_element["type"] == "plane":
-        from myfempy.core.elements.plane import Plane
+    if set_element["type"] == "structplane":
+        from myfempy.core.elements.structPlane import StructuralPlane
+        return StructuralPlane
 
-        return Plane
+    elif set_element["type"] == "structplate":
+        from myfempy.core.elements.structPlate import StructuralPlate
+        return StructuralPlate
 
-    elif set_element["type"] == "platekc":
-        from myfempy.core.elements.plateKC import PlateKC
-
-        return PlateKC
-
-    elif set_element["type"] == "solid":
-        from myfempy.core.elements.solid import Solid
-
-        return Solid
+    elif set_element["type"] == "structsolid":
+        from myfempy.core.elements.structSolid import StructuralSolid
+        return StructuralSolid
+    
+    elif set_element["type"] == "heatplane":
+        from myfempy.core.elements.heatPlane import HeatPlane
+        return HeatPlane
 
     else:
         pass
@@ -31,22 +32,6 @@ class Element(ABC):
         pass
 
     @abstractmethod
-    def getElementShape():
-        pass
-
-    @abstractmethod
-    def getElementMesh():
-        pass
-
-    @abstractmethod
-    def getElementMaterial():
-        pass
-
-    @abstractmethod
-    def getElementGeometry():
-        pass
-
-    @abstractmethod
     def getB():
         pass
 
@@ -57,7 +42,7 @@ class Element(ABC):
     @abstractmethod
     def getStifLinearMat():
         pass
-
+        
     @abstractmethod
     def getStifNonLinMat():
         pass
@@ -68,6 +53,10 @@ class Element(ABC):
 
     @abstractmethod
     def getMassLumpedMat():
+        pass
+    
+    @abstractmethod
+    def getUpdateMatrix():
         pass
 
     @abstractmethod
@@ -85,3 +74,18 @@ class Element(ABC):
     @abstractmethod
     def getElementVolume():
         pass
+
+    def get_side_fcapp(set_side):
+        side = {
+            "0 1": "0",  # quad4
+            "1 0": "0",  # quad4
+            "1 2": "1",  # quad4
+            "2 1": "1",  # quad4
+            "2 3": "2",  # quad4
+            "3 2": "2",  # quad4
+            "3 0": "3",  # quad4
+            "0 3": "3",  # quad4
+            "2 0": "2",  # tria3
+            "0 2": "2",  # tria3
+        }
+        return side[set_side]

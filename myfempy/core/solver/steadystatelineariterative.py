@@ -11,10 +11,10 @@ from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
 
 
-class StaticLinearIterative(Solver):
+class SteadyStateLinearIterative(Solver):
 
     """
-    Static Linear Solver Iterative Class <ConcreteClassService>
+    Steady State Linear Iterative Solver Class <ConcreteClassService>
     """
 
     def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, SYMM, MP):

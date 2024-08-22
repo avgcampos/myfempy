@@ -31,25 +31,45 @@ class SetPhysics:
         self.boundcondlist = boundlist
         return boundlist
 
-    def getLoadApply(self, physicdata, modelinfo):
-        flist = SetPhysics.setForceList(self, physicdata)
+    def getLoadApply(self, modelinfo):
+        flist = SetPhysics.setForceList(self, modelinfo["physic"])
         forcenodeaply = np.zeros((1, 4))
-        for step in range(int(len(np.unique([flist[:, 8]])))):
-            forcelist = flist[np.where(flist[:, 8] == str(step + 1))[0], :]
+        for nforc in range(len(flist)):
+            forcelist = flist[nforc]
             fapp = self.loads.getLoadApply(self.model, modelinfo, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         forcenodeaply = forcenodeaply[1::][::]
+        forcenodeaply[forcenodeaply[:, 3].argsort()]
         return forcenodeaply
 
-    def getBoundCondApply(self, physicdata, modelinfo):
-        bclist = SetPhysics.setBoundCondList(self, physicdata)
+    def getBoundCondApply(self, modelinfo):
+        bclist = SetPhysics.setBoundCondList(self, modelinfo["physic"])
         boncdnodeaply = np.zeros((1, 4))
-        for step in range(int(len(np.unique([bclist[:, 8]])))):
-            listapply = bclist[np.where(bclist[:, 8] == str(step))[0], :]
+        for nbc in range(len(bclist)):
+            listapply = bclist[nbc]
             bcapp = self.boundcond.getBCApply(modelinfo, listapply)
             boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
         boncdnodeaply = boncdnodeaply[1::][::]
+        boncdnodeaply[boncdnodeaply[:, 3].argsort()]
         return boncdnodeaply
+    
+    def getLoadCoup(self, modelinfo, physicdata):
+        forcenodeaply = np.zeros((1, 4))
+        for nforc in range(len(physicdata['POST'])):
+            coupling = physicdata['POST'][nforc]
+            coupling['TYPE'] = physicdata['TYPE']
+            coupling['STEP'] = int(nforc+1)
+            fapp = self.loads.getLoadApply(self.model, modelinfo, coupling)
+            forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
+        forcenodeaply = forcenodeaply[1::][::]
+        forcenodeaply[forcenodeaply[:, 3].argsort()]
+        return forcenodeaply
+    
+    def getUpdateMatrix(self, matrix, modelinfo, loadaply):
+        return self.loads.getUpdateMatrix(self.model, matrix, modelinfo, loadaply)
+    
+    def getUpdateLoad(self):
+        return None
 
     def getNodeList(self, domain_nodelist, coord, regions):
         return get_nodes_from_list(domain_nodelist, coord, regions)
@@ -62,151 +82,132 @@ class SetPhysics:
     def __forcelist(forcelist):
         """force set"""
         nforc = len(forcelist)
-        flist = np.zeros((1, 9))
+        flist = [] # np.zeros((1, 9))
         for fl in range(nforc):
             fap = forcelist[fl]
             for fs in range(len(fap["VAL"])):
                 if "LOC" in fap.keys():
-                    linearray = np.array(
-                        [
-                            fap["TYPE"],
-                            fap["DOF"],
-                            fap["VAL"][fs],
-                            fap["DIR"],
-                            fap["LOC"]["x"],
-                            fap["LOC"]["y"],
-                            fap["LOC"]["z"],
-                            0,
-                            int(fs + 1),
-                        ]
-                    )
-                # else:
+                    
+                    flist.append({
+                            "TYPE":fap["TYPE"],
+                            "DOF":fap["DOF"],
+                            "VAL":fap["VAL"][fs],
+                            "DIR":fap["DIR"],
+                            "LOCX":fap["LOC"]["x"],
+                            "LOCY":fap["LOC"]["y"],
+                            "LOCZ":fap["LOC"]["z"],
+                            "TAG":0,
+                            "STEP":int(fs + 1),
+                    })             
+                
                 elif "TAG" in fap.keys():
-                    linearray = np.array(
-                        [
-                            fap["TYPE"],
-                            fap["DOF"],
-                            fap["VAL"][fs],
-                            fap["DIR"],
-                            0.0,
-                            0.0,
-                            0.0,
-                            fap["TAG"],
-                            int(fs + 1),
-                        ]
-                    )
-                else:
-                    linearray = np.array(
-                        [
-                            fap["TYPE"],
-                            fap["DOF"],
-                            fap["VAL"][fs],
-                            fap["DIR"],
-                            0.0,
-                            0.0,
-                            0.0,
-                            0,
-                            int(fs + 1),
-                        ]
-                    )
-                flist = np.append(flist, [linearray], axis=0)
-        flist = flist[1::][::]
+                    
+                    flist.append({
+                            "TYPE":fap["TYPE"],
+                            "DOF":fap["DOF"],
+                            "VAL":fap["VAL"][fs],
+                            "DIR":fap["DIR"],
+                            "LOCX":0.0,
+                            "LOCY":0.0,
+                            "LOCZ":0.0,
+                            "TAG":fap["TAG"],
+                            "STEP":int(fs + 1),
+                    } )
+
+                else:                   
+                    flist.append({
+                            "TYPE":fap["TYPE"],
+                            "DOF":fap["DOF"],
+                            "VAL":fap["VAL"][fs],
+                            "DIR":fap["DIR"],
+                            "LOCX":0.0,
+                            "LOCY":0.0,
+                            "LOCZ":0.0,
+                            "TAG":0,
+                            "STEP":int(fs + 1),
+                    })
         return flist
 
     def __boundcondlist(boundcondlist):
         """boundary conditions set"""
         nbound = len(boundcondlist)
-        blist = np.zeros((1, 9))
+        blist = [] #np.zeros((1, 9))
         for bl in range(nbound):
             bap = boundcondlist[bl]
             if "VAL" in bap.keys():
                 for bs in range(len(bap["VAL"])):
-                    if "LOC" in bap.keys():
-                        linearray = np.array(
-                            [
-                                bap["TYPE"],
-                                bap["DOF"],
-                                bap["DIR"],
-                                bap["LOC"]["x"],
-                                bap["LOC"]["y"],
-                                bap["LOC"]["z"],
-                                0,
-                                bap["VAL"][bs],
-                                int(bs + 1),
-                            ]
-                        )
+                    if "LOC" in bap.keys():                        
+                        blist.append({
+                            "TYPE":bap["TYPE"],
+                            "DOF":bap["DOF"],
+                            "DIR":bap["DIR"],
+                            "LOCX":bap["LOC"]["x"],
+                            "LOCY":bap["LOC"]["y"],
+                            "LOCZ":bap["LOC"]["z"],
+                            "TAG":0,
+                            "VAL":bap["VAL"][bs],
+                            "STEP":int(bs + 1),
+                            })                        
+                        
                     elif "TAG" in bap.keys():
-                        linearray = np.array(
-                            [
-                                bap["TYPE"],
-                                bap["DOF"],
-                                bap["DIR"],
-                                0.0,
-                                0.0,
-                                0.0,
-                                bap["TAG"],
-                                bap["VAL"][bs],
-                                int(bs + 1),
-                            ]
-                        )
+                        blist.append({
+                            "TYPE":bap["TYPE"],
+                            "DOF":bap["DOF"],
+                            "DIR":bap["DIR"],
+                            "LOCX":0.0,
+                            "LOCY":0.0,
+                            "LOCZ":0.0,
+                            "TAG":bap["TAG"],
+                            "VAL":bap["VAL"][bs],
+                            "STEP":int(bs + 1),
+                            }) 
                     else:
-                        linearray = np.array(
-                            [
-                                bap["TYPE"],
-                                bap["DOF"],
-                                bap["DIR"],
-                                0.0,
-                                0.0,
-                                0.0,
-                                0,
-                                bap["VAL"][bs],
-                                int(bs + 1),
-                            ]
-                        )
-                    blist = np.append(blist, [linearray], axis=0)
+                        blist.append({
+                            "TYPE":bap["TYPE"],
+                            "DOF":bap["DOF"],
+                            "DIR":bap["DIR"],
+                            "LOCX":0.0,
+                            "LOCY":0.0,
+                            "LOCZ":0.0,
+                            "TAG":0,
+                            "VAL":bap["VAL"][bs],
+                            "STEP":int(bs + 1),
+                            }) 
             else:
                 if "LOC" in bap.keys():
-                    linearray = np.array(
-                        [
-                            bap["TYPE"],
-                            bap["DOF"],
-                            bap["DIR"],
-                            bap["LOC"]["x"],
-                            bap["LOC"]["y"],
-                            bap["LOC"]["z"],
-                            0,
-                            0.0,
-                            0,
-                        ]
-                    )
+                    blist.append({
+                        "TYPE":bap["TYPE"],
+                        "DOF":bap["DOF"],
+                        "DIR":bap["DIR"],
+                        "LOCX":bap["LOC"]["x"],
+                        "LOCY":bap["LOC"]["y"],
+                        "LOCZ":bap["LOC"]["z"],
+                        "TAG":0,
+                        "VAL":0.0,
+                        "STEP":0,
+                        } )  
                 elif "TAG" in bap.keys():
-                    linearray = np.array(
-                        [
-                            bap["TYPE"],
-                            bap["DOF"],
-                            bap["DIR"],
-                            0.0,
-                            0.0,
-                            0.0,
-                            bap["TAG"],
-                            0.0,
-                            0,
-                        ]
-                    )
+                    blist.append({
+                        "TYPE":bap["TYPE"],
+                        "DOF":bap["DOF"],
+                        "DIR":bap["DIR"],
+                        "LOCX":0.0,
+                        "LOCY":0.0,
+                        "LOCZ":0.0,
+                        "TAG":bap["TAG"],
+                        "VAL":0.0,
+                        "STEP":0,
+                        }) 
                 else:
-                    linearray = np.array(
-                        [
-                            bap["TYPE"],
-                            bap["DOF"],
-                            bap["DIR"],
-                            0.0,
-                            0.0,
-                            0.0,
-                            0,
-                            0.0,
-                            0,
-                        ]
-                    )
-                blist = np.append(blist, [linearray], axis=0)
-        blist = blist[1::][::]
+                    blist.append({
+                        "TYPE":bap["TYPE"],
+                        "DOF":bap["DOF"],
+                        "DIR":bap["DIR"],
+                        "LOCX":0.0,
+                        "LOCY":0.0,
+                        "LOCZ":0.0,
+                        "TAG":0,
+                        "VAL":0.0,
+                        "STEP":0,
+                        } )
         return blist

@@ -26,8 +26,8 @@ from myfempy.core.solver.assembler import getLoc, getMatrix
 def getMatrixAssemblerSymm(Model,
                                  INT32_t [:, ::1] inci,
                                  FLT64_t [:, ::1] coord,
-                                 FLT64_t [:, ::1] tabmat,
-                                 FLT64_t [:, ::1] tabgeo,
+                                 list tabmat,
+                                 list tabgeo,
                                  INT32_t elemdof,
                                  INT32_t intgauss,
                                  str type_assembler):

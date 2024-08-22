@@ -7,14 +7,12 @@ from myfempy.core.material.material import Material
 
 
 class PlaneStrainIsotropic(Material):
-    """Plane Strain Material Class <ConcreteClassService>"""
+    """Plane Strain Isotropic Material Class <ConcreteClassService>"""
 
     def getMaterialSet():
         matset = {
             "mat": "planestrain",
-            "idmat": 4,
             "type": "isotropic",
-            "idtyp": 20,
         }
         return matset
 
@@ -60,12 +58,8 @@ class PlaneStrainIsotropic(Material):
         return title
 
     def getElementStress(Model, epsilon, element_number):
-        E = Model.tabmat[
-            int(Model.inci[element_number, 2]) - 1, 0
-        ]  # material elasticity
-        v = Model.tabmat[
-            int(Model.inci[element_number, 2]) - 1, 1
-        ]  # material poisson ratio
+        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["EXX"] # material elasticity
+        v = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["VXX"] # material poisson ratio
 
         C = PlaneStrainIsotropic.getElasticTensor(E, v)
 

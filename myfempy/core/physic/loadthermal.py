@@ -3,46 +3,54 @@ from __future__ import annotations
 import numpy as np
 from scipy.special import roots_legendre
 
-from myfempy.core.physic.structural import Structural
+from myfempy.core.physic.thermal import Thermal
 from myfempy.core.utilities import (gauss_points, get_elemen_from_nodelist,
                                     get_nodes_from_list, poly_area)
 
 
-class LoadStructural(Structural):
-    """Structural Load Class <ConcreteClassService>"""
+class LoadThermal(Thermal):
+    """Thermal Load Class <ConcreteClassService>"""
 
     def getLoadApply(Model, modelinfo, forcelist):
         forcenodeaply = np.zeros((1, 4))
-        if forcelist['TYPE'] == "forcenode":
-            fapp = LoadStructural.__ForceNodeLoadApply(modelinfo, forcelist)
+        
+        # if forcelist['TYPE'] == "forcenode":
+        #     fapp = LoadThermal.__ForceNodeLoadApply(modelinfo, forcelist)
+        #     forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
+        
+        if forcelist['TYPE'] == "heatfluxedge":
+            fapp = LoadThermal.__ForceEdgeLoadApply(Model, modelinfo, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
-        elif forcelist['TYPE'] == "forceedge":
-            fapp = LoadStructural.__ForceEdgeLoadApply(Model, modelinfo, forcelist)
+                
+        # elif forcelist['TYPE'] == "heatfluxesurf":
+        #     fapp = LoadThermal.__ForceSurfLoadApply(modelinfo, forcelist)
+        #     forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
+            
+        elif forcelist['TYPE'] == "convectionedge":
+            fapp = LoadThermal.__ForceEdgeLoadApply(Model, modelinfo, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
-        elif forcelist['TYPE'] == "forcesurf":
-            fapp = LoadStructural.__ForceSurfLoadApply(modelinfo, forcelist)
+            
+        # elif forcelist['TYPE'] == "convectionsurf":
+        #     fapp = LoadThermal.__ForceEdgeLoadApply(Model, modelinfo, forcelist)
+        #     forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
+        
+        elif forcelist['TYPE'] == "heatgeneration":
+            fapp = LoadThermal.__ForceBodyLoadApply(Model, modelinfo, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
-        elif forcelist['TYPE'] == "forcebody":
-            fapp = LoadStructural.__ForceBodyLoadApply(Model, modelinfo, forcelist)
-            forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
+        
         else:
             pass
+        
         forcenodeaply = forcenodeaply[1::][::]
         return forcenodeaply
 
     def getUpdateMatrix(Model, matrix, modelinfo, loadaply):
+
+        addConv = np.where(loadaply[:, 1] == 15)
         
-        addSpring = np.where(loadaply[:, 1] == 16)
-        addMass = np.where(loadaply[:, 1] == 15)
-        
-        if addSpring[0].size:
-            addLoad = loadaply[addSpring, :][0]
-            matrix["stiffness"] = Model.element.getUpdateMatrix(Model, matrix["stiffness"], addLoad)
-       
-        if addMass[0].size:
-            addLoad = loadaply[addSpring, :][0]
-            matrix["mass"] = Model.element.getUpdateMatrix(Model, matrix["mass"], addLoad)
-        
+        if addConv[0].size:
+            addLoad = loadaply[addConv, :][0]
+            matrix["stiffness"] = Model.element.getUpdateMatrix(Model, matrix["stiffness"], modelinfo, addLoad)
         return matrix        
 
     def getUpdateLoad(self):
@@ -73,7 +81,7 @@ class LoadStructural(Structural):
 
     def __ForceBodyLoadApply(Model, modelinfo, forcelist):
         forcenodedof = np.zeros((1, 4))
-        gravity_value = float(forcelist['VAL'])
+        heatgen = float(forcelist['VAL'])
         inci = modelinfo["inci"]
         coord = modelinfo["coord"]
         tabmat = modelinfo["tabmat"]
@@ -81,7 +89,7 @@ class LoadStructural(Structural):
         intgauss = modelinfo["intgauss"]
         fc_type_dof = modelinfo["dofs"]["f"][forcelist['DOF']]
         for ee in range(inci.shape[0]):
-            force_value_vector, nodelist = LoadStructural.__body_force_volumetric(
+            force_value_vector, nodelist = LoadThermal.__body_force_volumetric(
                 Model,
                 inci,
                 coord,
@@ -89,7 +97,7 @@ class LoadStructural(Structural):
                 tabgeo,
                 intgauss,
                 ee,
-                gravity_value,
+                heatgen,
                 fc_type_dof,
             )
             for j in range(len(nodelist)):
@@ -123,7 +131,12 @@ class LoadStructural(Structural):
         elmlist = get_elemen_from_nodelist(inci, node_list_fc)
         forcenodedof = np.zeros((1, 4))
         for ee in range(len(elmlist)):
-            (force_value_vector, nodelist, norm,) = LoadStructural.__line_force_distribuition(
+            
+            (
+                force_value_vector,
+                nodelist,
+                norm,
+            ) = LoadThermal.__line_force_distribuition(
                 Model,
                 inci,
                 coord,
@@ -133,21 +146,16 @@ class LoadStructural(Structural):
                 force_value,
                 fc_type,
             )
-            if len(force_value_vector) > len(nodelist):
-                nodelist = np.repeat(nodelist, 2)
-                fc_type_dof = np.tile([modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"]], len(nodelist))
-                
-            elif forcelist['DOF'] == "pressure":
-                if int(norm[0]) == 1 and int(norm[1]) == 0:
-                    fc_type_dof = modelinfo["dofs"]["f"]["fx"] * np.ones_like(nodelist)
-                elif int(norm[0]) == 0 and int(norm[1]) == 1:
-                    fc_type_dof = modelinfo["dofs"]["f"]["fy"] * np.ones_like(nodelist)
-                else:
-                    fc_type_dof = modelinfo["dofs"]["f"]["fy"] * np.ones_like(nodelist)
-            else:
-                fc_type_dof = modelinfo["dofs"]["f"][forcelist['DOF']] * np.ones_like(
-                    nodelist
-                )
+            
+            # if len(force_value_vector) > len(nodelist):
+            #     nodelist = np.repeat(nodelist, len(modelinfo["dofs"]["f"]))
+            #     fc_type_dof = np.tile(
+            #         [modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"]],
+            #         len(modelinfo["dofs"]["f"]),
+            #     )
+            
+            fc_type_dof = modelinfo["dofs"]["f"][forcelist['DOF']] * np.ones_like(nodelist)
+            
             for j in range(len(nodelist)):
                 fcdof = np.array(
                     [
@@ -200,7 +208,7 @@ class LoadStructural(Structural):
         tabgeo,
         intgauss,
         element_number,
-        gravity_value,
+        heat_gen,
         fc_type_dof,
     ):
         # body force
@@ -212,19 +220,15 @@ class LoadStructural(Structural):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        R = tabmat[int(inci[element_number, 2]) - 1]["RHO"] #tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
         t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"] #tabgeo[int(inci[element_number, 3] - 1), 4]
         pt, wt = gauss_points(type_shape, intgauss)
-        G = gravity_value
-        W = np.zeros((nodedof, 1))
-        W[fc_type_dof - 1, 0] = R * G
+        Q = heat_gen
         force_value_vector = np.zeros((edof, 1))
         for pp in range(intgauss):
             detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
             N = Model.shape.getShapeFunctions(pt[pp], nodedof)
-            force_value_vector += np.dot(N.transpose(), W) * t * abs(detJ) * wt[pp]
+            force_value_vector += np.dot(N.transpose(), Q) * t * abs(detJ) * wt[pp]
         force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
-        # force_value_vector = np.reshape(force_value_vector, (edof))
         return force_value_vector, nodelist
 
     def __line_force_distribuition(
@@ -238,52 +242,51 @@ class LoadStructural(Structural):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number - 1)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        t = tabgeo[int(inci[element_number - 1, 3] - 1)]["THICKN"] #tabgeo[int(inci[elem - 1, 3] - 1), 4]
-        # nodes, idx_conec, __ = np.intersect1d(nodelist, node_list_fc, assume_unique=True, return_indices=True)
+        t = tabgeo[int(inci[element_number - 1, 3] - 1)]["THICKN"]
         test = np.in1d(nodelist, node_list_fc, assume_unique=True)
         nodes = np.array(nodelist)[test]
         idx_conec = np.where(test == True)[0]
         norm = np.zeros((2))
+        q = force_value
         if len(idx_conec) < 2:
             nodes = np.repeat(nodes, 2)
             force_value_vector = np.zeros((len(nodes)))
             pass
         else:
-            if fc_type == "fx":
-                T = np.array([[force_value], [0.0]])  # force_value
-                norm[0] = 1
-            elif fc_type == "fy":
-                T = np.array([[0.0], [force_value]])  # force_value
-                norm[1] = 1
-            elif fc_type == "pressure":  #  -->[+]<--
-                noi = idx_conec[0]
-                noj = idx_conec[1]
-                dx = elementcoord[noj, 0] - elementcoord[noi, 0]
-                dy = elementcoord[noj, 1] - elementcoord[noi, 1]
-                L = np.sqrt(dx**2 + dy**2)
-                tx = (-dy / L) * force_value
-                ty = (dx / L) * force_value
-                T = np.array([[tx], [ty]])  # force_value
-                norm[0] = abs(dy / L)
-                norm[1] = abs(dx / L)
+            force_value_vector = np.zeros((len(nodes)))
+            if force_value == 0:
+                pass
             else:
-                T = np.array([[0.0], [0.0]])
-            idx_conec = np.array2string(idx_conec)
-            get_side = Model.element.get_side_fcapp(idx_conec[1:-1]) #.__get_side_fcapp(idx_conec[1:-1])
-            infoside = Model.shape.getIsoParaSide(get_side)
-            r_vl = infoside[0]
-            r_ax = infoside[1]
-            points, wt = gauss_points(type_shape, 2)
-            points[:, r_ax] = r_vl
-            force_value_vector = np.zeros((edof, 1))
-            for pp in range(2):
-                N = Model.shape.getShapeFunctions(points[pp], nodedof)
-                diffN = Model.shape.getDiffShapeFuntion(points[pp], nodedof)
-                J = Model.shape.getJacobian(points[pp], elementcoord)
-                detJ_e = Model.shape.getEdgeLength(J, get_side)
-                force_value_vector += (
-                    np.dot(N.transpose(), T) * t * abs(detJ_e) * wt[pp]
-                )
-            force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
-        # force_value_vector = np.reshape(force_value_vector, (edof))
+                idx_conec = np.array2string(idx_conec)
+                get_side = Model.element.get_side_fcapp(idx_conec[1:-1]) #LoadThermal.__get_side_fcapp(idx_conec[1:-1])
+                infoside = Model.shape.getIsoParaSide(get_side)
+                r_vl = infoside[0]
+                r_ax = infoside[1]
+                points, wt = gauss_points(type_shape, 2)
+                points[:, r_ax] = r_vl
+                force_value_vector = np.zeros((edof, 1))
+                for pp in range(2):
+                    N = Model.shape.getShapeFunctions(points[pp], nodedof)
+                    diffN = Model.shape.getDiffShapeFuntion(points[pp], nodedof)
+                    J = Model.shape.getJacobian(points[pp], elementcoord)
+                    detJ_e = Model.shape.getEdgeLength(J, get_side)
+                    force_value_vector += (
+                        np.dot(N.transpose(), q) * t * abs(detJ_e) * wt[pp]
+                    )
+                force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
         return force_value_vector, nodes, norm
+
+    # def __get_side_fcapp(set_side):
+    #     side = {
+    #         "0 1": "0",  # quad4
+    #         "1 0": "0",  # quad4
+    #         "1 2": "1",  # quad4
+    #         "2 1": "1",  # quad4
+    #         "2 3": "2",  # quad4
+    #         "3 2": "2",  # quad4
+    #         "3 0": "3",  # quad4
+    #         "0 3": "3",  # quad4
+    #         "2 0": "2",  # tria3
+    #         "0 2": "2",  # tria3
+    #     }
+    #     return side[set_side]

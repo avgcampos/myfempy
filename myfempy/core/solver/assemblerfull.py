@@ -69,7 +69,10 @@ class AssemblerFULL(Assembler):
             if nodedof == 1:
                 for ii in range(nload):
                     if int(forceaply[ii, 1]) == 1:
-                        gdlload = int(nodedof * forceaply[ii, 0] - (nodedof - 1))
+                        gdlload = int(nodedof * forceaply[ii, 0] - (nodedof))
+                        forcevec[gdlload, fstep] += forceaply[ii, 2]
+                    else:
+                        gdlload = int(nodedof * forceaply[ii, 0] - (nodedof))
                         forcevec[gdlload, fstep] += forceaply[ii, 2]
 
             elif nodedof == 2:
@@ -122,7 +125,12 @@ class AssemblerFULL(Assembler):
                         fixedof[nodedof * no - 1, 0] = nodedof * no
                     else:
                         constdof[nodedof * no - 1, 0] = nodedof * no
-
+                else:
+                    if constrains[ii, 2] == 0.0:
+                        fixedof[nodedof * no - 1, 0] = nodedof * no
+                    else:
+                        constdof[nodedof * no - 1, 0] = nodedof * no
+                    
         elif nodedof == 2:
             for ii in range(ntbc):
                 no = int(constrains[ii, 0])
@@ -206,7 +214,7 @@ class AssemblerFULL(Assembler):
             if nodedof == 1:
                 for ii in range(nload):
                     if int(forceaply[ii, 1]) == 1:
-                        gdlload = int(nodedof * forceaply[ii, 0] - (nodedof - 1))
+                        gdlload = int(nodedof * forceaply[ii, 0] - (nodedof))
                         Uc[gdlload, cstep] = forceaply[ii, 2]
 
             elif nodedof == 2:

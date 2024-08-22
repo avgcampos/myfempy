@@ -30,6 +30,7 @@ class AssemblerSYMM(Assembler):
         # if MP:
         #     rowsd, colsd, datad, rowsb, colsb, datab = getMatrixAssemblerSym_cy_parpool(Model, inci, coord, tabmat, tabgeo, elemdof,  intgauss, type_assembler)
         # else:
+        
         rowsd, datad, rowsb, colsb, datab = getMatrixAssemblerSymm(
             Model, inci, coord, tabmat, tabgeo, elemdof, intgauss, type_assembler
         )

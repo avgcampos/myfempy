@@ -11,9 +11,11 @@ def meshid2vtkid(elemid):
     CellType = {
         "1621": 3,
         "1632": 21,
+        "2131": 5,
         "2231": 5,
         "2331": 5,
         "2262": 22,
+        "2141": 9,
         "2241": 9,
         "2341": 9,
         "2282": 23,
@@ -32,25 +34,9 @@ def convert_to_vtk(plotdata):
     Arguments:
         plotdata -- _description_
     """
-    # ii: cython.int
-    # jj: cython.int
-    # md: cython.int
-    # numnodes: cython.int
-    # numelem: cython.int
-    # numdsp_pntdata: cython.int
-    # numstr_pntdata: cython.int
-    # nummds_pntdata: cython.int
-    # num_modes: cython.int
-    # numstr_clldata: cython.int
 
     numnodes = int(len(plotdata["coord"]))
     numelem = int(len(plotdata["inci"]))
-    numdsp_pntdata = int(len(plotdata["displ_POINT_DATA_val"]))
-    numstr_pntdata = int(len(plotdata["stress_POINT_DATA_title"]))
-    nummds_pntdata = int(len(plotdata["modes_POINT_DATA"]))
-
-    numstr_clldata = int(len(plotdata["stress_CELL_DATA_title"]))
-    # numstreng_clldata = int(len(plotdata["strain_energy_CELL_DATA_title"]))
 
     with open(plotdata["filename"] + ".vtk", "w") as file_object:
         file_object.write("# vtk DataFile Version 4.0\n")
@@ -85,23 +71,12 @@ def convert_to_vtk(plotdata):
             vtkCT = meshid2vtkid(str(int(plotdata["inci"][ii, 1])))
             file_object.write(str(vtkCT) + "\n")
         file_object.write("\n")
+       
         # -----------------------------------------------------
         # POINT DATA
         file_object.write("POINT_DATA" + " " + str(int(len(plotdata["coord"]))) + "\n")
-        if len(plotdata["stress_POINT_DATA_val"]) > 0:
-            for jj in range(0, numstr_pntdata):
-                file_object.write(
-                    "SCALARS " + plotdata["stress_POINT_DATA_title"][jj] + " float 1\n"
-                )
-                file_object.write("LOOKUP_TABLE default\n")
-                list2write = (
-                    plotdata["stress_POINT_DATA_val"][:, jj].astype(str).tolist()
-                )
-                file_object.write("\n".join(list2write) + "\n")
-                file_object.write("\n")
-        file_object.write("\n")
 
-        if len(plotdata["displ_POINT_DATA_val"]) > 0:
+        if "displ_POINT_DATA_val" in plotdata.keys():
             file_object.write("FIELD FieldData 1\n")
             file_object.write(
                 plotdata["displ_POINT_DATA_title"]
@@ -109,14 +84,15 @@ def convert_to_vtk(plotdata):
                 + str(int(len(plotdata["displ_POINT_DATA_val"])))
                 + " float\n"
             )
-            for ii in range(0, numdsp_pntdata):
+            for ii in range(0, int(len(plotdata["displ_POINT_DATA_val"]))):
                 list2write = (
                     plotdata["displ_POINT_DATA_val"][ii, :].astype(str).tolist()
                 )
                 file_object.write(" ".join(list2write) + "\n")
 
-        if len(plotdata["modes_POINT_DATA"]) > 0:
-            for md in range(0, nummds_pntdata):
+        # if len(plotdata["modes_POINT_DATA"]) > 0:
+        if "modes_POINT_DATA" in plotdata.keys():
+            for md in range(0, int(len(plotdata["modes_POINT_DATA"]))):
                 file_object.write("\n")
                 file_object.write("FIELD FieldData 1\n")
                 file_object.write(
@@ -135,13 +111,28 @@ def convert_to_vtk(plotdata):
                     )
                     file_object.write(" ".join(list2write) + "\n")
 
+        if "temp_POINT_DATA_val" in plotdata.keys():
+            file_object.write(
+                    "SCALARS " +plotdata["temp_POINT_DATA_title"] + " float 1\n"
+                )
+            file_object.write("LOOKUP_TABLE default\n")
+            for ii in range(0, int(len(plotdata["temp_POINT_DATA_val"]))):
+                
+                list2write = (
+                    plotdata["temp_POINT_DATA_val"][ii, :].astype(str).tolist()
+                )
+                file_object.write(" ".join(list2write) + "\n")
+
         # POINT DATA FUTURE...
+        
         file_object.write("\n")
         # -----------------------------------------------------
         # CELL DATA
         file_object.write("CELL_DATA" + " " + str(int(len(plotdata["inci"]))) + "\n")
-        if len(plotdata["stress_CELL_DATA_val"]) > 0:
-            for jj in range(0, numstr_clldata):
+        # if len(plotdata["stress_CELL_DATA_val"]) > 0:
+        if "stress_CELL_DATA_val" in plotdata.keys():
+            
+            for jj in range(0, int(len(plotdata["stress_CELL_DATA_title"]))):
                 file_object.write(
                     "SCALARS " + plotdata["stress_CELL_DATA_title"][jj] + " float 1\n"
                 )
@@ -150,6 +141,7 @@ def convert_to_vtk(plotdata):
                     plotdata["stress_CELL_DATA_val"][:, jj].astype(str).tolist()
                 )
                 file_object.write("\n".join(list2write) + "\n")
+        
         # if len(plotdata["strain_energy_CELL_DATA_val"]) > 0:
         #     for jj in range(0, numstreng_clldata):
         #         file_object.write(

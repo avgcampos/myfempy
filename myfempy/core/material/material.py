@@ -31,6 +31,14 @@ def setMaterial(set_material):
             return SolidIsotropic
         else:
             pass
+        
+    elif set_material["mat"] == 'heatplane':
+        if set_material["type"] == "isotropic":
+            from myfempy.core.material.heatplane import HeatPlaneIsotropic
+            return HeatPlaneIsotropic
+            
+    else:
+        pass
 
 
 class Material(ABC):
@@ -47,26 +55,26 @@ class Material(ABC):
     def getElasticTensor():
         pass
 
-    @abstractmethod
-    def getElementStrain():
-        pass
+    # @abstractmethod
+    # def getElementStrain():
+    #     pass
 
-    @abstractmethod
-    def getElementStress():
-        pass
+    # @abstractmethod
+    # def getElementStress():
+    #     pass
 
-    @abstractmethod
-    def getFailureCriteria():
-        pass
+    # @abstractmethod
+    # def getFailureCriteria():
+    #     pass
 
-    @abstractmethod
-    def getTitleStrain():
-        pass
+    # @abstractmethod
+    # def getTitleStrain():
+    #     pass
 
-    @abstractmethod
-    def getTitleStress():
-        pass
+    # @abstractmethod
+    # def getTitleStress():
+    #     pass
 
-    @abstractmethod
-    def getTitleFoS():
-        pass
+    # @abstractmethod
+    # def getTitleFoS():
+    #     pass
