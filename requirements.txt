@@ -8,12 +8,12 @@ gmsh
 matplotlib
 vedo
 numdifftools
-# jax[cpu]
 colorama
 art
 mkdocs
 python-markdown-math
 mkdocs-pdf-export-plugin
+mkdocs-mermaid2-plugin
 mkdocstrings[python]
 autodoc
 flake8

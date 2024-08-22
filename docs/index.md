@@ -129,10 +129,10 @@ Many **Examples** are available
 The myfempy is documented using Mkdocs under **docs**. The myfempy's
 documents versions can be found in web version and pdf [link]().
 
-## Release
+## Releases/ Versions
 
-The all release versions is available
-[here](https://github.com/easycae-3d/myfempy/releases)
+The changelog is available
+[here](https://github.com/avgcampos/myfempy/releases)
 
 ## Features
 
@@ -145,11 +145,9 @@ The *main myfempy features* are available here:
 
 **myfempy** is published under the [GPLv3
 license](https://www.gnu.org/licenses/gpl-3.0.en.html). See the
-[myfempy/LICENSE](https://github.com/easycae-3d/myfempy/blob/main/LICENSE.txt).
+[myfempy/LICENSE](https://github.com/avgcampos/myfempy/blob/main/LICENSE).
 
-```{=html}
-<!-- ## >> Acknowledgment -->
-```
+
 ## Citing
 
 Have you found this software useful for your research? Star the project
@@ -197,11 +195,6 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
 
 ------------------------------------------------------------------------
 
-## Changelog
-
-The changelog is available
-[here](https://github.com/easycae-3d/myfempy/wiki/Changelog)
-
 # Project tree structure
 
 ``` bash
@@ -211,53 +204,43 @@ The changelog is available
 |
 +---core
 |   |   utilities.py
-|   |   __init__.py
 |   |
 |   +---elements
-|   |   |   acustic2DWP.py
-|   |   |   beamEB.py
-|   |   |   beamNL.py
 |   |   |   element.py
-|   |   |   fluid1DLF.py
-|   |   |   fluid2DLF.py
-|   |   |   heat2DSS.py
-|   |   |   heat2DTR.py
-|   |   |   plane.py
-|   |   |   plateKC.py
-|   |   |   solid.py
-|   |   |   specials.py
-|   |   |   __init__.py
+|   |   |   heatPlane.py
+|   |   |   structPlane.py
+|   |   |   structPlate.py
+|   |   |   structSolid.py
 |   |
 |   +---geometry
 |   |   |   geometry.py
 |   |   |   rectangle.py
 |   |   |   thickness.py
-|   |   |   __init__.py
 |   |
 |   +---material
-|   |   |   fluidplane.py
+|   |   |   heatplane.py
 |   |   |   material.py
 |   |   |   microscale.py
 |   |   |   planestrain.py
 |   |   |   planestress.py
 |   |   |   solid.py
-|   |   |   __init__.py
 |   |
 |   +---mesh
 |   |   |   gmsh.py
 |   |   |   legacyquad4.py
 |   |   |   legacytria3.py
 |   |   |   mesh.py
-|   |   |   __init__.py
 |   |
 |   +---physic
 |   |   |   acustic.py
 |   |   |   bcstruct.py
-|   |   |   coupling.py
+|   |   |   bcthermal.py
 |   |   |   fluidflow.py
 |   |   |   loadstruct.py
+|   |   |   loadthermal.py
 |   |   |   structural.py
 |   |   |   thermal.py
+|   |   |   thermstructcoup.py
 |   |
 |   +---shapes
 |   |   |   hexa20.py
@@ -267,8 +250,6 @@ The changelog is available
 |   |   |   line3.py
 |   |   |   quad4.py
 |   |   |   quad4_tasks.c
-|   |   |   quad4_tasks.cp311-win_amd64.pyd
-|   |   |   quad4_tasks.html
 |   |   |   quad4_tasks.pyx
 |   |   |   quad8.py
 |   |   |   shape.py
@@ -276,48 +257,35 @@ The changelog is available
 |   |   |   tetr4.py
 |   |   |   tria3.py
 |   |   |   tria3_tasks.c
-|   |   |   tria3_tasks.cp311-win_amd64.pyd
-|   |   |   tria3_tasks.html
 |   |   |   tria3_tasks.pyx
 |   |   |   tria6.py
-|   |   |   __init__.py
 |   |
 |   +---solver
 |   |   |   acustic.py
 |   |   |   assembler.py
 |   |   |   assemblerfull.py
 |   |   |   assemblerfull_cython_v4.c
-|   |   |   assemblerfull_cython_v4.cp311-win_amd64.pyd
-|   |   |   assemblerfull_cython_v4.html
 |   |   |   assemblerfull_cython_v4.pyx
 |   |   |   assemblerfull_numpy_v1.py
 |   |   |   assemblersymm.py
 |   |   |   assemblersymm_cython_v4.c
-|   |   |   assemblersymm_cython_v4.cp311-win_amd64.pyd
-|   |   |   assemblersymm_cython_v4.html
 |   |   |   assemblersymm_cython_v4.pyx
 |   |   |   assemblersymm_numpy_v1.py
-|   |   |   buckling.py
 |   |   |   cyclicsymm.py
 |   |   |   dynamic.py
+|   |   |   dynmodal.py
+|   |   |   dynsteadystatelinear.py
 |   |   |   fluid.py
-|   |   |   harmoniclinear.py
-|   |   |   harmonicmodal.py
-|   |   |   modallinear.py
-|   |   |   multiphysic.py
 |   |   |   solver.py
-|   |   |   staticlinear.py
-|   |   |   staticlineariterative.py
-|   |   |   staticnonlinear.py
+|   |   |   steadystatelinear.py
+|   |   |   steadystatelineariterative.py
+|   |   |   steadystatenonlinear.py
 |   |   |   thermal.py
-|   |   |   __init__.py
-|
 |
 +---io
 |   |   iocsv.py
 |   |   iogmsh.py
 |   |   iovtk.py
-|   |   __init__.py
 |
 +---plots
 |   |   meshquality.py
@@ -326,23 +294,17 @@ The changelog is available
 |   |   plotxy.py
 |   |   postplot.py
 |   |   prevplot.py
-|   |   __init__.py
 |
 +---setup
-|   |   asi.py
 |   |   fea.py
-|   |   fsi.py
 |   |   model.py
 |   |   physics.py
 |   |   results.py
 |   |   topopt.py
-|   |   tsi.py
-|   |   __init__.py
 |
 +---utils
 |   |   logo.png
 |   |   logo.txt
 |   |   utils.py
-|   |   __init__.py
 
 ```
