@@ -100,3 +100,12 @@ class PlaneStressIsotropic(Material):
     def getTitleCompliance():
         title = ["STRAIN_ENERGY_DENSITY"]
         return title
+    
+    def getFailureCriteria(sigma):
+        return 0.0
+
+    def getTitleFoS():
+        title = ["FoS_YIELD_VON_MISES"]
+        return title
+    
+    

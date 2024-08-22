@@ -80,3 +80,10 @@ class PlaneStrainIsotropic(Material):
     def getTitleStress():
         title = ["STRESS_VM", "STRESS_XX", "STRESS_YY", "STRESS_XY"]
         return title
+    
+    def getFailureCriteria(sigma):
+        return 0.0
+
+    def getTitleFoS():
+        title = ["FoS_YIELD_VON_MISES"]
+        return title

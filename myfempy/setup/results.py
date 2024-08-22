@@ -38,6 +38,7 @@ class setPostProcess(ABC):
         # print_console("post")
         
         postprocdata = dict()
+        postprocdata['SOLUTION'] = []
         postprocdata["solverstatus"] = postprocset["SOLVERDATA"]["solverstatus"]
         SOLUTION = postprocset["SOLVERDATA"]["solution"]["U"]
         
@@ -58,9 +59,8 @@ class setPostProcess(ABC):
                         }
                     )
                     
-                    postprocdata[sol_title] = result_solu[st, :, :]
-                    
-                # for setpost in range(result_solu.shape[2]):
+                    postprocdata['SOLUTION'].append({sol_title:result_solu[st, :, :],
+                                                     'STEP':st+1})
 
             if (
                 "stress" in postprocset["COMPUTER"]["structural"].keys()
@@ -74,7 +74,7 @@ class setPostProcess(ABC):
                     )
                 )
 
-                for ns in range(SOLUTION.shape[1]):
+                for st in range(SOLUTION.shape[1]):
                     result_stress[ns, :, :], title = setPostProcess.__stress(
                         self, SOLUTION[:, ns]
                     )
@@ -89,11 +89,6 @@ class setPostProcess(ABC):
                     )
             else:
                 pass
-
-        # if "dynamic" in postprocset["COMPUTER"].keys():
-        #     result_solu = np.zeros((SOLUTION.shape[1], self.modelinfo["coord"].shape[0], 3))       
-        #     for ns in range(SOLUTION.shape[1]):
-        #         result_solu[ns, :, :], sol_title = setPostProcess.__displ(self, SOLUTION[:, ns])
             
             if "modes" in postprocset["COMPUTER"]["structural"].keys():
                 FREQUENCY = postprocset["SOLVERDATA"]["solution"]["FREQ"]
@@ -112,7 +107,13 @@ class setPostProcess(ABC):
                             ),
                             "avr": True,
                         }
-                    )                
+                    )
+                    
+                    postprocdata['SOLUTION'].append({'VAL':result_solu[st, :, :],
+                                                    'MODE':st+1,
+                                                    "FREQ":np.round(FREQUENCY[st][2], 3)                                                   
+                                                    })
+                          
             if (
                 "frf" in postprocset["COMPUTER"]["structural"].keys()
                 and postprocset["COMPUTER"]["structural"]["frf"] == True
@@ -132,13 +133,17 @@ class setPostProcess(ABC):
                             "avr": True,
                         }
                     )
+                    
+                    postprocdata['SOLUTION'].append({'VAL':result_solu[st, :, :],
+                                                    "FREQ":np.round(FREQUENCY[st], 3)                                                   
+                                                    })
             else:
                 pass
 
         if "thermal" in postprocset["COMPUTER"].keys():
             result_solu = np.zeros((SOLUTION.shape[1], self.modelinfo["coord"].shape[0], 1))       
-            for ns in range(SOLUTION.shape[1]):
-                result_solu[ns, :, :], sol_title = setPostProcess.__displ(self, SOLUTION[:, ns])
+            for st in range(SOLUTION.shape[1]):
+                result_solu[st, :, :], sol_title = setPostProcess.__displ(self, SOLUTION[:, st])
             if "temp" in postprocset["COMPUTER"]["thermal"].keys():
                 postporc_result["solution"] = []
                 for st in range(SOLUTION.shape[1]):
@@ -150,7 +155,8 @@ class setPostProcess(ABC):
                         }
                     )
                     
-                    postprocdata[sol_title] = result_solu[st, :, :]
+                    postprocdata['SOLUTION'].append({sol_title:result_solu[st, :, :],
+                                                     'STEP':st+1})
                     
             if (
                 "heatflux" in postprocset["COMPUTER"]["thermal"].keys()
@@ -160,14 +166,12 @@ class setPostProcess(ABC):
                     (
                         SOLUTION.shape[1],
                         self.modelinfo["inci"].shape[0],
-                        2 * self.modelinfo["tensor"] + 4,
+                        2 * self.modelinfo["tensor"] + 2,
                     )
                 )
 
-                for ns in range(SOLUTION.shape[1]):
-                    result_stress[ns, :, :], title = setPostProcess.__stress(
-                        self, SOLUTION[:, ns]
-                    )
+                for st in range(SOLUTION.shape[1]):
+                    result_stress[st, :, :], title = setPostProcess.__heatflux(self, SOLUTION[:, st])
 
                 postporc_result["stress_elm"] = []
                 for st in range(SOLUTION.shape[1]):
@@ -176,8 +180,7 @@ class setPostProcess(ABC):
                     )
             
                     for setpost in range(result_stress.shape[2]):
-                        postprocdata[title[setpost]] = result_stress[st, :, setpost]                
-            
+                        postprocdata[title[setpost]] = result_stress[st, :, setpost]          
             
             else:
                 pass       
@@ -194,7 +197,7 @@ class setPostProcess(ABC):
         hist_Y = []
         plotset["nodedof"] = self.modelinfo["nodedof"]
 
-        max_steps = len(postporc_result["solution"])
+        max_steps = len(postporc_result['SOLUTION'])
 
         # if 'frf' in postprocset["TRACKER"].keys():
         #     max_steps = len(postporc_result["frf"])
@@ -277,17 +280,18 @@ class setPostProcess(ABC):
                         and postprocset["COMPUTER"]["structural"]["stress"] == True
                     ):
                         plotdata["stress_CELL_DATA_val"] = postporc_result["stress_elm"][st]["val"]
-                        plotdata["stress_CELL_DATA_title"] = postporc_result["stress_elm"][st]["title"]
-                        
+                        plotdata["stress_CELL_DATA_title"] = postporc_result["stress_elm"][st]["title"]   
                     convert_to_vtk(plotdata)
 
             elif "modes" in postprocset["COMPUTER"]["structural"].keys():
                 plotdata["modes_POINT_DATA"] = []
-                # plotdata["filename"] = (path + "/" + postprocset["PLOTSET"]["filename"] + "_results_modes")
                 plotdata["modes_POINT_DATA"] = postporc_result["solution"]
-                # plotdata["modes_POINT_DATA_title"] = postporc_result["solution"][st]["title"]
-
-            convert_to_vtk(plotdata)
+                convert_to_vtk(plotdata)
+                
+            elif "frf" in postprocset["COMPUTER"]["structural"].keys():
+                plotdata["frf_POINT_DATA"] = []
+                plotdata["frf_POINT_DATA"] = postporc_result["solution"]
+                convert_to_vtk(plotdata)
             
         elif "thermal" in postprocset["COMPUTER"].keys():
             
@@ -373,8 +377,7 @@ class setPostProcess(ABC):
                 sigma, epsilon, self.modelinfo["elemvol"][ee]
             )
             
-            FoS = 0.0
-            # FoS = self.model.material.getFailureCriteria(...)
+            FoS = self.model.material.getFailureCriteria(sigma)
             
             stress_list[ee, :] = stress
             strain_list[ee, :] = strain
@@ -388,13 +391,49 @@ class setPostProcess(ABC):
         tistrs = self.model.material.getTitleStress()
         tistrn = self.model.material.getTitleStrain()
         ticomp = self.model.material.getTitleCompliance()
-        tifos = ["FoS_YIELD_VON_MISES"]  # self.model.material.getTitleFoS()
+        tifos = self.model.material.getTitleFoS()
         title = np.concatenate((tistrs, tistrn, ticomp, tifos), axis=0)
         return result, title
+    
 
-    # def __strain_energy(self, sigma, epsilon, elemvol):
-    #     result =  self.model.material.getStrainEnergyDensity(sigma, epsilon, elemvol)
-    #     return result
+    def __heatflux(self, U):
+        """_summary_
+
+        Arguments:
+            U -- _description_
+
+        Returns:
+            _description_
+        """
+        stress_list = np.zeros(
+            (self.modelinfo["nelem"], self.modelinfo["tensor"] + 1), dtype=float
+        )
+        
+        strain_list = np.zeros(
+            (self.modelinfo["nelem"], self.modelinfo["tensor"] + 1), dtype=float
+        )
+        
+        pt, wt = gauss_points(self.modelinfo["type_shape"], 1)
+        for ee in range(self.modelinfo["nelem"]):
+            epsilon, strain = self.model.material.getElementGradTemp(
+                self.model, U, pt, ee
+            )
+            
+            sigma, stress = self.model.material.getElementHeatFlux(
+                self.model, epsilon, ee
+            )
+            
+            stress_list[ee, :] = stress
+            strain_list[ee, :] = strain
+        
+        result = np.concatenate(
+            (stress_list, strain_list), axis=1
+        )
+        
+        tistrs = self.model.material.getTitleHeatFlux()
+        tistrn = self.model.material.getTitleGradTemp()
+        title = np.concatenate((tistrs, tistrn), axis=0)
+        return result, title
 
     def __tracker_value(postporc_result, postprocset, plotset, coord):
         """trancker plot function"""
@@ -408,7 +447,7 @@ class setPostProcess(ABC):
             )
             # hist_node = hist_node[0]-1
             # plotset["rstl"] = nodedof[0]*hist_node - (nodedof[0]-postprocset["TRACKER"]["data"]["displ"]["dof"])
-            val_Y = postporc_result["solution"][plotset["step"]]["val"][
+            val_Y = postporc_result["SOLUTION"][plotset["step"]]["val"][
                 hist_node[0] - 1, postprocset["TRACKER"]["point"]["dof"]
             ]
             val_X = plotset["step"] + 1
@@ -456,14 +495,14 @@ class setPostProcess(ABC):
             val_Y = 20 * np.log(
                 (
                     abs(
-                        postporc_result["solution"][plotset["step"]]["val"][
+                        postporc_result["SOLUTION"][plotset["step"]]["VAL"][
                             hist_node[0] - 1, postprocset["TRACKER"]["frf"]["dof"]
                         ]
                     )
                 )
                 / 10e-12
             )
-            val_X = postporc_result["solution"][plotset["step"]]["freq"]
+            val_X = postporc_result["SOLUTION"][plotset["step"]]["FREQ"]
             xlabel = "FREQUENCY RESPONSE [Hz]"
             ylabel = "FREQUENCY RESPONSE [dB]"
 

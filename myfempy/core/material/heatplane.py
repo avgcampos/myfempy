@@ -22,7 +22,7 @@ class HeatPlaneIsotropic(Material):
         D[1, 1] = Kyy
         return D
 
-    def getElementStrain(Model, U, ptg, element_number):
+    def getElementGradTemp(Model, U, ptg, element_number):
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
 
@@ -49,11 +49,11 @@ class HeatPlaneIsotropic(Material):
 
         return epsilon, strain
 
-    def getTitleStrain():
+    def getTitleGradTemp():
         title = ["GRADTEMP", "GRADTEMP_XX", "GRADTEMP_YY"]
         return title
 
-    def getElementStress(Model, epsilon, element_number):
+    def getElementHeatFlux(Model, epsilon, element_number):
         Kxx = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["KXX"]
         Kyy = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["KYY"]
 
@@ -70,14 +70,6 @@ class HeatPlaneIsotropic(Material):
 
         return sigma, stress
 
-    def getTitleStress():
+    def getTitleHeatFlux():
         title = ["HEATFLUX_MAG", "HEATFLUX_XX", "HEATFLUX_YY"]
-        return title
-
-    def getStrainEnergyDensity(sigma, epsilon, elemvol):
-        strain_energy = 0
-        return strain_energy
-
-    def getTitleCompliance():
-        title = ["STRAIN_ENERGY_DENSITY"]
         return title

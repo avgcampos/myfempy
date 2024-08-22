@@ -105,7 +105,27 @@ def convert_to_vtk(plotdata):
                     0, int(len(plotdata["modes_POINT_DATA"][md]["val"][:, 1:]))
                 ):
                     list2write = (
-                        plotdata["modes_POINT_DATA"][md]["val"][:, 1:][ii, :]
+                        plotdata["modes_POINT_DATA"][md]["val"][ii, :]
+                        .astype(str)
+                        .tolist()
+                    )
+                    file_object.write(" ".join(list2write) + "\n")
+                    
+        if "frf_POINT_DATA" in plotdata.keys():
+            for md in range(0, int(len(plotdata["frf_POINT_DATA"]))):
+                file_object.write("\n")
+                file_object.write("FIELD FieldData 1\n")
+                file_object.write(
+                    plotdata["frf_POINT_DATA"][md]["title"]
+                    + " 3 "
+                    + str(int(len(plotdata["frf_POINT_DATA"][md]["val"][:, 1:])))
+                    + " float\n"
+                )
+                for ii in range(
+                    0, int(len(plotdata["frf_POINT_DATA"][md]["val"][:, 1:]))
+                ):
+                    list2write = (
+                        plotdata["frf_POINT_DATA"][md]["val"][ii, :]
                         .astype(str)
                         .tolist()
                     )
