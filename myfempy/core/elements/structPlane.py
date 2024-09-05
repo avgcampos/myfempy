@@ -54,9 +54,9 @@ class StructuralPlane(Element):
     def getH():
         return array([[1, 0, 0, 0], [0, 0, 0, 1], [0, 1, 1, 0]], dtype=INT32)
 
-    def getB(Model, elementcoord, ptg, nodedof):
-        diffN = Model.shape.getDiffShapeFuntion(ptg, nodedof)
-        invJ = Model.shape.getinvJacobi(ptg, elementcoord, nodedof)
+    def getB(Model, elementcoord, pt, nodedof):
+        diffN = Model.shape.getDiffShapeFuntion(pt, nodedof)
+        invJ = Model.shape.getinvJacobi(pt, elementcoord, nodedof)
         H = StructuralPlane.getH()
         B = HDIFFNINVJ(H, diffN, invJ)
         return B
@@ -78,12 +78,13 @@ class StructuralPlane(Element):
         H = StructuralPlane.getH()
         pt, wt = gauss_points(type_shape, intgauss)
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
-        for pp in range(intgauss):
-            detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
-            diffN = Model.shape.getDiffShapeFuntion(pt[pp], nodedof)
-            invJ = Model.shape.getinvJacobi(pt[pp], elementcoord, nodedof)
-            BCB = BTCB(diffN, H, invJ, C)
-            K_elem_mat += BCB * t * abs(detJ) * wt[pp]
+        for ip in range(intgauss):
+            for jp in range(intgauss):
+                detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
+                diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp]]), nodedof)
+                invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp]]), elementcoord, nodedof)
+                BCB = BTCB(diffN, H, invJ, C)
+                K_elem_mat += BCB * t * abs(detJ) * wt[ip] * wt[jp]
         return K_elem_mat
 
     def getMassConsistentMat(
@@ -101,11 +102,12 @@ class StructuralPlane(Element):
         t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"] #tabgeo[int(inci[element_number, 3] - 1), 4]
         pt, wt = gauss_points(type_shape, intgauss)
         M_elem_mat = zeros((edof, edof), dtype=FLT64)
-        for pp in range(intgauss):
-            detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
-            N = Model.shape.getShapeFunctions(pt[pp], nodedof)
-            NRN = NTRN(N, R)
-            M_elem_mat += NRN * t * abs(detJ) * wt[pp]
+        for ip in range(intgauss):
+            for jp in range(intgauss):
+                detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
+                N = Model.shape.getShapeFunctions(array([pt[ip], pt[jp]]), nodedof)
+                NRN = NTRN(N, R)
+                M_elem_mat += NRN * t * abs(detJ) * wt[ip] * wt[jp]
         return M_elem_mat
 
     def getUpdateMatrix(Model, matrix, addval):
@@ -135,14 +137,15 @@ class StructuralPlane(Element):
     def setTitleDeformation():
         return "DISPLACEMENT"
 
-    def getElementVolume(Model, inci, coord, tabgeo, intgauss, element_number):
-        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"] #tabgeo[int(inci[element_number, 3] - 1), 4]
+    def getElementVolume(Model, inci, coord, tabgeo, element_number):
+        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
         shape_set = Model.shape.getShapeSet()
         type_shape = shape_set["key"]
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        pt, wt = gauss_points(type_shape, intgauss)
+        pt, wt = gauss_points(type_shape, 1)
         detJ = 0.0
-        for pp in range(intgauss):
-            detJ += abs(Model.shape.getdetJacobi(pt[pp], elementcoord))
+        for ip in range(1):
+            for jp in range(1):
+                detJ += abs(Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)) * wt[ip] * wt[jp]
         return detJ * t

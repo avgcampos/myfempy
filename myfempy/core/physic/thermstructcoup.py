@@ -98,16 +98,14 @@ class ThermalStructuralCoupling(Structural):
         v = tabmat[int(inci[element_number, 2]) - 1]["VXX"] #tabmat[int(inci[element_number, 2]) - 1, 1]  # material poisson ratio
         a = tabmat[int(inci[element_number, 2]) - 1]["CTE"]
         t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"] #tabgeo[int(inci[element_number, 3] - 1), 4]
-                
         C = Model.material.getElasticTensor(E, v)
         pt, wt = gauss_points(type_shape, intgauss)
         W = np.zeros((nodedof, 1))
         force_value_vector = np.zeros((edof, 1))
-        for pp in range(intgauss):
-            detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
-            B = Model.element.getB(Model, elementcoord, pt[pp], nodedof)
-            force_value_vector += np.dot(np.dot(B.transpose(), C), np.reshape(strain_thermal, (3, 1))) * (a * t * abs(detJ) * wt[pp])
-        
-        # force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
+        for ip in range(intgauss):
+            for jp in range(intgauss):
+                detJ = Model.shape.getdetJacobi(np.array([pt[ip], pt[jp]]), elementcoord)
+                B = Model.element.getB(Model, elementcoord, np.array([pt[ip], pt[jp]]), nodedof)
+                force_value_vector += np.dot(np.dot(B.transpose(), C), np.reshape(strain_thermal, (3, 1))) * (a * t * abs(detJ) * wt[ip] * wt[jp])
         force_value_vector = np.reshape(force_value_vector, (edof))
         return force_value_vector, nodelist

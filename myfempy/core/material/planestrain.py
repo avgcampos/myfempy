@@ -27,21 +27,22 @@ class PlaneStrainIsotropic(Material):
 
     def getElementStrain(Model, U, ptg, element_number):
         elem_set = Model.element.getElementSet()
-        nodedof = len(elem_set["dofs"])
+        nodedof = len(elem_set["dofs"]["d"])
 
         nodelist = Model.shape.getNodeList(Model.inci, element_number)
 
-        loc = Model.shape.getShapeKey(nodelist, nodedof)
+        loc = Model.shape.getLocKey(nodelist, nodedof)
 
         elementcoord = Model.shape.getNodeCoord(Model.coord, nodelist)
 
-        B = Model.element.getB(Model, elementcoord, ptg)
+        B = Model.element.getB(Model, elementcoord, ptg, nodedof)
 
         epsilon = np.dot(B, U[loc])  # B @ (U[loc])
 
         strn_elm_xx = epsilon[0]
         strn_elm_yy = epsilon[1]
         strn_elm_xy = epsilon[2]
+                
         strn_elm_vm = np.sqrt(
             epsilon[0] ** 2
             - epsilon[0] * epsilon[1]
@@ -57,7 +58,7 @@ class PlaneStrainIsotropic(Material):
         title = ["STRAIN_VM", "STRAIN_XX", "STRAIN_YY", "STRAIN_XY"]
         return title
 
-    def getElementStress(Model, epsilon, element_number):
+    def getElementStress(Model, epsilon, element_number):        
         E = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["EXX"] # material elasticity
         v = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["VXX"] # material poisson ratio
 
@@ -75,10 +76,18 @@ class PlaneStrainIsotropic(Material):
 
         stress = [strs_elm_vm, strs_elm_xx, strs_elm_yy, strs_elm_xy]
 
-        return stress
+        return sigma, stress
 
     def getTitleStress():
         title = ["STRESS_VM", "STRESS_XX", "STRESS_YY", "STRESS_XY"]
+        return title
+
+    def getStrainEnergyDensity(sigma, epsilon, elemvol):
+        strain_energy = 0.5 * np.dot(sigma.transpose(), epsilon) / elemvol
+        return strain_energy
+
+    def getTitleCompliance():
+        title = ["STRAIN_ENERGY_DENSITY"]
         return title
     
     def getFailureCriteria(sigma):

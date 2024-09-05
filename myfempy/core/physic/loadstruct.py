@@ -5,7 +5,7 @@ from scipy.special import roots_legendre
 
 from myfempy.core.physic.structural import Structural
 from myfempy.core.utilities import (gauss_points, get_elemen_from_nodelist,
-                                    get_nodes_from_list, poly_area)
+                                    get_nodes_from_list, poly_area, unit_normal)
 
 
 class LoadStructural(Structural):
@@ -123,31 +123,35 @@ class LoadStructural(Structural):
         elmlist = get_elemen_from_nodelist(inci, node_list_fc)
         forcenodedof = np.zeros((1, 4))
         for ee in range(len(elmlist)):
-            (force_value_vector, nodelist, norm,) = LoadStructural.__line_force_distribuition(
+            force_value_vector, nodelist, norm = LoadStructural.__line_force_distribuition(
                 Model,
                 inci,
                 coord,
                 tabgeo,
+                intgauss,
                 node_list_fc,
                 elmlist[ee],
                 force_value,
                 fc_type,
             )
+            
+            elem_set = Model.element.getElementSet()
+            nodedof = len(elem_set["dofs"]["d"])
+                        
             if len(force_value_vector) > len(nodelist):
-                nodelist = np.repeat(nodelist, 2)
-                fc_type_dof = np.tile([modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"]], len(nodelist))
-                
-            elif forcelist['DOF'] == "pressure":
+                nodelist = np.repeat(nodelist, nodedof)
+                # fc_type_dof = np.tile([modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"]], int(len(nodelist)/nodedof))
+                                
+            if forcelist['DOF'] == "pressure":
                 if int(norm[0]) == 1 and int(norm[1]) == 0:
                     fc_type_dof = modelinfo["dofs"]["f"]["fx"] * np.ones_like(nodelist)
-                elif int(norm[0]) == 0 and int(norm[1]) == 1:
+                elif  int(norm[0]) == 0 and int(norm[1]) == 1:
                     fc_type_dof = modelinfo["dofs"]["f"]["fy"] * np.ones_like(nodelist)
                 else:
-                    fc_type_dof = modelinfo["dofs"]["f"]["fy"] * np.ones_like(nodelist)
+                    fc_type_dof = np.tile([modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"]], int(len(nodelist)/nodedof)) #modelinfo["dofs"]["f"]["fy"] * np.ones_like(nodelist)
             else:
-                fc_type_dof = modelinfo["dofs"]["f"][forcelist['DOF']] * np.ones_like(
-                    nodelist
-                )
+                fc_type_dof = modelinfo["dofs"]["f"][forcelist['DOF']] * np.ones_like(nodelist)
+                
             for j in range(len(nodelist)):
                 fcdof = np.array(
                     [
@@ -219,16 +223,17 @@ class LoadStructural(Structural):
         W = np.zeros((nodedof, 1))
         W[fc_type_dof - 1, 0] = R * G
         force_value_vector = np.zeros((edof, 1))
-        for pp in range(intgauss):
-            detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
-            N = Model.shape.getShapeFunctions(pt[pp], nodedof)
-            force_value_vector += np.dot(N.transpose(), W) * t * abs(detJ) * wt[pp]
+        for ip in range(intgauss):
+            for jp in range(intgauss):
+                detJ = Model.shape.getdetJacobi(np.array([pt[ip], pt[jp]]), elementcoord)
+                N = Model.shape.getShapeFunctions(np.array([pt[ip], pt[jp]]), nodedof)
+                force_value_vector += np.dot(N.transpose(), W) * t * abs(detJ) * wt[ip] * wt[jp]
         force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
         # force_value_vector = np.reshape(force_value_vector, (edof))
         return force_value_vector, nodelist
 
     def __line_force_distribuition(
-        Model, inci, coord, tabgeo, node_list_fc, element_number, force_value, fc_type
+        Model, inci, coord, tabgeo, intgauss, node_list_fc, element_number, force_value, fc_type
     ):
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
@@ -258,32 +263,27 @@ class LoadStructural(Structural):
             elif fc_type == "pressure":  #  -->[+]<--
                 noi = idx_conec[0]
                 noj = idx_conec[1]
-                dx = elementcoord[noj, 0] - elementcoord[noi, 0]
-                dy = elementcoord[noj, 1] - elementcoord[noi, 1]
+                dx = abs(elementcoord[noj, 0] - elementcoord[noi, 0])
+                dy = abs(elementcoord[noj, 1] - elementcoord[noi, 1])
                 L = np.sqrt(dx**2 + dy**2)
-                tx = (-dy / L) * force_value
-                ty = (dx / L) * force_value
-                T = np.array([[tx], [ty]])  # force_value
-                norm[0] = abs(dy / L)
-                norm[1] = abs(dx / L)
+                # tx = (-dy / L) * force_value
+                # ty = (dx / L) * force_value
+                # T = np.array([[tx], [ty]])  # force_value
+                norm[0] = dy / L
+                norm[1] = dx / L
+                T = -1*(np.array([norm]).T)*force_value #(np.array([norm]).T)*T
             else:
                 T = np.array([[0.0], [0.0]])
             idx_conec = np.array2string(idx_conec)
             get_side = Model.element.get_side_fcapp(idx_conec[1:-1]) #.__get_side_fcapp(idx_conec[1:-1])
-            infoside = Model.shape.getIsoParaSide(get_side)
-            r_vl = infoside[0]
-            r_ax = infoside[1]
-            points, wt = gauss_points(type_shape, 2)
-            points[:, r_ax] = r_vl
+            pt, wt = gauss_points(type_shape, intgauss)
             force_value_vector = np.zeros((edof, 1))
-            for pp in range(2):
-                N = Model.shape.getShapeFunctions(points[pp], nodedof)
-                diffN = Model.shape.getDiffShapeFuntion(points[pp], nodedof)
-                J = Model.shape.getJacobian(points[pp], elementcoord)
+            for ip in range(intgauss):                
+                points =  Model.shape.getIsoParaSide(get_side, pt[ip])
+                N = Model.shape.getShapeFunctions(np.array(points), nodedof)
+                diffN = Model.shape.getDiffShapeFuntion(np.array(points), nodedof)
+                J = Model.shape.getJacobian(np.array(points), elementcoord)
                 detJ_e = Model.shape.getEdgeLength(J, get_side)
-                force_value_vector += (
-                    np.dot(N.transpose(), T) * t * abs(detJ_e) * wt[pp]
-                )
+                force_value_vector += np.dot(N.transpose(), T) * t * abs(detJ_e) * wt[ip]
             force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
-        # force_value_vector = np.reshape(force_value_vector, (edof))
         return force_value_vector, nodes, norm

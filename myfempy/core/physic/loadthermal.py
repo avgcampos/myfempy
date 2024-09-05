@@ -224,10 +224,11 @@ class LoadThermal(Thermal):
         pt, wt = gauss_points(type_shape, intgauss)
         Q = heat_gen
         force_value_vector = np.zeros((edof, 1))
-        for pp in range(intgauss):
-            detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
-            N = Model.shape.getShapeFunctions(pt[pp], nodedof)
-            force_value_vector += np.dot(N.transpose(), Q) * t * abs(detJ) * wt[pp]
+        for ip in range(intgauss):
+            for jp in range(intgauss):
+                detJ = Model.shape.getdetJacobi(np.array([pt[ip], pt[jp]]), elementcoord)
+                N = Model.shape.getShapeFunctions(np.array([pt[ip], pt[jp]]), nodedof)
+                force_value_vector += np.dot(N.transpose(), Q) * t * abs(detJ) * wt[ip] * wt[jp]
         force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
         return force_value_vector, nodelist
 
@@ -262,31 +263,17 @@ class LoadThermal(Thermal):
                 infoside = Model.shape.getIsoParaSide(get_side)
                 r_vl = infoside[0]
                 r_ax = infoside[1]
-                points, wt = gauss_points(type_shape, 2)
+                pt, wt = gauss_points(type_shape, 2)
+                points = np.repeat(np.reshape([pt], (2,1)), 2, axis=1)
                 points[:, r_ax] = r_vl
                 force_value_vector = np.zeros((edof, 1))
-                for pp in range(2):
-                    N = Model.shape.getShapeFunctions(points[pp], nodedof)
-                    diffN = Model.shape.getDiffShapeFuntion(points[pp], nodedof)
-                    J = Model.shape.getJacobian(points[pp], elementcoord)
+                for ip in range(2):
+                    N = Model.shape.getShapeFunctions(points[ip], nodedof)
+                    diffN = Model.shape.getDiffShapeFuntion(points[ip], nodedof)
+                    J = Model.shape.getJacobian(points[ip], elementcoord)
                     detJ_e = Model.shape.getEdgeLength(J, get_side)
                     force_value_vector += (
-                        np.dot(N.transpose(), q) * t * abs(detJ_e) * wt[pp]
+                        np.dot(N.transpose(), q) * t * abs(detJ_e) * wt[ip]
                     )
                 force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
         return force_value_vector, nodes, norm
-
-    # def __get_side_fcapp(set_side):
-    #     side = {
-    #         "0 1": "0",  # quad4
-    #         "1 0": "0",  # quad4
-    #         "1 2": "1",  # quad4
-    #         "2 1": "1",  # quad4
-    #         "2 3": "2",  # quad4
-    #         "3 2": "2",  # quad4
-    #         "3 0": "3",  # quad4
-    #         "0 3": "3",  # quad4
-    #         "2 0": "2",  # tria3
-    #         "0 2": "2",  # tria3
-    #     }
-    #     return side[set_side]

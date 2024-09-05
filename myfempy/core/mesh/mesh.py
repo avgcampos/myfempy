@@ -13,12 +13,12 @@ def setMesh(set_mesh):
     elif set_mesh["TYPE"] == "legacy":
         if set_mesh["shape"] == "quad4":
             from myfempy.core.mesh.legacyquad4 import LegacyQuad4
-
             return LegacyQuad4
+        
         elif set_mesh["shape"] == "tria3":
             from myfempy.core.mesh.legacytria3 import LegacyTria3
-
             return LegacyTria3
+       
         else:
             pass
 

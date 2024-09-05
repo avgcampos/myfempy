@@ -8,9 +8,9 @@ https://www.thecloudtutorial.com/user-manual-for-software-applications/
 
 ```myfempy.mesh.genmesh.ModelGen.get_model(meshdata: dict{})```
 
-### Model Setting
+**Model Setting**
 
-### ```meshdata{"PROPMAT"}: list[mat_set_1: dict{}, ..., mat_set_n: dict{}]```
+```meshdata{"PROPMAT"}: list[mat_set_1: dict{}, ..., mat_set_n: dict{}]```
 
 ```python
 mat_set_n = {
@@ -42,7 +42,7 @@ mat_set_n = {
 ```
 
 
-### ```meshdata{"PROPGEO"}: list[geo_set_1: dict{}, ..., geo_set_n: dict{}]```
+```meshdata{"PROPGEO"}: list[geo_set_1: dict{}, ..., geo_set_n: dict{}]```
 
 ```python
 
@@ -63,8 +63,9 @@ geo_set_n = {
 
 ```
 
+```meshdata{"FORCES"}: list[force_set_1: dict{},..., force_set_n: dict{}]```
 
-### ```meshdata{"FORCES"}: list[force_set_1: dict{},..., force_set_n: dict{}]```
+**Physics Setting**
 
 ```python
 
@@ -117,7 +118,7 @@ force_set_n = {
 
 ```
 
-### ```meshdata{"BOUNDCOND"}: list[boundcond_set_1: dict{},..., boundcond_set_n: dict{}]```
+```meshdata{"BOUNDCOND"}: list[boundcond_set_1: dict{},..., boundcond_set_n: dict{}]```
 
 ```python
 
@@ -161,11 +162,11 @@ boundcond_set_n = {
             ...,
             val_displ_step_n]
 
-```	
+```
 
-See <goto> Table 3 Consistent Units
+See **Table 3** Consistent Units
 
-### ```meshdata{"QUADRATURE"}: dict{}```
+```meshdata{"QUADRATURE"}: dict{}```
 
 ```python
 
@@ -184,7 +185,7 @@ See <goto> Table 3 Consistent Units
 
 ```			
 
-### ```meshdata{"DOMAIN"}: str```
+```meshdata{"DOMAIN"}: str```
 
 ```python
 
@@ -193,8 +194,9 @@ See <goto> Table 3 Consistent Units
 
 ```				
 
-### Mesh Legacy Options				
-### ```meshdata{"LEGACY"}: dict{} # LEGACY mesh return a rectangular plane only [test option]```
+## Mesh Legacy Options
+
+```meshdata{"LEGACY"}: dict{} # LEGACY mesh return a rectangular plane only [test option]```
 
 ```python
 
@@ -210,7 +212,7 @@ See <goto> Table 3 Consistent Units
 
 ```
 
-### ```meshdata{"ELEMLIST"}: list[] # ELEMLIST return a element list from a manual mesh [old option]```
+```meshdata{"ELEMLIST"}: list[] # ELEMLIST return a element list from a manual mesh [old option]```
 
 ```python
 
@@ -221,9 +223,9 @@ See <goto> Table 3 Consistent Units
     ]
     >> [[1, 'plane31', 'steel', 'geo', [1, 2, 3]]]
     
-```        
-    
-### ```meshdata{"NODELIST"}: list[] # NODELIST return a nodes list from a manual mesh [old option]```
+```
+
+```meshdata{"NODELIST"}: list[] # NODELIST return a nodes list from a manual mesh [old option]```
 
 ```python
 
@@ -236,13 +238,13 @@ See <goto> Table 3 Consistent Units
         [2, 1, 0, 0]
         [3, 0, 1, 0]]
 ```
-        
-###	Gmsh Mesh Options
+
+## Gmsh Mesh Options
 
 Notes: 1 - Gmsh is NOT part of myfempy projects;
 2 - Is Needed install Gmsh manually	
 
-### ```meshdata{"GMSH"}: dict{} # GMSH mesh return a advacend mesh from gmsh external lib [link](https://pypi.org/project/gmsh/) [advanced option]```
+```meshdata{"GMSH"}: dict{} # GMSH mesh return a advacend mesh from gmsh external lib [link](https://pypi.org/project/gmsh/) [advanced option]```
 
 ```python
 
@@ -349,7 +351,7 @@ Notes: 1 - Gmsh is NOT part of myfempy projects;
 
 ## Appendix
 
-## Table 2 Mesh List
+### Table 2 Mesh List
 
 | mesh    | supported elements                        |
 |---------|-------------------------------------------|
@@ -360,7 +362,7 @@ Notes: 1 - Gmsh is NOT part of myfempy projects;
 | "tetr4" | "solid41"                                 |
 |         |                                           |
 
-## Table 2 Elements List
+### Table 2 Elements List
 
 | element    | key/id | description                                                                 |
 |------------|--------|-----------------------------------------------------------------------------|
@@ -376,7 +378,7 @@ Notes: 1 - Gmsh is NOT part of myfempy projects;
 | 'solid81'  | 320    | hexahedron Isoparametric Solid 8-node linear Finite Element                 |
 |            |        |                                                                             |
 
-## Table 3 Consistent Units
+### Table 3 Consistent Units
 
 | Quantity | SI(m)    | SI(mm)      |
 |----------|----------|-------------|
@@ -389,7 +391,7 @@ Notes: 1 - Gmsh is NOT part of myfempy projects;
 | density  | kg/m^3   | kg/mm^3(kg/m^3 E-9)|
 |          |          |             |
 
-## Axis Diretions
+### Axis Diretions
 
 ```python
  
@@ -414,7 +416,7 @@ Notes: 1 - Gmsh is NOT part of myfempy projects;
 
 ```
 
-## Cross Section Dimensions
+### Cross Section Dimensions
 
 ```python
               
@@ -441,7 +443,7 @@ Notes: 1 - Gmsh is NOT part of myfempy projects;
 
 ```
 
-## Tag Legends
+**Tag Legends**
 
 * [advanced option]: Inputs advanced options, require a external package
 * [current version]: Inputs options in the latest  stable version of myfempy

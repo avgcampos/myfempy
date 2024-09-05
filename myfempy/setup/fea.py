@@ -13,7 +13,7 @@ from myfempy.core.geometry.geometry import setGeometry
 from myfempy.core.material.material import setMaterial
 from myfempy.core.mesh.mesh import setMesh
 from myfempy.core.shapes.shape import setShape
-from myfempy.core.utilities import addMatrix, setSteps
+from myfempy.core.utilities import setSteps
 from myfempy.plots.prevplot import preview_plot
 from myfempy.setup.model import SetModel
 from myfempy.setup.physics import SetPhysics
@@ -108,7 +108,6 @@ class newAnalysis:
             self.modelinfo["inci"],
             self.modelinfo["coord"],
             self.modelinfo["tabgeo"],
-            self.modelinfo["intgauss"],
         )
 
     def Physic(self, physicdata):
@@ -346,11 +345,11 @@ class newAnalysis:
     def getIntGauss(self):
         return self.model.getIntGauss(self.model.modeldata)
 
-    def getElementVolume(self, inci, coord, tabgeo, intgauss):
+    def getElementVolume(self, inci, coord, tabgeo):
         vol = np.zeros((inci.shape[0]))
         for ee in range(inci.shape[0]):
             vol[ee] = self.model.element.getElementVolume(
-                self.model, inci, coord, tabgeo, intgauss, ee
+                self.model, inci, coord, tabgeo, ee
             )
         return vol
 

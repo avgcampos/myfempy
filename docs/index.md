@@ -1,8 +1,8 @@
-# Under Development
+# Welcome to myfempy's online documentation
+
+**Under Development**
 
 The **myfempy** project is under development, updates and code modifications may occur in future versions without prior notice from the developers.
-
-## Welcome to myfempy's online documentation
 
 ![myfempy_logo](assets\logo.png)
 
@@ -20,7 +20,7 @@ work.**
 
 ## Installation
 
-### To install myfempy manually in your directory, following the steps
+To install myfempy manually in your directory, following the steps
 
 1.  Clone/ Download the main code \[latest version\] from
     [github/myfempy/main](https://github.com/easycae-3d/myfempy/)
@@ -50,7 +50,7 @@ environments](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-
 **Myfempy** can be used in systems based on Linux, MacOS and Windows.
 **Myfempy** requires Python 3.
 
-### Installation prerequisites, required to build **myfempy**
+Installation prerequisites, required to build **myfempy**
 
 You can use either of two python development environments to run myfempy
 
@@ -61,7 +61,7 @@ You can use either of two python development environments to run myfempy
     way to perform Python/R data science and machine learning on a
     single machine.*
 
-### Python packages required for using **myfempy**
+Python packages required for using **myfempy**
 
 The following python packages are required to run myfempy. Before to
 install myfempy-main, install this packages. Check if they are already
@@ -84,7 +84,7 @@ installed on your machine
 >> pip install numpy, cython, scipy, vedo
 ```
 
-#### Outhers prerequisites
+Outhers prerequisites
 
 -   [gmsh/External Generator Mesh](https://gmsh.info/) - Gmsh is an open
     source 3D finite element mesh generator with a built-in CAD engine
@@ -177,7 +177,7 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
 
 ------------------------------------------------------------------------
 
-# Project tree structure
+## Project tree structure
 
 ``` bash
 /myfempy
@@ -288,25 +288,5 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
 |   |   logo.png
 |   |   logo.txt
 |   |   utils.py
-
-```
-
-## MathJax Test Page
-
-When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
-
-\begin{equation}
-ax^2 + bx + c = 0
-\end{equation}
-
-$$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
-
-## FlowChart with mermaid
-
-``` mermaid
-flowchart
-    doc --> abc 
-
-    abc --> 123
 
 ```

@@ -55,9 +55,9 @@ class HeatPlane(Element):
     def getH():
         return array([[1, 0], [0, 1]], dtype=INT32)
 
-    def getB(Model, elementcoord, ptg, nodedof):
-        diffN = Model.shape.getDiffShapeFuntion(ptg, nodedof)
-        invJ = Model.shape.getinvJacobi(ptg, elementcoord, nodedof)
+    def getB(Model, elementcoord, pt, nodedof):
+        diffN = Model.shape.getDiffShapeFuntion(pt, nodedof)
+        invJ = Model.shape.getinvJacobi(pt, elementcoord, nodedof)
         H = HeatPlane.getH()
         B = HDIFFNINVJ(H, diffN, invJ)
         return B
@@ -79,14 +79,36 @@ class HeatPlane(Element):
         H = HeatPlane.getH()
         pt, wt = gauss_points(type_shape, intgauss)
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
-        for pp in range(intgauss):
-            detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
-            diffN = Model.shape.getDiffShapeFuntion(pt[pp], nodedof)
-            invJ = Model.shape.getinvJacobi(pt[pp], elementcoord, nodedof)
-            BCB = BTCB(diffN, H, invJ, C)
-            K_elem_mat += BCB * t * abs(detJ) * wt[pp]
+        for ip in range(intgauss):
+            for jp in range(intgauss):
+                detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
+                diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp]]), nodedof)
+                invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp]]), elementcoord, nodedof)
+                BCB = BTCB(diffN, H, invJ, C)
+                K_elem_mat += BCB * t * abs(detJ) * wt[ip] * wt[jp]
         return K_elem_mat
 
+    # def getMassConsistentMat(
+    #     Model, inci, coord, tabmat, tabgeo, intgauss, element_number
+    # ):
+    #     elem_set = HeatPlane.getElementSet()
+    #     nodedof = len(elem_set["dofs"]["d"])
+    #     shape_set = Model.shape.getShapeSet()
+    #     nodecon = len(shape_set["nodes"])
+    #     type_shape = shape_set["key"]
+    #     edof = nodecon * nodedof
+    #     nodelist = Model.shape.getNodeList(inci, element_number)
+    #     elementcoord = Model.shape.getNodeCoord(coord, nodelist)
+    #     R = tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
+    #     t = tabgeo[int(inci[element_number, 3] - 1), 4]
+    #     pt, wt = gauss_points(type_shape, intgauss)
+    #     M_elem_mat = zeros((edof, edof), dtype=FLT64)
+    #     for pp in range(intgauss):
+    #         detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
+    #         N = Model.shape.getShapeFunctions(pt[pp], nodedof)
+    #         NRN = NTRN(N, R)
+    #         M_elem_mat += NRN * t * abs(detJ) * wt[pp]
+    #     return M_elem_mat
 
     def getUpdateMatrix(Model, matrix, modelinfo, addval):
         inci = modelinfo["inci"]
@@ -121,46 +143,24 @@ class HeatPlane(Element):
             r_vl = infoside[0]
             r_ax = infoside[1]
             points, wt = gauss_points(type_shape, 2)
-            points[:, r_ax] = r_vl
+            points[r_ax] = r_vl
             
             loc = Model.shape.getLocKey(nodelist, nodedof)
         
             h = addval[0, 2]
             
             Kh = zeros((edof, edof))
-            for pp in range(2):
-                N = Model.shape.getShapeFunctions(points[pp], nodedof)
-                diffN = Model.shape.getDiffShapeFuntion(points[pp], nodedof)
-                J = Model.shape.getJacobian(points[pp], elementcoord)
-                detJ_e = Model.shape.getEdgeLength(J, get_side)
-                Kh  += dot(N.transpose(), N)*h*t*abs(detJ_e)*wt[pp]
+            for ip in range(2):
+                for jp in range(2):
+                    N = Model.shape.getShapeFunctions(array([points[ip], points[jp]]), nodedof)
+                    diffN = Model.shape.getDiffShapeFuntion(array([points[ip], points[jp]]), nodedof)
+                    J = Model.shape.getJacobian(array([points[ip], points[jp]]), elementcoord)
+                    detJ_e = Model.shape.getEdgeLength(J, get_side)
+                    Kh  += dot(N.transpose(), N)*h*t*abs(detJ_e) * wt[ip] * wt[jp]
                 
             matrix[ix_(loc, loc)] += Kh
 
         return matrix
-
-
-    # def getMassConsistentMat(
-    #     Model, inci, coord, tabmat, tabgeo, intgauss, element_number
-    # ):
-    #     elem_set = HeatPlane.getElementSet()
-    #     nodedof = len(elem_set["dofs"]["d"])
-    #     shape_set = Model.shape.getShapeSet()
-    #     nodecon = len(shape_set["nodes"])
-    #     type_shape = shape_set["key"]
-    #     edof = nodecon * nodedof
-    #     nodelist = Model.shape.getNodeList(inci, element_number)
-    #     elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-    #     R = tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
-    #     t = tabgeo[int(inci[element_number, 3] - 1), 4]
-    #     pt, wt = gauss_points(type_shape, intgauss)
-    #     M_elem_mat = zeros((edof, edof), dtype=FLT64)
-    #     for pp in range(intgauss):
-    #         detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
-    #         N = Model.shape.getShapeFunctions(pt[pp], nodedof)
-    #         NRN = NTRN(N, R)
-    #         M_elem_mat += NRN * t * abs(detJ) * wt[pp]
-    #     return M_elem_mat
 
     def getElementDeformation(U, modelinfo):
         nodetot = modelinfo["nnode"]
@@ -173,14 +173,15 @@ class HeatPlane(Element):
     def setTitleDeformation():
         return "TEMPERATURE"
 
-    def getElementVolume(Model, inci, coord, tabgeo, intgauss, element_number):
+    def getElementVolume(Model, inci, coord, tabgeo, element_number):
         t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
         shape_set = Model.shape.getShapeSet()
         type_shape = shape_set["key"]
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        pt, wt = gauss_points(type_shape, intgauss)
+        pt, wt = gauss_points(type_shape, 1)
         detJ = 0.0
-        for pp in range(intgauss):
-            detJ += abs(Model.shape.getdetJacobi(pt[pp], elementcoord))
+        for ip in range(1):
+            for jp in range(1):
+                detJ += abs(Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)) * wt[ip] * wt[jp]
         return detJ * t

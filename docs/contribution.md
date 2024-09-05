@@ -1,16 +1,14 @@
-# Contribution
+# Estilos gerais utilizados no projeto
 
-## Regras para realizar upload {*commit*} no projeto myfempy
+**Regras para realizar upload {*commit*} no projeto myfempy**
 
 Este repositório destina-se ao gerenciamento das versões de desenvolvimento do projeto **myfempy**. Para que se tenha um código claro e limpo, as seguintes regras são aplicadas para manter um padrão geral do projeto.
 
-# 1 - Estilos gerais utilizados no projeto
-
-## 1.1 - Estilo dos códigos *.py*
+## Estilo dos códigos *.py*
 
 O padrão utilizado na sintax da escrita dos códigos é o [PEP8](https://peps.python.org/pep-0008).
 
-### 1.1.1 - Padrão de criação de classes *class AbcAbc*
+### Padrão de criação de classes *class AbcAbc*
 
 ```python
 
@@ -27,7 +25,7 @@ class AbcAbc: # class name
 
 ```
 
-### 1.1.2 - Padrão de criação de funções *def abc_abc*
+### Padrão de criação de funções *def abc_abc*
 
 ```python
 
@@ -42,21 +40,21 @@ def abc_abc(x:int, y:float): # function
 
 ```
 
-## 1.2 - ```__doc__``` de classes e funções
+## ```__doc__``` de classes e funções
 
 Toda classe e função deve conter sua documentação interna {```__doc__```}.
 
-### 1.2.1 - Procedimento
+### Procedimento
 
-1. Utilizar a referência [PEP8](https://peps.python.org/pep-0008).
+1. Utilizar a referência [PEP8](https://peps.python.org/pep-0008)
 
-2. Apresentar em uma única linha o que aquela classe ou função executa.
+2. Apresentar em uma única linha o que aquela classe ou função executa
 
-3. Use comentarios para informações adicionais.
+3. Use comentarios para informações adicionais
 
-4. Todas as entradas e saídas e a tipagem de dados deve ser indicados.
+4. Todas as entradas e saídas e a tipagem de dados deve ser indicados
 
-5. O idioma padrão é o inglês técnico.
+5. O idioma padrão é o inglês técnico
 
 Exemplo:
 
@@ -105,7 +103,7 @@ class AbcAbc: # class name
         return div_y
 ```
 
-## 1.3 - Documentação online
+## Documentação online
 
 O padrão utilizado para escrever a documentação oficial do projeto é no formato [Markdown](https://www.markdownguide.org/basic-syntax).
 
@@ -113,7 +111,7 @@ Atualmente o projeto utiliza o pacote [mkdocs](https://www.mkdocs.org/) para ger
 
 O *sphinx* converte arquivos *.rst* {reStruturedText} para *.html/pdf* de uma forma prática. Também é possível converter arquivos *.md* {markdown} em *.rst*, uma opção interessante é [mdToRst](https://github.com/kata198/mdToRst) ou de forma onlline com o [vertopal](https://www.vertopal.com/).
 
-### 1.3.1 - Procedimento de atualização da documentação online
+### Procedimento de atualização da documentação online
 
 1. Para editar a documentação online oficial do projeto basta atualizar os arquivos *.md* na pasta **\docs**.
 
@@ -121,19 +119,23 @@ O *sphinx* converte arquivos *.rst* {reStruturedText} para *.html/pdf* de uma fo
 
 ```bash
 
->> mkdocs build  # constroe os arquivos em \site
+>> mkdocs build     # constroe os arquivos em \site
 
 >> mkdocs gh-deploy # deploy para o endereço de hospedagem no github pages
 
+or
+
+>> make doc         # constroe e gera a documentação local
+
 ```
 
-Veja a seção [1.2 - ```__doc__``` de classes e funções]
+Veja a seção [```__doc__``` de classes e funções]
 
 6.Verificar se não a **bugs** na documentação.
 
-# 2 - Testes, bugs, e documentação
+# Testes, bugs, e documentação
 
-## 2.1 - Utilizando o line_profiler para verificar performance do código, linha-linha
+## Utilizando o line_profiler para verificar performance do código, linha-linha
 
 ```python
 
@@ -151,7 +153,7 @@ def slow_function(a, b, c):
 
 ```
 
-## 2.2 - Teste de verificação manual, antes realizar o commit para o _main_
+## Teste de verificação manual, antes realizar o commit para o _main_
 
 Executar na pasta principal do projeto \myfempy
 
@@ -184,9 +186,7 @@ Estes sistemas também podem ser verificados de forma automatica via *Makefile*.
 
 https://medium.com/gbtech/aprimorando-qualidade-de-c%C3%B3digo-python-com-black-flake8-isort-e-interrogate-d5c089121357
 
-# 3 - Git
-
-Utilize commits para subir atualizações no repositório do github (https://github.com/easycae-3d/simple_myfempy_oop).
+# Git
 
 Faça,
 
@@ -202,9 +202,9 @@ git push         # push para a _main_ do projeto
 
 Após realizar o envio das modificações, faça realeases quando necessário, utilize tags das versões como marcadores e gere os changelogs para documentar as modificações ao longo do projeto.
 
-# 4 - Instalação do pacote
+# Instalação do pacote
 
-Faça,
+Faça, sempre crie um ambiente de desenvolvimento separado do principal
 
 ```bash
 

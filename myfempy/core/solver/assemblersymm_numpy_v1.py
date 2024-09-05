@@ -11,12 +11,6 @@ from myfempy.core.solver.assembler import getLoc, getMatrix
 def getMatrixAssemblerSymm(
     Model, inci, coord, tabmat, tabgeo, elemdof, intgauss, type_assembler
 ):
-    # ith_band = []
-    # jth_band = []
-    # val_band = []
-    # ith_diag = []
-    # jth_diag = []
-    # val_diag = []
 
     dim_band = int(0.5 * (elemdof * elemdof - elemdof) * inci.shape[0])
     dim_diag = int(elemdof * inci.shape[0])

@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-from .__about__ import __version__
 from .core.solver.cyclicsymm import StaticLinearCyclicSymm
 from .core.solver.dynsteadystatelinear import DynamicSteadyStateLinear
 from .core.solver.dynmodal import DynamicModalLinear
@@ -15,5 +14,4 @@ __all__ = [
     "StaticLinearCyclicSymm",
     "DynamicModalLinear",
     "DynamicSteadyStateLinear",
-    "__version__",
 ]

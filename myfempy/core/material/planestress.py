@@ -39,7 +39,7 @@ class PlaneStressIsotropic(Material):
 
         elementcoord = Model.shape.getNodeCoord(Model.coord, nodelist)
 
-        B = Model.element.getB(Model, elementcoord, ptg[0], nodedof)
+        B = Model.element.getB(Model, elementcoord, ptg, nodedof)
 
         epsilon = np.dot(B, U[loc])  # B @ (U[loc])
 

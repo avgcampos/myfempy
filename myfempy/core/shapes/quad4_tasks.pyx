@@ -12,16 +12,18 @@ ctypedef np.float64_t FLT64_t
        
    
 cdef double [:, :] MATN(double [:] r_coord):
+    cdef double r0 = r_coord[0]
+    cdef double r1 = r_coord[1]
     cdef double [:, :] N = np.zeros((1,4), dtype=FLT64)
-    N[0, 0] = 0.25*(1-r_coord[0])*(1-r_coord[1])
-    N[0, 1] = 0.25*(1+r_coord[0])*(1-r_coord[1])
-    N[0, 2] = 0.25*(1+r_coord[0])*(1+r_coord[1])
-    N[0, 3] = 0.25*(1-r_coord[0])*(1+r_coord[1])
+    N[0, 0] = 0.25*(1-r0)*(1-r1)
+    N[0, 1] = 0.25*(1+r0)*(1-r1)
+    N[0, 2] = 0.25*(1+r0)*(1+r1)
+    N[0, 3] = 0.25*(1-r0)*(1+r1)
     return N
  
 cdef double [:, :] MATDIFFN(double [:] r):
-    cdef double r1 = r[1]
     cdef double r0 = r[0]
+    cdef double r1 = r[1]
     cdef double [:, :] dN = np.zeros((2,4), dtype=FLT64)
     dN[0, 0] = 0.25*(-1.0+r1)
     dN[0, 1] = 0.25*(1.0-r1)

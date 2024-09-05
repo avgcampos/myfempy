@@ -12,15 +12,17 @@ def meshid2gmshid(elemid):
     # https://gmsh.info/dev/doc/texinfo/gmsh.pdf
     # space + dofnode + numbconecelem + firstorder(1)/secondorder(2)
     celltype = {
+        "1121": 1,
+        "1132": 8,
         "1621": 1,
         "1632": 8,
         "2131": 2,
-        "2231": 2,
-        "2331": 2,
-        "2262": 9,
+        "2161": 9,
         "2141": 3,
+        "2182": 16,
+        "2231": 2,
+        "2262": 9,
         "2241": 3,
-        "2341": 3,
         "2282": 16,
         "3341": 4,
         "33102": 11,
@@ -48,6 +50,7 @@ def gmsh_key(meshtype: str):
 
 
 def get_gmsh_msh(filename, meshdata):
+    os.system("echo MESHING...")
     cmd = (
         "gmsh"
         + " "
@@ -59,7 +62,7 @@ def get_gmsh_msh(filename, meshdata):
     )
     # os.system("echo GENERATING MESH FROM EXTERNAL GMSH")
     os.system(cmd)
-    os.system("echo MESHING IS DONE")
+    os.system("echo MESH IS DONE")
     # os.system("echo SAVING AND EXIT")
 
 
@@ -278,6 +281,22 @@ def get_gmsh_geo(filename, meshdata):
                 file_object.write("Mesh.HighOrderOptimize = 0;\n")
                 file_object.write("Mesh.Algorithm = 8;\n")
                 file_object.write("Mesh.ElementOrder = 1;\n")
+                
+            elif meshdata["meshconfig"]["mesh"] == "tria6":
+                file_object.write("// MESH CONFIGURATION\n")
+                file_object.write("Mesh.CharacteristicLengthExtendFromBoundary = 1;\n")
+                file_object.write("Mesh.CharacteristicLengthMin = 0;\n")
+                file_object.write(
+                    "Mesh.CharacteristicLengthMax = "
+                    + str(meshdata["meshconfig"]["sizeelement"])
+                    + ";\n"
+                )
+                file_object.write("Mesh.CharacteristicLengthFromPoints = 1;\n")
+                file_object.write("Mesh.Optimize = 1;\n")
+                file_object.write("Mesh.HighOrderOptimize = 0;\n")
+                file_object.write("Mesh.Algorithm = 8;\n")
+                file_object.write("Mesh.SecondOrderIncomplete = 1;\n")
+                file_object.write("Mesh.ElementOrder = 2;\n")
 
             elif meshdata["meshconfig"]["mesh"] == "quad4":
                 file_object.write("Recombine Surface {:};\n")
@@ -297,6 +316,27 @@ def get_gmsh_geo(filename, meshdata):
                 file_object.write("Mesh.HighOrderOptimize = 0;\n")
                 file_object.write("Mesh.Algorithm = 8;\n")
                 file_object.write("Mesh.ElementOrder = 1;\n")
+                
+            elif meshdata["meshconfig"]["mesh"] == "quad8":
+                file_object.write("Recombine Surface {:};\n")
+                file_object.write("// MESH CONFIGURATION\n")
+                file_object.write("Mesh.RecombinationAlgorithm = 1;\n")
+                file_object.write("Mesh.RecombineAll = 1;\n")
+                file_object.write("Mesh.SubdivisionAlgorithm = 1;\n")
+                file_object.write("Mesh.CharacteristicLengthExtendFromBoundary = 1;\n")
+                file_object.write("Mesh.CharacteristicLengthMin = 0;\n")
+                file_object.write(
+                    "Mesh.CharacteristicLengthMax = "
+                    + str(meshdata["meshconfig"]["sizeelement"])
+                    + ";\n"
+                )
+                file_object.write("Mesh.CharacteristicLengthFromPoints = 1;\n")
+                file_object.write("Mesh.Optimize = 1;\n")
+                file_object.write("Mesh.HighOrderOptimize = 0;\n")
+                file_object.write("Mesh.Algorithm = 8;\n")
+                file_object.write("Mesh.SecondOrderIncomplete = 1;\n")
+                file_object.write("Mesh.ElementOrder = 2;\n")
+                
 
             elif meshdata["meshconfig"]["mesh"] == "tetr4":
                 if "extrude" in meshdata["meshconfig"].keys():

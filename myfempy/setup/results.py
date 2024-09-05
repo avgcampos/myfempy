@@ -363,11 +363,11 @@ class setPostProcess(ABC):
         factor_of_safety = np.zeros((self.modelinfo["nelem"], 1), dtype=float)
 
         pt, wt = gauss_points(self.modelinfo["type_shape"], 1)
+        
         for ee in range(self.modelinfo["nelem"]):
-            # tensor = get_stress(self.modelinfo, U, ee)
+            
             epsilon, strain = self.model.material.getElementStrain(
-                self.model, U, pt, ee
-            )
+                self.model, U, np.array([pt[0], pt[0]]), ee)
             
             sigma, stress = self.model.material.getElementStress(
                 self.model, epsilon, ee
@@ -414,10 +414,11 @@ class setPostProcess(ABC):
         )
         
         pt, wt = gauss_points(self.modelinfo["type_shape"], 1)
+        
         for ee in range(self.modelinfo["nelem"]):
+            
             epsilon, strain = self.model.material.getElementGradTemp(
-                self.model, U, pt, ee
-            )
+                self.model, U, np.array([pt[0], pt[0]]), ee)
             
             sigma, stress = self.model.material.getElementHeatFlux(
                 self.model, epsilon, ee

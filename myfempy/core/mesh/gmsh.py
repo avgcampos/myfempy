@@ -107,7 +107,7 @@ class MeshGmsh(Mesh):
                     }
                 )
                 ptn0 = ptn1
-            elif int(conec[ee][1]) == 1:
+            elif (int(conec[ee][1]) == 1) or (int(conec[ee][1]) == 8):
                 edg1 = int(conec[ee][3])
                 if edg1 != edg0:
                     contedg += 1

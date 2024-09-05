@@ -23,14 +23,14 @@ class Quad4(Shape):
         return shapeset
 
     # quad4 sides
-    def getIsoParaSide(side):
+    def getIsoParaSide(side, r):
         # [r_valor, r_axis]
         # r = 0/ s = 1/ t = 2
         isops = {
-            "0": [-1.0, 1],  # [-1, s]
-            "1": [1.0, 0],  # [+1, r]
-            "2": [1.0, 1],  # [+1, s]
-            "3": [-1.0, 0],  # [-1, r]
+            "0": [r, -1.0],  # [-1, s]
+            "1": [1.0, r],  # [+1, r]
+            "2": [r, 1.0],  # [+1, s]
+            "3": [-1.0, r],  # [-1, r]
         }
 
         return isops[side]

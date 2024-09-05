@@ -32,9 +32,9 @@ class HeatPlaneIsotropic(Material):
 
         elementcoord = Model.shape.getNodeCoord(Model.coord, nodelist)
 
-        B = Model.element.getB(Model, elementcoord, ptg[0], nodedof)
+        B = Model.element.getB(Model, elementcoord, ptg, nodedof)
 
-        N = Model.shape.getShapeFunctions(ptg[0], nodedof)
+        N = Model.shape.getShapeFunctions(ptg, nodedof)
 
         epsilon = np.dot(B, U[loc])  # B @ (U[loc])
         

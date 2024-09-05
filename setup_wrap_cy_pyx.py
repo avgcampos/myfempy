@@ -31,7 +31,9 @@ class build_ext(_build_ext):
         extensions=[
             Extension("*", sources=["./myfempy/core/solver/assemblersymm_cython_v4.pyx"], **extension_kwargs),
             Extension("*", sources=["./myfempy/core/solver/assemblerfull_cython_v4.pyx"], **extension_kwargs),
-            Extension("*", sources=["./myfempy/core/shapes/quad4_tasks.pyx"], **extension_kwargs),
             Extension("*", sources=["./myfempy/core/shapes/tria3_tasks.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/tria6_tasks.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/quad4_tasks.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/quad8_tasks.pyx"], **extension_kwargs),
         ]
         self.distribution.ext_modules.extend(cythonize(extensions))

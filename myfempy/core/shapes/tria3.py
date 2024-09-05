@@ -23,13 +23,13 @@ class Tria3(Shape):
         return shapeset
 
     # tria3 sides
-    def getIsoParaSide(side):
+    def getIsoParaSide(side, r):
         # [r_valor, r_axis]
         # r = 0/ s = 1/ t = 2
         isops = {
-            "0": [0.0, 1],  # [0, s]
-            "1": [0.5, 0],  # [+1, r]
-            "2": [0.0, 0],  # [+1, r]
+            "0": [r, 0.0],  # [0, s]
+            "1": [r, 1 - r],  # [1-r, s]
+            "2": [0.0, r],  # [+1, r]
         }
 
         return isops[side]
@@ -64,10 +64,10 @@ class Tria3(Shape):
         #   detJ_r = sqrt[dx/ds^2 + dy/ds^2]
         #   detJ_s = sqrt[dx/dr^2 + dy/dr^2]
         if side == "0":
-            return 0.5 * sqrt(J[0, 0] ** 2 + J[0, 1] ** 2)
+            return sqrt(J[0, 0] ** 2 + J[0, 1] ** 2)
         elif side == "1":
-            return 0.5 * sqrt((J[0, 0] - J[1, 0]) ** 2 + (J[0, 1] - J[1, 1]) ** 2)
+            return sqrt((J[0, 0] - J[1, 0]) ** 2 + (J[0, 1] - J[1, 1]) ** 2)
         elif side == "2":
-            return 0.5 * sqrt(J[1, 0] ** 2 + J[1, 1] ** 2)
+            return sqrt(J[1, 0] ** 2 + J[1, 1] ** 2)
         else:
             return 0.0
