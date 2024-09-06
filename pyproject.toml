@@ -68,16 +68,16 @@ Documentation = "myfempy.readthedocs.io/en/latest/"
 Repository = "https://github.com/avgcampos/myfempy/releases"
 
 ### Cython Compiler
-# [build-system]
-# requires = ["setuptools", "numpy", "cython"]
-# build-backend = "setuptools.build_meta"
+[build-system]
+requires = ["setuptools", "numpy", "cython"]
+build-backend = "setuptools.build_meta"
 
-# [tool.setuptools]
-# py-modules = ["setup_wrap_cy_pyx"]
-# package-dir = {"" = "."}
+[tool.setuptools]
+py-modules = ["setup_wrap_cy_pyx"]
+package-dir = {"" = "."}
 
-# [tool.setuptools.packages]
-# find = {}
+[tool.setuptools.packages]
+find = {}
 
-# [tool.setuptools.cmdclass]
-# build_ext = "setup_wrap_cy_pyx.build_ext"
+[tool.setuptools.cmdclass]
+build_ext = "setup_wrap_cy_pyx.build_ext"

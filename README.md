@@ -164,7 +164,7 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
 
 -----------
 
-# Project tree structure
+## Project tree structure
 
 ``` bash
 /myfempy
@@ -277,3 +277,14 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
 |   |   utils.py
 
 ```
+
+<!-- ## Changelog
+
+The changelog is formatted with the standard [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+### [v0.5.1]
+
+### [v0.5.0]
+
+- Added: `myfempy.core.shapes.tria6.Tria6` New FE second order triangular 6-nodes
+- Added: `myfempy.core.shapes.quad8.Quad8` New FE second order quadrilateral 8-nodes -->
