@@ -40,7 +40,7 @@ authors = [
     {name = "Antonio Campos", email = "antviniciuscampos@gmail.com"},
 ]
 readme = "README.md"
-version = "0.5.0"
+version = "0.5.1"
 license = {file = "LICENSE.md"}
 requires-python = ">3.8"
 dependencies = [
