@@ -164,6 +164,7 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
 
 -----------
 
+<!-- 
 ## Project tree structure
 
 ``` bash
@@ -276,7 +277,7 @@ url          = {https://doi.org/10.5281/zenodo.6958796}
 |   |   logo.txt
 |   |   utils.py
 
-```
+``` -->
 
 <!-- ## Changelog
 
