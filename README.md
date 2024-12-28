@@ -22,7 +22,7 @@ Copyright © Antonio Vinicius G. Campos 2022. Processo INPI BR512022001484-0
 
 ## About
 
-**myfempy** is a python package based on finite element method to multiphysics analysis. The code is open source and *intended for educational and scientific purposes only, not recommended to commercial use*. You can help us by contributing with a donation on the main project page, send us a email [antonio.garcia&edu.ufpi.br]. **If you use myfempy in your research, the  developers would be grateful if you could cite in your work.**
+**myfempy** is a python package based on finite element method to multiphysics analysis. The code is open source and *intended for educational and scientific purposes only, not recommended to commercial use*. The name **myfempy** is an acronym for **M**ultiph**Y**sics **F**inite **E**lements **M**odule to **PY**thon. You can help us by contributing with a donation on the main project page, send us a email [antonio.garcia&edu.ufpi.br]. **If you use myfempy in your research, the  developers would be grateful if you could cite in your work.**
 
 ## Installation
 
