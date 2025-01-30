@@ -1,6 +1,8 @@
 # distutils: language=c
 # cython: language_level=3
+cimport numpy as np
 from cython cimport boundscheck, wraparound
+
 # from cython.view cimport array as cvarray
 # from libc.stdint cimport int32_t
 
@@ -8,7 +10,6 @@ from cython cimport boundscheck, wraparound
 # cimport openmp
 # import numpy as np
 
-cimport numpy as np
 
 # DTYPE = np.int64
 # ctypedef np.int64_t DTYPE_t

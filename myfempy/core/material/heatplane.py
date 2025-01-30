@@ -37,12 +37,12 @@ class HeatPlaneIsotropic(Material):
         N = Model.shape.getShapeFunctions(ptg, nodedof)
 
         epsilon = np.dot(B, U[loc])  # B @ (U[loc])
-        
+
         epsilon_T = np.dot(N, U[loc])
-        
+
         strn_elm_xx = epsilon[0]
         strn_elm_yy = epsilon[1]
-        
+
         # strn_elm_vm = np.sqrt(epsilon[0]**2 + epsilon[1]**2)
 
         strain = [epsilon_T[0], strn_elm_xx, strn_elm_yy]
@@ -59,12 +59,12 @@ class HeatPlaneIsotropic(Material):
 
         C = HeatPlaneIsotropic.getElasticTensor(Kxx, Kyy)
 
-        sigma = -1*np.dot(C, epsilon)
+        sigma = -1 * np.dot(C, epsilon)
 
         strs_elm_xx = sigma[0]
         strs_elm_yy = sigma[1]
 
-        strs_elm_vm = np.sqrt(sigma[0]**2 + sigma[1]**2)
+        strs_elm_vm = np.sqrt(sigma[0] ** 2 + sigma[1] ** 2)
 
         stress = [strs_elm_vm, strs_elm_xx, strs_elm_yy]
 

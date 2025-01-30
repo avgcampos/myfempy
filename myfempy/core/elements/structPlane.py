@@ -1,15 +1,18 @@
 from __future__ import annotations
 
+from numpy import (abs, array, concatenate, dot, float64, int32, ix_, sqrt,
+                   zeros)
+
 # from os import environ
 # environ["OMP_NUM_THREADS"] = "8"
 
-from numpy import abs, array, concatenate, dot, ix_, float64, int32, sqrt, zeros
 
 INT32 = int32
 FLT64 = float64
 
 from myfempy.core.elements.element import Element
 from myfempy.core.utilities import gauss_points
+
 
 class StructuralPlane(Element):
     """Plane Structural Element Class <ConcreteClassService>"""
@@ -21,8 +24,13 @@ class StructuralPlane(Element):
             "id": 22,
             "dofs": {
                 "d": {"ux": 1, "uy": 2},
-                "f": {"fx": 1, "fy": 2,
-                      "massaadd": 15, "spring2ground": 16, "damper2ground": 17},
+                "f": {
+                    "fx": 1,
+                    "fy": 2,
+                    "massaadd": 15,
+                    "spring2ground": 16,
+                    "damper2ground": 17,
+                },
             },
             "tensor": ["sxx", "syy", "sxy"],
         }
@@ -49,16 +57,24 @@ class StructuralPlane(Element):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        E = tabmat[int(inci[element_number, 2]) - 1]["EXX"] #tabmat[int(inci[element_number, 2]) - 1, 0]  # material elasticity
-        v = tabmat[int(inci[element_number, 2]) - 1]["VXX"] #tabmat[int(inci[element_number, 2]) - 1, 1]  # material poisson ratio
+        E = tabmat[int(inci[element_number, 2]) - 1][
+            "EXX"
+        ]  # tabmat[int(inci[element_number, 2]) - 1, 0]  # material elasticity
+        v = tabmat[int(inci[element_number, 2]) - 1][
+            "VXX"
+        ]  # tabmat[int(inci[element_number, 2]) - 1, 1]  # material poisson ratio
         C = Model.material.getElasticTensor(E, v)
-        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"] #tabgeo[int(inci[element_number, 3] - 1), 4]
+        t = tabgeo[int(inci[element_number, 3] - 1)][
+            "THICKN"
+        ]  # tabgeo[int(inci[element_number, 3] - 1), 4]
         pt, wt = gauss_points(type_shape, intgauss)
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
         for ip in range(intgauss):
             for jp in range(intgauss):
                 detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
-                B = StructuralPlane.getB(Model, elementcoord, array([pt[ip], pt[jp]]), nodedof)
+                B = StructuralPlane.getB(
+                    Model, elementcoord, array([pt[ip], pt[jp]]), nodedof
+                )
                 BCB = dot(dot(B.transpose(), C), B)
                 K_elem_mat += BCB * t * abs(detJ) * wt[ip] * wt[jp]
         return K_elem_mat
@@ -74,8 +90,12 @@ class StructuralPlane(Element):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        R = tabmat[int(inci[element_number, 2]) - 1]["RHO"] #tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
-        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"] #tabgeo[int(inci[element_number, 3] - 1), 4]
+        R = tabmat[int(inci[element_number, 2]) - 1][
+            "RHO"
+        ]  # tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
+        t = tabgeo[int(inci[element_number, 3] - 1)][
+            "THICKN"
+        ]  # tabgeo[int(inci[element_number, 3] - 1), 4]
         pt, wt = gauss_points(type_shape, intgauss)
         M_elem_mat = zeros((edof, edof), dtype=FLT64)
         for ip in range(intgauss):
@@ -91,13 +111,16 @@ class StructuralPlane(Element):
         shape_set = Model.shape.getShapeSet()
         dofe = len(shape_set["nodes"]) * len(elem_set["dofs"]["d"])
         for ii in range(len(addval)):
-            
-            A_add = addval[ii, 2] * array([[1, -1],
-                                           [-1, 1]])
-            
-            loc = array([int(dofe * addval[ii, 0] - (dofe)),
-                        int(dofe * addval[ii, 0]  - (dofe - 1)),])
-           
+
+            A_add = addval[ii, 2] * array([[1, -1], [-1, 1]])
+
+            loc = array(
+                [
+                    int(dofe * addval[ii, 0] - (dofe)),
+                    int(dofe * addval[ii, 0] - (dofe - 1)),
+                ]
+            )
+
             matrix[ix_(loc, loc)] += A_add
         return matrix
 
@@ -123,5 +146,9 @@ class StructuralPlane(Element):
         detJ = 0.0
         for ip in range(1):
             for jp in range(1):
-                detJ += abs(Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)) * wt[ip] * wt[jp]
+                detJ += (
+                    abs(Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord))
+                    * wt[ip]
+                    * wt[jp]
+                )
         return detJ * t

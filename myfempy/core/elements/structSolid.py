@@ -4,7 +4,8 @@ from os import environ
 
 environ["OMP_NUM_THREADS"] = "1"
 
-from numpy import abs, array, concatenate, dot, ix_, float64, int32, sqrt, zeros
+from numpy import (abs, array, concatenate, dot, float64, int32, ix_, sqrt,
+                   zeros)
 
 INT32 = int32
 FLT64 = float64
@@ -44,20 +45,31 @@ class StructuralSolid(Element):
             "id": 33,
             "dofs": {
                 "d": {"ux": 1, "uy": 2, "uz": 3},
-                "f": {"fx": 1, "fy": 2, "fz": 3,
-                      "massaadd": 15, "spring2ground": 16, "damper2ground": 17},
+                "f": {
+                    "fx": 1,
+                    "fy": 2,
+                    "fz": 3,
+                    "massaadd": 15,
+                    "spring2ground": 16,
+                    "damper2ground": 17,
+                },
             },
             "tensor": ["sxx", "syy", "szz", "sxy", "syz", "szx"],
         }
         return elemset
 
     def getH():
-        return array([[1, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 1, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 1],
-                    [0, 1, 0, 1, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 1, 0, 1, 0],
-                    [0, 0, 1, 0, 0, 0, 1, 0, 0]], dtype=INT32)
+        return array(
+            [
+                [1, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [0, 1, 0, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 1, 0, 1, 0],
+                [0, 0, 1, 0, 0, 0, 1, 0, 0],
+            ],
+            dtype=INT32,
+        )
 
     def getB(Model, elementcoord, pt, nodedof):
         diffN = Model.shape.getDiffShapeFuntion(pt, nodedof)
@@ -76,8 +88,12 @@ class StructuralSolid(Element):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        E = tabmat[int(inci[element_number, 2]) - 1]["EXX"] #tabmat[int(inci[element_number, 2]) - 1, 0]  # material elasticity
-        v = tabmat[int(inci[element_number, 2]) - 1]["VXX"] #tabmat[int(inci[element_number, 2]) - 1, 1]  # material poisson ratio
+        E = tabmat[int(inci[element_number, 2]) - 1][
+            "EXX"
+        ]  # tabmat[int(inci[element_number, 2]) - 1, 0]  # material elasticity
+        v = tabmat[int(inci[element_number, 2]) - 1][
+            "VXX"
+        ]  # tabmat[int(inci[element_number, 2]) - 1, 1]  # material poisson ratio
         C = Model.material.getElasticTensor(E, v)
         H = StructuralSolid.getH()
         pt, wt = gauss_points(type_shape, intgauss)
@@ -85,9 +101,15 @@ class StructuralSolid(Element):
         for ip in range(intgauss):
             for jp in range(intgauss):
                 for kp in range(intgauss):
-                    detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp], pt[kp]]), elementcoord)
-                    diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp], pt[kp]]), nodedof)
-                    invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp], pt[kp]]), elementcoord, nodedof)
+                    detJ = Model.shape.getdetJacobi(
+                        array([pt[ip], pt[jp], pt[kp]]), elementcoord
+                    )
+                    diffN = Model.shape.getDiffShapeFuntion(
+                        array([pt[ip], pt[jp], pt[kp]]), nodedof
+                    )
+                    invJ = Model.shape.getinvJacobi(
+                        array([pt[ip], pt[jp], pt[kp]]), elementcoord, nodedof
+                    )
                     BCB = BTCB(diffN, H, invJ, C)
                     K_elem_mat += BCB * abs(detJ) * wt[ip] * wt[jp] * wt[kp]
         return K_elem_mat
@@ -103,14 +125,20 @@ class StructuralSolid(Element):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        R = tabmat[int(inci[element_number, 2]) - 1]["RHO"] #tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
+        R = tabmat[int(inci[element_number, 2]) - 1][
+            "RHO"
+        ]  # tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
         pt, wt = gauss_points(type_shape, intgauss)
         M_elem_mat = zeros((edof, edof), dtype=FLT64)
         for ip in range(intgauss):
             for jp in range(intgauss):
                 for kp in range(intgauss):
-                    detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp], pt[kp]]), elementcoord)
-                    N = Model.shape.getShapeFunctions(array([pt[ip], pt[jp], pt[kp]]), nodedof)
+                    detJ = Model.shape.getdetJacobi(
+                        array([pt[ip], pt[jp], pt[kp]]), elementcoord
+                    )
+                    N = Model.shape.getShapeFunctions(
+                        array([pt[ip], pt[jp], pt[kp]]), nodedof
+                    )
                     NRN = NTRN(N, R)
                     M_elem_mat += NRN * abs(detJ) * wt[ip] * wt[jp] * wt[kp]
         return M_elem_mat
@@ -120,13 +148,13 @@ class StructuralSolid(Element):
     #     shape_set = Model.shape.getShapeSet()
     #     dofe = len(shape_set["nodes"]) * len(elem_set["dofs"]["d"])
     #     for ii in range(len(addval)):
-            
+
     #         A_add = addval[ii, 2] * array([[1, -1],
     #                                        [-1, 1]])
-            
+
     #         loc = array([int(dofe * addval[ii, 0] - (dofe)),
     #                     int(dofe * addval[ii, 0]  - (dofe - 1)),])
-           
+
     #         matrix[ix_(loc, loc)] += A_add
     #     return matrix
 
@@ -153,5 +181,14 @@ class StructuralSolid(Element):
         for ip in range(1):
             for jp in range(1):
                 for kp in range(1):
-                    Vol += abs(Model.shape.getdetJacobi(array([pt[ip], pt[jp], pt[kp]]), elementcoord)) * wt[ip] * wt[jp] * wt[kp]
+                    Vol += (
+                        abs(
+                            Model.shape.getdetJacobi(
+                                array([pt[ip], pt[jp], pt[kp]]), elementcoord
+                            )
+                        )
+                        * wt[ip]
+                        * wt[jp]
+                        * wt[kp]
+                    )
         return Vol

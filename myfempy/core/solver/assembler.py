@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 
 class Assembler(ABC):
-
     """
     Assembler API Class <ClassService>
     """

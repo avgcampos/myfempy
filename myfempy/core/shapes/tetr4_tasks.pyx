@@ -1,8 +1,9 @@
 cimport openmp
 from cython cimport boundscheck, wraparound
-from cython.parallel import parallel, prange
 
 import numpy as np
+from cython.parallel import parallel, prange
+
 cimport numpy as np
 
 ctypedef np.int32_t INT32

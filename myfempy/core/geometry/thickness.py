@@ -27,8 +27,8 @@ class Thickness(Geometry):
 
         y_max = 0
         y_min = 0
-        z_max = 0.5*t
-        z_min = -0.5*t
+        z_max = 0.5 * t
+        z_min = -0.5 * t
         r_max = 0
 
         cg = {

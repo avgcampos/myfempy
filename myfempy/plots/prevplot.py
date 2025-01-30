@@ -89,7 +89,14 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
         previewset["tabcs"]["typSection"].append(int(modelinfo["tabgeo"][gg]["ID"]))
         # previewset["tabcs"]["dimSection"].append(modelinfo["tabgeo"][gg][5:9])
         # dim = [modelinfo["tabgeo"][gg]['B'], modelinfo["tabgeo"][gg]['B'], modelinfo["tabgeo"][gg]['B'], modelinfo["tabgeo"][gg]['B']]
-        previewset["tabcs"]["dimSection"].append([modelinfo["tabgeo"][gg]['B'], modelinfo["tabgeo"][gg]['H'], modelinfo["tabgeo"][gg]['T'], modelinfo["tabgeo"][gg]['D']])
+        previewset["tabcs"]["dimSection"].append(
+            [
+                modelinfo["tabgeo"][gg]["B"],
+                modelinfo["tabgeo"][gg]["H"],
+                modelinfo["tabgeo"][gg]["T"],
+                modelinfo["tabgeo"][gg]["D"],
+            ]
+        )
 
     if "forces" in modelinfo.keys():
         previewset["forces"] = modelinfo["forces"]
@@ -339,7 +346,7 @@ def __setLoadDof(forcedof):
         "damper2ground": 17,
         "cg": 18,
         "heatflux": 1,
-        "convection": 15
+        "convection": 15,
     }
     return fdoftype[forcedof]
 

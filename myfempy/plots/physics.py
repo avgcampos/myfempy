@@ -326,11 +326,11 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs, scala_view):
     Returns:
         _description_
     """
-    scala = 0.008*scala_view
-    b = dimSection[0]*scala
-    h = dimSection[1]*scala
-    t = dimSection[2]*scala
-    dia = dimSection[3]*scala
+    scala = 0.008 * scala_view
+    b = dimSection[0] * scala
+    h = dimSection[1] * scala
+    t = dimSection[2] * scala
+    dia = dimSection[3] * scala
     Lx = np.sqrt(((coord_bcs[3] - coord_bcs[0]) ** 2))
     Ly = np.sqrt(((coord_bcs[4] - coord_bcs[1]) ** 2))
     Lz = np.sqrt(((coord_bcs[5] - coord_bcs[2]) ** 2))
@@ -447,7 +447,7 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs, scala_view):
             coord_bcs[1] + m * 0.5 * L,
             coord_bcs[2] + n * 0.5 * L,
         )
-    if typSection == 10: # Rectangle
+    if typSection == 10:  # Rectangle
         points = vtk.vtkPoints()
         points.SetNumberOfPoints(4)
         points.SetPoint(0, -b / 2, -h / 2, 0.0)
@@ -471,7 +471,7 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs, scala_view):
         transform_filter.SetTransform(transform)
         transform_filter.SetInputData(profile)
         transform_filter.Update()
-    elif typSection == 11: # Rectangle Tube
+    elif typSection == 11:  # Rectangle Tube
         points = vtk.vtkPoints()
         points.SetNumberOfPoints(12)
         points.SetPoint(0, 0.0, h / 2, 0.0)
@@ -516,7 +516,7 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs, scala_view):
         extrude.SetExtrusionTypeToNormalExtrusion()
         extrude.SetVector(Lx, Ly, Lz)
         extrude.Update()
-    elif typSection == 20: # Circle
+    elif typSection == 20:  # Circle
         profile = vtk.vtkDiskSource()
         profile.SetCircumferentialResolution(32)
         profile.SetOuterRadius(dia / 2)
@@ -529,7 +529,7 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs, scala_view):
         transform_filter.SetTransform(transform)
         transform_filter.SetInputConnection(profile.GetOutputPort())
         transform_filter.Update()
-    elif typSection == 21: # Circle Tube
+    elif typSection == 21:  # Circle Tube
         profile = vtk.vtkDiskSource()
         profile.SetCircumferentialResolution(64)
         profile.SetOuterRadius(dia / 2)
@@ -542,7 +542,7 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs, scala_view):
         transform_filter.SetTransform(transform)
         transform_filter.SetInputConnection(profile.GetOutputPort())
         transform_filter.Update()
-    elif typSection == 30: # I Section
+    elif typSection == 30:  # I Section
         points = vtk.vtkPoints()
         points.SetNumberOfPoints(12)
         points.SetPoint(0, b / 2, h / 2, 0)
@@ -583,7 +583,7 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs, scala_view):
         transform_filter.SetTransform(transform)
         transform_filter.SetInputData(profile)
         transform_filter.Update()
-    elif typSection == 2: # Spring
+    elif typSection == 2:  # Spring
         p0 = [0.0, 0.0, 0.0]
         p1 = [0.25 * L, 0.0, 0.0]
         p2 = [0.5 * L, 0.25 * L, 0.0]
@@ -615,7 +615,7 @@ def view_beam_crossSection(dimSection, typSection, coord_bcs, scala_view):
         transform_filter.SetTransform(transform)
         transform_filter.SetInputData(profile)
         transform_filter.Update()
-    elif typSection == 99: #User Defined
+    elif typSection == 99:  # User Defined
         profile = vtk.vtkDiskSource()
         profile.SetCircumferentialResolution(32)
         profile.SetOuterRadius(scala)

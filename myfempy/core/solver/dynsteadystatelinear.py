@@ -15,7 +15,6 @@ from myfempy.core.utilities import setSteps
 
 
 class DynamicSteadyStateLinear(Solver):
-
     """
     Dynamic Steady State Harmonic Forced System Linear Solver Class <ConcreteClassService>
     """

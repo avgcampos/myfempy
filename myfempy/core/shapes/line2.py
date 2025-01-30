@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from numpy import sqrt
 
-from myfempy.core.shapes.line2_tasks import (DiffDiffShapeFuntion, DiffShapeFuntion, Jacobian,
+from myfempy.core.shapes.line2_tasks import (DiffDiffShapeFuntion,
+                                             DiffShapeFuntion, Jacobian,
                                              LocKey, NodeCoord, NodeList,
                                              ShapeFunctions, detJacobi,
                                              invJacobi)
 from myfempy.core.shapes.shape import Shape
 
 # from myfempy.core.utilities import getRotational_3dVector
+
 
 class Line2(Shape):
     """Line 2-Node Shape Class <ConcreteClassService>"""
@@ -43,7 +45,7 @@ class Line2(Shape):
         return DiffDiffShapeFuntion(r_coord, nodedof)
 
     def getJacobian(r_coord, element_coord):
-        return Jacobian(r_coord,element_coord)
+        return Jacobian(r_coord, element_coord)
 
     def getinvJacobi(r_coord, element_coord, nodedof):
         return invJacobi(r_coord, element_coord, nodedof)
@@ -66,10 +68,10 @@ class Line2(Shape):
             return J[0, 0]
         else:
             return 0.0
-        
+
     def getSideAxis(set_side):
         side = {
-            "0 1": "0", 
-            "1 0": "0", 
+            "0 1": "0",
+            "1 0": "0",
         }
         return side[set_side]

@@ -17,7 +17,6 @@ from myfempy.core.utilities import setSteps
 
 
 class StaticLinearCyclicSymm(Solver):
-
     """
     Static Linear Cyclic Symmetry Solver Class <ConcreteClassService>
     """

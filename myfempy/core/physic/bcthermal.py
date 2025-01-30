@@ -11,19 +11,19 @@ class BoundCondThermal(Structural):
 
     def getBCApply(modelinfo, bclist):
         boncdnodeaply = np.zeros((1, 4))
-        
-        if bclist['TYPE'] == "insulated":
+
+        if bclist["TYPE"] == "insulated":
             bcapp = BoundCondThermal.__BCFixed(modelinfo, bclist)
             boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
-        
-        elif bclist['TYPE'] == "temperature":
+
+        elif bclist["TYPE"] == "temperature":
             bcapp = BoundCondThermal.__BCDispl(modelinfo, bclist)
             boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
-        
+
         # elif bclist['TYPE'] == "csymm":
         #     bcapp = BoundCondThermal.__BCCS(modelinfo, bclist)
         #     boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
-        
+
         else:
             pass
         boncdnodeaply = boncdnodeaply[1::][::]
@@ -32,18 +32,24 @@ class BoundCondThermal(Structural):
     def __BCFixed(modelinfo, bclist):
         boncdnodeaply = np.zeros((1, 4))
 
-        nodelist = [bclist['DIR'], bclist['LOCX'], bclist['LOCY'], bclist['LOCZ'], bclist['TAG']]
+        nodelist = [
+            bclist["DIR"],
+            bclist["LOCX"],
+            bclist["LOCY"],
+            bclist["LOCZ"],
+            bclist["TAG"],
+        ]
         node_list_bc, dir_fc = get_nodes_from_list(
             nodelist, modelinfo["coord"], modelinfo["regions"]
         )
 
-        if bclist['DOF'] == "full":
+        if bclist["DOF"] == "full":
             bcdof = 0
         else:
-            bcdof = modelinfo["dofs"]["d"][bclist['DOF']]
+            bcdof = modelinfo["dofs"]["d"][bclist["DOF"]]
 
         for j in range(len(node_list_bc)):
-            bcapp = np.array([[int(node_list_bc[j]), bcdof, 0.0, int(bclist['STEP'])]])
+            bcapp = np.array([[int(node_list_bc[j]), bcdof, 0.0, int(bclist["STEP"])]])
             boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
 
         boncdnodeaply = boncdnodeaply[1::][::]
@@ -52,16 +58,29 @@ class BoundCondThermal(Structural):
     def __BCDispl(modelinfo, bclist):
         boncdnodeaply = np.zeros((1, 4))
 
-        nodelist = [bclist['DIR'], bclist['LOCX'], bclist['LOCY'], bclist['LOCZ'], bclist['TAG']]
+        nodelist = [
+            bclist["DIR"],
+            bclist["LOCX"],
+            bclist["LOCY"],
+            bclist["LOCZ"],
+            bclist["TAG"],
+        ]
         node_list_bc, dir_fc = get_nodes_from_list(
             nodelist, modelinfo["coord"], modelinfo["regions"]
         )
 
-        bcdof = modelinfo["dofs"]["d"][bclist['DOF']]
+        bcdof = modelinfo["dofs"]["d"][bclist["DOF"]]
 
         for j in range(len(node_list_bc)):
             bcapp = np.array(
-                [[int(node_list_bc[j]), bcdof, float(bclist['VAL']), int(bclist['STEP'])]]
+                [
+                    [
+                        int(node_list_bc[j]),
+                        bcdof,
+                        float(bclist["VAL"]),
+                        int(bclist["STEP"]),
+                    ]
+                ]
             )
             boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
 

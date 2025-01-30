@@ -1,9 +1,5 @@
 from __future__ import annotations
 
-# from os import environ
-
-# environ["OMP_NUM_THREADS"] = "3"
-
 from numpy import dot, float64, zeros
 from scipy.sparse.linalg import spsolve
 
@@ -13,9 +9,15 @@ from myfempy.core.solver.assemblersymm import AssemblerSYMM
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
 
+# from os import environ
+
+# environ["OMP_NUM_THREADS"] = "3"
+
+
+
+
 
 class SteadyStateLinear(Solver):
-
     """
     Steady State Linear Solver Class <ConcreteClassService>
     """
@@ -48,7 +50,7 @@ class SteadyStateLinear(Solver):
                 type_assembler="linear_stiffness",
                 MP=MP,
             )
-        
+
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):

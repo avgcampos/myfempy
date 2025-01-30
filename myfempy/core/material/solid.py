@@ -78,7 +78,6 @@ class SolidIsotropic(Material):
             strn_elm_zx,
         ]
 
-
         return epsilon, strain
 
     def getTitleStrain():
@@ -93,7 +92,7 @@ class SolidIsotropic(Material):
         ]
         return title
 
-    def getElementStress(Model, epsilon, element_number):        
+    def getElementStress(Model, epsilon, element_number):
         E = Model.tabmat[
             int(Model.inci[element_number, 2]) - 1, 0
         ]  # material elasticity
@@ -131,7 +130,6 @@ class SolidIsotropic(Material):
             strs_elm_zx,
         ]
 
-
         return sigma, stress
 
     def getTitleStress():
@@ -153,12 +151,10 @@ class SolidIsotropic(Material):
     def getTitleCompliance():
         title = ["STRAIN_ENERGY_DENSITY"]
         return title
-    
+
     def getFailureCriteria(sigma):
         return 0.0
 
     def getTitleFoS():
         title = ["FoS_YIELD_VON_MISES"]
         return title
-    
-    

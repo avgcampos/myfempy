@@ -15,7 +15,7 @@ class Thermal(ABC):
     @abstractmethod
     def getUpdateMatrix():
         pass
-    
+
     @abstractmethod
     def getUpdateLoad():
         pass

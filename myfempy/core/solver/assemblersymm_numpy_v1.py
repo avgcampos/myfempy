@@ -1,6 +1,7 @@
-
 # @profile
-def getVectorizationSymm(ith_band, jth_band, val_band, ith_diag, val_diag, nb, nd, loc, matrix, ee, elemdof):
+def getVectorizationSymm(
+    ith_band, jth_band, val_band, ith_diag, val_diag, nb, nd, loc, matrix, ee, elemdof
+):
 
     KI = 0
     KJ = 0

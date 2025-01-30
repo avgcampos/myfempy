@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class Element(ABC):
     """Element API Class <ClassService>"""
 
@@ -18,7 +19,7 @@ class Element(ABC):
     @abstractmethod
     def getStifLinearMat():
         pass
-        
+
     @abstractmethod
     def getStifNonLinMat():
         pass
@@ -30,7 +31,7 @@ class Element(ABC):
     @abstractmethod
     def getMassLumpedMat():
         pass
-    
+
     @abstractmethod
     def getUpdateMatrix():
         pass
@@ -50,4 +51,3 @@ class Element(ABC):
     @abstractmethod
     def getElementVolume():
         pass
-    

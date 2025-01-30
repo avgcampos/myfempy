@@ -46,14 +46,14 @@ class PlaneStressIsotropic(Material):
         strn_elm_xx = epsilon[0]
         strn_elm_yy = epsilon[1]
         strn_elm_xy = epsilon[2]
-        
+
         # T = np.array([[1.0, -0.5, 0.0],
         #               [-0.5, 1.0, 0.0],
         #               [0.0, 0.0, 3.0]])
-               
+
         # strain = np.array([strn_elm_xx, strn_elm_yy, strn_elm_xy])
         # strn_elm_vm = np.sqrt(np.dot(strain.transpose() ,np.dot(T, strain)))
-        
+
         strn_elm_vm = np.sqrt(
             epsilon[0] ** 2
             - epsilon[0] * epsilon[1]
@@ -69,9 +69,13 @@ class PlaneStressIsotropic(Material):
         title = ["STRAIN_VM", "STRAIN_XX", "STRAIN_YY", "STRAIN_XY"]
         return title
 
-    def getElementStress(Model, epsilon, element_number):        
-        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["EXX"] # material elasticity
-        v = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["VXX"] # material poisson ratio
+    def getElementStress(Model, epsilon, element_number):
+        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1][
+            "EXX"
+        ]  # material elasticity
+        v = Model.tabmat[int(Model.inci[element_number, 2]) - 1][
+            "VXX"
+        ]  # material poisson ratio
 
         C = PlaneStressIsotropic.getElasticTensor(E, v)
 
@@ -100,12 +104,10 @@ class PlaneStressIsotropic(Material):
     def getTitleCompliance():
         title = ["STRAIN_ENERGY_DENSITY"]
         return title
-    
+
     def getFailureCriteria(sigma):
         return 0.0
 
     def getTitleFoS():
         title = ["FoS_YIELD_VON_MISES"]
         return title
-    
-    

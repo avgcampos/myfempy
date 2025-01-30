@@ -3,9 +3,12 @@
 # distutils: extra_compile_args=-fopenmp
 # distutils: extra_link_args=-fopenmp
 cimport openmp
-from cython cimport boundscheck, wraparound, cdivision, exceptval, nonecheck
+from cython cimport boundscheck, cdivision, exceptval, nonecheck, wraparound
+
 from cython.parallel import parallel, prange
+
 cimport numpy as np
+
 ctypedef np.int32_t INT32_t
 ctypedef np.float64_t FLT64_t
 

@@ -2,12 +2,17 @@
 import numpy as np
 from scipy import sparse
 
+
 def getVectorizationFull(ith, jth, val, loc, matrix, ee, elemdof):
-       
-    ith[(elemdof * elemdof) * ee : (elemdof * elemdof) * (ee + 1)] = np.tile(loc.reshape(1, elemdof).T, (1, elemdof)).flatten("F")
-    jth[(elemdof * elemdof) * ee : (elemdof * elemdof) * (ee + 1)] = np.transpose(np.tile(loc.reshape(1, elemdof).T, (1, elemdof))).flatten("F")
-    val[(elemdof * elemdof) * ee : (elemdof * elemdof) * (ee + 1)] = matrix.flatten( "F")
-   
+
+    ith[(elemdof * elemdof) * ee : (elemdof * elemdof) * (ee + 1)] = np.tile(
+        loc.reshape(1, elemdof).T, (1, elemdof)
+    ).flatten("F")
+    jth[(elemdof * elemdof) * ee : (elemdof * elemdof) * (ee + 1)] = np.transpose(
+        np.tile(loc.reshape(1, elemdof).T, (1, elemdof))
+    ).flatten("F")
+    val[(elemdof * elemdof) * ee : (elemdof * elemdof) * (ee + 1)] = matrix.flatten("F")
+
     return ith, jth, val
 
 
@@ -77,15 +82,15 @@ def getLoadAssembler(loadaply, nodetot, nodedof):
                 elif int(forceaply[ii, 1]) == 3:
                     gdlload = int(nodedof * forceaply[ii, 0] - (nodedof - 2))
                     forcevec[gdlload, fstep] += forceaply[ii, 2]
-    
+
                 elif int(forceaply[ii, 1]) == 4:
                     gdlload = int(nodedof * forceaply[ii, 0] - (nodedof - 3))
                     forcevec[gdlload, fstep] += forceaply[ii, 2]
-                    
+
                 elif int(forceaply[ii, 1]) == 5:
                     gdlload = int(nodedof * forceaply[ii, 0] - (nodedof - 4))
                     forcevec[gdlload, fstep] += forceaply[ii, 2]
-                    
+
                 elif int(forceaply[ii, 1]) == 6:
                     gdlload = int(nodedof * forceaply[ii, 0] - (nodedof - 5))
                     forcevec[gdlload, fstep] += forceaply[ii, 2]
@@ -93,6 +98,7 @@ def getLoadAssembler(loadaply, nodetot, nodedof):
             pass
     # forcevec = sparse.csc_matrix(forcevec)
     return forcevec
+
 
 # Dirichlet Homogeneous https://en.wikipedia.org/wiki/Dirichlet_boundary_condition
 def getConstrains(constrains, nodetot, nodedof):
@@ -120,7 +126,7 @@ def getConstrains(constrains, nodetot, nodedof):
                     fixedof[nodedof * no - 1, 0] = nodedof * no
                 else:
                     constdof[nodedof * no - 1, 0] = nodedof * no
-                
+
     elif nodedof == 2:
         for ii in range(ntbc):
             no = int(constrains[ii, 0])
@@ -178,22 +184,22 @@ def getConstrains(constrains, nodetot, nodedof):
                     fixedof[nodedof * no - 6, 0] = nodedof * no - 5
                 else:
                     constdof[nodedof * no - 6, 0] = nodedof * no - 5
-            
+
             elif int(constrains[ii, 1]) == 2:
                 if constrains[ii, 2] == 0.0:
                     fixedof[nodedof * no - 5, 0] = nodedof * no - 4
                 else:
                     constdof[nodedof * no - 5, 0] = nodedof * no - 4
-            
+
             elif int(constrains[ii, 1]) == 3:
                 if constrains[ii, 2] == 0.0:
                     fixedof[nodedof * no - 4, 0] = nodedof * no - 3
                 else:
                     constdof[nodedof * no - 4, 0] = nodedof * no - 3
-                    
+
             elif int(constrains[ii, 1]) == 4:
                 if constrains[ii, 2] == 0.0:
-                    fixedof[nodedof * no - 3, 0] = nodedof * no - 2 
+                    fixedof[nodedof * no - 3, 0] = nodedof * no - 2
                 else:
                     constdof[nodedof * no - 3, 0] = nodedof * no - 2
 
@@ -202,13 +208,13 @@ def getConstrains(constrains, nodetot, nodedof):
                     fixedof[nodedof * no - 2, 0] = nodedof * no - 1
                 else:
                     constdof[nodedof * no - 2, 0] = nodedof * no - 1
-                    
+
             elif int(constrains[ii, 1]) == 6:
                 if constrains[ii, 2] == 0.0:
                     fixedof[nodedof * no - 1, 0] = nodedof * no
                 else:
                     constdof[nodedof * no - 1, 0] = nodedof * no
-            
+
             else:  # int(constrains[ii, 1]) == 0:
                 if constrains[ii, 2] == 0.0:
                     fixedof[nodedof * no - 6, 0] = nodedof * no - 5
@@ -234,6 +240,7 @@ def getConstrains(constrains, nodetot, nodedof):
     freedof = np.setdiff1d(freedof, constdof)
     return freedof, fixedof, constdof
 
+
 # Dirichlet Non-Homogeneous
 def getDirichletNH(constrains, nodetot, nodedof):
     """
@@ -248,9 +255,7 @@ def getDirichletNH(constrains, nodetot, nodedof):
         steps = 1
     else:
         pass
-    Uc = np.zeros(
-        (nodedof * nodetot, steps), dtype=np.float64
-    )  # solution constrains
+    Uc = np.zeros((nodedof * nodetot, steps), dtype=np.float64)  # solution constrains
 
     for cstep in range(len(np.unique(constrains[:, 3][constrains[:, 3] != 0]))):
         forceaply = constrains[np.where(constrains[:, 3] == cstep + 1), :][0]
@@ -285,7 +290,7 @@ def getDirichletNH(constrains, nodetot, nodedof):
                 elif int(forceaply[ii, 1]) == 3:
                     gdlload = int(nodedof * forceaply[ii, 0] - (nodedof - 2))
                     Uc[gdlload, cstep] = forceaply[ii, 2]
-            
+
         elif nodedof == 6:
             for ii in range(nload):
                 if int(forceaply[ii, 1]) == 1:
@@ -299,9 +304,9 @@ def getDirichletNH(constrains, nodetot, nodedof):
                 elif int(forceaply[ii, 1]) == 3:
                     gdlload = int(nodedof * forceaply[ii, 0] - (nodedof - 2))
                     Uc[gdlload, cstep] = forceaply[ii, 2]
-                    
+
                 elif int(forceaply[ii, 1]) == 4:
-                    gdlload = int(nodedof * forceaply[ii, 0] - (nodedof- 3))
+                    gdlload = int(nodedof * forceaply[ii, 0] - (nodedof - 3))
                     Uc[gdlload, cstep] = forceaply[ii, 2]
 
                 elif int(forceaply[ii, 1]) == 5:
@@ -315,6 +320,7 @@ def getDirichletNH(constrains, nodetot, nodedof):
         else:
             pass
     return Uc
+
 
 # https://en.wikipedia.org/wiki/Rotation_matrix
 def getRotationMatrix(node_list, coord, ndof):

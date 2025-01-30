@@ -1,28 +1,32 @@
 from __future__ import annotations
 
 from os import environ
+
 environ["OMP_NUM_THREADS"] = "8"
 
-from numpy import array, zeros, int32, float64
-from scipy.sparse import csc_matrix, coo_matrix
+from numpy import array, float64, int32, zeros
+from scipy.sparse import coo_matrix, csc_matrix
 
 INT32 = int32
 FLT64 = float64
 
 from myfempy.core.solver.assembler import Assembler
-from myfempy.core.solver.assemblerfull_numpy_v1 import getLoadAssembler, getConstrains, getConstrains, getDirichletNH, getRotationMatrix
-
 from myfempy.core.solver.assemblerfull_cython_v5 import getVectorizationFull
+from myfempy.core.solver.assemblerfull_numpy_v1 import (getConstrains,
+                                                        getDirichletNH,
+                                                        getLoadAssembler,
+                                                        getRotationMatrix)
 
 
 class AssemblerFULL(Assembler):
-
     """
     Assembler Full System Class <ConcreteClassService>
     """
-    
+
     # @profile
-    def getLinearStiffnessGlobalMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler, MP):
+    def getLinearStiffnessGlobalMatrixAssembler(
+        Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler, MP
+    ):
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
@@ -30,23 +34,29 @@ class AssemblerFULL(Assembler):
         elemdof = nodecon * nodedof
         nodetot = coord.shape[0]
         sdof = nodedof * nodetot
-        
+
         ith = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
         jth = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
         val = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=FLT64)
-        
+
         for ee in range(inci.shape[0]):
-            matrix = Model.element.getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, ee)
+            matrix = Model.element.getStifLinearMat(
+                Model, inci, coord, tabmat, tabgeo, intgauss, ee
+            )
             loc = AssemblerFULL.__getLoc(Model, inci, ee)
-            ith, jth, val = AssemblerFULL.__getVectorization(ith, jth, val, loc, matrix, ee, elemdof)
-        
+            ith, jth, val = AssemblerFULL.__getVectorization(
+                ith, jth, val, loc, matrix, ee, elemdof
+            )
+
         A_sp_scipy_csc = csc_matrix((val, (ith, jth)), shape=(sdof, sdof))
         return A_sp_scipy_csc
 
     def getNonLinearStiffnessGlobalMatrixAssembler():
         pass
-    
-    def getMassConsistentGlobalMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler, MP):
+
+    def getMassConsistentGlobalMatrixAssembler(
+        Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler, MP
+    ):
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
@@ -54,19 +64,23 @@ class AssemblerFULL(Assembler):
         elemdof = nodecon * nodedof
         nodetot = coord.shape[0]
         sdof = nodedof * nodetot
-        
+
         ith = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
         jth = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
         val = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=FLT64)
-        
+
         for ee in range(inci.shape[0]):
-            matrix = Model.element.getMassConsistentMat(Model, inci, coord, tabmat, tabgeo, intgauss, ee)
+            matrix = Model.element.getMassConsistentMat(
+                Model, inci, coord, tabmat, tabgeo, intgauss, ee
+            )
             loc = AssemblerFULL.__getLoc(Model, inci, ee)
-            ith, jth, val = AssemblerFULL.__getVectorization(ith, jth, val, loc, matrix, ee, elemdof)
-        
+            ith, jth, val = AssemblerFULL.__getVectorization(
+                ith, jth, val, loc, matrix, ee, elemdof
+            )
+
         A_sp_scipy_csc = csc_matrix((val, (ith, jth)), shape=(sdof, sdof))
         return A_sp_scipy_csc
-    
+
     def getMassLumpedGlobalMatrixAssembler():
         pass
 
@@ -84,11 +98,11 @@ class AssemblerFULL(Assembler):
     # https://en.wikipedia.org/wiki/Rotation_matrix
     def getRotationMatrix(node_list, coord, ndof):
         return getRotationMatrix(node_list, coord, ndof)
-                            
+
     # @profile
     def __getVectorization(ith, jth, val, loc, matrix, ee, elemdof):
         return getVectorizationFull(ith, jth, val, loc, matrix, ee, elemdof)
-                        
+
     def __getLoc(Model, inci, element_number):
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])

@@ -1,5 +1,5 @@
 #Makefile to dev user
-.PHONY: install format lint test sec doc perf comp
+.PHONY: install format lint test sec doc prof build
 
 install:
 	pip install -r requirements.txt
@@ -17,8 +17,8 @@ sec:
 	pip-audit
 doc:
 	mkdocs serve
-perf:
+prof:
 	kernprof -l -v .\__shakedown\myfempy_perf_test_profile.py
 #python -m line_profiler static_line.py.lprof
-comp:
+build:
 	python __dev__setup_wrap_cy_pyx.py build_ext --inplace

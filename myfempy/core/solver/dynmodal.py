@@ -15,7 +15,6 @@ from myfempy.core.utilities import setSteps
 
 
 class DynamicModalLinear(Solver):
-
     """
     Modal(eig problem) Linear Solver Class <ConcreteClassService>
     """

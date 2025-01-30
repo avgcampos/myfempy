@@ -7,9 +7,9 @@ class UserDefined(Geometry):
     """User Defined Geometry Class <ConcreteClassService>"""
 
     def GeometrySet():
-        geoset =  {"geo": "userdefined", "idgeo": 99}
+        geoset = {"geo": "userdefined", "idgeo": 99}
         return geoset
-    
+
     def getCGCoord(tabgeo, inci, element_number):
 
         cg = {

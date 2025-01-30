@@ -7,7 +7,7 @@ class ISection(Geometry):
     """I Section Geometry Class <ConcreteClassService>"""
 
     def GeometrySet():
-        geoset =  {"geo": "isection", "idgeo": 30}
+        geoset = {"geo": "isection", "idgeo": 30}
         return geoset
 
     def getSectionProp(dim_sec):
@@ -16,9 +16,9 @@ class ISection(Geometry):
         t = dim_sec["t"]
         d = dim_sec["d"]
 
-        A = 2*b*d + t*(h-2*d)
-        Izz = (b*h**3)/12 - ((b-t)*(h-2*d)**3)/12
-        Iyy = ((h-2*d)*t**3)/12 + 2*(d*b**3)/12
+        A = 2 * b * d + t * (h - 2 * d)
+        Izz = (b * h**3) / 12 - ((b - t) * (h - 2 * d) ** 3) / 12
+        Iyy = ((h - 2 * d) * t**3) / 12 + 2 * (d * b**3) / 12
         Jxx = Iyy + Izz
 
         sect_prop = {
@@ -34,10 +34,10 @@ class ISection(Geometry):
         b = tabgeo[int(inci[element_number, 3] - 1)]["B"]
         h = tabgeo[int(inci[element_number, 3] - 1)]["H"]
 
-        y_max = h*0.5
-        y_min = -h*0.5
-        z_max = b*0.5
-        z_min = -b*0.5
+        y_max = h * 0.5
+        y_min = -h * 0.5
+        z_max = b * 0.5
+        z_min = -b * 0.5
         r_max = y_max
 
         cg = {

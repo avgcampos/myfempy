@@ -63,6 +63,9 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# Profile/ Tests
+*.lprof
+
 ### C++ ###
 # Prerequisites
 

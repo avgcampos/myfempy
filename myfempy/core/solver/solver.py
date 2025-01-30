@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 
 class Solver(ABC):
-
     """
     Solver API Class <ClassService>
     """

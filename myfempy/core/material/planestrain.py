@@ -42,7 +42,7 @@ class PlaneStrainIsotropic(Material):
         strn_elm_xx = epsilon[0]
         strn_elm_yy = epsilon[1]
         strn_elm_xy = epsilon[2]
-                
+
         strn_elm_vm = np.sqrt(
             epsilon[0] ** 2
             - epsilon[0] * epsilon[1]
@@ -58,9 +58,13 @@ class PlaneStrainIsotropic(Material):
         title = ["STRAIN_VM", "STRAIN_XX", "STRAIN_YY", "STRAIN_XY"]
         return title
 
-    def getElementStress(Model, epsilon, element_number):        
-        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["EXX"] # material elasticity
-        v = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["VXX"] # material poisson ratio
+    def getElementStress(Model, epsilon, element_number):
+        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1][
+            "EXX"
+        ]  # material elasticity
+        v = Model.tabmat[int(Model.inci[element_number, 2]) - 1][
+            "VXX"
+        ]  # material poisson ratio
 
         C = PlaneStrainIsotropic.getElasticTensor(E, v)
 
@@ -89,7 +93,7 @@ class PlaneStrainIsotropic(Material):
     def getTitleCompliance():
         title = ["STRAIN_ENERGY_DENSITY"]
         return title
-    
+
     def getFailureCriteria(sigma):
         return 0.0
 

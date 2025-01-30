@@ -7,14 +7,14 @@ class Circle(Geometry):
     """Circle Geometry Class <ConcreteClassService>"""
 
     def GeometrySet():
-        geoset =  {"geo": "circle", "idgeo": 20}
+        geoset = {"geo": "circle", "idgeo": 20}
         return geoset
 
     def getSectionProp(dim_sec):
         d = dim_sec["d"]
 
-        A = (1/4)*np.pi*d**2
-        Izz = (1/64)*np.pi*d**4
+        A = (1 / 4) * np.pi * d**2
+        Izz = (1 / 64) * np.pi * d**4
         Iyy = Izz
         Jxx = Iyy + Izz
 
@@ -30,10 +30,10 @@ class Circle(Geometry):
     def getCGCoord(tabgeo, inci, element_number):
         d = tabgeo[int(inci[element_number, 3] - 1)]["D"]
 
-        y_max = d*0.5
-        y_min = -d*0.5
-        z_max = d*0.5
-        z_min = -d*0.5
+        y_max = d * 0.5
+        y_min = -d * 0.5
+        z_max = d * 0.5
+        z_min = -d * 0.5
         r_max = y_max
 
         cg = {

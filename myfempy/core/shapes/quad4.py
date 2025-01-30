@@ -6,7 +6,6 @@ from myfempy.core.shapes.quad4_tasks import (DiffShapeFuntion, Jacobian,
                                              LocKey, NodeCoord, NodeList,
                                              ShapeFunctions, detJacobi,
                                              invJacobi)
-
 from myfempy.core.shapes.shape import Shape
 
 
@@ -78,8 +77,8 @@ class Quad4(Shape):
             "1 0": "0",
             "1 2": "1",
             "2 1": "1",
-            "2 3": "2",  
+            "2 3": "2",
             "3 2": "2",
-            "3 0": "3", 
+            "3 0": "3",
         }
         return side[set_side]

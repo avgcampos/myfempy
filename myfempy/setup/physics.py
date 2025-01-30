@@ -52,22 +52,22 @@ class SetPhysics:
         boncdnodeaply = boncdnodeaply[1::][::]
         boncdnodeaply[boncdnodeaply[:, 3].argsort()]
         return boncdnodeaply
-    
+
     def getLoadCoup(self, modelinfo, physicdata):
         forcenodeaply = np.zeros((1, 4))
-        for nforc in range(len(physicdata['POST'])):
-            coupling = physicdata['POST'][nforc]
-            coupling['TYPE'] = physicdata['TYPE']
-            coupling['STEP'] = int(nforc+1)
+        for nforc in range(len(physicdata["POST"])):
+            coupling = physicdata["POST"][nforc]
+            coupling["TYPE"] = physicdata["TYPE"]
+            coupling["STEP"] = int(nforc + 1)
             fapp = self.loads.getLoadApply(self.model, modelinfo, coupling)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         forcenodeaply = forcenodeaply[1::][::]
         forcenodeaply[forcenodeaply[:, 3].argsort()]
         return forcenodeaply
-    
+
     def getUpdateMatrix(self, matrix, loadaply):
         return self.loads.getUpdateMatrix(self.model, matrix, loadaply)
-    
+
     def getUpdateLoad(self):
         return None
 
@@ -82,132 +82,150 @@ class SetPhysics:
     def __forcelist(forcelist):
         """force set"""
         nforc = len(forcelist)
-        flist = [] # np.zeros((1, 9))
+        flist = []  # np.zeros((1, 9))
         for fl in range(nforc):
             fap = forcelist[fl]
             for fs in range(len(fap["VAL"])):
                 if "LOC" in fap.keys():
-                    
-                    flist.append({
-                            "TYPE":fap["TYPE"],
-                            "DOF":fap["DOF"],
-                            "VAL":fap["VAL"][fs],
-                            "DIR":fap["DIR"],
-                            "LOCX":fap["LOC"]["x"],
-                            "LOCY":fap["LOC"]["y"],
-                            "LOCZ":fap["LOC"]["z"],
-                            "TAG":0,
-                            "STEP":int(fs + 1),
-                    })             
-                
-                elif "TAG" in fap.keys():
-                    
-                    flist.append({
-                            "TYPE":fap["TYPE"],
-                            "DOF":fap["DOF"],
-                            "VAL":fap["VAL"][fs],
-                            "DIR":fap["DIR"],
-                            "LOCX":0.0,
-                            "LOCY":0.0,
-                            "LOCZ":0.0,
-                            "TAG":fap["TAG"],
-                            "STEP":int(fs + 1),
-                    } )
 
-                else:                   
-                    flist.append({
-                            "TYPE":fap["TYPE"],
-                            "DOF":fap["DOF"],
-                            "VAL":fap["VAL"][fs],
-                            "DIR":fap["DIR"],
-                            "LOCX":0.0,
-                            "LOCY":0.0,
-                            "LOCZ":0.0,
-                            "TAG":0,
-                            "STEP":int(fs + 1),
-                    })
+                    flist.append(
+                        {
+                            "TYPE": fap["TYPE"],
+                            "DOF": fap["DOF"],
+                            "VAL": fap["VAL"][fs],
+                            "DIR": fap["DIR"],
+                            "LOCX": fap["LOC"]["x"],
+                            "LOCY": fap["LOC"]["y"],
+                            "LOCZ": fap["LOC"]["z"],
+                            "TAG": 0,
+                            "STEP": int(fs + 1),
+                        }
+                    )
+
+                elif "TAG" in fap.keys():
+
+                    flist.append(
+                        {
+                            "TYPE": fap["TYPE"],
+                            "DOF": fap["DOF"],
+                            "VAL": fap["VAL"][fs],
+                            "DIR": fap["DIR"],
+                            "LOCX": 0.0,
+                            "LOCY": 0.0,
+                            "LOCZ": 0.0,
+                            "TAG": fap["TAG"],
+                            "STEP": int(fs + 1),
+                        }
+                    )
+
+                else:
+                    flist.append(
+                        {
+                            "TYPE": fap["TYPE"],
+                            "DOF": fap["DOF"],
+                            "VAL": fap["VAL"][fs],
+                            "DIR": fap["DIR"],
+                            "LOCX": 0.0,
+                            "LOCY": 0.0,
+                            "LOCZ": 0.0,
+                            "TAG": 0,
+                            "STEP": int(fs + 1),
+                        }
+                    )
         return flist
 
     def __boundcondlist(boundcondlist):
         """boundary conditions set"""
         nbound = len(boundcondlist)
-        blist = [] #np.zeros((1, 9))
+        blist = []  # np.zeros((1, 9))
         for bl in range(nbound):
             bap = boundcondlist[bl]
             if "VAL" in bap.keys():
                 for bs in range(len(bap["VAL"])):
-                    if "LOC" in bap.keys():                        
-                        blist.append({
-                            "TYPE":bap["TYPE"],
-                            "DOF":bap["DOF"],
-                            "DIR":bap["DIR"],
-                            "LOCX":bap["LOC"]["x"],
-                            "LOCY":bap["LOC"]["y"],
-                            "LOCZ":bap["LOC"]["z"],
-                            "TAG":0,
-                            "VAL":bap["VAL"][bs],
-                            "STEP":int(bs + 1),
-                            })                        
-                        
+                    if "LOC" in bap.keys():
+                        blist.append(
+                            {
+                                "TYPE": bap["TYPE"],
+                                "DOF": bap["DOF"],
+                                "DIR": bap["DIR"],
+                                "LOCX": bap["LOC"]["x"],
+                                "LOCY": bap["LOC"]["y"],
+                                "LOCZ": bap["LOC"]["z"],
+                                "TAG": 0,
+                                "VAL": bap["VAL"][bs],
+                                "STEP": int(bs + 1),
+                            }
+                        )
+
                     elif "TAG" in bap.keys():
-                        blist.append({
-                            "TYPE":bap["TYPE"],
-                            "DOF":bap["DOF"],
-                            "DIR":bap["DIR"],
-                            "LOCX":0.0,
-                            "LOCY":0.0,
-                            "LOCZ":0.0,
-                            "TAG":bap["TAG"],
-                            "VAL":bap["VAL"][bs],
-                            "STEP":int(bs + 1),
-                            }) 
+                        blist.append(
+                            {
+                                "TYPE": bap["TYPE"],
+                                "DOF": bap["DOF"],
+                                "DIR": bap["DIR"],
+                                "LOCX": 0.0,
+                                "LOCY": 0.0,
+                                "LOCZ": 0.0,
+                                "TAG": bap["TAG"],
+                                "VAL": bap["VAL"][bs],
+                                "STEP": int(bs + 1),
+                            }
+                        )
                     else:
-                        blist.append({
-                            "TYPE":bap["TYPE"],
-                            "DOF":bap["DOF"],
-                            "DIR":bap["DIR"],
-                            "LOCX":0.0,
-                            "LOCY":0.0,
-                            "LOCZ":0.0,
-                            "TAG":0,
-                            "VAL":bap["VAL"][bs],
-                            "STEP":int(bs + 1),
-                            }) 
+                        blist.append(
+                            {
+                                "TYPE": bap["TYPE"],
+                                "DOF": bap["DOF"],
+                                "DIR": bap["DIR"],
+                                "LOCX": 0.0,
+                                "LOCY": 0.0,
+                                "LOCZ": 0.0,
+                                "TAG": 0,
+                                "VAL": bap["VAL"][bs],
+                                "STEP": int(bs + 1),
+                            }
+                        )
             else:
                 if "LOC" in bap.keys():
-                    blist.append({
-                        "TYPE":bap["TYPE"],
-                        "DOF":bap["DOF"],
-                        "DIR":bap["DIR"],
-                        "LOCX":bap["LOC"]["x"],
-                        "LOCY":bap["LOC"]["y"],
-                        "LOCZ":bap["LOC"]["z"],
-                        "TAG":0,
-                        "VAL":0.0,
-                        "STEP":0,
-                        } )  
+                    blist.append(
+                        {
+                            "TYPE": bap["TYPE"],
+                            "DOF": bap["DOF"],
+                            "DIR": bap["DIR"],
+                            "LOCX": bap["LOC"]["x"],
+                            "LOCY": bap["LOC"]["y"],
+                            "LOCZ": bap["LOC"]["z"],
+                            "TAG": 0,
+                            "VAL": 0.0,
+                            "STEP": 0,
+                        }
+                    )
                 elif "TAG" in bap.keys():
-                    blist.append({
-                        "TYPE":bap["TYPE"],
-                        "DOF":bap["DOF"],
-                        "DIR":bap["DIR"],
-                        "LOCX":0.0,
-                        "LOCY":0.0,
-                        "LOCZ":0.0,
-                        "TAG":bap["TAG"],
-                        "VAL":0.0,
-                        "STEP":0,
-                        }) 
+                    blist.append(
+                        {
+                            "TYPE": bap["TYPE"],
+                            "DOF": bap["DOF"],
+                            "DIR": bap["DIR"],
+                            "LOCX": 0.0,
+                            "LOCY": 0.0,
+                            "LOCZ": 0.0,
+                            "TAG": bap["TAG"],
+                            "VAL": 0.0,
+                            "STEP": 0,
+                        }
+                    )
                 else:
-                    blist.append({
-                        "TYPE":bap["TYPE"],
-                        "DOF":bap["DOF"],
-                        "DIR":bap["DIR"],
-                        "LOCX":0.0,
-                        "LOCY":0.0,
-                        "LOCZ":0.0,
-                        "TAG":0,
-                        "VAL":0.0,
-                        "STEP":0,
-                        } )
+                    blist.append(
+                        {
+                            "TYPE": bap["TYPE"],
+                            "DOF": bap["DOF"],
+                            "DIR": bap["DIR"],
+                            "LOCX": 0.0,
+                            "LOCY": 0.0,
+                            "LOCZ": 0.0,
+                            "TAG": 0,
+                            "VAL": 0.0,
+                            "STEP": 0,
+                        }
+                    )
         return blist

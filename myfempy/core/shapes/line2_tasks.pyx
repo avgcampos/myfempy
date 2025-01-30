@@ -1,8 +1,10 @@
 # cimport openmp
-from cython cimport boundscheck, wraparound, cdivision, exceptval, nonecheck
+from cython cimport boundscheck, cdivision, exceptval, nonecheck, wraparound
+
 # from cython.parallel import parallel, prange
 
 import numpy as np
+
 cimport numpy as np
 
 ctypedef np.int32_t INT32

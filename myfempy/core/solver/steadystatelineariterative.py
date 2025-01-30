@@ -12,13 +12,12 @@ from myfempy.core.utilities import setSteps
 
 
 class SteadyStateLinearIterative(Solver):
-
     """
     Steady State Linear Iterative Solver Class <ConcreteClassService>
     """
 
     def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, SYMM, MP):
-        
+
         matrix = dict()
 
         if SYMM:

@@ -4,8 +4,11 @@
 # distutils: extra_link_args=-fopenmp
 cimport openmp
 from cython cimport boundscheck, wraparound
+
 from cython.parallel import parallel, prange
+
 cimport numpy as np
+
 ctypedef np.int32_t INT32_t
 ctypedef np.float64_t FLT64_t
 

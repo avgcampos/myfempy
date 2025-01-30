@@ -187,7 +187,7 @@ def get_gmsh_geo(filename, meshdata):
             file_object.write("Mesh.HighOrderOptimize = 0;\n")
             file_object.write("Mesh.Algorithm = 8;\n")
             file_object.write("Mesh.ElementOrder = 1;\n")
-            
+
         elif meshdata["meshconfig"]["mesh"] == "line3":
             if "numbernodes" in meshdata["meshconfig"].keys():
                 file_object.write(
@@ -222,7 +222,7 @@ def get_gmsh_geo(filename, meshdata):
             file_object.write("Mesh.Algorithm = 8;\n")
             file_object.write("Mesh.SecondOrderIncomplete = 1;\n")
             file_object.write("Mesh.ElementOrder = 2;\n")
-            
+
         else:
             if "cadimport" in meshdata.keys():
                 file_object.write('Merge "' + meshdata["cadimport"] + '";\n')
@@ -323,7 +323,7 @@ def get_gmsh_geo(filename, meshdata):
                 file_object.write("Mesh.HighOrderOptimize = 0;\n")
                 file_object.write("Mesh.Algorithm = 8;\n")
                 file_object.write("Mesh.ElementOrder = 1;\n")
-                
+
             elif meshdata["meshconfig"]["mesh"] == "tria6":
                 file_object.write("// MESH CONFIGURATION\n")
                 file_object.write("Mesh.CharacteristicLengthExtendFromBoundary = 1;\n")
@@ -358,7 +358,7 @@ def get_gmsh_geo(filename, meshdata):
                 file_object.write("Mesh.HighOrderOptimize = 0;\n")
                 file_object.write("Mesh.Algorithm = 8;\n")
                 file_object.write("Mesh.ElementOrder = 1;\n")
-                
+
             elif meshdata["meshconfig"]["mesh"] == "quad8":
                 file_object.write("Recombine Surface {:};\n")
                 file_object.write("// MESH CONFIGURATION\n")
@@ -378,7 +378,6 @@ def get_gmsh_geo(filename, meshdata):
                 file_object.write("Mesh.Algorithm = 8;\n")
                 file_object.write("Mesh.SecondOrderIncomplete = 1;\n")
                 file_object.write("Mesh.ElementOrder = 2;\n")
-                
 
             elif meshdata["meshconfig"]["mesh"] == "tetr4":
                 if "extrude" in meshdata["meshconfig"].keys():

@@ -2,10 +2,12 @@
 __doc__ = """
 Utils
 """
+import importlib.metadata
 import os
 import sys
+
 from art import tprint
-import importlib.metadata
+
 
 def get_version():
     """_summary_
@@ -22,10 +24,14 @@ def get_version():
 
 def get_logo():
     """_summary_"""
-    print("=================================================================================")
+    print(
+        "================================================================================="
+    )
     tprint("             myfempy", font="ogre")
     print("version: ", get_version())
-    print("=================================================================================")
+    print(
+        "================================================================================="
+    )
 
 
 def newDir(file_dir):

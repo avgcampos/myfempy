@@ -15,7 +15,7 @@ class Structural(ABC):
     @abstractmethod
     def getUpdateMatrix():
         pass
-    
+
     @abstractmethod
     def getUpdateLoad():
         pass

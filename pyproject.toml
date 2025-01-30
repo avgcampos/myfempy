@@ -20,7 +20,7 @@ authors = [
     {name = "Antonio Vinicius Garcia Campos", email = "antviniciuscampos@gmail.com"},
 ]
 readme = "README.md"
-version = "0.6.0"
+version = "0.5.2"
 license = {file = "LICENSE.md"}
 requires-python = ">3.8"
 dependencies = [
@@ -47,17 +47,17 @@ Documentation = "myfempy.readthedocs.io/en/latest/"
 Repository = "https://github.com/avgcampos/myfempy/releases"
 GitHub = "https://github.com/avgcampos/myfempy"
 
-# ### Cython Compiler
-# [build-system]
-# requires = ["setuptools", "numpy", "cython"]
-# build-backend = "setuptools.build_meta"
+### Cython Compiler
+[build-system]
+requires = ["setuptools", "numpy", "cython"]
+build-backend = "setuptools.build_meta"
 
-# [tool.setuptools]
-# py-modules = ["setup_wrap_cy_pyx"]
-# package-dir = {"" = "."}
+[tool.setuptools]
+py-modules = ["setup_wrap_cy_pyx"]
+package-dir = {"" = "."}
 
-# [tool.setuptools.packages]
-# find = {}
+[tool.setuptools.packages]
+find = {}
 
-# [tool.setuptools.cmdclass]
-# build_ext = "setup_wrap_cy_pyx.build_ext"
+[tool.setuptools.cmdclass]
+build_ext = "setup_wrap_cy_pyx.build_ext"

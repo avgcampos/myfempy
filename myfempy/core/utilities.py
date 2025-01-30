@@ -2,9 +2,9 @@
 # environ['OMP_NUM_THREADS'] = '3'
 
 from numpy import (array, asarray, cross, dot, eye, float64, ix_, less, matmul,
-                   mean, ones_like, uint32, unique, where, zeros, sqrt)
+                   mean, ones_like, sqrt, uint32, unique, where, zeros)
 from numpy.linalg import multi_dot
-from scipy.linalg import det, inv, kron, block_diag
+from scipy.linalg import block_diag, det, inv, kron
 from scipy.sparse import csc_matrix
 
 INT32 = uint32
@@ -40,14 +40,15 @@ def addMatrix(A, A_add, idx):
     A[ix_(idx, idx)] += A_add
     return A
 
+
 def get2D_LocalVector(x):
     noix = x[0][0]
     noiy = x[1][0]
     nojx = x[2][0]
     nojy = x[3][0]
-    L = sqrt((nojx-noix)**2 + (nojy-noiy)**2)
-    s = (nojy-noiy)/L
-    c = (nojx-noix)/L
+    L = sqrt((nojx - noix) ** 2 + (nojy - noiy) ** 2)
+    s = (nojy - noiy) / L
+    c = (nojx - noix) / L
     R = zeros((4, 4))
     R[0, 0] = c
     R[0, 1] = s
@@ -57,8 +58,9 @@ def get2D_LocalVector(x):
     R[2, 3] = s
     R[3, 2] = -s
     R[3, 3] = c
-    xb = dot(R,x)
+    xb = dot(R, x)
     return xb
+
 
 def get3D_LocalVector(x, dim):
     noix = x[0][0]
@@ -67,18 +69,18 @@ def get3D_LocalVector(x, dim):
     nojx = x[3][0]
     nojy = x[4][0]
     nojz = x[5][0]
-    L = sqrt((nojx-noix)**2 + (nojy-noiy)**2 + (nojz-noiz)**2)
+    L = sqrt((nojx - noix) ** 2 + (nojy - noiy) ** 2 + (nojz - noiz) ** 2)
     if (noix == nojx) and (noiy == nojy):
         if nojz > noiz:
             lamb = array([[0, 0, 1.0], [0, 1.0, 0], [-1.0, 0, 0]])
         else:
             lamb = array([[0, 0, -1.0], [0, 1.0, 0], [1.0, 0, 0]])
     else:
-        l = (nojx-noix)/L
-        m = (nojy-noiy)/L
-        n = (nojz-noiz)/L
+        l = (nojx - noix) / L
+        m = (nojy - noiy) / L
+        n = (nojz - noiz) / L
         d = sqrt(l**2 + m**2)
-        lamb = array([[l, m, n], [-m/d, l/d, 0.0], [-l*n/d, -m*n/d, d]])
+        lamb = array([[l, m, n], [-m / d, l / d, 0.0], [-l * n / d, -m * n / d, d]])
     if dim == 1:
         R = block_diag(lamb)
         return dot(R, x)
@@ -88,17 +90,18 @@ def get3D_LocalVector(x, dim):
     elif dim == 3:
         R = block_diag(lamb, lamb, lamb)
         return dot(R, x)
-    elif dim ==4:
+    elif dim == 4:
         R = block_diag(lamb, lamb, lamb, lamb)
         return dot(R, x)
-    elif dim ==5:
+    elif dim == 5:
         R = block_diag(lamb, lamb, lamb, lamb, lamb)
         return dot(R, x)
-    elif dim ==6:
+    elif dim == 6:
         R = block_diag(lamb, lamb, lamb, lamb, lamb, lamb)
         return dot(R, x)
     else:
         return 0.0
+
 
 def getRotational_Matrix(x, dim):
     noix = x[0][0]
@@ -107,33 +110,34 @@ def getRotational_Matrix(x, dim):
     nojx = x[3][0]
     nojy = x[4][0]
     nojz = x[5][0]
-    L = sqrt((nojx-noix)**2 + (nojy-noiy)**2 + (nojz-noiz)**2)
+    L = sqrt((nojx - noix) ** 2 + (nojy - noiy) ** 2 + (nojz - noiz) ** 2)
     if (noix == nojx) and (noiy == nojy):
         if nojz > noiz:
             lamb = array([[0, 0, 1.0], [0, 1.0, 0], [-1.0, 0, 0]])
         else:
             lamb = array([[0, 0, -1.0], [0, 1.0, 0], [1.0, 0, 0]])
     else:
-        l = (nojx-noix)/L
-        m = (nojy-noiy)/L
-        n = (nojz-noiz)/L
+        l = (nojx - noix) / L
+        m = (nojy - noiy) / L
+        n = (nojz - noiz) / L
         d = sqrt(l**2 + m**2)
-        lamb = array([[l, m, n], [-m/d, l/d, 0.0], [-l*n/d, -m*n/d, d]])
-        
+        lamb = array([[l, m, n], [-m / d, l / d, 0.0], [-l * n / d, -m * n / d, d]])
+
     if dim == 1:
         return block_diag(lamb)
     elif dim == 2:
         return block_diag(lamb, lamb)
     elif dim == 3:
         return block_diag(lamb, lamb, lamb)
-    elif dim ==4:
+    elif dim == 4:
         return block_diag(lamb, lamb, lamb, lamb)
-    elif dim ==5:
+    elif dim == 5:
         return block_diag(lamb, lamb, lamb, lamb, lamb)
-    elif dim ==6:
+    elif dim == 6:
         return block_diag(lamb, lamb, lamb, lamb, lamb, lamb)
     else:
         return 0.0
+
 
 def setSteps(steps):
     """
@@ -153,6 +157,7 @@ def setSteps(steps):
     else:
         nsteps = int((end - start) / substep)
     return nsteps
+
 
 def elem2nodes_conec(nnode, nelem, dofe, inci):
     """
@@ -217,10 +222,11 @@ def unit_normal(a, b, c):
     magnitude = (x**2 + y**2 + z**2) ** 0.5
     return (x / magnitude, y / magnitude, z / magnitude)
 
-def get_direction(coord , i , j ):
+
+def get_direction(coord, i, j):
     direc = zeros(3)
     rank = coord.shape[1]
-    direc[:rank] = coord[i,:] - coord[j,:]
+    direc[:rank] = coord[i, :] - coord[j, :]
     return direc
 
 
@@ -263,7 +269,9 @@ def get_nodes_from_list(nodelist, coord, regions):
         return nodes, dir_fc
 
     elif nodelist[0] == "edgex":
-        edge_coordX = float(nodelist[1]) # nodelist[1].astype(float)  # float(nodelist[1])
+        edge_coordX = float(
+            nodelist[1]
+        )  # nodelist[1].astype(float)  # float(nodelist[1])
         if int(nodelist[2]) == 999:
             dir_fc = "x_y"
             coord_fc = (
@@ -563,22 +571,22 @@ def nodes_from_regions(regionlist):
 
 # integracao numerica
 def gauss_points(type, npp):
-    
+
     if type == "line2":
         return __gauss_points_line(npp)
-    
+
     elif type == "line3":
         return __gauss_points_line(npp)
 
     elif type == "tria3":
         return __gauss_points_tria(npp)
-    
+
     elif type == "tria6":
         return __gauss_points_tria(npp)
-    
+
     elif type == "quad4":
         return __gauss_points_quad(npp)
-    
+
     elif type == "quad8":
         return __gauss_points_quad(npp)
 
@@ -590,7 +598,7 @@ def gauss_points(type, npp):
 
     else:
         pass
-    
+
 
 def __gauss_points_line(npp):
     if npp == 1:
@@ -600,31 +608,41 @@ def __gauss_points_line(npp):
 
     elif npp == 2:
         pt = array([-0.5773502691896258, 0.5773502691896258])
-        wt = array([1.000000000000000,
-                    1.000000000000000])
+        wt = array([1.000000000000000, 1.000000000000000])
         return pt, wt
-    
+
     elif npp == 4:
-        pt = array([-0.86113631, -0.33998104,  0.33998104,  0.86113631])
-        wt = array( [0.34785485,
-                     0.65214515,
-                     0.65214515,
-                     0.34785485])
+        pt = array([-0.86113631, -0.33998104, 0.33998104, 0.86113631])
+        wt = array([0.34785485, 0.65214515, 0.65214515, 0.34785485])
         return pt, wt
-        
+
     elif npp == 8:
-        pt = array([-0.96028986, -0.79666648, -0.52553241, -0.18343464,  0.18343464,  0.52553241, 0.79666648,  0.96028986])
-        wt = array( [0.10122854,
-                     0.22238103,
-                     0.31370665,
-                     0.36268378,
-                     0.36268378,
-                     0.31370665,
-                     0.22238103,
-                     0.10122854])
-        
+        pt = array(
+            [
+                -0.96028986,
+                -0.79666648,
+                -0.52553241,
+                -0.18343464,
+                0.18343464,
+                0.52553241,
+                0.79666648,
+                0.96028986,
+            ]
+        )
+        wt = array(
+            [
+                0.10122854,
+                0.22238103,
+                0.31370665,
+                0.36268378,
+                0.36268378,
+                0.31370665,
+                0.22238103,
+                0.10122854,
+            ]
+        )
+
         return pt, wt
-    
 
 
 def __gauss_points_quad(npp):
@@ -635,47 +653,72 @@ def __gauss_points_quad(npp):
 
     elif npp == 2:
         pt = array([-0.5773502691896258, 0.5773502691896258])
-        wt = array([1.000000000000000,
-                    1.000000000000000])
+        wt = array([1.000000000000000, 1.000000000000000])
         return pt, wt
-    
+
     elif npp == 3:
         pt = array([-0.774596669241483, 0.000000000000000, 0.774596669241483])
-        wt = array( [0.555555555555556,
-                     0.888888888888889,
-                     0.555555555555556])
+        wt = array([0.555555555555556, 0.888888888888889, 0.555555555555556])
 
     elif npp == 4:
-        pt = array([-0.86113631, -0.33998104,  0.33998104,  0.86113631])
-        wt = array( [0.34785485,
-                     0.65214515,
-                     0.65214515,
-                     0.34785485])
+        pt = array([-0.86113631, -0.33998104, 0.33998104, 0.86113631])
+        wt = array([0.34785485, 0.65214515, 0.65214515, 0.34785485])
         return pt, wt
-        
+
     elif npp == 8:
-        pt = array([-0.96028986, -0.79666648, -0.52553241, -0.18343464,  0.18343464,  0.52553241, 0.79666648,  0.96028986])
-        wt = array( [0.10122854,
-                     0.22238103,
-                     0.31370665,
-                     0.36268378,
-                     0.36268378,
-                     0.31370665,
-                     0.22238103,
-                     0.10122854])
+        pt = array(
+            [
+                -0.96028986,
+                -0.79666648,
+                -0.52553241,
+                -0.18343464,
+                0.18343464,
+                0.52553241,
+                0.79666648,
+                0.96028986,
+            ]
+        )
+        wt = array(
+            [
+                0.10122854,
+                0.22238103,
+                0.31370665,
+                0.36268378,
+                0.36268378,
+                0.31370665,
+                0.22238103,
+                0.10122854,
+            ]
+        )
         return pt, wt
-        
+
     elif npp == 9:
-        pt = array([-0.96816024, -0.83603111, -0.61337143, -0.32425342,  0.0, 0.32425342, 0.61337143, 0.83603111, 0.96816024])
-        wt = array( [0.08127439,
-                     0.18064816,
-                     0.2606107,
-                     0.31234708,
-                     0.33023936,
-                     0.31234708,
-                     0.2606107,
-                     0.18064816,
-                     0.08127439])
+        pt = array(
+            [
+                -0.96816024,
+                -0.83603111,
+                -0.61337143,
+                -0.32425342,
+                0.0,
+                0.32425342,
+                0.61337143,
+                0.83603111,
+                0.96816024,
+            ]
+        )
+        wt = array(
+            [
+                0.08127439,
+                0.18064816,
+                0.2606107,
+                0.31234708,
+                0.33023936,
+                0.31234708,
+                0.2606107,
+                0.18064816,
+                0.08127439,
+            ]
+        )
         return pt, wt
 
 
@@ -684,24 +727,37 @@ def __gauss_points_tria(npp):
         pt = array([0.3333333333333333])
         wt = array([1.000000000000000])
         return pt, wt
-    
+
     elif npp == 3:
         pt = array([0.6666666666666666, 0.1666666666666666, 0.1666666666666666])
-        wt = array([0.3333333333333,
-                    0.3333333333333,
-                    0.3333333333333])
+        wt = array([0.3333333333333, 0.3333333333333, 0.3333333333333])
         return pt, wt
 
     elif npp == 7:
-        pt = array([0.1012865073235, 0.79742698553531, 0.1012865073235, 0.4701420641051, 0.4701420641051, 0.597158717898, 0.3333333333333])
-        wt = array([0.1259391805448,
-                    0.1259391805448,
-                    0.1259391805448,
-                    0.1323941527885,
-                    0.1323941527885,
-                    0.1323941527885,
-                    0.2250000000000])
+        pt = array(
+            [
+                0.1012865073235,
+                0.79742698553531,
+                0.1012865073235,
+                0.4701420641051,
+                0.4701420641051,
+                0.597158717898,
+                0.3333333333333,
+            ]
+        )
+        wt = array(
+            [
+                0.1259391805448,
+                0.1259391805448,
+                0.1259391805448,
+                0.1323941527885,
+                0.1323941527885,
+                0.1323941527885,
+                0.2250000000000,
+            ]
+        )
         return pt, wt
+
 
 def __gauss_points_tetr(npp):
     if npp == 1:
@@ -709,25 +765,41 @@ def __gauss_points_tetr(npp):
         wt = array([1.000000000000000])
         return pt, wt
     elif npp == 4:
-        pt = array([0.5854101966249685,
-                    0.1381966011250105,
-                    0.1381966011250105,
-                    0.1381966011250105])
-        wt = array([0.25000000000000000,
-                    0.25000000000000000,
-                    0.25000000000000000,
-                    0.25000000000000000])
+        pt = array(
+            [
+                0.5854101966249685,
+                0.1381966011250105,
+                0.1381966011250105,
+                0.1381966011250105,
+            ]
+        )
+        wt = array(
+            [
+                0.25000000000000000,
+                0.25000000000000000,
+                0.25000000000000000,
+                0.25000000000000000,
+            ]
+        )
     elif npp == 5:
-        pt = array([0.25000000000000000,
-                    0.50000000000000000,
-                    0.166666666666667,
-                    0.166666666666667,
-                    0.166666666666667])
-        wt = array([-0.8000000000000000,
-                    0.45000000000000000,
-                    0.45000000000000000,
-                    0.45000000000000000,
-                    0.45000000000000000])
+        pt = array(
+            [
+                0.25000000000000000,
+                0.50000000000000000,
+                0.166666666666667,
+                0.166666666666667,
+                0.166666666666667,
+            ]
+        )
+        wt = array(
+            [
+                -0.8000000000000000,
+                0.45000000000000000,
+                0.45000000000000000,
+                0.45000000000000000,
+                0.45000000000000000,
+            ]
+        )
         return pt, wt
 
 
