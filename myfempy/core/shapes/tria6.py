@@ -14,7 +14,7 @@ class Tria6(Shape):
 
     def getShapeSet():
         shapeset = {
-            "def": "6-nodes_conec 2-first_order",
+            "def": "6-nodes_conec 2-interpol_order",
             "key": "tria6",
             "id": 62,
             "nodes": ["i", "j", "k", "l", "m", "n"],
@@ -71,3 +71,14 @@ class Tria6(Shape):
             return sqrt(J[1, 0] ** 2 + J[1, 1] ** 2)
         else:
             return 0.0
+
+    def getSideAxis(set_side):
+        side = {
+            "0 1 3": "0", 
+            "1 0 3": "0", 
+            "1 2 4": "1", 
+            "2 1 4": "1",  
+            "0 2 5": "2", 
+            "2 0 5": "2", 
+        }
+        return side[set_side]

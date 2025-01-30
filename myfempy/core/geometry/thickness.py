@@ -7,39 +7,28 @@ class Thickness(Geometry):
     """Thickness Geoemtry Class <ConcreteClassService>"""
 
     def GeometrySet():
-        geoset = {"geo": "thickness", "idgeo": 90}
+        geoset = {"geo": "thickness", "idgeo": 1}
         return geoset
 
     def getSectionProp(dim_sec):
-        b = dim_sec["b"]
-        h = dim_sec["h"]
         t = dim_sec["t"]
-        d = dim_sec["d"]
-
-        A = 0
-        Izz = 0
-        Iyy = 0
-        Jxx = 0
 
         sect_prop = {
-            "areacs": A,
-            "inerzz": Izz,
-            "ineryy": Iyy,
-            "inerxx": Jxx,
+            "areacs": 0.0,
+            "inerzz": 0.0,
+            "ineryy": 0.0,
+            "inerxx": 0.0,
             "thickn": t,
         }
         return sect_prop
 
     def getCGCoord(tabgeo, inci, element_number):
-        b = tabgeo[int(inci[element_number, 3]) - 1, 5]
-        h = tabgeo[int(inci[element_number, 3]) - 1, 6]
-        t = tabgeo[int(inci[element_number, 3]) - 1, 7]
-        d = tabgeo[int(inci[element_number, 3]) - 1, 8]
+        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
 
         y_max = 0
         y_min = 0
-        z_max = t / 2
-        z_min = -t / 2
+        z_max = 0.5*t
+        z_min = -0.5*t
         r_max = 0
 
         cg = {

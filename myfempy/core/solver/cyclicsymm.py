@@ -26,8 +26,9 @@ class StaticLinearCyclicSymm(Solver):
         Model, inci, coord, tabmat, tabgeo, intgauss, SYMM=None, MP=None
     ):
         matrix = dict()
+
         if SYMM:
-            matrix["stiffness"] = AssemblerSYMM.getMatrixAssembler(
+            matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,
@@ -38,7 +39,7 @@ class StaticLinearCyclicSymm(Solver):
                 MP=MP,
             )
         else:
-            matrix["stiffness"] = AssemblerFULL.getMatrixAssembler(
+            matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,

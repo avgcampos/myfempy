@@ -65,8 +65,8 @@ class SetPhysics:
         forcenodeaply[forcenodeaply[:, 3].argsort()]
         return forcenodeaply
     
-    def getUpdateMatrix(self, matrix, modelinfo, loadaply):
-        return self.loads.getUpdateMatrix(self.model, matrix, modelinfo, loadaply)
+    def getUpdateMatrix(self, matrix, loadaply):
+        return self.loads.getUpdateMatrix(self.model, matrix, loadaply)
     
     def getUpdateLoad(self):
         return None

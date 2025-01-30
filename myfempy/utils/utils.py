@@ -4,7 +4,8 @@ Utils
 """
 import os
 import sys
-
+from art import tprint
+import importlib.metadata
 
 def get_version():
     """_summary_
@@ -12,17 +13,19 @@ def get_version():
     Returns:
         _description_
     """
-    from myfempy import __version__
-
+    try:
+        __version__ = importlib.metadata.version("myfempy")
+    except:
+        __version__ = "dev"
     return __version__
 
 
 def get_logo():
     """_summary_"""
-    import art
-
-    art.tprint("myfempy", font="ogre")
-    print("myfempy version:", get_version())
+    print("=================================================================================")
+    tprint("             myfempy", font="ogre")
+    print("version: ", get_version())
+    print("=================================================================================")
 
 
 def newDir(file_dir):
@@ -58,9 +61,9 @@ def loading_bar_v1(pct, name):
     """
     sys.stdout.write(
         "\r"
-        + name
-        + ": "
-        + "|%-50s" % ("%" * int(pct * 0.5) + "|" + str(round(pct)) + "%")
+        # + name
+        + ">> "
+        + "|%-50s" % ("%" * int(pct * 0.7) + "|" + str(round(pct)) + "%")
     )
     sys.stdout.flush()
 
@@ -73,11 +76,6 @@ def print_console(sc):
     """
     if sc == "pre":
         print(
-            "================================================================================="
-        )
-        get_logo()
-        print("")
-        print(
             "\r******************   P R E - P R O C E S S   L O A D I N G   ******************"
         )
     elif sc == "mesh":
@@ -86,7 +84,7 @@ def print_console(sc):
         )
     elif sc == "solver":
         print(
-            "\r********************   S O L V I N G   E Q U A T I O N S   ********************"
+            "\r********************   S O L V I N G   E Q U A T I O N S   ********************\n"
         )
     elif sc == "post":
         print(
@@ -98,11 +96,8 @@ def print_console(sc):
             "***************       A N A L Y S I S   S U C C E S S F U L       ***************"
         )
         print(
-            "***************             M Y F E M P Y @ 2 0 2 2               ***************"
+            "***************                   M Y F E M P Y                   ***************"
         )
         print(
             "***************        T H A N K   Y O U   F O R   U S E !        ***************"
-        )
-        print(
-            "================================================================================="
         )

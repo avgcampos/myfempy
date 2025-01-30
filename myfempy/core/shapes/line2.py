@@ -1,99 +1,75 @@
 from __future__ import annotations
 
-import numdifftools as nd
-import numpy as np
+from numpy import sqrt
 
+from myfempy.core.shapes.line2_tasks import (DiffDiffShapeFuntion, DiffShapeFuntion, Jacobian,
+                                             LocKey, NodeCoord, NodeList,
+                                             ShapeFunctions, detJacobi,
+                                             invJacobi)
 from myfempy.core.shapes.shape import Shape
 
+# from myfempy.core.utilities import getRotational_3dVector
 
 class Line2(Shape):
-    """Linear 2-Node Shape Class <ConcreteClassService>"""
+    """Line 2-Node Shape Class <ConcreteClassService>"""
 
     def getShapeSet():
         shapeset = {
-            "def": "2-nodes_conec 1-first_order",
+            "def": "2-nodes_conec 1-interpol_order",
             "key": "line2",
             "id": 21,
             "nodes": ["i", "j"],
+            "sidenorm": {"0": [0, 1]},
         }
         return shapeset
 
-    def N(r_coord):
-        N = np.zeros((1, 2))
-        N[0, 0] = 0.5 * (1.0 - r_coord)
-        N[0, 1] = 0.5 * (1.0 + r_coord)
-        return N
+    # quad4 sides
+    def getIsoParaSide(side, r):
+        # [r_valor, r_axis]
+        # r = 0/ s = 1/ t = 2
+        isops = {
+            "0": [r, 0.0],  # [r, 0]
+        }
 
-    def diffN(shape_function, r_coord):
-        dN = nd.Gradient(shape_function, n=1)
-        return dN(r_coord)
+        return isops[side]
 
     def getShapeFunctions(r_coord, nodedof):
-        shape_function = Line2.N(r_coord)
+        return ShapeFunctions(r_coord, nodedof)
 
-        mat_N = np.zeros((nodedof, 1 * nodedof))
-        for block in range(1):
-            for dof in range(nodedof):
-                mat_N[dof, block * nodedof + dof] = shape_function[0, block]
+    def getDiffShapeFuntion(r_coord, nodedof):
+        return DiffShapeFuntion(r_coord, nodedof)
 
-        return mat_N
+    def getDiffDiffShapeFuntion(r_coord, nodedof):
+        return DiffDiffShapeFuntion(r_coord, nodedof)
 
-    def getDiffShapeFuntion(shape_function, r_coord, nodedof):
-        diff_shape_function = Line2.diffN(shape_function, r_coord)
+    def getJacobian(r_coord, element_coord):
+        return Jacobian(r_coord,element_coord)
 
-        mat_diff_N = np.zeros((1 * nodedof, 1 * nodedof))
+    def getinvJacobi(r_coord, element_coord, nodedof):
+        return invJacobi(r_coord, element_coord, nodedof)
 
-        for block in range(1):
-            for dof in range(nodedof):
-                mat_diff_N[
-                    nodedof * dof - dof * (nodedof - 1), block * nodedof + dof
-                ] = diff_shape_function[0, block]
-
-        return mat_diff_N
-
-    def getJacobian(shape_function, r_coord, element_coord):
-        return np.dot(Line2.diffN(shape_function, r_coord), element_coord)
-
-    def invJacobi(shape_function, r_coord, element_coord, nodedof):
-        J = Line2.getJacobian(shape_function, r_coord, element_coord)
-
-        invJ = np.linalg.inv(J)
-
-        mat_invJ = np.kron(np.eye(nodedof, dtype=int), invJ)
-
-        return mat_invJ
-
-    def detJacobi(shape_function, r_coord, element_coord):
-        J = Line2.getJacobian(shape_function, r_coord, element_coord)
-        return np.linalg.det(J)
+    def getdetJacobi(r_coord, element_coord):
+        return detJacobi(r_coord, element_coord)
 
     def getNodeList(inci, element_number):
-        noi = int(inci[element_number, 4])
-        noj = int(inci[element_number, 5])
-
-        node_list = [noi, noj]
-
-        return node_list
+        return NodeList(inci, element_number)
 
     def getNodeCoord(coord, node_list):
-        noi = node_list[0]
-        noj = node_list[1]
+        return NodeCoord(coord, node_list)
 
-        xi = coord[noi - 1, 1]
-        yi = coord[noi - 1, 2]
-        xj = coord[noj - 1, 1]
-        yj = coord[noj - 1, 2]
+    def getLocKey(node_list, nodedof):
+        return LocKey(node_list, nodedof)
 
-        element_coord = np.array([[xi, yi], [xj, yj]])
-        return element_coord
+    def getEdgeLength(J, side):
 
-    def getShapeKey(node_list, nodedof):
-        """element lockey(dof)"""
-        shape_key = np.zeros(2 * nodedof, dtype=int)
-
-        for node in range(len(node_list)):
-            for dof in range(nodedof):
-                shape_key[nodedof * node + dof] = nodedof * node_list[node] - (
-                    nodedof - dof
-                )
-        return shape_key
+        if side == "0":
+            return J[0, 0]
+        else:
+            return 0.0
+        
+    def getSideAxis(set_side):
+        side = {
+            "0 1": "0", 
+            "1 0": "0", 
+        }
+        return side[set_side]

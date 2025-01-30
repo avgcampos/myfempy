@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from os import environ
 
-environ["OMP_NUM_THREADS"] = "3"
+environ["OMP_NUM_THREADS"] = "8"
 
 from numpy import (arange, concatenate, empty, float64, newaxis, pi, sqrt,
                    unique, zeros)
@@ -25,7 +25,7 @@ class DynamicModalLinear(Solver):
     ):
         matrix = dict()
         if SYMM:
-            matrix["stiffness"] = AssemblerSYMM.getMatrixAssembler(
+            matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,
@@ -35,7 +35,7 @@ class DynamicModalLinear(Solver):
                 type_assembler="linear_stiffness",
                 MP=MP,
             )
-            matrix["mass"] = AssemblerSYMM.getMatrixAssembler(
+            matrix["mass"] = AssemblerSYMM.getMassConsistentGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,
@@ -46,7 +46,7 @@ class DynamicModalLinear(Solver):
                 MP=MP,
             )
         else:
-            matrix["stiffness"] = AssemblerFULL.getMatrixAssembler(
+            matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,
@@ -56,7 +56,7 @@ class DynamicModalLinear(Solver):
                 type_assembler="linear_stiffness",
                 MP=MP,
             )
-            matrix["mass"] = AssemblerFULL.getMatrixAssembler(
+            matrix["mass"] = AssemblerFULL.getMassConsistentGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,
@@ -87,18 +87,13 @@ class DynamicModalLinear(Solver):
 
     def runSolve(assembly, constrainsdof, modelinfo, solverset):
         fulldofs = modelinfo["fulldofs"]
-
         solution = dict()
         modeEnd = setSteps(solverset["STEPSET"])
-
         stiffness = assembly["stiffness"]
         mass = assembly["mass"]
         forcelist = assembly["loads"]
-
         U = zeros((fulldofs, modeEnd), dtype=float64)
-
         freedof = constrainsdof["freedof"]
-
         try:
             W, U[freedof, :] = eigsh(
                 A=stiffness[:, freedof][freedof, :],
@@ -110,14 +105,12 @@ class DynamicModalLinear(Solver):
             )
         except:
             pass
-
         Wlist = arange(0, modeEnd + 1)
         Wrad = sqrt(W)
         Whz = Wrad / (2 * pi)
         w_range = concatenate(
             (Wlist[1:, newaxis], Wrad[:, newaxis], Whz[:, newaxis]), axis=1
         )
-
         solution["U"] = U
         solution["FREQ"] = w_range
         return solution

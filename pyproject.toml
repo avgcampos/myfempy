@@ -1,22 +1,3 @@
-#==========================================================================#
-#  This Python file is part of myfempy project                             #
-#                                                                          #
-#  The code is written by A. V. G. Campos                                  #
-#                                                                          #
-#  A github repository, with the most up to date version of the code,      #
-#  can be found here: https://github.com/avgcampos/myfempy                 #
-#                                                                          #
-#  The code is open source and intended for educational and scientific     #
-#  purposes only. If you use myfempy in your research, the developers      #
-#  would be grateful if you could cite this.                               #  
-#                                                                          #
-#  Disclaimer:                                                             #
-#  The authors reserve all rights but do not guarantee that the code is    #
-#  free from errors. Furthermore, the authors shall not be liable in any   #
-#  event caused by the use of the program.                                 #
-#==========================================================================#
-
-#==========================================================================#
 #                                __                                
 #             _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
 #            | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
@@ -26,21 +7,20 @@
 #
 #~~~         myfempy -- MultiphYsics Finite Element Module with PYthon    ~~~
 #~~~                     COMPUTATIONAL ANALYSIS PROGRAM                   ~~~
-#~~~             Copyright (C) 2024 Antonio Vinicius Garcia Campos        ~~~
-#==========================================================================#
-#                            myfempy install script
-#
-#                Install myfempy through `>> python install .`,
-#                or visit the github page to more information
+#~~~             Copyright (C) 2025 Antonio Vinicius Garcia Campos        ~~~
+#============================================================================
+# myfempy install script:
+# Install myfempy through `>> python install .`,
+# or visit the github page to more information
 
 [project]
 name = "myfempy"
-description = "Myfempy is a python package based on finite element analysis to multiphysics solver."
+description = "Myfempy is a python package based on finite element analysis to multiphysics solutions."
 authors = [
-    {name = "Antonio Campos", email = "antviniciuscampos@gmail.com"},
+    {name = "Antonio Vinicius Garcia Campos", email = "antviniciuscampos@gmail.com"},
 ]
 readme = "README.md"
-version = "0.5.1"
+version = "0.6.0"
 license = {file = "LICENSE.md"}
 requires-python = ">3.8"
 dependencies = [
@@ -50,7 +30,6 @@ dependencies = [
 	"gmsh == 4.13.1",
 	"vedo == 2024.5.2",
 	"matplotlib == 3.9.0",
-	"colorama == 0.4.6",
 	"art == 6.2",
 ]
 keywords = ["FEM", "FEA", "FSI", "Engineering"]
@@ -66,18 +45,19 @@ classifiers = [
 [project.urls]
 Documentation = "myfempy.readthedocs.io/en/latest/"
 Repository = "https://github.com/avgcampos/myfempy/releases"
+GitHub = "https://github.com/avgcampos/myfempy"
 
-### Cython Compiler
-[build-system]
-requires = ["setuptools", "numpy", "cython"]
-build-backend = "setuptools.build_meta"
+# ### Cython Compiler
+# [build-system]
+# requires = ["setuptools", "numpy", "cython"]
+# build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-py-modules = ["setup_wrap_cy_pyx"]
-package-dir = {"" = "."}
+# [tool.setuptools]
+# py-modules = ["setup_wrap_cy_pyx"]
+# package-dir = {"" = "."}
 
-[tool.setuptools.packages]
-find = {}
+# [tool.setuptools.packages]
+# find = {}
 
-[tool.setuptools.cmdclass]
-build_ext = "setup_wrap_cy_pyx.build_ext"
+# [tool.setuptools.cmdclass]
+# build_ext = "setup_wrap_cy_pyx.build_ext"

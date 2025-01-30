@@ -14,7 +14,7 @@ class Tria3(Shape):
 
     def getShapeSet():
         shapeset = {
-            "def": "3-nodes_conec 1-first_order",
+            "def": "3-nodes_conec 1-interpol_order",
             "key": "tria3",
             "id": 31,
             "nodes": ["i", "j", "k"],
@@ -71,3 +71,14 @@ class Tria3(Shape):
             return sqrt(J[1, 0] ** 2 + J[1, 1] ** 2)
         else:
             return 0.0
+
+    def getSideAxis(set_side):
+        side = {
+            "2 0": "2",   
+            "0 2": "2",   
+            "0 1": "0",
+            "1 0": "0", 
+            "1 2": "1",   
+            "2 1": "1",  
+        }
+        return side[set_side]

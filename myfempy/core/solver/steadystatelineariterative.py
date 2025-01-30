@@ -18,9 +18,11 @@ class SteadyStateLinearIterative(Solver):
     """
 
     def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, SYMM, MP):
+        
+        matrix = dict()
+
         if SYMM:
-            matrix = dict()
-            matrix["stiffness"] = AssemblerSYMM.getMatrixAssembler(
+            matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,
@@ -30,10 +32,8 @@ class SteadyStateLinearIterative(Solver):
                 type_assembler="linear_stiffness",
                 MP=MP,
             )
-            return matrix
         else:
-            matrix = dict()
-            matrix["stiffness"] = AssemblerFULL.getMatrixAssembler(
+            matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,
@@ -43,7 +43,7 @@ class SteadyStateLinearIterative(Solver):
                 type_assembler="linear_stiffness",
                 MP=MP,
             )
-            return matrix
+        return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
         return AssemblerFULL.getLoadAssembler(loadaply, nodetot, nodedof)

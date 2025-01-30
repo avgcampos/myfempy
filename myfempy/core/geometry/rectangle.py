@@ -7,16 +7,12 @@ class Rectangle(Geometry):
     """Rectangle Geometry Class <ConcreteClassService>"""
 
     def GeometrySet():
-        geoset = {
-            "geo": ["rectangle", 10],
-        }
+        geoset =  {"geo": "rectangle", "idgeo": 10}
         return geoset
 
     def getSectionProp(dim_sec):
         b = dim_sec["b"]
         h = dim_sec["h"]
-        t = dim_sec["t"]
-        d = dim_sec["d"]
 
         A = b * h
         Izz = (1 / 12) * b * h**3
@@ -28,15 +24,13 @@ class Rectangle(Geometry):
             "inerzz": Izz,
             "ineryy": Iyy,
             "inerxx": Jxx,
-            "thickn": t,
+            "thickn": 0.0,
         }
         return sect_prop
 
-    def getCGCoord(tabgeo, inci, element_number):
-        b = tabgeo[int(inci[element_number, 3]) - 1, 5]
-        h = tabgeo[int(inci[element_number, 3]) - 1, 6]
-        t = tabgeo[int(inci[element_number, 3]) - 1, 7]
-        d = tabgeo[int(inci[element_number, 3]) - 1, 8]
+    def getCGCoord(tabgeo, inci, element_number):        
+        b = tabgeo[int(inci[element_number, 3] - 1)]["B"]
+        h = tabgeo[int(inci[element_number, 3] - 1)]["H"]
 
         y_max = h * 0.5
         y_min = -h * 0.5

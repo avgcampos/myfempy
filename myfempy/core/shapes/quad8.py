@@ -14,7 +14,7 @@ class Quad8(Shape):
 
     def getShapeSet():
         shapeset = {
-            "def": "8-nodes_conec 2-first_order",
+            "def": "8-nodes_conec 2-interpol_order",
             "key": "quad8",
             "id": 82,
             "nodes": ["i", "j", "k", "l", "m", "n", "o", "p"],
@@ -69,3 +69,16 @@ class Quad8(Shape):
             return sqrt(J[1, 0] ** 2 + J[1, 1] ** 2)
         else:
             return 0.0
+
+    def getSideAxis(set_side):
+        side = {
+            "0 1 4": "0", 
+            "1 0 4": "0",   
+            "1 2 5": "1",   
+            "2 1 5": "1",  
+            "2 3 6": "2",  
+            "3 2 6": "2",  
+            "3 0 7": "3",  
+            "0 3 7": "3",   
+        }
+        return side[set_side]

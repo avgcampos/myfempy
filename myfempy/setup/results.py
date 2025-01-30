@@ -75,9 +75,7 @@ class setPostProcess(ABC):
                 )
 
                 for st in range(SOLUTION.shape[1]):
-                    result_stress[ns, :, :], title = setPostProcess.__stress(
-                        self, SOLUTION[:, ns]
-                    )
+                    result_stress[ns, :, :], title = setPostProcess.__stress(self, SOLUTION[:, ns])
                     
                     for setpost in range(result_stress.shape[2]):
                         postprocdata[title[setpost]] = result_stress[st, :, setpost]
@@ -100,7 +98,7 @@ class setPostProcess(ABC):
                             "title": (
                                 "MODE_"
                                 + str(st + 1)
-                                + "-"
+                                + "_"
                                 + "FREQ_"
                                 + str(np.round(FREQUENCY[st][2], 3))
                                 + "Hz"

@@ -78,7 +78,7 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
         previewset["regions"] = [[], []]
 
     if "cs" in previewset["RENDER"].keys():
-        pass
+        previewset["RENDER"]["cs"] = True
     else:
         previewset["RENDER"]["cs"] = False
 
@@ -162,7 +162,7 @@ def build_preview(previewset: dict, path):
     renderer = vtk.vtkRenderer()
     renderer_window = vtk.vtkRenderWindow()
     renderer_window.SetSize(600, 480)
-    renderer.SetBackground(1.0, 1.0, 1.0)
+    renderer.SetBackground(0.0, 0.0, 0.0)
     reader = vtk.vtkUnstructuredGridReader()
     reader.SetFileName(file_name)
     reader.Update()  # Needed because of GetScalarRange
@@ -251,7 +251,7 @@ def build_preview(previewset: dict, path):
                 nojz = previewset["coord"][noj - 1, 3]
                 coord_bcs = [noix, noiy, noiz, nojx, nojy, nojz]
                 exec(
-                    f"beam_extrude_actor_{i_node} = view_beam_crossSection(dimSection, typSection, coord_bcs)"
+                    f"beam_extrude_actor_{i_node} = view_beam_crossSection(dimSection, typSection, coord_bcs, scala_view)"
                 )
                 i_node += 1
     actor = vtk.vtkActor()
@@ -269,7 +269,7 @@ def build_preview(previewset: dict, path):
     txtprop = text_logo.GetTextProperty()
     txtprop.SetFontFamilyToArial()
     txtprop.SetFontSize(20)
-    txtprop.SetColor(0, 0, 0)
+    txtprop.SetColor(1, 1, 1)
     text_logo.SetDisplayPosition(10, 400)
     colors = vtk.vtkNamedColors()
     backgroundColor = colors.GetColor3d("DarkSlateGray")

@@ -95,8 +95,8 @@ def get_gmsh_geo(filename, meshdata):
                     + str(meshdata["pointlist"][i][1])
                     + ","
                     + str(meshdata["pointlist"][i][2])
-                    + ","
-                    + str(meshdata["meshconfig"]["sizeelement"])
+                    # + ","
+                    # + str(meshdata["meshconfig"]["sizeelement"])
                     + "};"
                     + "\n"
                 )
@@ -179,9 +179,51 @@ def get_gmsh_geo(filename, meshdata):
                         + "};"
                         + "\n"
                     )
-            else:
-                pass
-        elif meshdata["meshconfig"]["mesh"] != "line2":
+            file_object.write("// MESH CONFIGURATION\n")
+            file_object.write("Mesh.CharacteristicLengthExtendFromBoundary = 1;\n")
+            file_object.write("Mesh.CharacteristicLengthMin = 0;\n")
+            file_object.write("Mesh.CharacteristicLengthFromPoints = 1;\n")
+            file_object.write("Mesh.Optimize = 1;\n")
+            file_object.write("Mesh.HighOrderOptimize = 0;\n")
+            file_object.write("Mesh.Algorithm = 8;\n")
+            file_object.write("Mesh.ElementOrder = 1;\n")
+            
+        elif meshdata["meshconfig"]["mesh"] == "line3":
+            if "numbernodes" in meshdata["meshconfig"].keys():
+                file_object.write(
+                    "Transfinite Curve {"
+                    + line_list
+                    + "} = "
+                    + str(meshdata["meshconfig"]["numbernodes"])
+                    + " Using Progression 1;\n"
+                )
+            elif "sizeelement" in meshdata["meshconfig"].keys():
+                for i in range(0, numpnt):
+                    file_object.write(
+                        "Point("
+                        + str(i + 1)
+                        + ") = {"
+                        + str(meshdata["pointlist"][i][0])
+                        + ","
+                        + str(meshdata["pointlist"][i][1])
+                        + ","
+                        + str(meshdata["pointlist"][i][2])
+                        + ","
+                        + str(meshdata["meshconfig"]["sizeelement"])
+                        + "};"
+                        + "\n"
+                    )
+            file_object.write("// MESH CONFIGURATION\n")
+            file_object.write("Mesh.CharacteristicLengthExtendFromBoundary = 1;\n")
+            file_object.write("Mesh.CharacteristicLengthMin = 0;\n")
+            file_object.write("Mesh.CharacteristicLengthFromPoints = 1;\n")
+            file_object.write("Mesh.Optimize = 1;\n")
+            file_object.write("Mesh.HighOrderOptimize = 0;\n")
+            file_object.write("Mesh.Algorithm = 8;\n")
+            file_object.write("Mesh.SecondOrderIncomplete = 1;\n")
+            file_object.write("Mesh.ElementOrder = 2;\n")
+            
+        else:
             if "cadimport" in meshdata.keys():
                 file_object.write('Merge "' + meshdata["cadimport"] + '";\n')
             else:
@@ -391,5 +433,3 @@ def get_gmsh_geo(filename, meshdata):
                 file_object.write("Mesh.RecombinationAlgorithm = 0;\n")
                 file_object.write("Mesh.SubdivisionAlgorithm = 2;\n")
                 file_object.write("Mesh.RecombineAll = 1;\n")
-        else:
-            print("input erro: mesh_cfg don't defined")

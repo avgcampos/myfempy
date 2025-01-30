@@ -6,6 +6,7 @@ from myfempy.core.shapes.quad4_tasks import (DiffShapeFuntion, Jacobian,
                                              LocKey, NodeCoord, NodeList,
                                              ShapeFunctions, detJacobi,
                                              invJacobi)
+
 from myfempy.core.shapes.shape import Shape
 
 
@@ -14,7 +15,7 @@ class Quad4(Shape):
 
     def getShapeSet():
         shapeset = {
-            "def": "4-nodes_conec 1-first_order",
+            "def": "4-nodes_conec 1-interpol_order",
             "key": "quad4",
             "id": 41,
             "nodes": ["i", "j", "k", "l"],
@@ -70,3 +71,15 @@ class Quad4(Shape):
             return sqrt(J[1, 0] ** 2 + J[1, 1] ** 2)
         else:
             return 0.0
+
+    def getSideAxis(set_side):
+        side = {
+            "0 1": "0",
+            "1 0": "0",
+            "1 2": "1",
+            "2 1": "1",
+            "2 3": "2",  
+            "3 2": "2",
+            "3 0": "3", 
+        }
+        return side[set_side]

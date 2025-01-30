@@ -1,0 +1,75 @@
+from __future__ import annotations
+
+from numpy import sqrt
+
+from myfempy.core.shapes.line3_tasks import (DiffDiffShapeFuntion, DiffShapeFuntion, Jacobian,
+                                             LocKey, NodeCoord, NodeList,
+                                             ShapeFunctions, detJacobi,
+                                             invJacobi)
+from myfempy.core.shapes.shape import Shape
+
+# from myfempy.core.utilities import getRotational_3dVector
+
+class Line3(Shape):
+    """Line 3-Node Shape Class <ConcreteClassService>"""
+
+    def getShapeSet():
+        shapeset = {
+            "def": "3-nodes_conec 2-interpol_order",
+            "key": "line3",
+            "id": 32,
+            "nodes": ["i", "j", "k"],
+            "sidenorm": {"0": [0, 1]},
+        }
+        return shapeset
+
+    # quad4 sides
+    def getIsoParaSide(side, r):
+        # [r_valor, r_axis]
+        # r = 0/ s = 1/ t = 2
+        isops = {
+            "0": [r, 0.0],  # [r, 0]
+        }
+
+        return isops[side]
+
+    def getShapeFunctions(r_coord, nodedof):
+        return ShapeFunctions(r_coord, nodedof)
+
+    def getDiffShapeFuntion(r_coord, nodedof):
+        return DiffShapeFuntion(r_coord, nodedof)
+
+    def getDiffDiffShapeFuntion(r_coord, nodedof):
+        return DiffDiffShapeFuntion(r_coord, nodedof)
+
+    def getJacobian(r_coord, element_coord):
+        return Jacobian(r_coord,element_coord)
+
+    def getinvJacobi(r_coord, element_coord, nodedof):
+        return invJacobi(r_coord, element_coord, nodedof)
+
+    def getdetJacobi(r_coord, element_coord):
+        return detJacobi(r_coord, element_coord)
+
+    def getNodeList(inci, element_number):
+        return NodeList(inci, element_number)
+
+    def getNodeCoord(coord, node_list):
+        return NodeCoord(coord, node_list)
+
+    def getLocKey(node_list, nodedof):
+        return LocKey(node_list, nodedof)
+
+    def getEdgeLength(J, side):
+
+        if side == "0":
+            return J[0, 0]
+        else:
+            return 0.0
+        
+    def getSideAxis(set_side):
+        side = {
+            "0 1 2": "0",  
+            "2 1 0": "0",   
+        }
+        return side[set_side]

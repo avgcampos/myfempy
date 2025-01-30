@@ -1,17 +1,18 @@
 import numpy as np
 
+INT32 = np.uint32
+FLT64 = np.float64
+
 from myfempy.core.material.material import Material
 
 
 class SolidIsotropic(Material):
-    """Solid Stress Material Class <ConcreteClassService>"""
+    """Solid Stress Isotropic Material Class <ConcreteClassService>"""
 
     def getMaterialSet():
         matset = {
-            "mat": "solid",
-            "idmat": 5,
+            "mat": "solidstress",
             "type": "isotropic",
-            "idtyp": 20,
         }
         return matset
 
@@ -77,6 +78,7 @@ class SolidIsotropic(Material):
             strn_elm_zx,
         ]
 
+
         return epsilon, strain
 
     def getTitleStrain():
@@ -91,7 +93,7 @@ class SolidIsotropic(Material):
         ]
         return title
 
-    def getElementStress(Model, epsilon, element_number):
+    def getElementStress(Model, epsilon, element_number):        
         E = Model.tabmat[
             int(Model.inci[element_number, 2]) - 1, 0
         ]  # material elasticity
@@ -129,6 +131,7 @@ class SolidIsotropic(Material):
             strs_elm_zx,
         ]
 
+
         return sigma, stress
 
     def getTitleStress():
@@ -144,8 +147,18 @@ class SolidIsotropic(Material):
         return title
 
     def getStrainEnergyDensity(sigma, epsilon, elemvol):
-        return 0.5 * np.dot(np.transpose(sigma), epsilon) / elemvol
+        strain_energy = 0.5 * np.dot(sigma.transpose(), epsilon) / elemvol
+        return strain_energy
 
-    def setTitleCompliance():
+    def getTitleCompliance():
         title = ["STRAIN_ENERGY_DENSITY"]
         return title
+    
+    def getFailureCriteria(sigma):
+        return 0.0
+
+    def getTitleFoS():
+        title = ["FoS_YIELD_VON_MISES"]
+        return title
+    
+    

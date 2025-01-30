@@ -14,27 +14,6 @@ from myfempy.core.elements.element import Element
 from myfempy.core.utilities import gauss_points
 
 
-def HDIFFNINVJ(H, diffN, invJ):
-    invJdiffN = dot(invJ, diffN)
-    B = dot(H, invJdiffN)
-    return B
-
-
-def BTCB(diffN, H, invJ, C):
-    B = HDIFFNINVJ(H, diffN, invJ)
-    BT = B.transpose()
-    BTC = dot(BT, C)
-    BCB = dot(BTC, B)
-    return BCB
-
-
-def NTRN(N, R):
-    NT = N.transpose()
-    NTR = dot(NT, R)
-    NRN = dot(NTR, N)
-    return NRN
-
-
 class HeatPlane(Element):
     """Plane Structural Element Class <ConcreteClassService>"""
 
@@ -52,14 +31,11 @@ class HeatPlane(Element):
         }
         return elemset
 
-    def getH():
-        return array([[1, 0], [0, 1]], dtype=INT32)
-
     def getB(Model, elementcoord, pt, nodedof):
         diffN = Model.shape.getDiffShapeFuntion(pt, nodedof)
         invJ = Model.shape.getinvJacobi(pt, elementcoord, nodedof)
-        H = HeatPlane.getH()
-        B = HDIFFNINVJ(H, diffN, invJ)
+        H = array([[1, 0], [0, 1]], dtype=INT32)
+        B = dot(H, dot(invJ, diffN))
         return B
 
     # @profile
@@ -82,9 +58,8 @@ class HeatPlane(Element):
         for ip in range(intgauss):
             for jp in range(intgauss):
                 detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
-                diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp]]), nodedof)
-                invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp]]), elementcoord, nodedof)
-                BCB = BTCB(diffN, H, invJ, C)
+                B = HeatPlane.getB(Model, elementcoord, array([pt[ip], pt[jp]]), nodedof)
+                BCB = dot(dot(B.transpose(), C), B)
                 K_elem_mat += BCB * t * abs(detJ) * wt[ip] * wt[jp]
         return K_elem_mat
 
@@ -110,14 +85,7 @@ class HeatPlane(Element):
     #         M_elem_mat += NRN * t * abs(detJ) * wt[pp]
     #     return M_elem_mat
 
-    def getUpdateMatrix(Model, matrix, modelinfo, addval):
-        inci = modelinfo["inci"]
-        coord = modelinfo["coord"]
-        tabmat = modelinfo["tabmat"]
-        tabgeo = modelinfo["tabgeo"]
-        intgauss = modelinfo["intgauss"]
-        regions = modelinfo["regions"]
-        
+    def getUpdateMatrix(Model, matrix, addval):       
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
@@ -126,24 +94,20 @@ class HeatPlane(Element):
         edof = nodecon * nodedof
         
         nodelistconv = unique(addval[:, 0])
-        elmlist = get_elemen_from_nodelist(inci, nodelistconv)
+        elmlist = get_elemen_from_nodelist(Model.inci, nodelistconv)
         for ee in range(len(elmlist)):
         
-            nodelist = Model.shape.getNodeList(inci, elmlist[ee] - 1)
-            elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-            t = tabgeo[int(inci[elmlist[ee] - 1, 3] - 1)]["THICKN"] #tabgeo[int(inci[elem - 1, 3] - 1), 4]
+            nodelist = Model.shape.getNodeList(Model.inci, elmlist[ee] - 1)
+            elementcoord = Model.shape.getNodeCoord(Model.coord, nodelist)
+            t = Model.tabgeo[int(Model.inci[elmlist[ee] - 1, 3] - 1)]["THICKN"] #tabgeo[int(inci[elem - 1, 3] - 1), 4]
             # nodes, idx_conec, __ = np.intersect1d(nodelist, node_list_fc, assume_unique=True, return_indices=True)
             test = in1d(nodelist, nodelistconv, assume_unique=True)
             
             # nodes = array(nodelist)[test]
             idx_conec = where(test == True)[0]
             idx_conec = array2string(idx_conec)
-            get_side = HeatPlane.get_side_fcapp(idx_conec[1:-1])
-            infoside = Model.shape.getIsoParaSide(get_side)
-            r_vl = infoside[0]
-            r_ax = infoside[1]
-            points, wt = gauss_points(type_shape, 2)
-            points[r_ax] = r_vl
+            get_side = Model.shape.getSideAxis(idx_conec[1:-1])
+            pt, wt = gauss_points(type_shape, Model.intgauss)
             
             loc = Model.shape.getLocKey(nodelist, nodedof)
         
@@ -152,9 +116,9 @@ class HeatPlane(Element):
             Kh = zeros((edof, edof))
             for ip in range(2):
                 for jp in range(2):
-                    N = Model.shape.getShapeFunctions(array([points[ip], points[jp]]), nodedof)
-                    diffN = Model.shape.getDiffShapeFuntion(array([points[ip], points[jp]]), nodedof)
-                    J = Model.shape.getJacobian(array([points[ip], points[jp]]), elementcoord)
+                    points =  Model.shape.getIsoParaSide(get_side, pt[ip])
+                    N = Model.shape.getShapeFunctions(array(points), nodedof)
+                    J = Model.shape.getJacobian(array(points), elementcoord)
                     detJ_e = Model.shape.getEdgeLength(J, get_side)
                     Kh  += dot(N.transpose(), N)*h*t*abs(detJ_e) * wt[ip] * wt[jp]
                 

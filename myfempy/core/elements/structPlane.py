@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from os import environ
-
-environ["OMP_NUM_THREADS"] = "1"
+# from os import environ
+# environ["OMP_NUM_THREADS"] = "8"
 
 from numpy import abs, array, concatenate, dot, ix_, float64, int32, sqrt, zeros
 
@@ -11,28 +10,6 @@ FLT64 = float64
 
 from myfempy.core.elements.element import Element
 from myfempy.core.utilities import gauss_points
-
-
-def HDIFFNINVJ(H, diffN, invJ):
-    invJdiffN = dot(invJ, diffN)
-    B = dot(H, invJdiffN)
-    return B
-
-
-def BTCB(diffN, H, invJ, C):
-    B = HDIFFNINVJ(H, diffN, invJ)
-    BT = B.transpose()
-    BTC = dot(BT, C)
-    BCB = dot(BTC, B)
-    return BCB
-
-
-def NTRN(N, R):
-    NT = N.transpose()
-    NTR = dot(NT, R)
-    NRN = dot(NTR, N)
-    return NRN
-
 
 class StructuralPlane(Element):
     """Plane Structural Element Class <ConcreteClassService>"""
@@ -51,14 +28,15 @@ class StructuralPlane(Element):
         }
         return elemset
 
-    def getH():
-        return array([[1, 0, 0, 0], [0, 0, 0, 1], [0, 1, 1, 0]], dtype=INT32)
+    # def getH():
+    #     return array([[1, 0, 0, 0], [0, 0, 0, 1], [0, 1, 1, 0]], dtype=INT32)
 
+    # @profile
     def getB(Model, elementcoord, pt, nodedof):
         diffN = Model.shape.getDiffShapeFuntion(pt, nodedof)
         invJ = Model.shape.getinvJacobi(pt, elementcoord, nodedof)
-        H = StructuralPlane.getH()
-        B = HDIFFNINVJ(H, diffN, invJ)
+        H = array([[1, 0, 0, 0], [0, 0, 0, 1], [0, 1, 1, 0]], dtype=INT32)
+        B = dot(H, dot(invJ, diffN))
         return B
 
     # @profile
@@ -75,15 +53,13 @@ class StructuralPlane(Element):
         v = tabmat[int(inci[element_number, 2]) - 1]["VXX"] #tabmat[int(inci[element_number, 2]) - 1, 1]  # material poisson ratio
         C = Model.material.getElasticTensor(E, v)
         t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"] #tabgeo[int(inci[element_number, 3] - 1), 4]
-        H = StructuralPlane.getH()
         pt, wt = gauss_points(type_shape, intgauss)
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
         for ip in range(intgauss):
             for jp in range(intgauss):
                 detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
-                diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp]]), nodedof)
-                invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp]]), elementcoord, nodedof)
-                BCB = BTCB(diffN, H, invJ, C)
+                B = StructuralPlane.getB(Model, elementcoord, array([pt[ip], pt[jp]]), nodedof)
+                BCB = dot(dot(B.transpose(), C), B)
                 K_elem_mat += BCB * t * abs(detJ) * wt[ip] * wt[jp]
         return K_elem_mat
 
@@ -106,7 +82,7 @@ class StructuralPlane(Element):
             for jp in range(intgauss):
                 detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
                 N = Model.shape.getShapeFunctions(array([pt[ip], pt[jp]]), nodedof)
-                NRN = NTRN(N, R)
+                NRN = dot(dot(N.transpose(), R), N)
                 M_elem_mat += NRN * t * abs(detJ) * wt[ip] * wt[jp]
         return M_elem_mat
 

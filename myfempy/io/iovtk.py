@@ -9,6 +9,8 @@ def meshid2vtkid(elemid):
     # https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
     # space + dofnode + numbconecelem + firstorder(1)/secondorder(2)
     CellType = {
+        "1121": 3,
+        "1132": 21,
         "1621": 3,
         "1632": 21,
         "2131": 5,

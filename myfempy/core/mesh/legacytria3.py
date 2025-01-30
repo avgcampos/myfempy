@@ -4,7 +4,7 @@ from myfempy.core.mesh.mesh import Mesh
 
 
 class LegacyTria3(Mesh):
-    """Mesh Quad Class <ConcreteClassService>"""
+    """Mesh Tria Class <ConcreteClassService>"""
 
     def getElementConection(set_mesh):
         """get a triagular 3 nodes mesh

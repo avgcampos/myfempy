@@ -1,207 +1,201 @@
-cimport cython
 cimport openmp
+from cython cimport boundscheck, wraparound, cdivision, exceptval, nonecheck
+from cython.parallel import parallel, prange
 
 import numpy as np
 cimport numpy as np
 
-INT32 = np.int32
-FLT64 = np.float64
+ctypedef np.int32_t INT32
+ctypedef np.float64_t FLT64
 
-ctypedef np.int32_t INT32_t
-ctypedef np.float64_t FLT64_t
-
-   
-cdef double [:, :] MATN(double [:] r_coord):
-    cdef double r0 = r_coord[0]
-    cdef double r1 = r_coord[1]
-    cdef double [:, :] N = np.zeros((1,8), dtype=FLT64)
-    N[0, 0] = 0.25*(1-r0)*(1-r1)*(-r0-r1-1)
-    N[0, 1] = 0.25*(1+r0)*(1-r1)*(r0-r1-1)
-    N[0, 2] = 0.25*(1+r0)*(1+r1)*(+r0+r1-1)
-    N[0, 3] = 0.25*(1-r0)*(1+r1)*(-r0+r1-1)
-    N[0, 4] = 0.5*(1-r0*r0)*(1-r1)
-    N[0, 5] = 0.5*(1+r0)*(1-r1*r1)
-    N[0, 6] = 0.5*(1-r0*r0)*(1+r1)
-    N[0, 7] = 0.5*(1-r0)*(1-r1*r1)
+@cdivision(True)
+@exceptval(check=False)
+@boundscheck(False) # turn off bounds-checking for entire function
+@wraparound(False)  # turn off negative index wrapping for entire function           
+@nonecheck(False) 
+cdef FLT64 [:, ::1] MATN(FLT64 [::1] r_coord):
+    cdef FLT64 r0 = r_coord[0]
+    cdef FLT64 r1 = r_coord[1]
+    N = np.zeros((1,8), dtype=np.float64)
+    cdef FLT64 [:, ::1] N_view = N
+    N_view[0][0] = 0.25*(1-r0)*(1-r1)*(-r0-r1-1)
+    N_view[0][1] = 0.25*(1+r0)*(1-r1)*(r0-r1-1)
+    N_view[0][2] = 0.25*(1+r0)*(1+r1)*(+r0+r1-1)
+    N_view[0][3] = 0.25*(1-r0)*(1+r1)*(-r0+r1-1)
+    N_view[0][4] = 0.5*(1-r0*r0)*(1-r1)
+    N_view[0][5] = 0.5*(1+r0)*(1-r1*r1)
+    N_view[0][6] = 0.5*(1-r0*r0)*(1+r1)
+    N_view[0][7] = 0.5*(1-r0)*(1-r1*r1)
     return N
 
-cdef double [:, :] MATDIFFN(double [:] r_coord):
-    cdef double r0 = r_coord[0]
-    cdef double r1 = r_coord[1]
-    cdef double [:, :] dN = np.zeros((2,8), dtype=FLT64)
-    dN[0, 0] = 0.25*(1-r1)*(2*r0+r1)
-    dN[0, 1] = 0.25*(1-r1)*(2*r0-r1)
-    dN[0, 2] = 0.25*(1+r1)*(2*r0+r1)
-    dN[0, 3] = 0.25*(1+r1)*(2*r0-r1)
-    dN[0, 4] = -r0*(1-r1)
-    dN[0, 5] = 0.5*(1-r1*r1)
-    dN[0, 6] = -r0*(1+r1)
-    dN[0, 7] = -0.5*(1-r1*r1)
-    dN[1, 0] = 0.25*(1-r0)*(2*r1+r0)
-    dN[1, 1] = 0.25*(1+r0)*(2*r1-r0)
-    dN[1, 2] = 0.25*(1+r0)*(2*r1+r0)
-    dN[1, 3] = 0.25*(1-r0)*(2*r1-r0)
-    dN[1, 4] = -0.5*(1-r0*r0)
-    dN[1, 5] = -r1*(1+r0)
-    dN[1, 6] = 0.5*(1-r0*r0)
-    dN[1, 7] = -r1*(1-r0)
+@cdivision(True)
+@exceptval(check=False)
+@boundscheck(False) # turn off bounds-checking for entire function
+@wraparound(False)  # turn off negative index wrapping for entire function           
+@nonecheck(False) 
+cdef FLT64 [:, ::1] MATDIFFN(FLT64 [::1] r):
+    cdef FLT64 r0 = r[0]
+    cdef FLT64 r1 = r[1]
+    dN = np.zeros((2,8), dtype=np.float64)
+    cdef FLT64 [:, ::1] dN_view = dN
+    dN_view[0][0] = 0.25*(1-r1)*(2*r0+r1)
+    dN_view[0][1] = 0.25*(1-r1)*(2*r0-r1)
+    dN_view[0][2] = 0.25*(1+r1)*(2*r0+r1)
+    dN_view[0][3] = 0.25*(1+r1)*(2*r0-r1)
+    dN_view[0][4] = -r0*(1-r1)
+    dN_view[0][5] = 0.5*(1-r1*r1)
+    dN_view[0][6] = -r0*(1+r1)
+    dN_view[0][7] = -0.5*(1-r1*r1)
+    dN_view[1][0] = 0.25*(1-r0)*(2*r1+r0)
+    dN_view[1][1] = 0.25*(1+r0)*(2*r1-r0)
+    dN_view[1][2] = 0.25*(1+r0)*(2*r1+r0)
+    dN_view[1][3] = 0.25*(1-r0)*(2*r1-r0)
+    dN_view[1][4] = -0.5*(1-r0*r0)
+    dN_view[1][5] = -r1*(1+r0)
+    dN_view[1][6] = 0.5*(1-r0*r0)
+    dN_view[1][7] = -r1*(1-r0)
     return dN
-    
-cdef double DET(double [:] A):
-    cdef double det = A[0]*A[3]-A[1]*A[2]
-    return det
- 
-cdef double [:,:] INV(double [:] A):
-    cdef double [:,:] invA = (1/(A[0]*A[3]-A[1]*A[2]))*np.array([[A[3], -A[1]], [-A[2], A[0]]])
-    return invA
-    
 
-@cython.cdivision(True)
-@cython.exceptval(check=False)
-@cython.boundscheck(False) # turn off bounds-checking for entire function
-@cython.wraparound(False)  # turn off negative index wrapping for entire function           
-@cython.nonecheck(False)              
-def ShapeFunctions(double [:] r_coord, int nodedof):
-    
-    N = MATN(r_coord)
-    cdef double [:, :] shape_function = N
-    
-    matN = np.zeros((nodedof, 8*nodedof), dtype=FLT64) 
-    cdef double [:, :] mat_N = matN
-    
+@cdivision(True)
+@exceptval(check=False)
+@boundscheck(False) # turn off bounds-checking for entire function
+@wraparound(False)  # turn off negative index wrapping for entire function           
+@nonecheck(False) 
+cdef FLT64 DET(FLT64 [:, ::1] A):
+    cdef FLT64 det = A[0][0]*A[1][1]-A[0][1]*A[1][0]
+    return det
+
+@cdivision(True)
+@exceptval(check=False)
+@boundscheck(False) # turn off bounds-checking for entire function
+@wraparound(False)  # turn off negative index wrapping for entire function           
+@nonecheck(False) 
+cdef FLT64 [:, ::1] INV(FLT64 [:, ::1] A):
+    cdef FLT64 detA = DET(A)
+    cdef FLT64 [:, ::1] invA = (1/detA)*np.array([[A[1][1],-A[0][1]],
+                                                  [-A[1][0], A[0][0]]])
+    return invA
+
+@cdivision(True)
+@exceptval(check=False)
+@boundscheck(False) # turn off bounds-checking for entire function
+@wraparound(False)  # turn off negative index wrapping for entire function           
+@nonecheck(False) 
+cdef FLT64 [:, ::1] JACOBIANO(FLT64 [::1] r_coord, FLT64 [:, ::1] element_coord):  
+    cdef FLT64 [:, ::1] diffN = MATDIFFN(r_coord)  
+    jac = np.zeros((2, 2), dtype=np.float64)
+    cdef FLT64 [:, ::1] jac_view = jac
+    jac_view[0][0] = diffN[0][0]*element_coord[0][0]+diffN[0][1]*element_coord[1][0]+diffN[0][2]*element_coord[2][0]+diffN[0][3]*element_coord[3][0]+diffN[0][4]*element_coord[4][0]+diffN[0][5]*element_coord[5][0]+diffN[0][6]*element_coord[6][0]+diffN[0][7]*element_coord[7][0]
+    jac_view[0][1] = diffN[0][0]*element_coord[0][1]+diffN[0][1]*element_coord[1][1]+diffN[0][2]*element_coord[2][1]+diffN[0][3]*element_coord[3][1]+diffN[0][4]*element_coord[4][1]+diffN[0][5]*element_coord[5][1]+diffN[0][6]*element_coord[6][1]+diffN[0][7]*element_coord[7][1]
+    jac_view[1][0] = diffN[1][0]*element_coord[0][0]+diffN[1][1]*element_coord[1][0]+diffN[1][2]*element_coord[2][0]+diffN[1][3]*element_coord[3][0]+diffN[1][4]*element_coord[4][0]+diffN[1][5]*element_coord[5][0]+diffN[1][6]*element_coord[6][0]+diffN[1][7]*element_coord[7][0]
+    jac_view[1][1] = diffN[1][0]*element_coord[0][1]+diffN[1][1]*element_coord[1][1]+diffN[1][2]*element_coord[2][1]+diffN[1][3]*element_coord[3][1]+diffN[1][4]*element_coord[4][1]+diffN[1][5]*element_coord[5][1]+diffN[1][6]*element_coord[6][1]+diffN[1][7]*element_coord[7][1]
+    return jac
+
+@boundscheck(False) # turn off bounds-checking for entire function
+@wraparound(False)  # turn off negative index wrapping for entire function                  
+def ShapeFunctions(FLT64 [::1] r_coord, INT32 nodedof):
+    cdef FLT64 [:, ::1] shape_function = MATN(r_coord)
+    matN = np.zeros((nodedof, 8*nodedof), dtype=np.float64) 
+    cdef FLT64 [:, ::1] matN_view = matN
     cdef Py_ssize_t block, dof
-    
     for block in range(8):
         for dof in range(nodedof):
-            mat_N[dof, block*nodedof+dof] = shape_function[0, block]
+            matN_view[dof, block*nodedof+dof] = shape_function[0, block]
     return matN
 
-@cython.cdivision(True)
-@cython.exceptval(check=False)
-@cython.boundscheck(False) # turn off bounds-checking for entire function
-@cython.wraparound(False)  # turn off negative index wrapping for entire function           
-@cython.nonecheck(False)     
-def DiffShapeFuntion(double [:] r_coord, int nodedof):
-    
-    diffN = MATDIFFN(r_coord)
-    cdef double [:, :] diff_shape_function = diffN
-    
-    matdiffN = np.zeros((2*nodedof, 8*nodedof), dtype=FLT64) 
-    cdef double [:, :] mat_diff_N = matdiffN
-    
+@boundscheck(False) # turn off bounds-checking for entire function
+@wraparound(False)  # turn off negative index wrapping for entire function           
+def DiffShapeFuntion(FLT64 [::1] r_coord, INT32 nodedof):
+    cdef FLT64 [:, ::1] diff_shape_function = MATDIFFN(r_coord)
+    matdiffN = np.zeros((2*nodedof, 8*nodedof), dtype=np.float64) 
+    cdef FLT64 [:, ::1] matdiffN_view = matdiffN
     cdef Py_ssize_t block, dof
-    
     for block in range(8):
         for dof in range(nodedof):
-            mat_diff_N[nodedof*dof-dof*(nodedof-2), block*nodedof+dof] = diff_shape_function[0, block]
-            mat_diff_N[nodedof*dof-dof*(nodedof-2)+1, block*nodedof+dof] = diff_shape_function[1, block]
-  
+            matdiffN_view[nodedof*dof-dof*(nodedof-2), block*nodedof+dof] = diff_shape_function[0, block]
+            matdiffN_view[nodedof*dof-dof*(nodedof-2)+1, block*nodedof+dof] = diff_shape_function[1, block]
     return matdiffN
     
-@cython.cdivision(True)
-@cython.exceptval(check=False)
-@cython.boundscheck(False) # turn off bounds-checking for entire function
-@cython.wraparound(False)  # turn off negative index wrapping for entire function           
-@cython.nonecheck(False)     
-def Jacobian(double [:] r_coord, double [:, :] element_coord):  
-    cdef double [:, :] diffN = MATDIFFN(r_coord)  
-    cdef double [:, :] jac = np.zeros((2, 2), dtype=FLT64)
-
-    jac[0,0] = diffN[0,0]*element_coord[0,0]+diffN[0,1]*element_coord[1,0]+diffN[0,2]*element_coord[2,0]+diffN[0,3]*element_coord[3,0]+diffN[0,4]*element_coord[4,0]+diffN[0,5]*element_coord[5,0]+diffN[0,6]*element_coord[6,0]+diffN[0,7]*element_coord[7,0]
-    jac[0,1] = diffN[0,0]*element_coord[0,1]+diffN[0,1]*element_coord[1,1]+diffN[0,2]*element_coord[2,1]+diffN[0,3]*element_coord[3,1]+diffN[0,4]*element_coord[4,1]+diffN[0,5]*element_coord[5,1]+diffN[0,6]*element_coord[6,1]+diffN[0,7]*element_coord[7,1]
-    jac[1,0] = diffN[1,0]*element_coord[0,0]+diffN[1,1]*element_coord[1,0]+diffN[1,2]*element_coord[2,0]+diffN[1,3]*element_coord[3,0]+diffN[1,4]*element_coord[4,0]+diffN[1,5]*element_coord[5,0]+diffN[1,6]*element_coord[6,0]+diffN[1,7]*element_coord[7,0]
-    jac[1,1] = diffN[1,0]*element_coord[0,1]+diffN[1,1]*element_coord[1,1]+diffN[1,2]*element_coord[2,1]+diffN[1,3]*element_coord[3,1]+diffN[1,4]*element_coord[4,1]+diffN[1,5]*element_coord[5,1]+diffN[1,6]*element_coord[6,1]+diffN[1,7]*element_coord[7,1]
-    return jac
+@boundscheck(False) # turn off bounds-checking for entire function
+@wraparound(False)  # turn off negative index wrapping for entire function           
+def Jacobian(FLT64 [::1] r_coord, FLT64 [:, ::1] element_coord):  
+    cdef FLT64 [:, ::1] Jac = JACOBIANO(r_coord, element_coord)
+    return Jac
     
-@cython.cdivision(True)
-@cython.exceptval(check=False)
-@cython.boundscheck(False) # turn off bounds-checking for entire function
-@cython.wraparound(False)  # turn off negative index wrapping for entire function           
-@cython.nonecheck(False)     
-def invJacobi(double [:] r_coord, double [:, :] element_coord, int nodedof):
-    cdef double [:, :] J = Jacobian(r_coord, element_coord)
-    cdef double [:, :] invJ = INV(np.array(J).flatten())
-    cdef double [:, :] mat_invJ = np.zeros((2*nodedof, 2*nodedof), dtype=FLT64)  
-
+@boundscheck(False) # turn off bounds-checking for entire function
+@wraparound(False)  # turn off negative index wrapping for entire function           
+def invJacobi(FLT64 [::1] r_coord, FLT64 [:, ::1] element_coord, INT32 nodedof):
+    cdef FLT64 [:, ::1] Jac = JACOBIANO(r_coord, element_coord)
+    cdef FLT64 [:, ::1] invJ = INV(Jac)
+    mat_invJ = np.zeros((2*nodedof, 2*nodedof), dtype=np.float64)  
+    cdef FLT64 [:, ::1] mat_invJ_view = mat_invJ
     cdef Py_ssize_t block, dimr, dimc
-
     for block in range(nodedof):
         for dimr in range(2):
             for dimc in range(2):
-                mat_invJ[block*nodedof+dimr, block*nodedof+dimc] = invJ[dimr, dimc]
-       
+                mat_invJ_view[block*nodedof+dimr, block*nodedof+dimc] = invJ[dimr, dimc]
+    
     return mat_invJ
 
-@cython.cdivision(True)
-@cython.exceptval(check=False)
-@cython.boundscheck(False) # turn off bounds-checking for entire function
-@cython.wraparound(False)  # turn off negative index wrapping for entire function           
-@cython.nonecheck(False)     
-def detJacobi(double [:] r_coord, double [:, :] element_coord):
-    cdef double [:, :] J = Jacobian(r_coord, element_coord)
-    cdef double detJ = 0.0
-    detJ = DET(np.array(J).flatten())
+@boundscheck(False) # turn off bounds-checking for entire function
+@wraparound(False)  # turn off negative index wrapping for entire function           
+def detJacobi(FLT64 [::1] r_coord, FLT64 [:, ::1] element_coord):
+    cdef FLT64 [:, ::1] Jac = JACOBIANO(r_coord, element_coord)
+    cdef FLT64 detJ = DET(Jac)
     return detJ
 
-@cython.cdivision(True)
-@cython.exceptval(check=False)
-@cython.boundscheck(False) # turn off bounds-checking for entire function
-@cython.wraparound(False)  # turn off negative index wrapping for entire function           
-@cython.nonecheck(False)     
-def NodeList(int [:, :] inci, int element_number):
-    cdef int noi = inci[element_number, 4]
-    cdef int noj = inci[element_number, 5]
-    cdef int nok = inci[element_number, 6]
-    cdef int nol = inci[element_number, 7]
-    cdef int nom = inci[element_number, 8]
-    cdef int non = inci[element_number, 9]
-    cdef int noo = inci[element_number, 10]
-    cdef int nop = inci[element_number, 11]
-    cdef int [:] node_list = np.array([noi, noj, nok, nol, nom, non, noo, nop])                  
+@boundscheck(False) # turn off bounds-checking for entire function
+@wraparound(False)  # turn off negative index wrapping for entire function            
+def NodeList(INT32 [:, ::1] inci, INT32 element_number):
+    cdef INT32 noi = inci[element_number, 4]
+    cdef INT32 noj = inci[element_number, 5]
+    cdef INT32 nok = inci[element_number, 6]
+    cdef INT32 nol = inci[element_number, 7]
+    cdef INT32 nom = inci[element_number, 8]
+    cdef INT32 non = inci[element_number, 9]
+    cdef INT32 noo = inci[element_number, 10]
+    cdef INT32 nop = inci[element_number, 11]
+    cdef INT32 [::1] node_list = np.array([noi, noj, nok, nol, nom, non, noo, nop], dtype=np.int32)                  
     return node_list
             
-@cython.cdivision(True)
-@cython.exceptval(check=False)
-@cython.boundscheck(False) # turn off bounds-checking for entire function
-@cython.wraparound(False)  # turn off negative index wrapping for entire function           
-@cython.nonecheck(False)     
-def NodeCoord(double [:, :] coord, int [:] node_list):
-    cdef int noi = node_list[0]
-    cdef int noj = node_list[1]
-    cdef int nok = node_list[2]
-    cdef int nol = node_list[3]
-    cdef int nom = node_list[4]
-    cdef int non = node_list[5]
-    cdef int noo = node_list[6]
-    cdef int nop = node_list[7]
-    cdef double xi = coord[noi - 1, 1]
-    cdef double yi = coord[noi - 1, 2]
-    cdef double xj = coord[noj - 1, 1]
-    cdef double yj = coord[noj - 1, 2]
-    cdef double xk = coord[nok - 1, 1]
-    cdef double yk = coord[nok - 1, 2]
-    cdef double xl = coord[nol - 1, 1]
-    cdef double yl = coord[nol - 1, 2]
-    cdef double xm = coord[nom - 1, 1]
-    cdef double ym = coord[nom - 1, 2]
-    cdef double xn = coord[non - 1, 1]
-    cdef double yn = coord[non - 1, 2]
-    cdef double xo = coord[noo - 1, 1]
-    cdef double yo = coord[noo - 1, 2]
-    cdef double xp = coord[nop - 1, 1]
-    cdef double yp = coord[nop - 1, 2]
-    cdef double [:,:] element_coord = np.array([[xi, yi], [xj, yj], [xk, yk], [xl, yl], [xm, ym], [xn, yn], [xo, yo], [xp, yp]], dtype=FLT64)
+@boundscheck(False) # turn off bounds-checking for entire function
+@wraparound(False)  # turn off negative index wrapping for entire function           
+def NodeCoord(FLT64 [:, ::1] coord, INT32 [::1] node_list):
+    cdef INT32 noi = node_list[0]
+    cdef INT32 noj = node_list[1]
+    cdef INT32 nok = node_list[2]
+    cdef INT32 nol = node_list[3]
+    cdef INT32 nom = node_list[4]
+    cdef INT32 non = node_list[5]
+    cdef INT32 noo = node_list[6]
+    cdef INT32 nop = node_list[7]
+    cdef FLT64 xi = coord[noi - 1, 1]
+    cdef FLT64 yi = coord[noi - 1, 2]
+    cdef FLT64 xj = coord[noj - 1, 1]
+    cdef FLT64 yj = coord[noj - 1, 2]
+    cdef FLT64 xk = coord[nok - 1, 1]
+    cdef FLT64 yk = coord[nok - 1, 2]
+    cdef FLT64 xl = coord[nol - 1, 1]
+    cdef FLT64 yl = coord[nol - 1, 2]
+    cdef FLT64 xm = coord[nom - 1, 1]
+    cdef FLT64 ym = coord[nom - 1, 2]
+    cdef FLT64 xn = coord[non - 1, 1]
+    cdef FLT64 yn = coord[non - 1, 2]
+    cdef FLT64 xo = coord[noo - 1, 1]
+    cdef FLT64 yo = coord[noo - 1, 2]
+    cdef FLT64 xp = coord[nop - 1, 1]
+    cdef FLT64 yp = coord[nop - 1, 2]
+    cdef FLT64 [:, ::1] element_coord = np.array([[xi, yi], [xj, yj], [xk, yk], [xl, yl], [xm, ym], [xn, yn], [xo, yo], [xp, yp]], dtype=np.float64)
     return element_coord
 
-@cython.cdivision(True)
-@cython.exceptval(check=False)
-@cython.boundscheck(False) # turn off bounds-checking for entire function
-@cython.wraparound(False)  # turn off negative index wrapping for entire function           
-@cython.nonecheck(False)     
-def LocKey(int [:] node_list, int nodedof):
-    cdef int [::1] shape_key = np.zeros(8*nodedof, dtype=INT32)
+
+@boundscheck(False) # turn off bounds-checking for entire function
+@wraparound(False)  # turn off negative index wrapping for entire function           
+def LocKey(INT32 [::1] node_list, INT32 nodedof):
+    shape_key = np.zeros(8*nodedof, dtype=np.int32)
+    cdef INT32 [::1] shape_key_view = shape_key
     cdef Py_ssize_t node, dof
     for node in range(len(node_list)):
         for dof in range(nodedof):
-            shape_key[nodedof*node+dof] = nodedof * node_list[node] - (nodedof-dof)
+            shape_key_view[nodedof*node+dof] = nodedof * node_list[node] - (nodedof-dof)
     return shape_key

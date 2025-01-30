@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from os import environ
+# from os import environ
 
-environ["OMP_NUM_THREADS"] = "3"
+# environ["OMP_NUM_THREADS"] = "3"
 
 from numpy import dot, float64, zeros
 from scipy.sparse.linalg import spsolve
@@ -20,12 +20,14 @@ class SteadyStateLinear(Solver):
     Steady State Linear Solver Class <ConcreteClassService>
     """
 
+    # @profile
     def getMatrixAssembler(
         Model, inci, coord, tabmat, tabgeo, intgauss, SYMM=None, MP=None
     ):
         matrix = dict()
+
         if SYMM:
-            matrix["stiffness"] = AssemblerSYMM.getMatrixAssembler(
+            matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,
@@ -36,7 +38,7 @@ class SteadyStateLinear(Solver):
                 MP=MP,
             )
         else:
-            matrix["stiffness"] = AssemblerFULL.getMatrixAssembler(
+            matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,
@@ -46,6 +48,7 @@ class SteadyStateLinear(Solver):
                 type_assembler="linear_stiffness",
                 MP=MP,
             )
+        
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):

@@ -72,20 +72,16 @@ class SetModel:
     def __elemlist(self, modeldata):
         set_mesh = modeldata["MESH"]
         conec = self.mesh.getElementConection(set_mesh)
-
         elemset = self.element.getElementSet()
         shapset = self.shape.getShapeSet()
         meshset = int(f'{elemset["id"]}{shapset["id"]}')
-
         elemlist = self.mesh.getElementList(conec, meshset, modeldata)
-
         return elemlist
 
     def __coordlist(self, modeldata):
         # self.mesh(modeldata)
         set_mesh = modeldata["MESH"]
         coord = self.mesh.getNodesCoord(set_mesh)
-
         coordlist = [[None] * 4]
         nodes = [[None] * 4]
         for nn in range(len(coord)):
@@ -97,7 +93,6 @@ class SetModel:
 
     def __tabmat(self, matlist):
         """get material table"""
-
         nmat = len(matlist["PROPMAT"])
         mat_lib = dict()
         mat_prop = dict()
@@ -181,15 +176,15 @@ class SetModel:
                     "d": d,
                 }
 
-                geoset = self.geometry.GeoemtrySet()
+                geoset = self.geometry.GeometrySet()
                 idgeo = geoset["idgeo"]
 
                 sect_prop = self.geometry.getSectionProp(dim_sec)
 
                 tabgeo[gg] = {
                     "AREACS":sect_prop["areacs"],
-                    "INERYY":sect_prop["inerzz"],
-                    "INERZZ":sect_prop["ineryy"],
+                    "INERZZ":sect_prop["inerzz"],
+                    "INERYY":sect_prop["ineryy"],
                     "INERXX":sect_prop["inerxx"],
                     "THICKN":sect_prop["thickn"],
                     "B":b,
@@ -206,11 +201,14 @@ class SetModel:
                         geo_prop[key] = geolist["PROPGEO"][gg][key]
                     else:
                         geo_prop[key] = 0.0
-                idgeo = int(0)
+                        
+                geoset = self.geometry.GeometrySet()
+                idgeo = geoset["idgeo"]
+                
                 tabgeo[gg] = {
                     "AREACS":geo_prop["AREACS"],
-                    "INERYY":geo_prop["INERZZ"],
-                    "INERZZ":geo_prop["INERYY"],
+                    "INERZZ":geo_prop["INERZZ"],
+                    "INERYY":geo_prop["INERYY"],
                     "INERXX":geo_prop["INERXX"],
                     "THICKN":geo_prop["THICKN"],
                     "B":geo_prop["B"],
@@ -222,7 +220,7 @@ class SetModel:
         return tabgeo, geo_lib
 
     def __inci(self, elemlist, mat_lib, geo_lib):
-        MAXCONECELM = int(20)  # Max 20-Nodes (hexa20)
+        MAXCONECELM = int(20)  # Max 20-Nodes from hexa20
         inci = [[None] * (1 + 3 + MAXCONECELM)]
         nelem = len(elemlist)
         conec_elm = np.zeros((nelem, MAXCONECELM + 1), dtype=np.int32)
@@ -244,26 +242,21 @@ class SetModel:
             keyelem = elemlist[kk][1]
             # elem = get_elemset(keyelem)
             # elemset = elem.elemset()
-
             mesh_type_list[keyelem] = [
                 int(f'{elemeset["id"]}{shapeset["id"]}'),  # elemeset["id"],
                 len(elemeset["dofs"]),
                 len(shapeset["nodes"]),
                 len(elemeset["tensor"]),
             ]
-
             prop_elm[kk, 0] = int(elemlist[kk][1])
             prop_elm[kk, 1] = mat_lib[elemlist[kk][2]]
             prop_elm[kk, 2] = geo_lib[elemlist[kk][3]]
-
         inci = np.concatenate(
             (conec_elm[:, 0][:, np.newaxis], prop_elm, conec_elm[:, 1:]), axis=1
         )
         return inci, mesh_type_list
 
     def __coord(self, coordlist):
-        """get coord nodes"""
-
         nnod = len(coordlist)
         coord = np.zeros((nnod, 4))
         for ii in range(0, nnod):

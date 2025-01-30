@@ -3,38 +3,6 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from myfempy.io.iogmsh import get_gmsh_geo, get_gmsh_msh
-
-
-def setMesh(set_mesh):
-    if set_mesh["TYPE"] == "add":
-        return MeshADD
-
-    elif set_mesh["TYPE"] == "legacy":
-        if set_mesh["shape"] == "quad4":
-            from myfempy.core.mesh.legacyquad4 import LegacyQuad4
-            return LegacyQuad4
-        
-        elif set_mesh["shape"] == "tria3":
-            from myfempy.core.mesh.legacytria3 import LegacyTria3
-            return LegacyTria3
-       
-        else:
-            pass
-
-    elif set_mesh["TYPE"] == "gmsh":
-        if "meshimport" in set_mesh.keys():
-            pass
-        else:
-            filename = set_mesh["user_path"] + "/" + set_mesh["filename"]
-            get_gmsh_geo(filename, set_mesh)
-            get_gmsh_msh(filename, set_mesh)
-        from myfempy.core.mesh.gmsh import MeshGmsh
-
-        return MeshGmsh
-    else:
-        pass
-
 
 class Mesh(ABC):
     """Element API Class <ClassService>"""

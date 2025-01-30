@@ -44,13 +44,13 @@ class LoadThermal(Thermal):
         forcenodeaply = forcenodeaply[1::][::]
         return forcenodeaply
 
-    def getUpdateMatrix(Model, matrix, modelinfo, loadaply):
+    def getUpdateMatrix(Model, matrix, loadaply):
 
         addConv = np.where(loadaply[:, 1] == 15)
         
         if addConv[0].size:
             addLoad = loadaply[addConv, :][0]
-            matrix["stiffness"] = Model.element.getUpdateMatrix(Model, matrix["stiffness"], modelinfo, addLoad)
+            matrix["stiffness"] = Model.element.getUpdateMatrix(Model, matrix["stiffness"], addLoad)
         return matrix        
 
     def getUpdateLoad(self):
@@ -141,6 +141,7 @@ class LoadThermal(Thermal):
                 inci,
                 coord,
                 tabgeo,
+                intgauss,
                 node_list_fc,
                 elmlist[ee],
                 force_value,
@@ -233,7 +234,7 @@ class LoadThermal(Thermal):
         return force_value_vector, nodelist
 
     def __line_force_distribuition(
-        Model, inci, coord, tabgeo, node_list_fc, element_number, force_value, fc_type
+        Model, inci, coord, tabgeo, intgauss, node_list_fc, element_number, force_value, fc_type
     ):
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
@@ -243,7 +244,8 @@ class LoadThermal(Thermal):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number - 1)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        t = tabgeo[int(inci[element_number - 1, 3] - 1)]["THICKN"]
+        t = tabgeo[int(inci[element_number - 1, 3] - 1)]["THICKN"] #tabgeo[int(inci[elem - 1, 3] - 1), 4]
+        # nodes, idx_conec, __ = np.intersect1d(nodelist, node_list_fc, assume_unique=True, return_indices=True)
         test = np.in1d(nodelist, node_list_fc, assume_unique=True)
         nodes = np.array(nodelist)[test]
         idx_conec = np.where(test == True)[0]
@@ -259,21 +261,15 @@ class LoadThermal(Thermal):
                 pass
             else:
                 idx_conec = np.array2string(idx_conec)
-                get_side = Model.element.get_side_fcapp(idx_conec[1:-1]) #LoadThermal.__get_side_fcapp(idx_conec[1:-1])
-                infoside = Model.shape.getIsoParaSide(get_side)
-                r_vl = infoside[0]
-                r_ax = infoside[1]
-                pt, wt = gauss_points(type_shape, 2)
-                points = np.repeat(np.reshape([pt], (2,1)), 2, axis=1)
-                points[:, r_ax] = r_vl
+                get_side = Model.shape.getSideAxis(idx_conec[1:-1]) #.__get_side_fcapp(idx_conec[1:-1])
+                pt, wt = gauss_points(type_shape, intgauss)
                 force_value_vector = np.zeros((edof, 1))
-                for ip in range(2):
-                    N = Model.shape.getShapeFunctions(points[ip], nodedof)
-                    diffN = Model.shape.getDiffShapeFuntion(points[ip], nodedof)
-                    J = Model.shape.getJacobian(points[ip], elementcoord)
+                for ip in range(intgauss):                
+                    points =  Model.shape.getIsoParaSide(get_side, pt[ip])
+                    N = Model.shape.getShapeFunctions(np.array(points), nodedof)
+                    diffN = Model.shape.getDiffShapeFuntion(np.array(points), nodedof)
+                    J = Model.shape.getJacobian(np.array(points), elementcoord)
                     detJ_e = Model.shape.getEdgeLength(J, get_side)
-                    force_value_vector += (
-                        np.dot(N.transpose(), q) * t * abs(detJ_e) * wt[ip]
-                    )
+                    force_value_vector += (np.dot(N.transpose(), q) * t * abs(detJ_e) * wt[ip])
                 force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
         return force_value_vector, nodes, norm

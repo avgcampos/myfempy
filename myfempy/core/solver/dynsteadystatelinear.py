@@ -25,7 +25,7 @@ class DynamicSteadyStateLinear(Solver):
     ):
         matrix = dict()
         if SYMM:
-            matrix["stiffness"] = AssemblerSYMM.getMatrixAssembler(
+            matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,
@@ -35,7 +35,7 @@ class DynamicSteadyStateLinear(Solver):
                 type_assembler="linear_stiffness",
                 MP=MP,
             )
-            matrix["mass"] = AssemblerSYMM.getMatrixAssembler(
+            matrix["mass"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,
@@ -46,7 +46,7 @@ class DynamicSteadyStateLinear(Solver):
                 MP=MP,
             )
         else:
-            matrix["stiffness"] = AssemblerFULL.getMatrixAssembler(
+            matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,
@@ -56,7 +56,7 @@ class DynamicSteadyStateLinear(Solver):
                 type_assembler="linear_stiffness",
                 MP=MP,
             )
-            matrix["mass"] = AssemblerFULL.getMatrixAssembler(
+            matrix["mass"] = AssemblerFULL.getMassConsistentGlobalMatrixAssembler(
                 Model,
                 inci,
                 coord,

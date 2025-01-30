@@ -2,14 +2,13 @@
 ###### Requirements without Version Specifiers ######
 ######      pip install -r requirements.txt    ######
 numpy==1.26.4
-scipy
-cython
-gmsh
-matplotlib
-vedo
-numdifftools
-colorama
-art
+scipy==1.13.1
+cython==3.0.10
+gmsh==4.13.1
+matplotlib==3.9.0
+vedo==2024.5.2
+colorama==0.4.6
+art==6.2
 mkdocs
 python-markdown-math
 mkdocs-pdf-export-plugin

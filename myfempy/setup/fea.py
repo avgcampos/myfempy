@@ -8,17 +8,13 @@ import numpy as np
 import scipy.sparse as sp
 
 # from myfempy.core.solver import getSolver
-from myfempy.core.elements.element import setElement
-from myfempy.core.geometry.geometry import setGeometry
-from myfempy.core.material.material import setMaterial
-from myfempy.core.mesh.mesh import setMesh
-from myfempy.core.shapes.shape import setShape
+from myfempy.io.controllers import setElement, setGeometry, setMaterial, setMesh, setShape
 from myfempy.core.utilities import setSteps
 from myfempy.plots.prevplot import preview_plot
 from myfempy.setup.model import SetModel
 from myfempy.setup.physics import SetPhysics
 from myfempy.setup.results import setPostProcess
-from myfempy.utils.utils import newDir
+from myfempy.utils.utils import newDir, get_logo, get_version, clear_console, print_console, loading_bar_v1
 
 
 class newAnalysis:
@@ -43,6 +39,9 @@ class newAnalysis:
         Arguments:
             modeldata -- data information
         """
+        clear_console()
+        get_logo()
+        print_console('mesh')
         try:
             modeldata["MESH"]["user_path"] = self.path
             Mesh = newAnalysis.__setMesh(modeldata)
@@ -103,12 +102,12 @@ class newAnalysis:
         self.modelinfo["nnode"] = len(self.model.coord)
         self.modelinfo["nelem"] = len(self.model.inci)
         self.modelinfo["fulldofs"] = len(elem_set["dofs"]["d"]) * len(self.model.coord)
-        self.modelinfo["elemvol"] = newAnalysis.getElementVolume(
-            self,
-            self.modelinfo["inci"],
-            self.modelinfo["coord"],
-            self.modelinfo["tabgeo"],
-        )
+        # self.modelinfo["elemvol"] = newAnalysis.getElementVolume(
+        #     self,
+        #     self.modelinfo["inci"],
+        #     self.modelinfo["coord"],
+        #     self.modelinfo["tabgeo"],
+        # )
 
     def Physic(self, physicdata):
         """
@@ -117,14 +116,14 @@ class newAnalysis:
         Arguments:
             physicdata -- data information
         """
+        print_console('pre')
         self.modelinfo["physic"] = physicdata["PHYSIC"]
-
         try:
             Loads, BoundCond = newAnalysis.__setDomain(physicdata)
             logging.info("TRY SET PHYSICS -- SUCCESS")
         except:
             logging.warning("TRY SET PHYSICS -- FAULT")
-        
+    
         self.physic = SetPhysics(self.model, Loads, BoundCond)
         # self.physic.physicdata = physicdata
         self.modelinfo["forces"] = newAnalysis.getLoadApply(self)
@@ -146,6 +145,7 @@ class newAnalysis:
         # self.loadaply = FEANewAnalysis.getLoadApply(self)
         # self.constrains = FEANewAnalysis.getBCApply(self)
 
+    
     def Assembly(self):
         """
         Assembly assembly of fe model algebric system
@@ -158,22 +158,20 @@ class newAnalysis:
         tabmat = self.modelinfo["tabmat"]
         tabgeo = self.modelinfo["tabgeo"]
         intgauss = self.modelinfo["intgauss"]
-        
+        # loading_bar_v1(20,"SOLVER")
         try:
-            matrix = newAnalysis.getGlobalMatrix(
-                self, inci, coord, tabmat, tabgeo, intgauss, self.symm, self.mp
-            )
-            # self.solver.getMatrixAssembler(self.model, inci, coord, tabmat, tabgeo)
+            matrix = newAnalysis.getGlobalMatrix(self, inci, coord, tabmat, tabgeo, intgauss, self.symm, self.mp)
             logging.info("TRY RUN GLOBAL ASSEMBLY -- SUCCESS")
         except:
             logging.warning("TRY RUN GLOBAL ASSEMBLY -- FAULT")
-        
+        # loading_bar_v1(30,"SOLVER")
         loadaply = self.modelinfo["forces"]
         try:
             matrix = newAnalysis.getUpdateMatrix(self, matrix, loadaply)  
             logging.info("TRY RUN UPDATE ASSEMBLY -- SUCCESS")
         except:
             logging.warning("TRY RUN UPDATE ASSEMBLY -- FAULT")
+        # loading_bar_v1(40,"SOLVER")
         try:
             forcelist = newAnalysis.getLoadArray(self, loadaply)
             logging.info("TRY RUN LOAD ASSEMBLY -- SUCCESS")
@@ -191,19 +189,22 @@ class newAnalysis:
         Returns:
             solution
         """
+        print_console('solver')
         # fulldofs = self.modelinfo['fulldofs']
         # self.modelinfo = dict()
         # self.modelinfo['coord'] = self.coord
         # self.modelinfo['regions'] = self.regions
         solverset["solverstatus"] = dict()
-
+        # loading_bar_v1(5,"SOLVER")
         try:
             self.symm = solverset["SYMM"]
-            solverset["solverstatus"]["typeasmb"] = "SYMMETRIC"
+            if self.symm:
+                solverset["solverstatus"]["typeasmb"] = "SYMMETRIC"
+            else:
+                solverset["solverstatus"]["typeasmb"] = "FULL"
         except:
             self.symm = False
             solverset["solverstatus"]["typeasmb"] = "FULL"
-
         try:
             self.mp = solverset["MP"]
             solverset["solverstatus"]["ncpu"] = (
@@ -212,13 +213,13 @@ class newAnalysis:
         except:
             self.mp = 0
             solverset["solverstatus"]["ncpu"] = "OPENMP_" + str(1) + "_CORES"
-
+        # loading_bar_v1(10,"SOLVER")
         starttime = time()
         assembly, forcelist = newAnalysis.Assembly(self)
         endttime = time()
         solverset["solverstatus"]["timeasb"] = abs(endttime - starttime)
         solverset["solverstatus"]["memorysize"] = assembly["stiffness"].data.nbytes
-
+        # loading_bar_v1(50,"SOLVER")
         constrains = self.modelinfo["constrains"]
         nsteps = setSteps(solverset["STEPSET"])
         constrainsdof = dict()
@@ -227,29 +228,26 @@ class newAnalysis:
             logging.info("TRY RUN CONSTRAINS -- SUCCESS")
         except:
             logging.warning("TRY RUN CONSTRAINS -- FAULT")
-
+        # loading_bar_v1(60,"SOLVER")
         constrainsdof["freedof"] = freedof
         constrainsdof["fixedof"] = fixedof
         constrainsdof["constdof"] = constdof
-
         try:
             Uc = newAnalysis.getDirichletNH(self, constrains)
             logging.info("TRY SET DNH CONSTRAINS -- SUCCESS")
         except:
             logging.warning("TRY SET DNH CONSTRAINS -- FAULT")
-
         if forcelist.shape[1] != nsteps:
             forcelist = np.repeat(forcelist, nsteps, axis=1)
         else:
             pass
         assembly["loads"] = forcelist
-
         if Uc.shape[1] != nsteps:
             Uc = np.repeat(Uc, nsteps, axis=1)
         else:
             pass
         assembly["bcdirnh"] = Uc
-
+        # loading_bar_v1(80,"SOLVER")
         try:
             starttime = time()
             solverset["solution"] = self.solver.runSolve(
@@ -260,6 +258,7 @@ class newAnalysis:
             logging.info("TRY RUN SOLVER -- SUCCESS")
         except:
             logging.warning("TRY RUN SOLVER -- FAULT")
+        # loading_bar_v1(100,"SOLVER")
         return solverset
 
     def PreviewAnalysis(self, previewdata):
@@ -294,7 +293,6 @@ class newAnalysis:
         #     modelinfo["constrains"] = []
         # modelinfo["forces"] = FEANewAnalysis.getLoadApply(self)
         # modelinfo["constrains"] = FEANewAnalysis.getBCApply(self)
-
         try:
             preview_plot(previewdata, self.modelinfo, str(self.path))
             logging.info("TRY RUN PREVIEW PLOT -- SUCCESS")
@@ -311,7 +309,16 @@ class newAnalysis:
         Returns:
             post process arrays
         """
+        print_console('post')
         postprocdata = []
+        
+        self.modelinfo["elemvol"] = newAnalysis.getElementVolume(
+            self,
+            self.modelinfo["inci"],
+            self.modelinfo["coord"],
+            self.modelinfo["tabgeo"],
+        )
+        
         try:
             if "COMPUTER" in postprocset.keys():
                 postprocdata = setPostProcess.getCompute(self, postprocset)
@@ -407,7 +414,7 @@ class newAnalysis:
         return self.physic.getLoadCoup(self.modelinfo, self.modelinfo["coupling"])
         
     def getUpdateMatrix(self, matrix, addval):
-        return self.physic.getUpdateMatrix(matrix, self.modelinfo, addval)
+        return self.physic.getUpdateMatrix(matrix, addval)
 
     def getRegions(self):
         return self.model.mesh.getRegionsList(
