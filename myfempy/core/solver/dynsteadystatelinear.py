@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from os import environ
-
-environ["OMP_NUM_THREADS"] = "3"
+environ["OMP_NUM_THREADS"] = "8"
 
 from numpy import empty, float64, linspace, pi, unique, zeros
 from scipy.sparse.linalg import minres, spsolve

@@ -3,7 +3,7 @@
 # distutils: extra_compile_args=-fopenmp
 # distutils: extra_link_args=-fopenmp
 cimport openmp
-from cython cimport boundscheck, cdivision, exceptval, nonecheck, wraparound
+from cython cimport boundscheck, wraparound
 
 from cython.parallel import parallel, prange
 
@@ -14,7 +14,7 @@ ctypedef np.float64_t FLT64_t
 
 @boundscheck(False) # turn off bounds-checking for entire function
 @wraparound(False)  # turn off negative index wrapping for entire function           
-def getVectorizationSymm(INT32_t [::1] ith_band,
+def getVectorization(INT32_t [::1] ith_band,
                            INT32_t [::1] jth_band,
                            FLT64_t [::1] val_band,
                            INT32_t [::1] ith_diag,

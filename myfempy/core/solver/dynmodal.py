@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from os import environ
-
 environ["OMP_NUM_THREADS"] = "8"
 
 from numpy import (arange, concatenate, empty, float64, newaxis, pi, sqrt,

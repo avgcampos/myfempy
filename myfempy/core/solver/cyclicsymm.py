@@ -1,17 +1,16 @@
 from __future__ import annotations
 
 from os import environ
-
-environ["OMP_NUM_THREADS"] = "3"
+environ["OMP_NUM_THREADS"] = "8"
 
 from numpy import (arange, array, concatenate, dot, float64, in1d, int16,
                    setdiff1d, where, zeros)
+
 from scipy.sparse import csc_matrix, eye, hstack, vstack
 from scipy.sparse.linalg import minres, spsolve
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
-# from myfempy.core.alglin import linsolve_spsolve
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
 

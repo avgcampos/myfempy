@@ -12,7 +12,7 @@ FLT64 = float64
 
 from myfempy.core.solver.assembler import Assembler
 from myfempy.core.solver.assemblerfull import AssemblerFULL
-from myfempy.core.solver.assemblersymm_cython_v5 import getVectorizationSymm
+from myfempy.core.solver.assemblersymm_cython_v5 import getVectorization
 
 
 class AssemblerSYMM(Assembler):
@@ -159,7 +159,7 @@ class AssemblerSYMM(Assembler):
         ee,
         elemdof,
     ):
-        return getVectorizationSymm(
+        return getVectorization(
             ith_band,
             jth_band,
             val_band,

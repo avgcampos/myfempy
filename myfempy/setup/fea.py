@@ -45,9 +45,12 @@ class newAnalysis:
         get_logo()
         print_console("mesh")
         try:
+            starttime = time()
             modeldata["MESH"]["user_path"] = self.path
             Mesh = newAnalysis.__setMesh(modeldata)
+            endttime = time()
             logging.info("TRY SET MESH -- SUCCESS")
+            print(abs(endttime - starttime))
         except:
             logging.warning("TRY SET MESH -- FAULT")
         try:

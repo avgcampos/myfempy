@@ -3,7 +3,7 @@ import numpy as np
 from scipy import sparse
 
 
-def getVectorizationFull(ith, jth, val, loc, matrix, ee, elemdof):
+def getVectorization(ith, jth, val, loc, matrix, ee, elemdof):
 
     ith[(elemdof * elemdof) * ee : (elemdof * elemdof) * (ee + 1)] = np.tile(
         loc.reshape(1, elemdof).T, (1, elemdof)

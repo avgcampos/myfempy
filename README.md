@@ -65,7 +65,6 @@ The following python packages are required to run myfempy. Before to install myf
 - [vtk](https://pypi.org/project/vtk/)(optional) - VTK is an open-source toolkit for 3D computer graphics, image processing, and visualization
 - [vedo](https://vedo.embl.es/) - A python module for scientific analysis and visualization of эd objects
 
-
 - try
 
 ```bash
@@ -78,15 +77,27 @@ The following python packages are required to run myfempy. Before to install myf
 
 - [gmsh/External Generator Mesh](https://gmsh.info/) - Gmsh is an open source 3D finite element mesh generator with a built-in CAD engine and post-processor. *Notes: 1 - Gmsh is NOT part of myfempy projects;  2 - Is Needed install Gmsh manually*
 
+- goto [gmsh PyPi](https://pypi.org/project/gmsh/)
+
 - try
 
 ```bash
 
->> pip install --upgrade gmsh
+>> pip install gmsh
 
 ```
 
-- [gmsh PyPi](https://pypi.org/project/gmsh/)
+or
+
+- to *linux system*:
+
+```bash
+
+>> apt install gmsh
+
+```
+
+- to *windows/mac system*: [gmsh download](https://gmsh.info/#Download)
 
 ## Tutorial
 
@@ -115,7 +126,6 @@ This command generates *.html* files
 ## Release
 
 The all release versions is available [here](https://github.com/avgcampos/myfempy/releases)
-
 
 ## License
 

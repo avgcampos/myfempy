@@ -57,7 +57,7 @@ def get_gmsh_msh(filename, meshdata):
         + (filename + ".geo")
         + " "
         + gmsh_key(meshdata["meshconfig"]["mesh"])
-        + " -o "
+        + " -o -nt 0 -algo "
         + (filename + ".msh1")
     )
     # os.system("echo GENERATING MESH FROM EXTERNAL GMSH")

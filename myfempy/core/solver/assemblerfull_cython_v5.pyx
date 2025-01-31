@@ -14,7 +14,7 @@ ctypedef np.float64_t FLT64_t
 
 @boundscheck(False) # turn off bounds-checking for entire function
 @wraparound(False)  # turn off negative index wrapping for entire function           
-def getVectorizationFull(INT32_t [::1] ith, INT32_t [::1] jth, FLT64_t [::1] val, INT32_t [::1] loc, FLT64_t [:, ::1] matrix, INT32_t ee, INT32_t elemdof):
+def getVectorization(INT32_t [::1] ith, INT32_t [::1] jth, FLT64_t [::1] val, INT32_t [::1] loc, FLT64_t [:, ::1] matrix, INT32_t ee, INT32_t elemdof):
     cdef Py_ssize_t LOOP_MAX = elemdof  
     cdef FLT64_t VAL
     cdef INT32_t KI, KJ

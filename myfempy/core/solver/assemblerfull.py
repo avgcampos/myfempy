@@ -11,12 +11,11 @@ INT32 = int32
 FLT64 = float64
 
 from myfempy.core.solver.assembler import Assembler
-from myfempy.core.solver.assemblerfull_cython_v5 import getVectorizationFull
 from myfempy.core.solver.assemblerfull_numpy_v1 import (getConstrains,
                                                         getDirichletNH,
                                                         getLoadAssembler,
                                                         getRotationMatrix)
-
+from myfempy.core.solver.assemblerfull_cython_v5 import getVectorization
 
 class AssemblerFULL(Assembler):
     """
@@ -101,7 +100,7 @@ class AssemblerFULL(Assembler):
 
     # @profile
     def __getVectorization(ith, jth, val, loc, matrix, ee, elemdof):
-        return getVectorizationFull(ith, jth, val, loc, matrix, ee, elemdof)
+        return getVectorization(ith, jth, val, loc, matrix, ee, elemdof)
 
     def __getLoc(Model, inci, element_number):
         elem_set = Model.element.getElementSet()
