@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-from os import environ
-
-environ["OMP_NUM_THREADS"] = "8"
-
-from numpy import array, float64, int32, zeros
+from numpy import array, float64, int32, zeros, empty
 from scipy.sparse import coo_matrix, csc_matrix
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 INT32 = int32
 FLT64 = float64
@@ -13,8 +10,8 @@ FLT64 = float64
 from myfempy.core.solver.assembler import Assembler
 from myfempy.core.solver.assemblerfull_numpy_v1 import (getConstrains,
                                                         getDirichletNH,
-                                                        getLoadAssembler,
-                                                        getRotationMatrix)
+                                                        getLoadAssembler)
+
 from myfempy.core.solver.assemblerfull_cython_v5 import getVectorization
 
 class AssemblerFULL(Assembler):
@@ -34,18 +31,17 @@ class AssemblerFULL(Assembler):
         nodetot = coord.shape[0]
         sdof = nodedof * nodetot
 
+        # Initialize lists to store sparse matrix data
         ith = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
         jth = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
         val = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=FLT64)
+        
+        # ith_list, jth_list, val_list = [], [], []
 
         for ee in range(inci.shape[0]):
-            matrix = Model.element.getStifLinearMat(
-                Model, inci, coord, tabmat, tabgeo, intgauss, ee
-            )
+            matrix = Model.element.getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, ee)
             loc = AssemblerFULL.__getLoc(Model, inci, ee)
-            ith, jth, val = AssemblerFULL.__getVectorization(
-                ith, jth, val, loc, matrix, ee, elemdof
-            )
+            ith, jth, val = AssemblerFULL.__getVectorization(ith, jth, val, loc, matrix, ee, elemdof)
 
         A_sp_scipy_csc = csc_matrix((val, (ith, jth)), shape=(sdof, sdof))
         return A_sp_scipy_csc
@@ -64,9 +60,10 @@ class AssemblerFULL(Assembler):
         nodetot = coord.shape[0]
         sdof = nodedof * nodetot
 
-        ith = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
-        jth = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
-        val = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=FLT64)
+        # Initialize lists to store sparse matrix data
+        ith = empty((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
+        jth = empty((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
+        val = empty((inci.shape[0] * (elemdof * elemdof)), dtype=FLT64)
 
         for ee in range(inci.shape[0]):
             matrix = Model.element.getMassConsistentMat(
@@ -94,13 +91,9 @@ class AssemblerFULL(Assembler):
     def getDirichletNH(constrains, nodetot, nodedof):
         return getDirichletNH(constrains, nodetot, nodedof)
 
-    # https://en.wikipedia.org/wiki/Rotation_matrix
-    def getRotationMatrix(node_list, coord, ndof):
-        return getRotationMatrix(node_list, coord, ndof)
-
     # @profile
-    def __getVectorization(ith, jth, val, loc, matrix, ee, elemdof):
-        return getVectorization(ith, jth, val, loc, matrix, ee, elemdof)
+    def __getVectorization(ith, jth, val, loc, matrix, element_number, elemdof):
+        return getVectorization(ith, jth, val, loc, matrix, element_number, elemdof)
 
     def __getLoc(Model, inci, element_number):
         elem_set = Model.element.getElementSet()
@@ -108,3 +101,4 @@ class AssemblerFULL(Assembler):
         nodelist = Model.shape.getNodeList(inci, element_number)
         loc = Model.shape.getLocKey(nodelist, nodedof)
         return array(loc)
+        

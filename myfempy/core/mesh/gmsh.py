@@ -44,9 +44,7 @@ class MeshGmsh(Mesh):
 
     def __setmesh_from_gmsh(set_mesh):
         if "meshimport" in set_mesh.keys():
-            conec, nodes = MeshGmsh.__convert_from_msh1(
-                set_mesh["user_path"] + "/" + set_mesh["meshimport"]
-            )
+            conec, nodes = MeshGmsh.__convert_from_msh1(set_mesh["user_path"] + "/" + set_mesh["meshimport"]['object'])
         else:
             conec, nodes = MeshGmsh.__convert_from_msh1(
                 set_mesh["user_path"] + "/" + set_mesh["filename"]

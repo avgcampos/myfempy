@@ -77,13 +77,13 @@ The following python packages are required to run myfempy. Before to install myf
 
 - [gmsh/External Generator Mesh](https://gmsh.info/) - Gmsh is an open source 3D finite element mesh generator with a built-in CAD engine and post-processor. *Notes: 1 - Gmsh is NOT part of myfempy projects;  2 - Is Needed install Gmsh manually*
 
-- goto [gmsh PyPi](https://pypi.org/project/gmsh/)
+goto [gmsh PyPi](https://pypi.org/project/gmsh/) to install the API gmsh/python
 
 - try
 
 ```bash
 
->> pip install gmsh
+>> pip install gmsh 
 
 ```
 

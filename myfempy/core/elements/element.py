@@ -13,10 +13,6 @@ class Element(ABC):
         pass
 
     @abstractmethod
-    def getH():
-        pass
-
-    @abstractmethod
     def getStifLinearMat():
         pass
 

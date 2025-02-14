@@ -1,149 +1,146 @@
 from __future__ import annotations
 
-import numdifftools as nd
-import numpy as np
+from numpy import sqrt, array, cross
+from numpy.linalg import norm
 
 from myfempy.core.shapes.shape import Shape
-
+from myfempy.core.shapes.hexa8_tasks import (DiffShapeFuntion, Jacobian,
+                                             LocKey, NodeCoord, NodeList,
+                                             ShapeFunctions, detJacobi,
+                                             invJacobi)
+from myfempy.core.utilities import poly_area
 
 class Hexa8(Shape):
-    """Hexaedro 8-Node Shape Class <ConcreteClassService>"""
+    """Hexaedron 8-Node Shape Class <ConcreteClassService>"""
 
     def getShapeSet():
         shapeset = {
-            "def": "8-nodes_conec 1-first_order",
+            "def": "8-nodes_conec 1-interpol_order",
             "key": "hexa8",
             "id": 81,
             "nodes": ["i", "j", "k", "l", "m", "n", "o", "p"],
+            "sidenorm": {
+                "0": [0, 0, -1],
+                "1": [-1, 0, 0],
+                "2": [0, -1, 0],
+                "3": [0, 0, 1],
+                "4": [0, 1, 0],
+                "5": [1, 0, 0],
+            },
+            "nodesconecface": 4,
         }
         return shapeset
 
-    def N(r_coord):
-        N = np.zeros((1, 8))
-        N[0, 0] = 0.125 * (1 - r_coord[0]) * (1 - r_coord[1]) * (1 - r_coord[2])
-        N[0, 1] = 0.125 * (1 + r_coord[0]) * (1 - r_coord[1]) * (1 - r_coord[2])
-        N[0, 2] = 0.125 * (1 + r_coord[0]) * (1 + r_coord[1]) * (1 - r_coord[2])
-        N[0, 3] = 0.125 * (1 - r_coord[0]) * (1 + r_coord[1]) * (1 - r_coord[2])
-        N[0, 4] = 0.125 * (1 - r_coord[0]) * (1 - r_coord[1]) * (1 + r_coord[2])
-        N[0, 5] = 0.125 * (1 + r_coord[0]) * (1 - r_coord[1]) * (1 + r_coord[2])
-        N[0, 6] = 0.125 * (1 + r_coord[0]) * (1 + r_coord[1]) * (1 + r_coord[2])
-        N[0, 7] = 0.125 * (1 - r_coord[0]) * (1 + r_coord[1]) * (1 + r_coord[2])
-        return N
-
-    def diffN(shape_function, r_coord):
-        dN = nd.Gradient(shape_function, n=1)
-        return dN(r_coord)
-
-    def getShapeFunctions(r_coord, nodedof):
-        shape_function = Hexa8.N(r_coord)
-        mat_N = np.zeros((nodedof, 8 * nodedof))
-        for block in range(8):
-            for dof in range(nodedof):
-                mat_N[dof, block * nodedof + dof] = shape_function[0, block]
-        return mat_N
-
-    def getDiffShapeFuntion(shape_function, r_coord, nodedof):
-        diff_shape_function = Hexa8.diffN(shape_function, r_coord)
-        mat_diff_N = np.zeros((3 * nodedof, 8 * nodedof))
-        for block in range(8):
-            for dof in range(nodedof):
-                mat_diff_N[
-                    nodedof * dof - dof * (nodedof - 3), block * nodedof + dof
-                ] = diff_shape_function[0, block]
-                mat_diff_N[
-                    nodedof * dof - dof * (nodedof - 3) + 1, block * nodedof + dof
-                ] = diff_shape_function[1, block]
-                mat_diff_N[
-                    nodedof * dof - dof * (nodedof - 3) + 2, block * nodedof + dof
-                ] = diff_shape_function[2, block]
-        return mat_diff_N
-
-    def getJacobian(shape_function, r_coord, element_coord):
-        return np.dot(Hexa8.diffN(shape_function, r_coord), element_coord)
-
-    def invJacobi(shape_function, r_coord, element_coord, nodedof):
-        J = Hexa8.getJacobian(shape_function, r_coord, element_coord)
-        invJ = np.linalg.inv(J)
-        mat_invJ = np.kron(np.eye(nodedof, dtype=int), invJ)
-        return mat_invJ
-
-    def detJacobi(shape_function, r_coord, element_coord):
-        J = Hexa8.getJacobian(shape_function, r_coord, element_coord)
-        return np.linalg.det(J)
-
-    def getNodeList(inci, element_number):
-        noi = int(inci[element_number, 4])
-        noj = int(inci[element_number, 5])
-        nok = int(inci[element_number, 6])
-        nol = int(inci[element_number, 7])
-        nom = int(inci[element_number, 8])
-        non = int(inci[element_number, 9])
-        noo = int(inci[element_number, 10])
-        nop = int(inci[element_number, 11])
-
-        node_list = [noi, noj, nok, nol, nom, non, noo, nop]
-
-        return node_list
-
-    def getNodeCoord(coord, nodelist):
-        noi = nodelist[0]
-        noj = nodelist[1]
-        nok = nodelist[2]
-        nol = nodelist[3]
-        nom = nodelist[4]
-        non = nodelist[5]
-        noo = nodelist[6]
-        nop = nodelist[7]
-
-        xi = coord[noi - 1, 1]
-        yi = coord[noi - 1, 2]
-        zi = coord[noi - 1, 3]
-        xj = coord[noj - 1, 1]
-        yj = coord[noj - 1, 2]
-        zj = coord[noj - 1, 3]
-        xk = coord[nok - 1, 1]
-        yk = coord[nok - 1, 2]
-        zk = coord[nok - 1, 3]
-        xl = coord[nol - 1, 1]
-        yl = coord[nol - 1, 2]
-        zl = coord[nol - 1, 3]
-        xm = coord[nom - 1, 1]
-        ym = coord[nom - 1, 2]
-        zm = coord[nom - 1, 3]
-        xn = coord[non - 1, 1]
-        yn = coord[non - 1, 2]
-        zn = coord[non - 1, 3]
-        xo = coord[noo - 1, 1]
-        yo = coord[noo - 1, 2]
-        zo = coord[noo - 1, 3]
-        xp = coord[nop - 1, 1]
-        yp = coord[nop - 1, 2]
-        zp = coord[nop - 1, 3]
-
-        element_coord = np.array(
+    # tetra4 sides
+    def getIsoParaSide(side, r):
+        # r = 0/ s = 1/ t = 2
+        isops = {
+            "0": [r[0], r[1], -1.0],  # [r, s, 0]
+            "1": [-1.0, r[0], r[1]],  # [r, 0, t]
+            "2": [r[0], -1.0, r[1]],  # [0, s, t]
+            "3": [r[0], r[1], 1.0],  # [r, s, 0]
+            "4": [r[0], 1.0, r[1]],  # [r, 0, t]
+            "5": [1.0, r[0], r[1]],  # [0, s, t]
+        }
+        return isops[side]
+    
+    def getAreaLength(side, elementcoord):
+        
+        nodes_conec_dic = {
+            '0': [0, 1, 2, 3],
+            '1': [0, 3, 7, 4],
+            '2': [0, 1, 5, 4],
+            '3': [4, 5, 6, 7],
+            '4': [2, 3, 7, 6],
+            '5': [1, 2, 6, 5],
+        }
+        
+        nodes_conec = nodes_conec_dic[side]
+        
+        no1 = nodes_conec[0]
+        no2 = nodes_conec[1]
+        no3 = nodes_conec[2]
+        no4 = nodes_conec[3]
+        
+        
+        no1 = nodes_conec[0]
+        no2 = nodes_conec[1]
+        no3 = nodes_conec[2]
+        no4 = nodes_conec[3]
+        
+        coord_x_no1 = elementcoord[no1, 0]
+        coord_y_no1 = elementcoord[no1, 1]
+        coord_z_no1 = elementcoord[no1, 2]
+        coord_x_no2 = elementcoord[no2, 0]
+        coord_y_no2 = elementcoord[no2, 1]
+        coord_z_no2 = elementcoord[no2, 2]
+        coord_x_no3 = elementcoord[no3, 0]
+        coord_y_no3 = elementcoord[no3, 1]
+        coord_z_no3 = elementcoord[no3, 2]
+        coord_x_no4 = elementcoord[no4, 0]
+        coord_y_no4 = elementcoord[no4, 1]
+        coord_z_no4 = elementcoord[no4, 2]
+        
+        poly = array(
             [
-                [xi, yi, zi],
-                [xj, yj, zj],
-                [xk, yk, zk],
-                [xl, yl, zl],
-                [xm, ym, zm],
-                [xn, yn, zn],
-                [xo, yo, zo],
-                [xp, yp, zp],
+                [coord_x_no1, coord_y_no1, coord_z_no1],
+                [coord_x_no2, coord_y_no2, coord_z_no2],
+                [coord_x_no3, coord_y_no3, coord_z_no3],
+                [coord_x_no4, coord_y_no4, coord_z_no4],
             ]
         )
+        area_surf = 0.25*poly_area(poly)
+        return area_surf
 
-        return element_coord
+    def getNormalFace(elementcoord, side):
+        faces = array([
+                [elementcoord[0], elementcoord[1], elementcoord[2], elementcoord[3]],  # Face 0
+                [elementcoord[0], elementcoord[3], elementcoord[7], elementcoord[4]],  # Face 1
+                [elementcoord[0], elementcoord[1], elementcoord[5], elementcoord[4]],  # Face 2
+                [elementcoord[4], elementcoord[5], elementcoord[6], elementcoord[7]],   # Face 3
+                [elementcoord[2], elementcoord[3], elementcoord[7], elementcoord[6]],   # Face 4
+                [elementcoord[1], elementcoord[2], elementcoord[6], elementcoord[5]],   # Face 5
+            ])
+        face = faces[int(side)]
+        # Compute the outward normal vector of the face
+        v1 = face[1] - face[0]
+        v2 = face[2] - face[0]
+        normal = cross(v1, v2)
+        normal *= 1.0/norm(normal)  # Normalize
+        return normal
 
-    def getShapeKey(nodelist, nodedof):
-        """element lockey(dof)"""
+    def getSideAxis(set_side):
+        side = {
+            '0 1 2 3': '0',
+            '0 3 4 7': '1',
+            '0 1 4 5': '2',
+            '4 5 6 7': '3',
+            '2 3 6 7': '4',
+            '1 2 5 6': '5',
+        }
+        return side[set_side]
 
-        shape_key = np.zeros(8 * nodedof, dtype=int)
+    def getShapeFunctions(r_coord, nodedof):
+        return ShapeFunctions(r_coord, nodedof)
 
-        for node in range(len(nodelist)):
-            for dof in range(nodedof):
-                shape_key[nodedof * node + dof] = nodedof * nodelist[node] - (
-                    nodedof - dof
-                )
+    def getDiffShapeFuntion(r_coord, nodedof):
+        return DiffShapeFuntion(r_coord, nodedof)
 
-        return shape_key
+    def getJacobian(r_coord, element_coord):
+        return Jacobian(r_coord, element_coord)
+
+    def getinvJacobi(r_coord, element_coord, nodedof):
+        return invJacobi(r_coord, element_coord, nodedof)
+
+    def getdetJacobi(r_coord, element_coord):
+        return detJacobi(r_coord, element_coord)
+
+    def getNodeList(inci, element_number):
+        return NodeList(inci, element_number)
+
+    def getNodeCoord(coord, node_list):
+        return NodeCoord(coord, node_list)
+
+    def getLocKey(node_list, nodedof):
+        return LocKey(node_list, nodedof)
+

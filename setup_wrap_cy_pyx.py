@@ -44,5 +44,7 @@ class build_ext(_build_ext):
             Extension("*", sources=["./myfempy/core/shapes/tria6_tasks.pyx"], **extension_kwargs),
             Extension("*", sources=["./myfempy/core/shapes/quad4_tasks.pyx"], **extension_kwargs),
             Extension("*", sources=["./myfempy/core/shapes/quad8_tasks.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/tetr4_tasks.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/hexa8_tasks.pyx"], **extension_kwargs),
         ]
         self.distribution.ext_modules.extend(cythonize(extensions))

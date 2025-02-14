@@ -1,23 +1,21 @@
 from __future__ import annotations
 
-from os import environ
-environ["OMP_NUM_THREADS"] = "8"
-
 from numpy import (arange, array, concatenate, dot, float64, in1d, int16,
-                   setdiff1d, where, zeros)
+                   setdiff1d, where, zeros, sqrt)
 
-from scipy.sparse import csc_matrix, eye, hstack, vstack
+from scipy.sparse import csc_matrix, lil_matrix, eye, hstack, vstack
 from scipy.sparse.linalg import minres, spsolve
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
+from myfempy.core.solver.assemblerfull_parallel import AssemblerFULLPOOL
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
 
 
-class StaticLinearCyclicSymm(Solver):
+class StaticLinearCyclicSymmPlane(Solver):
     """
-    Static Linear Cyclic Symmetry Solver Class <ConcreteClassService>
+    Static Linear Cyclic Symmetry Plane Solver Class <ConcreteClassService>
     """
 
     def getMatrixAssembler(
@@ -37,16 +35,28 @@ class StaticLinearCyclicSymm(Solver):
                 MP=MP,
             )
         else:
-            matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
-                Model,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
-                type_assembler="linear_stiffness",
-                MP=MP,
-            )
+            if MP:
+                matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(
+                    Model,
+                    inci,
+                    coord,
+                    tabmat,
+                    tabgeo,
+                    intgauss,
+                    type_assembler="linear_stiffness",
+                    MP=MP,
+                )
+            else:
+                matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
+                    Model,
+                    inci,
+                    coord,
+                    tabmat,
+                    tabgeo,
+                    intgauss,
+                    type_assembler="linear_stiffness",
+                    MP=MP,
+                )
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
@@ -109,12 +119,8 @@ class StaticLinearCyclicSymm(Solver):
         stiffness = assembly["stiffness"]
         forcelist = assembly["loads"]
 
-        RM_left = AssemblerFULL.getRotationMatrix(
-            modelinfo["csleft"], modelinfo["coord"], leftdof.shape[0]
-        )
-        RM_right = AssemblerFULL.getRotationMatrix(
-            modelinfo["csright"], modelinfo["coord"], rightdof.shape[0]
-        )
+        RM_left = StaticLinearCyclicSymmPlane.getRotationMatrix2D(modelinfo["csleft"], modelinfo["coord"], leftdof.shape[0])
+        RM_right = StaticLinearCyclicSymmPlane.getRotationMatrix2D(modelinfo["csright"], modelinfo["coord"], rightdof.shape[0])
 
         FG_cell = vstack(
             [forcelist[interdof, :], forcelist[leftdof, :], forcelist[rightdof, :]]
@@ -236,3 +242,63 @@ class StaticLinearCyclicSymm(Solver):
             U0[:] = U1[:]
         solution["U"] = U
         return solution
+
+    
+    # https://en.wikipedia.org/wiki/Rotation_matrix
+    def getRotationMatrix2D(node_list, coord, ndof):
+        # Initialize RM as a sparse matrix
+        RM = lil_matrix((ndof, ndof))
+        for n in range(node_list.shape[0]):
+            nol = int(node_list[n] - 1)
+            RonX = coord[nol, 1]  # - Og[0]
+            RonY = coord[nol, 2]  # - Og[1]
+            Ron = sqrt(RonX**2 + RonY**2)
+            S_the = RonY / Ron
+            C_the = RonX / Ron
+            # Assign values to the sparse matrix
+            RM[2 * n, 2 * n] = C_the
+            RM[2 * n, 2 * n + 1] = -S_the
+            RM[2 * n + 1, 2 * n] = S_the
+            RM[2 * n + 1, 2 * n + 1] = C_the
+
+        # Convert to CSR format for more efficient arithmetic and matrix-vector operations
+        return RM.tocsr()
+
+    # def getRotationMatrix3D(node_list, coord, ndof):
+    #     """
+    #     https://en.wikipedia.org/wiki/Rotation_matrix
+
+    #     Arguments:
+    #         node_list -- _description_
+    #         coord -- _description_
+    #         ndof -- _description_
+
+    #     Returns:
+    #         RM
+    #     """
+    #     # Inicialize a RM como uma matriz esparsa
+    #     RM = lil_matrix((ndof, ndof))
+    #     for n in range(node_list.shape[0]):
+    #         nol = int(node_list[n] - 1)
+    #         RonX = coord[nol, 1]
+    #         RonY = coord[nol, 2]
+    #         RonZ = coord[nol, 3]
+    #         Ron = np.sqrt(RonX**2 + RonY**2 + RonZ**2)
+    #         S_phi = RonY / Ron
+    #         C_phi = RonX / Ron
+    #         S_theta = RonZ / Ron
+    #         C_theta = np.sqrt(RonX**2 + RonY**2) / Ron
+
+    #         # Atribuir valores à matriz esparsa
+    #         RM[3 * n, 3 * n] = C_theta
+    #         RM[3 * n, 3 * n + 1] = -S_phi * S_theta
+    #         RM[3 * n, 3 * n + 2] = C_phi * S_theta
+    #         RM[3 * n + 1, 3 * n] = S_phi
+    #         RM[3 * n + 1, 3 * n + 1] = C_phi * C_theta
+    #         RM[3 * n + 1, 3 * n + 2] = -S_theta
+    #         RM[3 * n + 2, 3 * n] = -S_theta
+    #         RM[3 * n + 2, 3 * n + 1] = C_theta
+    #         RM[3 * n + 2, 3 * n + 2] = C_theta * C_phi
+
+    #     # Converter para o formato CSR para operações aritméticas e de matriz-vetor mais eficientes
+    #     return RM.tocsr() 

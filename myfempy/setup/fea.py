@@ -10,7 +10,9 @@ import scipy.sparse as sp
 from myfempy.core.utilities import setSteps
 # from myfempy.core.solver import getSolver
 from myfempy.io.controllers import (setElement, setGeometry, setMaterial,
-                                    setMesh, setShape)
+                                    setMesh, setShape, setDomain, setCoupling,
+                                    setPoints2NumericalIntegration)
+
 from myfempy.plots.prevplot import preview_plot
 from myfempy.setup.model import SetModel
 from myfempy.setup.physics import SetPhysics
@@ -45,12 +47,9 @@ class newAnalysis:
         get_logo()
         print_console("mesh")
         try:
-            starttime = time()
             modeldata["MESH"]["user_path"] = self.path
             Mesh = newAnalysis.__setMesh(modeldata)
-            endttime = time()
             logging.info("TRY SET MESH -- SUCCESS")
-            print(abs(endttime - starttime))
         except:
             logging.warning("TRY SET MESH -- FAULT")
         try:
@@ -62,7 +61,7 @@ class newAnalysis:
             Shape = newAnalysis.__setShape(modeldata)
             logging.info("TRY SET SHAPE -- SUCCESS")
         except:
-            logging.warning("TRY SET SHAPE -- FAULT")
+            logging.warning("TRY SET SHAPE -- FAULT")    
         try:
             Material = newAnalysis.__setMaterial(modeldata)
             logging.info("TRY SET MATERIAL -- SUCCESS")
@@ -74,21 +73,27 @@ class newAnalysis:
         except:
             logging.warning("TRY SET GEOMETRY -- FAULT")
         try:
+            GaussPoints = newAnalysis.__setIntGauss(modeldata)
+            logging.info("TRY SET GAUSS POINTS -- SUCCESS")
+        except:
+            logging.warning("TRY SET GAUSS POINTS -- FAULT")            
+        try:
             self.model = SetModel(Mesh, Element, Shape, Material, Geometry)
             self.model.modeldata = modeldata
+            self.model.intgauss = GaussPoints
             logging.info("TRY SET FEMODEL -- SUCCESS")
         except:
             logging.warning("TRY SET FEMODEL -- FAULT")
+            
         self.modelinfo = dict()
         self.modelinfo["inci"] = newAnalysis.getInci(self)
         self.modelinfo["coord"] = newAnalysis.getCoord(self)
         self.modelinfo["tabmat"] = newAnalysis.getTabmat(self)
         self.modelinfo["tabgeo"] = newAnalysis.getTabgeo(self)
-        self.modelinfo["intgauss"] = newAnalysis.getIntGauss(self)
+        self.modelinfo["intgauss"] = GaussPoints
+        
         try:
-            self.modelinfo["regions"] = newAnalysis.getRegions(
-                self
-            )  # self.model.mesh.getRegionsList(self.model.mesh.getElementConection(self.model.modeldata['MESH']))
+            self.modelinfo["regions"] = newAnalysis.getRegions(self)
         except:
             self.modelinfo["regions"] = []
         elem_set = self.model.element.getElementSet()
@@ -101,18 +106,10 @@ class newAnalysis:
         self.modelinfo["nodecon"] = len(shape_set["nodes"])
         self.modelinfo["elemdofs"] = len(shape_set["nodes"]) * self.modelinfo["nodedof"]
         self.modelinfo["type_shape"] = shape_set["key"]
-        self.modelinfo["elemid"] = int(
-            f'{elem_set["id"]}{shape_set["id"]}'
-        )  # elem_set['id']
+        self.modelinfo["elemid"] = int(f'{elem_set["id"]}{shape_set["id"]}')
         self.modelinfo["nnode"] = len(self.model.coord)
         self.modelinfo["nelem"] = len(self.model.inci)
         self.modelinfo["fulldofs"] = len(elem_set["dofs"]["d"]) * len(self.model.coord)
-        # self.modelinfo["elemvol"] = newAnalysis.getElementVolume(
-        #     self,
-        #     self.modelinfo["inci"],
-        #     self.modelinfo["coord"],
-        #     self.modelinfo["tabgeo"],
-        # )
 
     def Physic(self, physicdata):
         """
@@ -168,7 +165,6 @@ class newAnalysis:
         tabmat = self.modelinfo["tabmat"]
         tabgeo = self.modelinfo["tabgeo"]
         intgauss = self.modelinfo["intgauss"]
-        # loading_bar_v1(20,"SOLVER")
         try:
             matrix = newAnalysis.getGlobalMatrix(
                 self, inci, coord, tabmat, tabgeo, intgauss, self.symm, self.mp
@@ -176,14 +172,12 @@ class newAnalysis:
             logging.info("TRY RUN GLOBAL ASSEMBLY -- SUCCESS")
         except:
             logging.warning("TRY RUN GLOBAL ASSEMBLY -- FAULT")
-        # loading_bar_v1(30,"SOLVER")
         loadaply = self.modelinfo["forces"]
         try:
             matrix = newAnalysis.getUpdateMatrix(self, matrix, loadaply)
             logging.info("TRY RUN UPDATE ASSEMBLY -- SUCCESS")
         except:
             logging.warning("TRY RUN UPDATE ASSEMBLY -- FAULT")
-        # loading_bar_v1(40,"SOLVER")
         try:
             forcelist = newAnalysis.getLoadArray(self, loadaply)
             logging.info("TRY RUN LOAD ASSEMBLY -- SUCCESS")
@@ -220,11 +214,11 @@ class newAnalysis:
         try:
             self.mp = solverset["MP"]
             solverset["solverstatus"]["ncpu"] = (
-                "OPENMP_" + str(solverset["MP"]) + "_CORES"
+                "PARALLEL_" + str(solverset["MP"]) + "_CORES"
             )
         except:
             self.mp = 0
-            solverset["solverstatus"]["ncpu"] = "OPENMP_" + str(1) + "_CORES"
+            solverset["solverstatus"]["ncpu"] = "SERIAL_" + str(1) + "_CORE"
         # loading_bar_v1(10,"SOLVER")
         starttime = time()
         assembly, forcelist = newAnalysis.Assembly(self)
@@ -305,11 +299,12 @@ class newAnalysis:
         #     modelinfo["constrains"] = []
         # modelinfo["forces"] = FEANewAnalysis.getLoadApply(self)
         # modelinfo["constrains"] = FEANewAnalysis.getBCApply(self)
-        try:
-            preview_plot(previewdata, self.modelinfo, str(self.path))
-            logging.info("TRY RUN PREVIEW PLOT -- SUCCESS")
-        except:
-            logging.warning("TRY RUN PREVIEW PLOT -- FAULT")
+        
+        # try:
+        preview_plot(previewdata, self.modelinfo, str(self.path))
+        #     logging.info("TRY RUN PREVIEW PLOT -- SUCCESS")
+        # except:
+        #     logging.warning("TRY RUN PREVIEW PLOT -- FAULT")
 
     def PostProcess(self, postprocset):
         """
@@ -347,6 +342,12 @@ class newAnalysis:
 
     # gettings
     def getModelInfo(self):
+        """
+        getModelInfo _summary_
+
+        Returns:
+            _description_
+        """
         return self.modelinfo
 
     def getInci(self):
@@ -362,7 +363,7 @@ class newAnalysis:
         return self.model.getTabGeo(self.model.modeldata)
 
     def getIntGauss(self):
-        return self.model.getIntGauss(self.model.modeldata)
+        return self.modelinfo["intgauss"]
 
     def getElementVolume(self, inci, coord, tabgeo):
         vol = np.zeros((inci.shape[0]))
@@ -448,69 +449,40 @@ class newAnalysis:
 
     def getElementFromNodesList(self, nodelist):
         return self.physic.getElementList(self.modelinfo["inci"], nodelist)
+    
 
     # settings FEA ANALYSIS <privates>
     def __setMesh(modeldata):
         set_mesh = dict()
         set_mesh = modeldata["MESH"]
-        set_mesh["shape"] = modeldata["ELEMENT"]["SHAPE"]
+        set_mesh["SHAPE"] = modeldata["ELEMENT"]["SHAPE"]
         return setMesh(set_mesh)
 
     def __setShape(modeldata):
-        set_shape = dict()
-        set_shape["type"] = modeldata["ELEMENT"]["SHAPE"]
-        return setShape(set_shape)
+        return setShape(modeldata["ELEMENT"])
 
     def __setElement(modeldata):
-        set_element = dict()
-        set_element["type"] = modeldata["ELEMENT"]["TYPE"]
-        return setElement(set_element)
+        return setElement(modeldata["ELEMENT"])
 
     def __setMaterial(modeldata):
-        set_material = dict()
-        set_material["mat"] = modeldata["MATERIAL"]["MAT"]
-        set_material["type"] = modeldata["MATERIAL"]["TYPE"]
-        return setMaterial(set_material)
+        return setMaterial(modeldata["MATERIAL"])
 
     def __setGeometry(modeldata):
-        set_geometry = dict()
-        set_geometry["geo"] = modeldata["GEOMETRY"]["GEO"]
-        return setGeometry(set_geometry)
+        return setGeometry(modeldata["GEOMETRY"])
 
-    def __setDomain(physicdata):
-        if physicdata["PHYSIC"]["DOMAIN"] == "structural":
-            from myfempy.core.physic.bcstruct import BoundCondStruct
-            from myfempy.core.physic.loadstruct import LoadStructural
+    def __setDomain(modeldata):
+        return setDomain(modeldata["PHYSIC"])
 
-            return LoadStructural, BoundCondStruct
-
-        elif physicdata["PHYSIC"]["DOMAIN"] == "thermal":
-            from myfempy.core.physic.bcthermal import BoundCondThermal
-            from myfempy.core.physic.loadthermal import LoadThermal
-
-            return LoadThermal, BoundCondThermal
-
-        elif physicdata["PHYSIC"]["DOMAIN"] == "fluidflow":
-            pass
+    def __setCoupling(modeldata):
+        return setCoupling(modeldata["COUPLING"])
+    
+    def __setIntGauss(modeldata):
+        if "INTGAUSS" in modeldata["ELEMENT"].keys():
+            intgauss = modeldata["ELEMENT"]["INTGAUSS"]
         else:
-            pass
+            intgauss = setPoints2NumericalIntegration(modeldata["ELEMENT"]["SHAPE"])
+        return intgauss
 
-    def __setCoupling(physicdata):
-        # themal structural iteration
-        if physicdata["COUPLING"]["TYPE"] == "thermalstress":
-            from myfempy.core.physic.thermstructcoup import \
-                ThermalStructuralCoupling
-
-            return ThermalStructuralCoupling
-
-        # fluidflow structural iteration
-        # elif physicdata["COUPLING"]['TYPE'] == "fsi":
-
-        # acoustic structural iteration
-        # elif physicdata["COUPLING"]['TYPE'] == "asi":
-
-        else:
-            pass
 
     # def __setSolution(self, solvedata):
     #     # self.inci = FEANewAnalysis.getInci(self)

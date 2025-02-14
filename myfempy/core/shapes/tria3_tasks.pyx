@@ -6,6 +6,7 @@ from cython.parallel import parallel, prange
 
 cimport numpy as np
 
+# DTYPE = np.float64
 ctypedef np.int32_t INT32
 ctypedef np.float64_t FLT64
 
@@ -40,24 +41,29 @@ cdef FLT64 [:, ::1] MATDIFFN(FLT64 [::1] r):
     dN_view[1][2] = 1.0
     return dN
 
-@cdivision(True)
-@exceptval(check=False)
-@boundscheck(False) # turn off bounds-checking for entire function
-@wraparound(False)  # turn off negative index wrapping for entire function           
-@nonecheck(False) 
-cdef FLT64 DET(FLT64 [:, ::1] A):
-    cdef FLT64 det = A[0][0]*A[1][1]-A[0][1]*A[1][0]
-    return det
+# @cdivision(True)
+# @exceptval(check=False)
+# @boundscheck(False) # turn off bounds-checking for entire function
+# @wraparound(False)  # turn off negative index wrapping for entire function           
+# @nonecheck(False) 
+# cdef FLT64 DET(FLT64 [:, ::1] A):
+#     cdef FLT64 det = A[0][0]*A[1][1]-A[0][1]*A[1][0]
+#     return det
 
 @cdivision(True)
 @exceptval(check=False)
 @boundscheck(False) # turn off bounds-checking for entire function
 @wraparound(False)  # turn off negative index wrapping for entire function           
-@nonecheck(False) 
+@nonecheck(False)  
 cdef FLT64 [:, ::1] INV(FLT64 [:, ::1] A):
-    cdef FLT64 detA = DET(A)
-    cdef FLT64 [:, ::1] invA = (1/detA)*np.array([[A[1][1],-A[0][1]],
-                                                  [-A[1][0], A[0][0]]])
+    cdef FLT64 detA = A[0][0] * A[1][1] - A[0][1] * A[1][0]
+    cdef FLT64 invDet = 1.0 / detA
+    invA = np.zeros((2, 2), dtype=np.float64)
+    cdef FLT64 [:, ::1] invA_view = invA
+    invA_view[0][0] = invDet * A[1][1]
+    invA_view[0][1] = -invDet * A[0][1]
+    invA_view[1][0] = -invDet * A[1][0]
+    invA_view[1][1] = invDet * A[0][0]
     return invA
 
 @cdivision(True)
@@ -121,11 +127,11 @@ def invJacobi(FLT64 [::1] r_coord, FLT64 [:, ::1] element_coord, INT32 nodedof):
     return mat_invJ
 
 @boundscheck(False) # turn off bounds-checking for entire function
-@wraparound(False)  # turn off negative index wrapping for entire function           
+@wraparound(False)  # turn off negative index wrapping for entire function             
 def detJacobi(FLT64 [::1] r_coord, FLT64 [:, ::1] element_coord):
     cdef FLT64 [:, ::1] Jac = JACOBIANO(r_coord, element_coord)
-    cdef FLT64 detJ = 0.5*DET(Jac)
-    return detJ
+    cdef FLT64 detJ = Jac[0][0] * Jac[1][1] - Jac[0][1] * Jac[1][0]
+    return 0.5*detJ
 
 @boundscheck(False) # turn off bounds-checking for entire function
 @wraparound(False)  # turn off negative index wrapping for entire function               

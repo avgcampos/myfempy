@@ -1,21 +1,20 @@
 from __future__ import annotations
 
-from os import environ
-environ["OMP_NUM_THREADS"] = "8"
 
 from numpy import (arange, concatenate, empty, float64, newaxis, pi, sqrt,
                    unique, zeros)
 from scipy.sparse.linalg import eigsh
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
+from myfempy.core.solver.assemblerfull_parallel import AssemblerFULLPOOL
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
 
 
-class DynamicModalLinear(Solver):
+class DynamicEigenLinear(Solver):
     """
-    Modal(eig problem) Linear Solver Class <ConcreteClassService>
+    Dynamic Eigen (modal problem) Linear Solver Class <ConcreteClassService>
     """
 
     def getMatrixAssembler(
@@ -44,26 +43,48 @@ class DynamicModalLinear(Solver):
                 MP=MP,
             )
         else:
-            matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
-                Model,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
-                type_assembler="linear_stiffness",
-                MP=MP,
-            )
-            matrix["mass"] = AssemblerFULL.getMassConsistentGlobalMatrixAssembler(
-                Model,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
-                type_assembler="mass_consistent",
-                MP=MP,
-            )
+            if MP:
+                matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(
+                    Model,
+                    inci,
+                    coord,
+                    tabmat,
+                    tabgeo,
+                    intgauss,
+                    type_assembler="linear_stiffness",
+                    MP=MP,
+                )
+                matrix["mass"] = AssemblerFULLPOOL.getMassConsistentGlobalMatrixAssembler(
+                    Model,
+                    inci,
+                    coord,
+                    tabmat,
+                    tabgeo,
+                    intgauss,
+                    type_assembler="linear_stiffness",
+                    MP=MP,
+                )
+            else:
+                matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
+                    Model,
+                    inci,
+                    coord,
+                    tabmat,
+                    tabgeo,
+                    intgauss,
+                    type_assembler="linear_stiffness",
+                    MP=MP,
+                )
+                matrix["mass"] = AssemblerFULL.getMassConsistentGlobalMatrixAssembler(
+                    Model,
+                    inci,
+                    coord,
+                    tabmat,
+                    tabgeo,
+                    intgauss,
+                    type_assembler="linear_stiffness",
+                    MP=MP,
+                )
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):

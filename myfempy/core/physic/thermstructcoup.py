@@ -15,7 +15,7 @@ class ThermalStructuralCoupling(Structural):
     def getLoadApply(Model, modelinfo, coupling):
         forcenodeaply = np.zeros((1, 4))
         if coupling["TYPE"] == "thermalstress":  # thermo stress mechanical
-            fapp = ThermalStructuralCoupling.__ForceThermalStress(
+            fapp = ThermalStructuralCoupling.ForceThermalStress(
                 Model, modelinfo, coupling
             )
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
@@ -24,20 +24,15 @@ class ThermalStructuralCoupling(Structural):
         forcenodeaply = forcenodeaply[1::][::]
         return forcenodeaply
 
-    def __ForceThermalStress(Model, modelinfo, coupling):
+    def ForceThermalStress(Model, modelinfo, coupling):
         forcenodedof = np.zeros((1, 4))
         inci = modelinfo["inci"]
         coord = modelinfo["coord"]
         tabmat = modelinfo["tabmat"]
         tabgeo = modelinfo["tabgeo"]
         intgauss = modelinfo["intgauss"]
-        # fc_type_dof = modelinfo["dofs"]["f"][forcelist['DOF']]
-
-        strain_thermal = np.zeros((inci.shape[0], 3))
-
-        dT = coupling["GRADTEMP"]  # np.mean(coupling['TEMPERATURE'])
-        strain_thermal[:, 0] = dT
-        strain_thermal[:, 1] = dT
+        
+        strain_thermal = Model.material.getStrainThermal(coupling["GRADTEMP"])
 
         for ee in range(inci.shape[0]):
             force_value_vector, nodelist = (
@@ -48,16 +43,18 @@ class ThermalStructuralCoupling(Structural):
                     tabmat,
                     tabgeo,
                     intgauss,
-                    strain_thermal[ee, :],
+                    strain_thermal[:, ee],
                     ee,
                 )
             )
 
-            fc_type_dof = np.tile(
-                [modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"]],
-                len(nodelist),
-            )
-            nodelist = np.repeat(nodelist, 2)
+            try:
+                fc_type_dof = np.tile([modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"], modelinfo["dofs"]["f"]["fz"]], len(nodelist),)
+                nodelist = np.repeat(nodelist, 3)
+            except:
+                fc_type_dof = np.tile([modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"]], len(nodelist),)
+                nodelist = np.repeat(nodelist, 2)
+                            
             for j in range(len(nodelist)):
                 fcdof = np.array(
                     [
@@ -74,8 +71,8 @@ class ThermalStructuralCoupling(Structural):
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
 
-    def getUpdateMatrix(Model, matrix, modelinfo, loadaply):
-        return LoadStructural.getUpdateMatrix(Model, matrix, modelinfo, loadaply)
+    def getUpdateMatrix(Model, matrix, loadaply):
+        return LoadStructural.getUpdateMatrix(Model, matrix, loadaply)
 
     def getUpdateLoad(self):
         return LoadStructural.getUpdateLoad(self)
@@ -99,30 +96,18 @@ class ThermalStructuralCoupling(Structural):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        E = tabmat[int(inci[element_number, 2]) - 1][
-            "EXX"
-        ]  # tabmat[int(inci[element_number, 2]) - 1, 0]  # material elasticity
-        v = tabmat[int(inci[element_number, 2]) - 1][
-            "VXX"
-        ]  # tabmat[int(inci[element_number, 2]) - 1, 1]  # material poisson ratio
         a = tabmat[int(inci[element_number, 2]) - 1]["CTE"]
-        t = tabgeo[int(inci[element_number, 3] - 1)][
-            "THICKN"
-        ]  # tabgeo[int(inci[element_number, 3] - 1), 4]
-        C = Model.material.getElasticTensor(E, v)
+        C = Model.material.getElasticTensor(Model, element_number)
         pt, wt = gauss_points(type_shape, intgauss)
         W = np.zeros((nodedof, 1))
         force_value_vector = np.zeros((edof, 1))
         for ip in range(intgauss):
             for jp in range(intgauss):
-                detJ = Model.shape.getdetJacobi(
-                    np.array([pt[ip], pt[jp]]), elementcoord
-                )
-                B = Model.element.getB(
-                    Model, elementcoord, np.array([pt[ip], pt[jp]]), nodedof
-                )
-                force_value_vector += np.dot(
-                    np.dot(B.transpose(), C), np.reshape(strain_thermal, (3, 1))
-                ) * (a * t * abs(detJ) * wt[ip] * wt[jp])
+                for kp in range(intgauss):
+                    detJ = Model.shape.getdetJacobi(np.array([pt[ip], pt[jp], pt[kp]]), elementcoord)
+                    diffN = Model.shape.getDiffShapeFuntion(np.array([pt[ip], pt[jp], pt[kp]]), nodedof)
+                    invJ = Model.shape.getinvJacobi(np.array([pt[ip], pt[jp], pt[kp]]), elementcoord, nodedof)
+                    B = Model.element.getB(diffN, invJ)
+                    force_value_vector += np.dot(np.dot(B.transpose(), C), strain_thermal.reshape((-1,1))) * (a * abs(detJ) * wt[ip] * wt[jp] * wt[kp])
         force_value_vector = np.reshape(force_value_vector, (edof))
         return force_value_vector, nodelist

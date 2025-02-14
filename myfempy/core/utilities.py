@@ -1,11 +1,12 @@
-# from os import environ
-# environ['OMP_NUM_THREADS'] = '3'
 
 from numpy import (array, asarray, cross, dot, eye, float64, ix_, less, matmul,
-                   mean, ones_like, sqrt, uint32, unique, where, zeros)
+                   mean, ones_like, sqrt, uint32, unique, where, zeros, empty)
 from numpy.linalg import multi_dot
 from scipy.linalg import block_diag, det, inv, kron
 from scipy.sparse import csc_matrix
+
+# from myfempy.core.util_cy import fast_dot
+
 
 INT32 = uint32
 FLT64 = float64
@@ -14,15 +15,10 @@ FLT64 = float64
 #                               MYFEMPY UTTILITIES
 # ==============================================================================
 
-# def determinant_dim2(A):
-#     detA = A[0] * A[3] - A[1] * A[2]
-#     return detA
-
-
-# def inverse_dim2(A):
-#     invA = 1 / (A[0] * A[3] - A[1] * A[2]) * array([[A[3], -A[1]], [-A[2], A[0]]])
-#     return invA
-
+# def fastDOT(A, B):
+#     R = empty((A.shape[0], B.shape[1]), dtype=float64)
+#     fast_dot(A, B, R, 1)
+#     return R
 
 def addMatrix(A, A_add, idx):
     """
@@ -590,8 +586,8 @@ def gauss_points(type, npp):
     elif type == "quad8":
         return __gauss_points_quad(npp)
 
-    # elif type == "hexa8":
-    #     return __gauss_points_hexa(npp)
+    elif type == "hexa8":
+        return __gauss_points_quad(npp)
 
     elif type == "tetr4":
         return __gauss_points_tetr(npp)
@@ -659,6 +655,7 @@ def __gauss_points_quad(npp):
     elif npp == 3:
         pt = array([-0.774596669241483, 0.000000000000000, 0.774596669241483])
         wt = array([0.555555555555556, 0.888888888888889, 0.555555555555556])
+        return pt, wt
 
     elif npp == 4:
         pt = array([-0.86113631, -0.33998104, 0.33998104, 0.86113631])
@@ -722,6 +719,37 @@ def __gauss_points_quad(npp):
         return pt, wt
 
 
+# def __gauss_points_hexa(npp):
+#     if npp == 1:
+#         pt = array([[0.000000000000000]])
+#         wt = array([2.000000000000000])
+#         return pt, wt
+
+#     elif npp == 8:
+#         pt = array(
+#             [
+#                 [-0.5773502691896258, -0.5773502691896258, -0.5773502691896258],
+#                 [0.5773502691896258, -0.5773502691896258, -0.5773502691896258],
+#                 [0.5773502691896258, 0.5773502691896258, -0.5773502691896258],
+#                 [-0.5773502691896258, 0.5773502691896258, -0.5773502691896258],
+#                 [-0.5773502691896258, -0.5773502691896258, 0.5773502691896258],
+#                 [0.5773502691896258, -0.5773502691896258, 0.5773502691896258],
+#                 [0.5773502691896258, 0.5773502691896258, 0.5773502691896258],
+#                 [-0.5773502691896258, 0.5773502691896258, 0.5773502691896258],
+#             ]
+#         )
+
+#         wt = array([1.000000000000000,
+#                     1.000000000000000,
+#                     1.000000000000000,
+#                     1.000000000000000,
+#                     1.000000000000000,
+#                     1.0000000000000000,
+#                     1.000000000000000,
+#                     1.000000000000000])
+#         return pt, wt
+
+
 def __gauss_points_tria(npp):
     if npp == 1:
         pt = array([0.3333333333333333])
@@ -761,8 +789,8 @@ def __gauss_points_tria(npp):
 
 def __gauss_points_tetr(npp):
     if npp == 1:
-        pt = array([0.25000000000000000])
-        wt = array([1.000000000000000])
+        pt = array([0.3333333333333333])
+        wt = array([0.166666666666667])
         return pt, wt
     elif npp == 4:
         pt = array(
@@ -781,6 +809,7 @@ def __gauss_points_tetr(npp):
                 0.25000000000000000,
             ]
         )
+        return pt, wt
     elif npp == 5:
         pt = array(
             [
@@ -804,7 +833,6 @@ def __gauss_points_tetr(npp):
 
 
 # antigo
-
 
 # def __gauss_points_quad(npp):
 #     if npp == 1:
@@ -940,33 +968,3 @@ def __gauss_points_tetr(npp):
 #                     0.45000000000000000])
 #         return pt, wt
 
-
-# def __gauss_points_hexa(npp):
-#     if npp == 1:
-#         pt = array([[0.000000000000000, 0.000000000000000, 0.000000000000000]])
-#         wt = array([2.000000000000000])
-#         return pt, wt
-
-#     elif npp == 8:
-#         pt = array(
-#             [
-#                 [-0.5773502691896258, -0.5773502691896258, -0.5773502691896258],
-#                 [0.5773502691896258, -0.5773502691896258, -0.5773502691896258],
-#                 [0.5773502691896258, 0.5773502691896258, -0.5773502691896258],
-#                 [-0.5773502691896258, 0.5773502691896258, -0.5773502691896258],
-#                 [-0.5773502691896258, -0.5773502691896258, 0.5773502691896258],
-#                 [0.5773502691896258, -0.5773502691896258, 0.5773502691896258],
-#                 [0.5773502691896258, 0.5773502691896258, 0.5773502691896258],
-#                 [-0.5773502691896258, 0.5773502691896258, 0.5773502691896258],
-#             ]
-#         )
-
-#         wt = array([1.000000000000000,
-#                     1.000000000000000,
-#                     1.000000000000000,
-#                     1.000000000000000,
-#                     1.000000000000000,
-#                     1.0000000000000000,
-#                     1.000000000000000,
-#                     1.000000000000000])
-#         return pt, wt

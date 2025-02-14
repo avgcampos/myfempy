@@ -5,6 +5,10 @@ __dev/
 __shakedown/
 out/
 __dev__setup_wrap_cy_pyx.py
+tests/
+
+# Profile/ Tests
+*.py.lprof
 
 ### C ###
 # Prerequisites
@@ -62,9 +66,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-
-# Profile/ Tests
-*.lprof
 
 ### C++ ###
 # Prerequisites

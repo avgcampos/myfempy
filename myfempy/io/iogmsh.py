@@ -24,8 +24,10 @@ def meshid2gmshid(elemid):
         "2262": 9,
         "2241": 3,
         "2282": 16,
+        "3141": 4,
         "3341": 4,
         "33102": 11,
+        "3181": 5,
         "3381": 5,
         "33202": 17,
     }
@@ -57,7 +59,7 @@ def get_gmsh_msh(filename, meshdata):
         + (filename + ".geo")
         + " "
         + gmsh_key(meshdata["meshconfig"]["mesh"])
-        + " -o -nt 0 -algo "
+        + " -o "
         + (filename + ".msh1")
     )
     # os.system("echo GENERATING MESH FROM EXTERNAL GMSH")
@@ -308,9 +310,8 @@ def get_gmsh_geo(filename, meshdata):
                     pass
             else:
                 pass
-
+            file_object.write("// MESH "+meshdata["meshconfig"]["mesh"]+" CONFIGURATION\n")
             if meshdata["meshconfig"]["mesh"] == "tria3":
-                file_object.write("// MESH CONFIGURATION\n")
                 file_object.write("Mesh.CharacteristicLengthExtendFromBoundary = 1;\n")
                 file_object.write("Mesh.CharacteristicLengthMin = 0;\n")
                 file_object.write(
@@ -325,7 +326,6 @@ def get_gmsh_geo(filename, meshdata):
                 file_object.write("Mesh.ElementOrder = 1;\n")
 
             elif meshdata["meshconfig"]["mesh"] == "tria6":
-                file_object.write("// MESH CONFIGURATION\n")
                 file_object.write("Mesh.CharacteristicLengthExtendFromBoundary = 1;\n")
                 file_object.write("Mesh.CharacteristicLengthMin = 0;\n")
                 file_object.write(
@@ -342,7 +342,6 @@ def get_gmsh_geo(filename, meshdata):
 
             elif meshdata["meshconfig"]["mesh"] == "quad4":
                 file_object.write("Recombine Surface {:};\n")
-                file_object.write("// MESH CONFIGURATION\n")
                 file_object.write("Mesh.RecombinationAlgorithm = 1;\n")
                 file_object.write("Mesh.RecombineAll = 1;\n")
                 file_object.write("Mesh.SubdivisionAlgorithm = 1;\n")
@@ -361,7 +360,6 @@ def get_gmsh_geo(filename, meshdata):
 
             elif meshdata["meshconfig"]["mesh"] == "quad8":
                 file_object.write("Recombine Surface {:};\n")
-                file_object.write("// MESH CONFIGURATION\n")
                 file_object.write("Mesh.RecombinationAlgorithm = 1;\n")
                 file_object.write("Mesh.RecombineAll = 1;\n")
                 file_object.write("Mesh.SubdivisionAlgorithm = 1;\n")
@@ -385,7 +383,6 @@ def get_gmsh_geo(filename, meshdata):
                     file_object.write(
                         "Extrude {0, 0, " + str(float(thck)) + "} {Surface{:};}\n"
                     )
-                file_object.write("// MESH CONFIGURATION\n")
                 file_object.write("Mesh.Algorithm = 2;\n")  # 4
                 file_object.write("Mesh.Algorithm3D = 4;\n")  # 7
                 file_object.write("Mesh.CharacteristicLengthExtendFromBoundary = 1;\n")
@@ -416,7 +413,6 @@ def get_gmsh_geo(filename, meshdata):
                         + "};Recombine;};\n"
                     )
                 file_object.write("Recombine Surface {:};\n")
-                file_object.write("// MESH CONFIGURATION\n")
                 file_object.write("Mesh.Algorithm = 2;\n")  # 8
                 file_object.write("Mesh.Algorithm3D = 4;\n")  # 7
                 file_object.write("Mesh.CharacteristicLengthExtendFromBoundary = 1;\n")

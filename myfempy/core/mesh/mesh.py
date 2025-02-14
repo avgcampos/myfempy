@@ -20,7 +20,7 @@ class Mesh(ABC):
         pass
 
 
-class MeshADD(Mesh):
+class MeshMANUAL(Mesh):
     """Mesh Add Class <ConcreteClassService>"""
 
     def getNodesCoord(set_mesh):

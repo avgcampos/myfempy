@@ -14,27 +14,3 @@ class Material(ABC):
     @abstractmethod
     def getElasticTensor():
         pass
-
-    # @abstractmethod
-    # def getElementStrain():
-    #     pass
-
-    # @abstractmethod
-    # def getElementStress():
-    #     pass
-
-    # @abstractmethod
-    # def getFailureCriteria():
-    #     pass
-
-    # @abstractmethod
-    # def getTitleStrain():
-    #     pass
-
-    # @abstractmethod
-    # def getTitleStress():
-    #     pass
-
-    # @abstractmethod
-    # def getTitleFoS():
-    #     pass

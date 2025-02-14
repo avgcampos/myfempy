@@ -320,24 +320,3 @@ def getDirichletNH(constrains, nodetot, nodedof):
         else:
             pass
     return Uc
-
-
-# https://en.wikipedia.org/wiki/Rotation_matrix
-def getRotationMatrix(node_list, coord, ndof):
-    # Initialize RM as a sparse matrix
-    RM = sparse.lil_matrix((ndof, ndof))
-    for n in range(node_list.shape[0]):
-        nol = int(node_list[n] - 1)
-        RonX = coord[nol, 1]  # - Og[0]
-        RonY = coord[nol, 2]  # - Og[1]
-        Ron = np.sqrt(RonX**2 + RonY**2)
-        S_the = RonY / Ron
-        C_the = RonX / Ron
-        # Assign values to the sparse matrix
-        RM[2 * n, 2 * n] = C_the
-        RM[2 * n, 2 * n + 1] = -S_the
-        RM[2 * n + 1, 2 * n] = S_the
-        RM[2 * n + 1, 2 * n + 1] = C_the
-
-    # Convert to CSR format for more efficient arithmetic and matrix-vector operations
-    return RM.tocsr()

@@ -13,28 +13,6 @@ FLT64 = float64
 from myfempy.core.elements.element import Element
 from myfempy.core.utilities import gauss_points
 
-
-def HDIFFNINVJ(H, diffN, invJ):
-    invJdiffN = dot(invJ, diffN)
-    B = dot(H, invJdiffN)
-    return B
-
-
-def BTCB(diffN, H, invJ, C):
-    B = HDIFFNINVJ(H, diffN, invJ)
-    BT = B.transpose()
-    BTC = dot(BT, C)
-    BCB = dot(BTC, B)
-    return BCB
-
-
-def NTRN(N, R):
-    NT = N.transpose()
-    NTR = dot(NT, R)
-    NRN = dot(NTR, N)
-    return NRN
-
-
 class StructuralSolid(Element):
     """Solid Structural Element Class <ConcreteClassService>"""
 
@@ -58,8 +36,9 @@ class StructuralSolid(Element):
         }
         return elemset
 
-    def getH():
-        return array(
+
+    def getB(diffN, invJ):
+        H = array(
             [
                 [1, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 1, 0, 0, 0, 0],
@@ -70,12 +49,9 @@ class StructuralSolid(Element):
             ],
             dtype=INT32,
         )
-
-    def getB(Model, elementcoord, pt, nodedof):
-        diffN = Model.shape.getDiffShapeFuntion(pt, nodedof)
-        invJ = Model.shape.getinvJacobi(pt, elementcoord, nodedof)
-        H = StructuralSolid.getH()
-        B = HDIFFNINVJ(H, diffN, invJ)
+        # B = dot(H, dot(invJ, diffN))
+        B = H.dot(invJ).dot(diffN)
+        # B = fastDOT(H, fastDOT(invJ, diffN))
         return B
 
     # @profile
@@ -88,29 +64,17 @@ class StructuralSolid(Element):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        E = tabmat[int(inci[element_number, 2]) - 1][
-            "EXX"
-        ]  # tabmat[int(inci[element_number, 2]) - 1, 0]  # material elasticity
-        v = tabmat[int(inci[element_number, 2]) - 1][
-            "VXX"
-        ]  # tabmat[int(inci[element_number, 2]) - 1, 1]  # material poisson ratio
-        C = Model.material.getElasticTensor(E, v)
-        H = StructuralSolid.getH()
+        C = Model.material.getElasticTensor(Model, element_number)
         pt, wt = gauss_points(type_shape, intgauss)
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
         for ip in range(intgauss):
             for jp in range(intgauss):
                 for kp in range(intgauss):
-                    detJ = Model.shape.getdetJacobi(
-                        array([pt[ip], pt[jp], pt[kp]]), elementcoord
-                    )
-                    diffN = Model.shape.getDiffShapeFuntion(
-                        array([pt[ip], pt[jp], pt[kp]]), nodedof
-                    )
-                    invJ = Model.shape.getinvJacobi(
-                        array([pt[ip], pt[jp], pt[kp]]), elementcoord, nodedof
-                    )
-                    BCB = BTCB(diffN, H, invJ, C)
+                    detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp], pt[kp]]), elementcoord)
+                    diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp], pt[kp]]), nodedof)
+                    invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp], pt[kp]]), elementcoord, nodedof)
+                    B = StructuralSolid.getB(diffN, invJ)
+                    BCB = B.transpose().dot(C).dot(B)
                     K_elem_mat += BCB * abs(detJ) * wt[ip] * wt[jp] * wt[kp]
         return K_elem_mat
 
@@ -125,21 +89,15 @@ class StructuralSolid(Element):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        R = tabmat[int(inci[element_number, 2]) - 1][
-            "RHO"
-        ]  # tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
+        R = tabmat[int(inci[element_number, 2]) - 1]["RHO"]
         pt, wt = gauss_points(type_shape, intgauss)
         M_elem_mat = zeros((edof, edof), dtype=FLT64)
         for ip in range(intgauss):
             for jp in range(intgauss):
                 for kp in range(intgauss):
-                    detJ = Model.shape.getdetJacobi(
-                        array([pt[ip], pt[jp], pt[kp]]), elementcoord
-                    )
-                    N = Model.shape.getShapeFunctions(
-                        array([pt[ip], pt[jp], pt[kp]]), nodedof
-                    )
-                    NRN = NTRN(N, R)
+                    detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp], pt[kp]]), elementcoord)
+                    N = Model.shape.getShapeFunctions(array([pt[ip], pt[jp], pt[kp]]), nodedof)
+                    NRN = N.transpose().dot(R).dot(N)
                     M_elem_mat += NRN * abs(detJ) * wt[ip] * wt[jp] * wt[kp]
         return M_elem_mat
 

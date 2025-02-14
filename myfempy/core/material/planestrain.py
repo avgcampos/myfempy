@@ -6,7 +6,7 @@ FLT64 = np.float64
 from myfempy.core.material.material import Material
 
 
-class PlaneStrainIsotropic(Material):
+class PlaneStrain(Material):
     """Plane Strain Isotropic Material Class <ConcreteClassService>"""
 
     def getMaterialSet():
@@ -16,7 +16,12 @@ class PlaneStrainIsotropic(Material):
         }
         return matset
 
-    def getElasticTensor(E, v):
+    def getElasticTensor(Model=None, element_number=None):
+        # material elasticity
+        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["EXX"]
+        # material poisson ratio
+        v = Model.tabmat[int(Model.inci[element_number, 2]) - 1][ "VXX"]  
+        
         D = np.zeros((3, 3), dtype=FLT64)
         D[0, 0] = E * (1.0 - v) / ((1 + v) * (1.0 - 2.0 * v))
         D[0, 1] = D[0, 0] * v / (1.0 - v)
@@ -35,7 +40,11 @@ class PlaneStrainIsotropic(Material):
 
         elementcoord = Model.shape.getNodeCoord(Model.coord, nodelist)
 
-        B = Model.element.getB(Model, elementcoord, ptg, nodedof)
+        diffN = Model.shape.getDiffShapeFuntion(np.array([ptg, ptg]), nodedof)
+        
+        invJ = Model.shape.getinvJacobi(np.array([ptg, ptg]), elementcoord, nodedof)
+        
+        B = Model.element.getB(diffN, invJ)
 
         epsilon = np.dot(B, U[loc])  # B @ (U[loc])
 
@@ -59,19 +68,14 @@ class PlaneStrainIsotropic(Material):
         return title
 
     def getElementStress(Model, epsilon, element_number):
-        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1][
-            "EXX"
-        ]  # material elasticity
-        v = Model.tabmat[int(Model.inci[element_number, 2]) - 1][
-            "VXX"
-        ]  # material poisson ratio
-
-        C = PlaneStrainIsotropic.getElasticTensor(E, v)
+        C = Model.material.getElasticTensor(Model, element_number)
 
         sigma = np.dot(C, epsilon)
 
         strs_elm_xx = sigma[0]
+        
         strs_elm_yy = sigma[1]
+        
         strs_elm_xy = sigma[2]
 
         strs_elm_vm = np.sqrt(
@@ -100,3 +104,15 @@ class PlaneStrainIsotropic(Material):
     def getTitleFoS():
         title = ["FoS_YIELD_VON_MISES"]
         return title
+
+    def getStrainMechanical(strain_vector):
+        strain = np.zeros((3, strain_vector.shape[0]))
+        strain[0, :] = strain_vector
+        strain[1, :] = strain_vector
+        return  strain
+    
+    def getStrainThermal(strain_vector):
+        strain = np.zeros((3, strain_vector.shape[0]))
+        strain[0, :] = strain_vector
+        strain[1, :] = strain_vector
+        return  strain

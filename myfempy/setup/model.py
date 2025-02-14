@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from myfempy.io.controllers import setPoints2NumericalIntegration
 import numpy as np
 
 
@@ -63,9 +64,14 @@ class SetModel:
 
     def getCoord(self, modeldata):
         return SetModel.setCoord(self, modeldata)
+    
+    # def setIntGauss(self, element):
+    #     intgauss = SetModel.__intgauss(element)
+    #     self.intgauss = intgauss
+    #     return intgauss
 
-    def getIntGauss(self, modeldata):
-        return SetModel.__intgauss(self, modeldata)
+    # def getIntGauss(self, element):
+    #     return SetModel.setIntGauss(self, element)
 
     # -----------------------------------------------
     # privates methods
@@ -98,14 +104,18 @@ class SetModel:
         mat_prop = dict()
         key_mat_list = {
             "EXX": "EXX",
-            "VXX": "VXX",
-            "GXX": "GXX",
+            "VXY": "VXY",
+            "GXY": "GXY",
             "EYY": "EYY",
-            "VYY": "VYY",
-            "GYY": "GYY",
+            "VYZ": "VYZ",
+            "GYZ": "GYZ",
+            "EZZ": "EZZ",
+            "VZX": "VZX",
+            "GZX": "GZX",
             "RHO": "RHO",
             "KXX": "KXX",
             "KYY": "KYY",
+            "KZZ": "KZZ",
             "CTE": "CTE",
             "VIS": "VIS",
             "STIF": "STIF",
@@ -126,14 +136,18 @@ class SetModel:
             # tabmat[mm] = {key:mat_prop[key]}
             tabmat[mm] = {
                 "EXX": mat_prop["EXX"],
-                "VXX": mat_prop["VXX"],
-                "GXX": mat_prop["GXX"],
+                "VXY": mat_prop["VXY"],
+                "GXY": mat_prop["GXY"],
                 "EYY": mat_prop["EYY"],
-                "VYY": mat_prop["VYY"],
-                "GYY": mat_prop["GYY"],
+                "VYZ": mat_prop["VYZ"],
+                "GYZ": mat_prop["GYZ"],
+                "EZZ": mat_prop["EZZ"],
+                "VZX": mat_prop["VZX"],
+                "GZX": mat_prop["GZX"],
                 "RHO": mat_prop["RHO"],
                 "KXX": mat_prop["KXX"],
                 "KYY": mat_prop["KYY"],
+                "KZZ": mat_prop["KZZ"],
                 "CTE": mat_prop["CTE"],
                 "VIS": mat_prop["VIS"],
                 "STIF": mat_prop["STIF"],
@@ -263,6 +277,9 @@ class SetModel:
             coord[ii, :] = np.array(coordlist[ii][:])
         return coord
 
-    def __intgauss(self, modeldata):
-        self.intgauss = modeldata["ELEMENT"]["INTGAUSS"]
-        return self.intgauss
+    # def __intgauss(element):
+    #     if "INTGAUSS" in element.keys():
+    #         intgauss = element["INTGAUSS"]
+    #     else:
+    #         intgauss = setPoints2NumericalIntegration(element["SHAPE"])
+    #     return intgauss

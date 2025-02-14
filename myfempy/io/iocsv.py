@@ -283,7 +283,7 @@ def write2log(log_file, log_data, modelinfo, solstatus):
             )
             file_object.write(
                 "{0:<30} : {1:<10} INT\n".format(
-                    "CPU CORE ", str(solstatus["solverstatus"]["ncpu"])
+                    "SOLVER CORE ", str(solstatus["solverstatus"]["ncpu"])
                 )
             )
 

@@ -1,21 +1,15 @@
 from __future__ import annotations
 
-from os import environ
-environ["OMP_NUM_THREADS"] = "8"
 
 from numpy import dot, float64, zeros
 from scipy.sparse.linalg import spsolve
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
+from myfempy.core.solver.assemblerfull_parallel import AssemblerFULLPOOL
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
 # from myfempy.core.alglin import linsolve_spsolve
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
-
-# from os import environ
-
-# environ["OMP_NUM_THREADS"] = "3"
-
 
 class SteadyStateLinear(Solver):
     """
@@ -40,16 +34,28 @@ class SteadyStateLinear(Solver):
                 MP=MP,
             )
         else:
-            matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
-                Model,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
-                type_assembler="linear_stiffness",
-                MP=MP,
-            )
+            if MP:
+                matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(
+                    Model,
+                    inci,
+                    coord,
+                    tabmat,
+                    tabgeo,
+                    intgauss,
+                    type_assembler="linear_stiffness",
+                    MP=MP,
+                )
+            else:
+                matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
+                    Model,
+                    inci,
+                    coord,
+                    tabmat,
+                    tabgeo,
+                    intgauss,
+                    type_assembler="linear_stiffness",
+                    MP=MP,
+                )
 
         return matrix
 

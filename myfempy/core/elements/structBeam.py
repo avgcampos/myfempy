@@ -1,9 +1,5 @@
 from __future__ import annotations
 
-from os import environ
-
-environ["OMP_NUM_THREADS"] = "1"
-
 from numpy import (abs, array, concatenate, dot, eye, float64, int32, ix_,
                    sqrt, transpose, zeros)
 
@@ -32,7 +28,7 @@ class StructuralBeam(Element):
                     "tx": 4,
                     "ty": 5,
                     "tz": 6,
-                    "massaadd": 15,
+                    "masspoint": 15,
                     "spring2ground": 16,
                     "damper2ground": 17,
                 },
@@ -48,12 +44,7 @@ class StructuralBeam(Element):
         }
         return elemset
 
-    # def getH():
-    #     return array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1],], dtype=INT32)
-
-    def getB(Model, elementcoord, pt, nodedof):
-        diffN = Model.shape.getDiffDiffShapeFuntion(pt, nodedof)
-        invJ = Model.shape.getinvJacobi(pt, elementcoord, nodedof)
+    def getB(diffN, invJ):
         H = array(
             [
                 [1, 0, 0, 0],
@@ -61,9 +52,9 @@ class StructuralBeam(Element):
                 [0, 0, 1, 0],
                 [0, 0, 0, 1],
             ],
-            dtype=INT32,
-        )  # StructuralBeam.getH()
-        B = dot(H, dot(invJ, diffN))
+            dtype=FLT64,
+        )
+        B = H.dot(invJ).dot(diffN)
         return B
 
     # @profile
@@ -80,12 +71,9 @@ class StructuralBeam(Element):
             elementcoord_local = get3D_LocalVector(elementcoord, 3)
         else:
             elementcoord_local = get3D_LocalVector(array(elementcoord), 2)
-        E = tabmat[int(inci[element_number, 2]) - 1]["EXX"]
-        G = tabmat[int(inci[element_number, 2]) - 1]["GXX"]
-        D = Model.material.getElasticTensor(E, G)
-        AREA = tabgeo[int(inci[element_number, 3] - 1)][
-            "AREACS"
-        ]  # tabgeo[int(inci[element_number, 3] - 1), 4]
+
+        D = Model.material.getElasticTensor(Model, element_number)
+        AREA = tabgeo[int(inci[element_number, 3] - 1)]["AREACS"]
         IZZ = tabgeo[int(inci[element_number, 3] - 1)]["INERZZ"]
         IYY = tabgeo[int(inci[element_number, 3] - 1)]["INERYY"]
         IXX = tabgeo[int(inci[element_number, 3] - 1)]["INERXX"]
@@ -94,8 +82,10 @@ class StructuralBeam(Element):
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
         for ip in range(intgauss):
             detJ = Model.shape.getdetJacobi(array([pt[ip]]), elementcoord_local)
-            B = StructuralBeam.getB(Model, elementcoord, array([pt[ip]]), nodedof)
-            BCB = dot(dot(B.transpose(), C), B)
+            diffN = Model.shape.getDiffDiffShapeFuntion(array([pt[ip]]), nodedof)
+            invJ = Model.shape.getinvJacobi(array([pt[ip]]), elementcoord, nodedof)
+            B = StructuralBeam.getB(diffN, invJ)
+            BCB = B.transpose().dot(C).dot(B)
             K_elem_mat += BCB * abs(detJ) * wt[ip]
         if type_shape == "line3":
             R = getRotational_Matrix(elementcoord, 6)
@@ -132,7 +122,7 @@ class StructuralBeam(Element):
         for ip in range(intgauss):
             detJ = Model.shape.getdetJacobi(array([pt[ip]]), elementcoord_local)
             N = Model.shape.getShapeFunctions(array([pt[ip]]), nodedof)
-            NRN = dot(dot(N.transpose(), R), N)
+            NRN = N.transpose().dot(R).dot(N)
             M_elem_mat += NRN * abs(detJ) * wt[ip]
         return M_elem_mat
 

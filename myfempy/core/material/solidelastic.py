@@ -6,21 +6,22 @@ FLT64 = np.float64
 from myfempy.core.material.material import Material
 
 
-class SolidIsotropic(Material):
+class SolidElastic(Material):
     """Solid Stress Isotropic Material Class <ConcreteClassService>"""
 
     def getMaterialSet():
         matset = {
-            "mat": "solidstress",
+            "mat": "solidelastic",
             "type": "isotropic",
         }
         return matset
 
-    # def getProMaterial(modeldata):
-    #     tabmat = io.samethings()
-    #     pass
-
-    def getElasticTensor(E, v):
+    def getElasticTensor(Model=None, element_number=None):
+        # material elasticity
+        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["EXX"]
+        # material poisson ratio
+        v = Model.tabmat[int(Model.inci[element_number, 2]) - 1][ "VXY"] 
+        
         D = np.zeros((6, 6))
         fac = 1.0 / (2.0 * v * v + v - 1.0)
         D[0, 0] = fac * E * (v - 1.0)
@@ -43,13 +44,17 @@ class SolidIsotropic(Material):
 
         nodelist = Model.shape.getNodeList(Model.inci, element_number)
 
-        loc = Model.shape.getShapeKey(nodelist, nodedof)
+        loc = Model.shape.getLocKey(nodelist, nodedof)
 
         elementcoord = Model.shape.getNodeCoord(Model.coord, nodelist)
 
-        B = Model.element.getB(Model, elementcoord, ptg, nodedof)
+        diffN = Model.shape.getDiffShapeFuntion(np.array([ptg, ptg, ptg]), nodedof)
+        
+        invJ = Model.shape.getinvJacobi(np.array([ptg, ptg, ptg]), elementcoord, nodedof)
 
-        epsilon = np.dot(B, U[loc])  # B @ (U[loc])
+        B = Model.element.getB(diffN, invJ)
+
+        epsilon = B.dot(U[loc]) #np.dot(B, U[loc])  # B @ (U[loc])
 
         strn_elm_xx = epsilon[0]
         strn_elm_yy = epsilon[1]
@@ -93,16 +98,10 @@ class SolidIsotropic(Material):
         return title
 
     def getElementStress(Model, epsilon, element_number):
-        E = Model.tabmat[
-            int(Model.inci[element_number, 2]) - 1, 0
-        ]  # material elasticity
-        v = Model.tabmat[
-            int(Model.inci[element_number, 2]) - 1, 1
-        ]  # material poisson ratio
 
-        C = SolidIsotropic.getElasticTensor(E, v)
+        C = Model.material.getElasticTensor(Model, element_number)
 
-        sigma = np.dot(C, epsilon)
+        sigma = C.dot(epsilon) #np.dot(C, epsilon)
 
         strs_elm_xx = sigma[0]
         strs_elm_yy = sigma[1]
@@ -158,3 +157,20 @@ class SolidIsotropic(Material):
     def getTitleFoS():
         title = ["FoS_YIELD_VON_MISES"]
         return title
+
+    def getStrainMechanical(strain_vector):
+        strain = np.zeros((6, strain_vector.shape[0]))
+        strain[0, :] = strain_vector[0]
+        strain[1, :] = strain_vector[1]
+        strain[2, :] = strain_vector[2]
+        strain[3, :] = strain_vector[3]
+        strain[4, :] = strain_vector[4]
+        strain[5, :] = strain_vector[5]
+        return strain
+    
+    def getStrainThermal(strain_vector):
+        strain = np.zeros((6, strain_vector.shape[0]))
+        strain[0, :] = strain_vector
+        strain[1, :] = strain_vector
+        strain[2, :] = strain_vector
+        return strain

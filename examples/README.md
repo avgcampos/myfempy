@@ -48,7 +48,7 @@
 ### Static Linear Analysis
 
 1. <ex_first_test.py> 							-- First test required to test install myfempy
-2. <ex_ex_su2_Linear Elasticity_Case.py>		-- Analysis to convergence of myfempy solver with su2 code [https://su2code.github.io/tutorials/Linear_Elasticity]
+2. <ex_ex_su2_Linear linear_static_planestress_case.py>		-- Analysis to convergence of myfempy solver with su2 code [https://su2code.github.io/tutorials/Linear_Elasticity]
 3. <ex_quad4_patchtest.py>						[dev]
 4. <ex_manual_mesh.py>							[dev]
 5. <ex_beam_meshlegacy.py> 						[dev]								

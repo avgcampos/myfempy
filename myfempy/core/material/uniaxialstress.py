@@ -7,7 +7,7 @@ from myfempy.core.material.material import Material
 from myfempy.core.utilities import get3D_LocalVector, getRotational_Matrix
 
 
-class UniAxialStressIsotropic(Material):
+class UniAxialStress(Material):
     """Uni-Axial Stress Isotropic Material Class <ConcreteClassService>"""
 
     def getMaterialSet():
@@ -17,11 +17,9 @@ class UniAxialStressIsotropic(Material):
         }
         return matset
 
-    # def getProMaterial(modeldata):
-    #     tabmat = io.samethings()
-    #     pass
-
-    def getElasticTensor(E, G):
+    def getElasticTensor(Model=None, element_number=None):
+        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["EXX"]
+        G = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["GXY"]
         C = np.zeros((4, 4), dtype=FLT64)
         C[0, 0] = E
         C[1, 1] = E
@@ -51,7 +49,11 @@ class UniAxialStressIsotropic(Material):
         else:
             elementcoord_local = get3D_LocalVector(elementcoord, 2)
 
-        B = Model.element.getB(Model, elementcoord_local, ptg, nodedof)
+        diffN = Model.shape.getDiffDiffShapeFuntion(np.array([ptg]), nodedof)
+        
+        invJ = Model.shape.getinvJacobi(np.array([ptg]), elementcoord, nodedof)
+        
+        B = Model.element.getB(diffN, invJ)
 
         cg = Model.geometry.getCGCoord(Model.tabgeo, Model.inci, element_number)
 
@@ -60,9 +62,11 @@ class UniAxialStressIsotropic(Material):
         strn_elm_normal_tension = epsilon[0]
 
         strn_elm_normal_bendingXY_max = -1.0 * cg["y_max"] * epsilon[1]
+        
         strn_elm_normal_bendingXY_min = -1.0 * cg["y_min"] * epsilon[1]
 
         strn_elm_normal_bendingXZ_max = -1.0 * cg["z_max"] * epsilon[2]
+        
         strn_elm_normal_bendingXZ_min = -1.0 * cg["z_min"] * epsilon[2]
 
         strn_elm_shear_torsion_max = cg["r_max"] * epsilon[3]
@@ -92,14 +96,8 @@ class UniAxialStressIsotropic(Material):
         return title
 
     def getElementStress(Model, epsilon, element_number):
-        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1][
-            "EXX"
-        ]  # material elasticity
-        G = Model.tabmat[int(Model.inci[element_number, 2]) - 1][
-            "GXX"
-        ]  # material poisson ratio
 
-        C = UniAxialStressIsotropic.getElasticTensor(E, G)
+        C = Model.material.getElasticTensor(Model, element_number)
 
         sigma = np.dot(C, epsilon)
 
@@ -108,9 +106,11 @@ class UniAxialStressIsotropic(Material):
         strs_elm_normal_tension = sigma[0]
 
         strs_elm_normal_bendingXY_max = -1.0 * cg["y_max"] * sigma[1]
+        
         strs_elm_normal_bendingXY_min = -1.0 * cg["y_min"] * sigma[1]
 
         strs_elm_normal_bendingXZ_max = -1.0 * cg["z_max"] * sigma[2]
+        
         strs_elm_normal_bendingXZ_min = -1.0 * cg["z_min"] * sigma[2]
 
         strs_elm_shear_torsion_max = cg["r_max"] * sigma[3]

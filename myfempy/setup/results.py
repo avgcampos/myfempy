@@ -133,7 +133,9 @@ class setPostProcess(ABC):
                         {
                             "val": result_solu[st][:][:],
                             "title": (
-                                "FREQUENCY_RESPONSE_"
+                                "RESPONSE_"
+                                + str(st)
+                                + "_FREQ_"
                                 + str(np.round(FREQUENCY[st], 3))
                                 + "Hz"
                             ),
@@ -402,7 +404,7 @@ class setPostProcess(ABC):
         for ee in range(self.modelinfo["nelem"]):
 
             epsilon, strain = self.model.material.getElementStrain(
-                self.model, U, np.array([pt[0], pt[0]]), ee
+                self.model, U, pt[0], ee
             )
 
             sigma, stress = self.model.material.getElementStress(
@@ -413,7 +415,7 @@ class setPostProcess(ABC):
                 sigma, epsilon, self.modelinfo["elemvol"][ee]
             )
 
-            FoS = self.model.material.getFailureCriteria(sigma)
+            FoS = self.model.material.getFailureCriteria(stress)
 
             stress_list[ee, :] = stress
             strain_list[ee, :] = strain
@@ -453,7 +455,7 @@ class setPostProcess(ABC):
         for ee in range(self.modelinfo["nelem"]):
 
             epsilon, strain = self.model.material.getElementGradTemp(
-                self.model, U, np.array([pt[0], pt[0]]), ee
+                self.model, U, pt[0], ee
             )
 
             sigma, stress = self.model.material.getElementHeatFlux(
@@ -535,7 +537,7 @@ class setPostProcess(ABC):
                         ]
                     )
                 )
-                / 10e-12
+                # / 10e-12
             )
             val_X = postporc_result["SOLUTION"][plotset["step"]]["FREQ"]
             xlabel = "FREQUENCY RESPONSE [Hz]"

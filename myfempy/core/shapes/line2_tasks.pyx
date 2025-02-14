@@ -7,6 +7,7 @@ import numpy as np
 
 cimport numpy as np
 
+DTYPE = np.float64
 ctypedef np.int32_t INT32
 ctypedef np.float64_t FLT64
 
@@ -64,14 +65,14 @@ cdef FLT64 [:, ::1] MATDIFFDIFFN(FLT64 [::1] r):
     ddN_view[3][9] = 0.5
     return ddN
 
-@cdivision(True)
-@exceptval(check=False)
-@boundscheck(False) # turn off bounds-checking for entire function
-@wraparound(False)  # turn off negative index wrapping for entire function           
-@nonecheck(False)   
-cdef FLT64 DET(FLT64 [:, ::1] A):
-    cdef FLT64 det = A[0][0]
-    return det
+# @cdivision(True)
+# @exceptval(check=False)
+# @boundscheck(False) # turn off bounds-checking for entire function
+# @wraparound(False)  # turn off negative index wrapping for entire function           
+# @nonecheck(False)   
+# cdef FLT64 DET(FLT64 [:, ::1] A):
+#     cdef FLT64 det = A[0][0]
+#     return det
 
 @cdivision(True)
 @exceptval(check=False)
@@ -79,6 +80,7 @@ cdef FLT64 DET(FLT64 [:, ::1] A):
 @wraparound(False)  # turn off negative index wrapping for entire function           
 @nonecheck(False)   
 cdef FLT64 INV(FLT64 [:, ::1] A):
+    cdef FLT64 detA = A[0][0]
     cdef FLT64 invA = 1.0 / A[0][0]
     return invA
 
@@ -150,7 +152,7 @@ def invJacobi(FLT64 [::1] r_coord, FLT64 [:, ::1] element_coord, INT32 nodedof):
 @wraparound(False)  # turn off negative index wrapping for entire function           
 def detJacobi(FLT64 [::1] r_coord, FLT64 [:, ::1] element_coord):
     cdef FLT64 [:, ::1] Jac = JACOBIANO(r_coord, element_coord)
-    cdef FLT64 detJ = DET(Jac)
+    cdef FLT64 detJ = Jac[0][0]
     return detJ
 
 @boundscheck(False) # turn off bounds-checking for entire function

@@ -18,7 +18,7 @@ sec:
 doc:
 	mkdocs serve
 prof:
-	kernprof -l -v .\__shakedown\myfempy_perf_test_profile.py
+	kernprof -l -v .\__shakedown\profile_test_myfempy.py
 #python -m line_profiler static_line.py.lprof
 build:
 	python __dev__setup_wrap_cy_pyx.py build_ext --inplace

@@ -1,10 +1,6 @@
 from __future__ import annotations
 
-from os import environ
-
-environ["OMP_NUM_THREADS"] = "8"
-
-from numpy import array, float64, int32, zeros
+from numpy import array, float64, int32, zeros, empty
 from scipy.sparse import coo_matrix
 
 INT32 = int32
@@ -91,11 +87,11 @@ class AssemblerSYMM(Assembler):
         dim_band = int(0.5 * (elemdof * elemdof - elemdof) * inci.shape[0])
         dim_diag = int(elemdof * inci.shape[0])
 
-        ith_band = zeros((dim_band,), dtype=INT32)
-        jth_band = zeros((dim_band,), dtype=INT32)
-        val_band = zeros((dim_band,), dtype=FLT64)
-        ith_diag = zeros((dim_diag,), dtype=INT32)
-        val_diag = zeros((dim_diag,), dtype=FLT64)
+        ith_band = empty((dim_band,), dtype=INT32)
+        jth_band = empty((dim_band,), dtype=INT32)
+        val_band = empty((dim_band,), dtype=FLT64)
+        ith_diag = empty((dim_diag,), dtype=INT32)
+        val_diag = empty((dim_diag,), dtype=FLT64)
 
         nb = int(0)
         nd = int(0)
@@ -141,9 +137,6 @@ class AssemblerSYMM(Assembler):
 
     def getDirichletNH(constrains, nodetot, nodedof):
         return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
-
-    def getRotationMatrix(node_list, coord, ndof):
-        return AssemblerFULL.getRotationMatrix(node_list, coord, ndof)
 
     # @profile
     def __getVectorization(
