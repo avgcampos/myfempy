@@ -16,10 +16,10 @@ class HeatSolid(Material):
         }
         return matset
 
-    def getElasticTensor(Model=None, element_number=None):
-        Kxx = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["KXX"]
-        Kyy = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["KYY"]
-        Kzz = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["KZZ"]
+    def getElasticTensor(tabmat, inci, element_number, Model=None):
+        Kxx = tabmat[int(inci[element_number, 2]) - 1]["KXX"]
+        Kyy = tabmat[int(inci[element_number, 2]) - 1]["KYY"]
+        Kzz = tabmat[int(inci[element_number, 2]) - 1]["KZZ"]
         D = np.zeros((3, 3), dtype=FLT64)
         D[0, 0] = Kxx
         D[1, 1] = Kyy
@@ -66,7 +66,7 @@ class HeatSolid(Material):
 
     def getElementHeatFlux(Model, epsilon, element_number):
 
-        C = Model.material.getElasticTensor(Model, element_number)
+        C = Model.material.getElasticTensor(Model.tabmat, Model.inci,  element_number)
 
         sigma = -1 * np.dot(C, epsilon)
 

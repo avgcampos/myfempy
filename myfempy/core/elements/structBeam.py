@@ -72,7 +72,7 @@ class StructuralBeam(Element):
         else:
             elementcoord_local = get3D_LocalVector(array(elementcoord), 2)
 
-        D = Model.material.getElasticTensor(Model, element_number)
+        D = Model.material.getElasticTensor(tabmat, inci, element_number)
         AREA = tabgeo[int(inci[element_number, 3] - 1)]["AREACS"]
         IZZ = tabgeo[int(inci[element_number, 3] - 1)]["INERZZ"]
         IYY = tabgeo[int(inci[element_number, 3] - 1)]["INERYY"]

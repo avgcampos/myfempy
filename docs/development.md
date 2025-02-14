@@ -27,11 +27,11 @@ Esta nova versão permite a inclusão de módulos e códigos escritos em C/Cytho
 
 9. [X] Implementação de elementos de alta ordem (quadritico)
 
-10. [ ] Implementação de rotinas para execução em multicore, exe: Montagem das matrizes
+10. [X] Implementação de rotinas para execução em multicore, exe: Montagem das matrizes
 
-11. [ ] Solvers avançados utilizando os pacotes [PETSc](https://petsc.org/release/) e [SLEPc](https://slepc.upv.es/)
+11. [X] Implementar funcionalidades do código do _core_ em C/Cython
 
-12. [ ] Implementar funcionalidades do código do _core_ em C
+12. [ ] Solvers avançados utilizando os pacotes [PETSc](https://petsc.org/release/) e [SLEPc](https://slepc.upv.es/)
 
 Implementar as seguintes soluções de análise:
 
@@ -54,7 +54,7 @@ Implementar as seguintes soluções de análise:
 
         - [X] Plane stress
         - [X] Plane strain
-        - [ ] Solid
+        - [X] Solid
 		- [X] Euler-Bernouilli Space Beam
 		- [ ] Timoshenko Space Beam
         - [ ] Plate Kirchhoff
@@ -74,9 +74,9 @@ Implementar as seguintes soluções de análise:
 		- [X] tria6 - triagular 6 nós
 		- [X] quad4 - quadrilateral 4 nós
 		- [X] quad8 - quadrilateral 8 nós
-		- [ ] tetr4 - tetraedro 4 nós
+		- [X] tetr4 - tetraedro 4 nós
 		- [ ] tetr10 - tetraedro 10 nós
-		- [ ] hexa8 - hexaedro 8 nós
+		- [X] hexa8 - hexaedro 8 nós
 		- [ ] hexa20 - hexaedro 20 nós
 
 	4. Acoplamento MMulti-físico:

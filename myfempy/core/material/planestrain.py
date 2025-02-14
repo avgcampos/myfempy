@@ -16,11 +16,11 @@ class PlaneStrain(Material):
         }
         return matset
 
-    def getElasticTensor(Model=None, element_number=None):
+    def getElasticTensor(tabmat, inci, element_number, Model=None):
         # material elasticity
-        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["EXX"]
+        E = tabmat[int(inci[element_number, 2]) - 1]["EXX"]
         # material poisson ratio
-        v = Model.tabmat[int(Model.inci[element_number, 2]) - 1][ "VXX"]  
+        v = tabmat[int(inci[element_number, 2]) - 1][ "VXX"]  
         
         D = np.zeros((3, 3), dtype=FLT64)
         D[0, 0] = E * (1.0 - v) / ((1 + v) * (1.0 - 2.0 * v))
@@ -68,7 +68,7 @@ class PlaneStrain(Material):
         return title
 
     def getElementStress(Model, epsilon, element_number):
-        C = Model.material.getElasticTensor(Model, element_number)
+        C = Model.material.getElasticTensor(Model.tabmat, Model.inci,  element_number)
 
         sigma = np.dot(C, epsilon)
 

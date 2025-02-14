@@ -42,7 +42,6 @@ class AssemblerFULL(Assembler):
             matrix = Model.element.getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, ee)
             loc = AssemblerFULL.__getLoc(Model, inci, ee)
             ith, jth, val = AssemblerFULL.__getVectorization(ith, jth, val, loc, matrix, ee, elemdof)
-
         A_sp_scipy_csc = csc_matrix((val, (ith, jth)), shape=(sdof, sdof))
         return A_sp_scipy_csc
 

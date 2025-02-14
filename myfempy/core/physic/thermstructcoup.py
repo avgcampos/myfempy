@@ -97,7 +97,7 @@ class ThermalStructuralCoupling(Structural):
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
         a = tabmat[int(inci[element_number, 2]) - 1]["CTE"]
-        C = Model.material.getElasticTensor(Model, element_number)
+        C = Model.material.getElasticTensor(tabmat, inci, element_number)
         pt, wt = gauss_points(type_shape, intgauss)
         W = np.zeros((nodedof, 1))
         force_value_vector = np.zeros((edof, 1))

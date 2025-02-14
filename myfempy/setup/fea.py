@@ -165,13 +165,13 @@ class newAnalysis:
         tabmat = self.modelinfo["tabmat"]
         tabgeo = self.modelinfo["tabgeo"]
         intgauss = self.modelinfo["intgauss"]
-        try:
-            matrix = newAnalysis.getGlobalMatrix(
-                self, inci, coord, tabmat, tabgeo, intgauss, self.symm, self.mp
-            )
-            logging.info("TRY RUN GLOBAL ASSEMBLY -- SUCCESS")
-        except:
-            logging.warning("TRY RUN GLOBAL ASSEMBLY -- FAULT")
+        # try:
+        matrix = newAnalysis.getGlobalMatrix(
+            self, inci, coord, tabmat, tabgeo, intgauss, self.symm, self.mp
+        )
+        #     logging.info("TRY RUN GLOBAL ASSEMBLY -- SUCCESS")
+        # except:
+        #     logging.warning("TRY RUN GLOBAL ASSEMBLY -- FAULT")
         loadaply = self.modelinfo["forces"]
         try:
             matrix = newAnalysis.getUpdateMatrix(self, matrix, loadaply)

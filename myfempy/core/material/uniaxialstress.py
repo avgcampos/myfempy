@@ -17,9 +17,9 @@ class UniAxialStress(Material):
         }
         return matset
 
-    def getElasticTensor(Model=None, element_number=None):
-        E = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["EXX"]
-        G = Model.tabmat[int(Model.inci[element_number, 2]) - 1]["GXY"]
+    def getElasticTensor(tabmat, inci, element_number, Model=None):
+        E = tabmat[int(inci[element_number, 2]) - 1]["EXX"]
+        G = tabmat[int(inci[element_number, 2]) - 1]["GXY"]
         C = np.zeros((4, 4), dtype=FLT64)
         C[0, 0] = E
         C[1, 1] = E
@@ -97,7 +97,7 @@ class UniAxialStress(Material):
 
     def getElementStress(Model, epsilon, element_number):
 
-        C = Model.material.getElasticTensor(Model, element_number)
+        C = Model.material.getElasticTensor(Model.tabmat, Model.inci,  element_number)
 
         sigma = np.dot(C, epsilon)
 

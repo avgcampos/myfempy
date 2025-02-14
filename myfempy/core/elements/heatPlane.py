@@ -44,7 +44,7 @@ class HeatPlane(Element):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        C = Model.material.getElasticTensor(Model, element_number)
+        C = Model.material.getElasticTensor(tabmat, inci, element_number)
         t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
         pt, wt = gauss_points(type_shape, intgauss)
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
