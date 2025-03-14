@@ -183,19 +183,24 @@ def write2log(log_file, log_data, modelinfo, solstatus):
                 file_object.write("\n")
                 file_object.write("LIST OF MATERIAL PROPERTY\n")
                 file_object.write(
-                    "{0:<7}{1:<10}{2:<10}{3:<10}{4:<10}{5:<10}{6:<10}{7:<10}{8:<10}{9:<10}{10:<10}{11:<10}\n".format(
-                        "PROP",
+                    "{0:<7}{1:<10}{2:<10}{3:<10}{4:<10}{5:<10}{6:<10}{7:<10}{8:<10}{9:<10}{10:<10}{11:<10}{12:<10}{13:<10}{14:<10}{15:<10}{16:<10}\n".format(
                         "EXX",
-                        "VXX",
-                        "GXX",
+                        "VXY",
+                        "GXY",
                         "EYY",
-                        "VYY",
-                        "GYY",
+                        "VYZ",
+                        "GYZ",
+                        "EZZ",
+                        "VZX",
+                        "GZX",
                         "RHO",
+                        "KXX",
+                        "KYY",
+                        "KZZ",
+                        "CTE",
+                        "VIS",
                         "STIF",
                         "DAMP",
-                        "ID_MAT",
-                        "ID_DEF",
                     )
                 )
                 for row in range(len(modelinfo["tabmat"])):
@@ -219,18 +224,17 @@ def write2log(log_file, log_data, modelinfo, solstatus):
                 file_object.write("\n")
                 file_object.write("LIST OF MATERIAL PROPERTY\n")
                 file_object.write(
-                    "{0:<7}{1:<10}{2:<10}{3:<10}{4:<10}{5:<10}{6:<10}{7:<10}{8:<10}{9:<10}{10:<10}\n".format(
-                        "PROP",
-                        "AREA",
-                        "IZZ",
-                        "IYY",
-                        "JXX",
-                        "THK",
-                        "B",
-                        "H",
-                        "T",
-                        "D",
-                        "ID_SEC",
+                    "{0:<7}{1:<10}{2:<10}{3:<10}{4:<10}{5:<10}{6:<10}{7:<10}{8:<10}{9:<10}}\n".format(
+                        "AREACS",
+                        "INERYY",
+                        "INERZZ",
+                        "INERXX",
+                        "THICKN",
+                        "b",
+                        "h",
+                        "t",
+                        "d",
+                        "ID",
                     )
                 )
                 for row in range(len(modelinfo["tabgeo"])):
@@ -272,7 +276,7 @@ def write2log(log_file, log_data, modelinfo, solstatus):
                 )
             )
             file_object.write(
-                "{0:<30} : {1:<10} BYTES\n".format(
+                "{0:<30} : {1:<10} MB\n".format(
                     "STIFFNESS SIZE ", str(solstatus["solverstatus"]["memorysize"])
                 )
             )

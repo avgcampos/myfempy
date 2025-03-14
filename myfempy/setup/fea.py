@@ -224,7 +224,7 @@ class newAnalysis:
         assembly, forcelist = newAnalysis.Assembly(self)
         endttime = time()
         solverset["solverstatus"]["timeasb"] = abs(endttime - starttime)
-        solverset["solverstatus"]["memorysize"] = assembly["stiffness"].data.nbytes
+        solverset["solverstatus"]["memorysize"] = (assembly["stiffness"].todense().nbytes)/1e6
         # loading_bar_v1(50,"SOLVER")
         constrains = self.modelinfo["constrains"]
         nsteps = setSteps(solverset["STEPSET"])

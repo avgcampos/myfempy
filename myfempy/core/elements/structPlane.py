@@ -95,17 +95,29 @@ class StructuralPlane(Element):
 
     def getUpdateMatrix(Model, matrix, addval):
         elem_set = Model.element.getElementSet()
-        shape_set = Model.shape.getShapeSet()
-        dofe = len(shape_set["nodes"]) * len(elem_set["dofs"]["d"])
+        # shape_set = Model.shape.getShapeSet()
+        nodedof = len(elem_set["dofs"]["d"])
+        
+        if int(addval[0, 1]) == 16:
+            matrix_update = array([[1.0, -1.0],
+                                   [-1.0, 1.0]])
+            
+        elif int(addval[0, 1]) == 15:
+            matrix_update = array([[1.0, 0.0],
+                                   [0.0, 1.0]])
+            
+        else:
+            matrix_update = array([[1.0, 1.0],
+                                   [1.0, 1.0]])
+        
         for ii in range(len(addval)):
 
-            A_add = addval[ii, 2] * array([[1.0, -1.0],
-                                           [-1.0, 1.0]])
+            A_add = addval[ii, 2] * matrix_update
 
             loc = array(
                 [
-                    int(dofe * addval[ii, 0] - (dofe)),
-                    int(dofe * addval[ii, 0] - (dofe - 1)),
+                    int(nodedof * addval[ii, 0] - (nodedof)),
+                    int(nodedof * addval[ii, 0] - (nodedof - 1)),
                 ]
             )
 
