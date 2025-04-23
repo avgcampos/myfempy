@@ -46,13 +46,13 @@ Copyright © Antonio Vinicius G. Campos 2022. Processo INPI BR512022001484-0
 
 ## Dependencies
 
-**Myfempy** can be used in systems based on Linux, MacOS and Windows. **Myfempy** requires Python 3.
+**Myfempy** can be used in systems based on Linux, MacOS and Windows. **Myfempy** requires Python 3.11
 
 ### Installation prerequisites, required to build **myfempy**
 
 You can use either of two python development environments to run myfempy
 
-- [Python 3.x](https://www.python.org/) - *Python is a programming language that lets you work quickly and integrate systems more effectively.*
+- [Python 3.11.x](https://www.python.org/) - *Python is a programming language that lets you work quickly and integrate systems more effectively.*
 - [Anaconda](https://www.anaconda.com/) - *Anaconda offers the easiest way to perform Python/R data science and machine learning on a single machine.*
 
 ### Python packages required for using **myfempy**

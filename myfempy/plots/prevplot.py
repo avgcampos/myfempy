@@ -27,10 +27,10 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
     plotdata["filename"] = path + "/" + previewset["RENDER"]["filename"]
     plotdata["title"] = ["UNDEFORM_MESH"]
     plotdata["solution"] = np.ones((len(modelinfo["inci"]), 1))
-    plotdata["stress_CELL_DATA_val"] = (
+    plotdata["material_CELL_DATA_val"] = (
         (np.array([(modelinfo["inci"][:, 2])])).T
     ).astype(int)
-    plotdata["stress_CELL_DATA_title"] = ["Model"]
+    plotdata["material_CELL_DATA_title"] = ["Material_Set"]
 
     convert_to_vtk(plotdata)
 

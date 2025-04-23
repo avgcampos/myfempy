@@ -272,6 +272,10 @@ class setPostProcess(ABC):
             str(self.path) + "/" + postprocset["PLOTSET"]["filename"] + "_post_process"
         )
         plotdata["coord"] = self.modelinfo["coord"]
+        plotdata["material_CELL_DATA_val"] = (
+            (np.array([(self.modelinfo["inci"][:, 2])])).T
+        ).astype(int)
+        plotdata["material_CELL_DATA_title"] = ["Material_Set"]
 
         # if "structural" in postprocset["COMPUTER"].keys():
         #     if "displ" in postprocset["COMPUTER"]["structural"].keys():

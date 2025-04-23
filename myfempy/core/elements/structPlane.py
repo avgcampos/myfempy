@@ -3,11 +3,12 @@ from __future__ import annotations
 from os import environ
 environ["OMP_NUM_THREADS"] = "1"
 
-from numpy import (abs, array, concatenate, dot, matmul, float64, int32, ix_, sqrt,
+from numpy import (abs, array, concatenate, dot, matmul, float64, float32, int32, ix_, sqrt,
                    zeros)
 
 INT32 = int32
 FLT64 = float64
+FLT32 = float32
 
 from myfempy.core.elements.element import Element
 from myfempy.core.utilities import gauss_points

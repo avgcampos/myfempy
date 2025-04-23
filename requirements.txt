@@ -1,6 +1,7 @@
-###### 		          To Dev Version       ######
-###### Requirements without Version Specifiers ######
-######      pip install -r requirements.txt    ######
+###### 		          To Dev Version            ######
+###### Requirements without Version Specifiers  ######
+######                  python 3.11             ######
+######      pip install -r requirements.txt     ######
 numpy==1.26.4
 scipy==1.13.1
 cython==3.0.10

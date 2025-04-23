@@ -60,13 +60,9 @@ class AssemblerSYMM(Assembler):
                 )
             )
 
-        mtKG_sp_sym = coo_matrix(
-            (val_band, (ith_band, jth_band)), shape=(sdof, sdof)
-        ).tocsr()
+        mtKG_sp_sym = coo_matrix((val_band, (ith_band, jth_band)), shape=(sdof, sdof)).tocsr()
         mtKG_sp_sym += mtKG_sp_sym.transpose()
-        mtKG_sp_sym += coo_matrix(
-            (val_diag, (ith_diag, ith_diag)), shape=(sdof, sdof)
-        ).tocsr()
+        mtKG_sp_sym += coo_matrix((val_diag, (ith_diag, ith_diag)), shape=(sdof, sdof)).tocsr()
 
         return mtKG_sp_sym
 

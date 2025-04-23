@@ -165,13 +165,13 @@ class newAnalysis:
         tabmat = self.modelinfo["tabmat"]
         tabgeo = self.modelinfo["tabgeo"]
         intgauss = self.modelinfo["intgauss"]
-        # try:
-        matrix = newAnalysis.getGlobalMatrix(
-            self, inci, coord, tabmat, tabgeo, intgauss, self.symm, self.mp
-        )
-        #     logging.info("TRY RUN GLOBAL ASSEMBLY -- SUCCESS")
-        # except:
-        #     logging.warning("TRY RUN GLOBAL ASSEMBLY -- FAULT")
+        try:
+            matrix = newAnalysis.getGlobalMatrix(
+                self, inci, coord, tabmat, tabgeo, intgauss, self.symm, self.mp
+            )
+            logging.info("TRY RUN GLOBAL ASSEMBLY -- SUCCESS")
+        except:
+            logging.warning("TRY RUN GLOBAL ASSEMBLY -- FAULT")
         loadaply = self.modelinfo["forces"]
         try:
             matrix = newAnalysis.getUpdateMatrix(self, matrix, loadaply)
@@ -183,6 +183,7 @@ class newAnalysis:
             logging.info("TRY RUN LOAD ASSEMBLY -- SUCCESS")
         except:
             logging.warning("TRY RUN LOAD ASSEMBLY -- FAULT")
+        
         return matrix, forcelist
 
     def Solve(self, solverset):
@@ -300,11 +301,11 @@ class newAnalysis:
         # modelinfo["forces"] = FEANewAnalysis.getLoadApply(self)
         # modelinfo["constrains"] = FEANewAnalysis.getBCApply(self)
         
-        # try:
-        preview_plot(previewdata, self.modelinfo, str(self.path))
-        #     logging.info("TRY RUN PREVIEW PLOT -- SUCCESS")
-        # except:
-        #     logging.warning("TRY RUN PREVIEW PLOT -- FAULT")
+        try:
+            preview_plot(previewdata, self.modelinfo, str(self.path))
+            logging.info("TRY RUN PREVIEW PLOT -- SUCCESS")
+        except:
+            logging.warning("TRY RUN PREVIEW PLOT -- FAULT")
 
     def PostProcess(self, postprocset):
         """
@@ -390,6 +391,8 @@ class newAnalysis:
     def getGlobalMatrix(
         self, inci, coord, tabmat, tabgeo, intgauss, SYMM=None, MP=None
     ):
+        
+        
         return self.solver.getMatrixAssembler(
             self.model, inci, coord, tabmat, tabgeo, intgauss, SYMM=SYMM, MP=MP
         )

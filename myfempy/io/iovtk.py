@@ -152,6 +152,18 @@ def convert_to_vtk(plotdata):
         # CELL DATA
         file_object.write("CELL_DATA" + " " + str(int(len(plotdata["inci"]))) + "\n")
         # if len(plotdata["stress_CELL_DATA_val"]) > 0:
+        if "material_CELL_DATA_val" in plotdata.keys():
+
+            for jj in range(0, int(len(plotdata["material_CELL_DATA_title"]))):
+                file_object.write(
+                    "SCALARS " + plotdata["material_CELL_DATA_title"][jj] + " float 1\n"
+                )
+                file_object.write("LOOKUP_TABLE default\n")
+                list2write = (
+                    plotdata["material_CELL_DATA_val"][:, jj].astype(str).tolist()
+                )
+                file_object.write("\n".join(list2write) + "\n")
+
         if "stress_CELL_DATA_val" in plotdata.keys():
 
             for jj in range(0, int(len(plotdata["stress_CELL_DATA_title"]))):

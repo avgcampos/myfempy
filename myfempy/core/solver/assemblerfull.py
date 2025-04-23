@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from numpy import array, float64, int32, zeros, empty
+from numpy import array, float64, float32, int32, zeros, empty
 from scipy.sparse import coo_matrix, csc_matrix
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 INT32 = int32
 FLT64 = float64
+FLT32 = float32
 
 from myfempy.core.solver.assembler import Assembler
 from myfempy.core.solver.assemblerfull_numpy_v1 import (getConstrains,
@@ -42,8 +43,10 @@ class AssemblerFULL(Assembler):
             matrix = Model.element.getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, ee)
             loc = AssemblerFULL.__getLoc(Model, inci, ee)
             ith, jth, val = AssemblerFULL.__getVectorization(ith, jth, val, loc, matrix, ee, elemdof)
-        A_sp_scipy_csc = csc_matrix((val, (ith, jth)), shape=(sdof, sdof))
-        return A_sp_scipy_csc
+        
+        A_sp_scipy_csr = coo_matrix((val, (ith, jth)), shape=(sdof, sdof), dtype=FLT32).tocsr()
+        
+        return A_sp_scipy_csr
 
     def getNonLinearStiffnessGlobalMatrixAssembler():
         pass
@@ -73,7 +76,8 @@ class AssemblerFULL(Assembler):
                 ith, jth, val, loc, matrix, ee, elemdof
             )
 
-        A_sp_scipy_csc = csc_matrix((val, (ith, jth)), shape=(sdof, sdof))
+        A_sp_scipy_csc = coo_matrix((val, (ith, jth)), shape=(sdof, sdof))
+        A_sp_scipy_csc = A_sp_scipy_csc.tocsr()
         return A_sp_scipy_csc
 
     def getMassLumpedGlobalMatrixAssembler():
