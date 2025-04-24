@@ -44,9 +44,9 @@ class AssemblerFULL(Assembler):
             loc = AssemblerFULL.__getLoc(Model, inci, ee)
             ith, jth, val = AssemblerFULL.__getVectorization(ith, jth, val, loc, matrix, ee, elemdof)
         
-        A_sp_scipy_csr = coo_matrix((val, (ith, jth)), shape=(sdof, sdof), dtype=FLT32).tocsr()
+        A_sp_scipy = coo_matrix((val, (ith, jth)), shape=(sdof, sdof), dtype=FLT64).tocsr()
         
-        return A_sp_scipy_csr
+        return A_sp_scipy
 
     def getNonLinearStiffnessGlobalMatrixAssembler():
         pass
