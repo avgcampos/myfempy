@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+from .core.solver.phonocrystalinplane import PhononicCrystalInPlane
 from .core.solver.cyclicsymm import StaticLinearCyclicSymmPlane
 from .core.solver.dynharmonicresponse import DynamicHarmonicResponseLinear
 from .core.solver.dyneigen import DynamicEigenLinear
@@ -29,6 +30,7 @@ __all__ = [
     "StaticLinearCyclicSymmPlane",
     "DynamicEigenLinear",
     "DynamicHarmonicResponseLinear",
+    "PhononicCrystalInPlane",
     "Mesh",
     "Shape",
     "Element",

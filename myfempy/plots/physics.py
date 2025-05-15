@@ -35,40 +35,40 @@ def view_listforce(coord: np.ndarray, frcApy_vet: np.ndarray, scala_view: float)
         dir_cone2 = dir_cone1
         center_cone1 = (coordX_force + height_cone / 2, coordY_force, coordZ_force)
         center_cone2 = center_cone1
-        color_fr = (1, 0, 0)
+        color_fr = (0, 1, 0)
     elif frcApy_vet[1] == 2:  # fy
         dir_cone1 = (0, np.sign(frcApy_vet[2]), 0)
         dir_cone2 = dir_cone1
         center_cone1 = (coordX_force, coordY_force + height_cone / 2, coordZ_force)
         center_cone2 = center_cone1
-        color_fr = (1, 0, 0)
+        color_fr = (0, 1, 0)
     elif frcApy_vet[1] == 3:  # fz
         dir_cone1 = (0, 0, np.sign(frcApy_vet[2]))
         dir_cone2 = dir_cone1
         center_cone1 = (coordX_force, coordY_force, coordZ_force + height_cone / 2)
         center_cone2 = center_cone1
-        color_fr = (1, 0, 0)
+        color_fr = (0, 1, 0)
     elif frcApy_vet[1] == 4:  # tx
         height_cone = 1.2 * height_cone
         dir_cone1 = (np.sign(frcApy_vet[2]), 0, 0)
         dir_cone2 = dir_cone1
         center_cone1 = (coordX_force + height_cone / 2, coordY_force, coordZ_force)
         center_cone2 = (coordX_force + height_cone, coordY_force, coordZ_force)
-        color_fr = (0, 1, 0)
+        color_fr = (1, 0, 1)
     elif frcApy_vet[1] == 5:  # ty
         height_cone = 1.2 * height_cone
         dir_cone1 = (0, np.sign(frcApy_vet[2]), 0)
         dir_cone2 = dir_cone1
         center_cone1 = (coordX_force, coordY_force + height_cone / 2, coordZ_force)
         center_cone2 = (coordX_force, coordY_force + height_cone, coordZ_force)
-        color_fr = (0, 1, 0)
+        color_fr = (1, 0, 1)
     elif frcApy_vet[1] == 6:  # tz
         height_cone = 1.2 * height_cone
         dir_cone1 = (0, 0, np.sign(frcApy_vet[2]))
         dir_cone2 = dir_cone1
         center_cone1 = (coordX_force, coordY_force, coordZ_force + height_cone / 2)
         center_cone2 = (coordX_force, coordY_force, coordZ_force + height_cone)
-        color_fr = (0, 1, 0)
+        color_fr = (1, 0, 1)
     elif frcApy_vet[1] == 15:  # massadd
         height_cone = 1.2 * scala_view
         dir_cone1 = (-1, 0, 0)
@@ -192,6 +192,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_point_actor_tdof.SetMapper(bcmap)
         bc_point_actor_tdof.GetProperty().SetLineWidth(0.5)
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
+    
     elif int(bondCond_vet[1]) == 3:  # fixed uz dofs
         dir_cone = (0, 0, 1)
         center_cone = (coordX_bc, coordY_bc, coordZ_bc - height_cone / 2)
@@ -216,7 +217,6 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         center_cube = (coordX_bc, coordY_bc, coordZ_bc - 3.5 * height_cone / 2)
         bc_text.SetText("RX")
         bc_text.Update()
-
         cube = vtk.vtkCubeSource()
         cube.SetXLength(0.5 * height_cone)
         cube.SetYLength(2.5 * height_cone)

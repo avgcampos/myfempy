@@ -154,7 +154,7 @@ class StaticLinearCyclicSymmPlane(Solver):
 
         Iii = eye(interdof.shape[0], interdof.shape[0], dtype=int16)
         Ill = eye(leftdof.shape[0], leftdof.shape[0], dtype=int16)
-        Irr = eye(leftdof.shape[0], leftdof.shape[0], dtype=int16)
+        Irr = eye(rightdof.shape[0], rightdof.shape[0], dtype=int16)
         Zil = csc_matrix((interdof.shape[0], leftdof.shape[0]), dtype=int16)
         Zll = csc_matrix((leftdof.shape[0], leftdof.shape[0]), dtype=int16)
 

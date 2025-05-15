@@ -207,8 +207,19 @@ def build_preview(previewset: dict, path):
             bondCond_vet = previewset["constrains"][[num_bc]][0]
             if int(bondCond_vet[1]) == 0:
                 pass
+            
             elif int(bondCond_vet[1]) == 11 or int(bondCond_vet[1]) == 12:
                 bondCond_vet[1] = 4
+
+            elif int(bondCond_vet[1]) == 13 or int(bondCond_vet[1]) == 14:
+                bondCond_vet[1] = 1
+
+            elif int(bondCond_vet[1]) == 15 or int(bondCond_vet[1]) == 16:
+                bondCond_vet[1] = 2
+
+            elif int(bondCond_vet[1]) == 17 or int(bondCond_vet[1]) == 18 or int(bondCond_vet[1]) == 19 or int(bondCond_vet[1]) == 20:
+                bondCond_vet[1] = 0
+
             else:
                 bondCond_vet[1] = __setBCDof(
                     key_list_bc[val_list_bc.index(int(bondCond_vet[1]))]

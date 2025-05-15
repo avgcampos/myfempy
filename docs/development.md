@@ -45,6 +45,7 @@ Implementar as seguintes soluções de análise:
 			- [ ] Dinâmico FRF (modal)
             - [X] Cyclic Symmetry
 			- [ ] Flambagem (eigen)
+			- [X] Phononic Crystal 2D (Elastic Plane Wave in Periodic Structures)
 		2. Transiênte linear
 			- [ ] Algo. Newmark
 		3. Non Linear
@@ -64,7 +65,7 @@ Implementar as seguintes soluções de análise:
 		- [ ] Plasticidade
 		- [X] Heat Plane
 		- [ ] Fluid Flow Plane
-		- [ ] Acústico Plane
+		- [ ] Acustic Plane
 
 	3. Elementos isoparametricos:
 
@@ -84,8 +85,8 @@ Implementar as seguintes soluções de análise:
 		1. Multi-material
 			- [X] Interface de multi-material (multi E, v, ...)
 		2. Acoplamento multi-físico
-			- [ ] Fluid-Structure interaction
 			- [X] Thermal-Structure interaction
+			- [ ] Fluid-Structure interaction
 			- [ ] Acoustic-Structure interaction
 
 Após a nova implementação, foi feito um _merge_ no repositório **myfempy_dev** (repositório oficial para desenvolvimento e testes), e após passar por todos os teste foi feito o upload para
