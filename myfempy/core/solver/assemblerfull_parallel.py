@@ -22,7 +22,13 @@ class AssemblerFULLPOOL(Assembler):
     Assembler Full System Class <ConcreteClassService>
     """
     # @profile
-    def getLinearStiffnessGlobalMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler, MP=None):
+    def getLinearStiffnessGlobalMatrixAssembler(Model, MP=None):
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
+
         # Get element and shape properties
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
@@ -156,9 +162,13 @@ class AssemblerFULLPOOL(Assembler):
     def getNonLinearStiffnessGlobalMatrixAssembler():
         pass
 
-    def getMassConsistentGlobalMatrixAssembler(
-        Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler, MP
-    ):
+    def getMassConsistentGlobalMatrixAssembler(Model, MP=None):
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
+
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()

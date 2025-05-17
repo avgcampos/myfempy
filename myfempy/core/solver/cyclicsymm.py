@@ -19,43 +19,23 @@ class StaticLinearCyclicSymmPlane(Solver):
     """
 
     def getMatrixAssembler(
-        Model, inci, coord, tabmat, tabgeo, intgauss, SYMM=None, MP=None
+        Model, SYMM=None, MP=None
     ):
         matrix = dict()
 
         if SYMM:
             matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
-                type_assembler="linear_stiffness",
-                MP=MP,
             )
         else:
             if MP:
                 matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(
                     Model,
-                    inci,
-                    coord,
-                    tabmat,
-                    tabgeo,
-                    intgauss,
-                    type_assembler="linear_stiffness",
                     MP=MP,
                 )
             else:
                 matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
                     Model,
-                    inci,
-                    coord,
-                    tabmat,
-                    tabgeo,
-                    intgauss,
-                    type_assembler="linear_stiffness",
-                    MP=MP,
                 )
         return matrix
 
@@ -99,8 +79,8 @@ class StaticLinearCyclicSymmPlane(Solver):
     def getDirichletNH(constrains, nodetot, nodedof):
         return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
 
-    def runSolve(assembly, constrainsdof, modelinfo, solverset):
-        fulldofs = modelinfo["fulldofs"]
+    def runSolve(Model, Physic, assembly, constrainsdof, solverset):
+        fulldofs = Model.modelinfo["fulldofs"]
 
         solution = dict()
         nsteps = setSteps(solverset["STEPSET"])
@@ -119,8 +99,8 @@ class StaticLinearCyclicSymmPlane(Solver):
         stiffness = assembly["stiffness"]
         forcelist = assembly["loads"]
 
-        RM_left = StaticLinearCyclicSymmPlane.getRotationMatrix2D(modelinfo["csleft"], modelinfo["coord"], leftdof.shape[0])
-        RM_right = StaticLinearCyclicSymmPlane.getRotationMatrix2D(modelinfo["csright"], modelinfo["coord"], rightdof.shape[0])
+        RM_left = StaticLinearCyclicSymmPlane.getRotationMatrix2D(Physic.csleft, Model.coord, leftdof.shape[0])
+        RM_right = StaticLinearCyclicSymmPlane.getRotationMatrix2D(Physic.csright, Model.coord, rightdof.shape[0])
 
         FG_cell = vstack(
             [forcelist[interdof, :], forcelist[leftdof, :], forcelist[rightdof, :]]

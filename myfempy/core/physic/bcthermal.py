@@ -9,15 +9,15 @@ from myfempy.core.utilities import get_nodes_from_list
 class BoundCondThermal(Structural):
     """Structural Load Class <ConcreteClassService>"""
 
-    def getBCApply(modelinfo, bclist):
+    def getBCApply(Model, bclist):
         boncdnodeaply = np.zeros((1, 4))
 
         if bclist["TYPE"] == "insulated":
-            bcapp = BoundCondThermal.__BCFixed(modelinfo, bclist)
+            bcapp = BoundCondThermal.__BCFixed(Model, bclist)
             boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
 
         elif bclist["TYPE"] == "temperature":
-            bcapp = BoundCondThermal.__BCDispl(modelinfo, bclist)
+            bcapp = BoundCondThermal.__BCDispl(Model, bclist)
             boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
 
         # elif bclist['TYPE'] == "csymm":
@@ -29,7 +29,7 @@ class BoundCondThermal(Structural):
         boncdnodeaply = boncdnodeaply[1::][::]
         return boncdnodeaply
 
-    def __BCFixed(modelinfo, bclist):
+    def __BCFixed(Model, bclist):
         boncdnodeaply = np.zeros((1, 4))
 
         nodelist = [
@@ -40,13 +40,13 @@ class BoundCondThermal(Structural):
             bclist["TAG"],
         ]
         node_list_bc, dir_fc = get_nodes_from_list(
-            nodelist, modelinfo["coord"], modelinfo["regions"]
+            nodelist, Model.coord, Model.regions
         )
 
         if bclist["DOF"] == "full":
             bcdof = 0
         else:
-            bcdof = modelinfo["dofs"]["d"][bclist["DOF"]]
+            bcdof = Model.modelinfo["dofs"]["d"][bclist["DOF"]]
 
         for j in range(len(node_list_bc)):
             bcapp = np.array([[int(node_list_bc[j]), bcdof, 0.0, int(bclist["STEP"])]])
@@ -55,7 +55,7 @@ class BoundCondThermal(Structural):
         boncdnodeaply = boncdnodeaply[1::][::]
         return boncdnodeaply
 
-    def __BCDispl(modelinfo, bclist):
+    def __BCDispl(Model, bclist):
         boncdnodeaply = np.zeros((1, 4))
 
         nodelist = [
@@ -66,10 +66,10 @@ class BoundCondThermal(Structural):
             bclist["TAG"],
         ]
         node_list_bc, dir_fc = get_nodes_from_list(
-            nodelist, modelinfo["coord"], modelinfo["regions"]
+            nodelist, Model.coord, Model.regions
         )
 
-        bcdof = modelinfo["dofs"]["d"][bclist["DOF"]]
+        bcdof = Model.modelinfo["dofs"]["d"][bclist["DOF"]]
 
         for j in range(len(node_list_bc)):
             bcapp = np.array(

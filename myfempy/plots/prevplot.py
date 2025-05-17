@@ -17,18 +17,18 @@ from myfempy.plots.physics import (view_beam_crossSection, view_bondcond_point,
 
 
 # @profile
-def preview_plot(previewset: dict, modelinfo: dict, path: str):
+def preview_plot(Model, previewset, path, Physic = None):
     # path = os.getcwd()
     plotdata = dict()
-    plotdata["coord"] = modelinfo["coord"]
-    plotdata["inci"] = modelinfo["inci"]
-    plotdata["nodecon"] = modelinfo["nodecon"]
-    plotdata["elemid"] = modelinfo["elemid"]
+    plotdata["coord"] = Model.coord
+    plotdata["inci"] = Model.inci
+    plotdata["nodecon"] = Model.modelinfo["nodecon"]
+    plotdata["elemid"] = Model.modelinfo["elemid"]
     plotdata["filename"] = path + "/" + previewset["RENDER"]["filename"]
     plotdata["title"] = ["UNDEFORM_MESH"]
-    plotdata["solution"] = np.ones((len(modelinfo["inci"]), 1))
+    plotdata["solution"] = np.ones((len(Model.inci), 1))
     plotdata["material_CELL_DATA_val"] = (
-        (np.array([(modelinfo["inci"][:, 2])])).T
+        (np.array([(Model.inci[:, 2])])).T
     ).astype(int)
     plotdata["material_CELL_DATA_title"] = ["Material_Set"]
 
@@ -37,9 +37,9 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
     if "scale" in previewset["RENDER"].keys():
         previewset["RENDER"]["scale"] = (previewset["RENDER"]["scale"] / 100) * max(
             [
-                max(abs(modelinfo["coord"][:, 1])),
-                max(abs(modelinfo["coord"][:, 2])),
-                max(abs(modelinfo["coord"][:, 3])),
+                max(abs(Model.coord[:, 1])),
+                max(abs(Model.coord[:, 2])),
+                max(abs(Model.coord[:, 3])),
             ]
         )
     else:
@@ -55,7 +55,7 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
             "point" in previewset["RENDER"]["plottags"].keys()
             and previewset["RENDER"]["plottags"]["point"] == True
         ):
-            previewset["regions"] = modelinfo["regions"][0]
+            previewset["regions"] = Model.regions[0]
         else:
             pass
 
@@ -63,7 +63,7 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
             "line" in previewset["RENDER"]["plottags"].keys()
             and previewset["RENDER"]["plottags"]["line"] == True
         ):
-            previewset["regions"] = modelinfo["regions"][1]
+            previewset["regions"] = Model.regions[1]
         else:
             pass
 
@@ -71,7 +71,7 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
             "plane" in previewset["RENDER"]["plottags"].keys()
             and previewset["RENDER"]["plottags"]["plane"] == True
         ):
-            previewset["regions"] = modelinfo["regions"][2]
+            previewset["regions"] = Model.regions[2]
         else:
             pass
     else:
@@ -85,34 +85,34 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
     previewset["tabcs"] = dict()
     previewset["tabcs"]["typSection"] = []
     previewset["tabcs"]["dimSection"] = []
-    for gg in range(len(modelinfo["tabgeo"])):
-        previewset["tabcs"]["typSection"].append(int(modelinfo["tabgeo"][gg]["ID"]))
+    for gg in range(len(Model.tabgeo)):
+        previewset["tabcs"]["typSection"].append(int(Model.tabgeo[gg]["ID"]))
         # previewset["tabcs"]["dimSection"].append(modelinfo["tabgeo"][gg][5:9])
         # dim = [modelinfo["tabgeo"][gg]['B'], modelinfo["tabgeo"][gg]['B'], modelinfo["tabgeo"][gg]['B'], modelinfo["tabgeo"][gg]['B']]
         previewset["tabcs"]["dimSection"].append(
             [
-                modelinfo["tabgeo"][gg]["B"],
-                modelinfo["tabgeo"][gg]["H"],
-                modelinfo["tabgeo"][gg]["T"],
-                modelinfo["tabgeo"][gg]["D"],
+                Model.tabgeo[gg]["B"],
+                Model.tabgeo[gg]["H"],
+                Model.tabgeo[gg]["T"],
+                Model.tabgeo[gg]["D"],
             ]
         )
 
-    if "forces" in modelinfo.keys():
-        previewset["forces"] = modelinfo["forces"]
-    else:
+    try:
+        previewset["forces"] = Physic.forces
+    except:
         pass
 
-    if "constrains" in modelinfo.keys():
-        previewset["constrains"] = modelinfo["constrains"]
-    else:
+    try:
+        previewset["constrains"] = Physic.constrains
+    except:
         pass
 
-    previewset["coord"] = modelinfo["coord"]
-    previewset["inci"] = modelinfo["inci"]
-    previewset["nnode"] = modelinfo["nnode"]
-    previewset["nodecon"] = modelinfo["nodecon"]
-    previewset["dofs"] = modelinfo["dofs"]
+    previewset["coord"] = Model.coord
+    previewset["inci"] = Model.inci
+    previewset["nnode"] = Model.modelinfo["nnode"]
+    previewset["nodecon"] = Model.modelinfo["nodecon"]
+    previewset["dofs"] = Model.modelinfo["dofs"]
 
     build_preview(previewset, path)
 
@@ -149,9 +149,9 @@ def preview_plot(previewset: dict, modelinfo: dict, path: str):
         if "scale" in previewset["LABELS"].keys():
             previewset["LABELS"]["scale"] = (previewset["LABELS"]["scale"] / 100) * max(
                 [
-                    max(abs(modelinfo["coord"][:, 1])),
-                    max(abs(modelinfo["coord"][:, 2])),
-                    max(abs(modelinfo["coord"][:, 3])),
+                    max(abs(Model.coord[:, 1])),
+                    max(abs(Model.coord[:, 2])),
+                    max(abs(Model.coord[:, 3])),
                 ]
             )
         else:

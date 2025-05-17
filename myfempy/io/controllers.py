@@ -245,7 +245,8 @@ def setCoupling(set_coupling):
     if set_coupling["TYPE"] == "thermalstress":
         from myfempy.core.physic.thermstructcoup import \
             ThermalStructuralCoupling
-        return ThermalStructuralCoupling
+        from myfempy.core.physic.bcstruct import BoundCondStruct
+        return ThermalStructuralCoupling, BoundCondStruct
 
     # fluidflow structural iteration
     # elif physicdata["COUPLING"]['TYPE'] == "fsi":

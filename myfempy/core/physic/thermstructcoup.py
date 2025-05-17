@@ -12,25 +12,23 @@ from myfempy.core.utilities import (gauss_points, get_elemen_from_nodelist,
 class ThermalStructuralCoupling(Structural):
     """Thermal Structural Coupled field analysis <ConcreteClassService>"""
 
-    def getLoadApply(Model, modelinfo, coupling):
+    def getLoadApply(Model, coupling):
         forcenodeaply = np.zeros((1, 4))
         if coupling["TYPE"] == "thermalstress":  # thermo stress mechanical
-            fapp = ThermalStructuralCoupling.ForceThermalStress(
-                Model, modelinfo, coupling
-            )
+            fapp = ThermalStructuralCoupling.ForceThermalStress(Model, coupling)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         else:
             pass
         forcenodeaply = forcenodeaply[1::][::]
         return forcenodeaply
 
-    def ForceThermalStress(Model, modelinfo, coupling):
+    def ForceThermalStress(Model, coupling):
         forcenodedof = np.zeros((1, 4))
-        inci = modelinfo["inci"]
-        coord = modelinfo["coord"]
-        tabmat = modelinfo["tabmat"]
-        tabgeo = modelinfo["tabgeo"]
-        intgauss = modelinfo["intgauss"]
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
         
         strain_thermal = Model.material.getStrainThermal(coupling["GRADTEMP"])
 
@@ -49,10 +47,10 @@ class ThermalStructuralCoupling(Structural):
             )
 
             try:
-                fc_type_dof = np.tile([modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"], modelinfo["dofs"]["f"]["fz"]], len(nodelist),)
+                fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fy"], Model.modelinfo["dofs"]["f"]["fz"]], len(nodelist),)
                 nodelist = np.repeat(nodelist, 3)
             except:
-                fc_type_dof = np.tile([modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"]], len(nodelist),)
+                fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fy"]], len(nodelist),)
                 nodelist = np.repeat(nodelist, 2)
                             
             for j in range(len(nodelist)):

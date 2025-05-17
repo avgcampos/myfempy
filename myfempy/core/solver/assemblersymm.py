@@ -17,9 +17,13 @@ class AssemblerSYMM(Assembler):
     """
 
     # @profile
-    def getLinearStiffnessGlobalMatrixAssembler(
-        Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler, MP
-    ):
+    def getLinearStiffnessGlobalMatrixAssembler(Model):
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
+
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
@@ -69,9 +73,13 @@ class AssemblerSYMM(Assembler):
     def getNonLinearStiffnessGlobalMatrixAssembler():
         pass
 
-    def getMassConsistentGlobalMatrixAssembler(
-        Model, inci, coord, tabmat, tabgeo, intgauss, type_assembler, MP
-    ):
+    def getMassConsistentGlobalMatrixAssembler(Model):
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
+
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()

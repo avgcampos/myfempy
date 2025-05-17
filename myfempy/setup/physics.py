@@ -31,35 +31,35 @@ class SetPhysics:
         self.boundcondlist = boundlist
         return boundlist
 
-    def getLoadApply(self, modelinfo):
-        flist = SetPhysics.setForceList(self, modelinfo["physic"])
+    def getLoadApply(self, physicdata):
+        flist = SetPhysics.setForceList(self, physicdata["PHYSIC"])
         forcenodeaply = np.zeros((1, 4))
         for nforc in range(len(flist)):
             forcelist = flist[nforc]
-            fapp = self.loads.getLoadApply(self.model, modelinfo, forcelist)
+            fapp = self.loads.getLoadApply(self.model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         forcenodeaply = forcenodeaply[1::][::]
         forcenodeaply[forcenodeaply[:, 3].argsort()]
         return forcenodeaply
 
-    def getBoundCondApply(self, modelinfo):
-        bclist = SetPhysics.setBoundCondList(self, modelinfo["physic"])
+    def getBoundCondApply(self, physicdata):
+        bclist = SetPhysics.setBoundCondList(self, physicdata["PHYSIC"])
         boncdnodeaply = np.zeros((1, 4))
         for nbc in range(len(bclist)):
             listapply = bclist[nbc]
-            bcapp = self.boundcond.getBCApply(modelinfo, listapply)
+            bcapp = self.boundcond.getBCApply(self.model, listapply)
             boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
         boncdnodeaply = boncdnodeaply[1::][::]
         boncdnodeaply[boncdnodeaply[:, 3].argsort()]
         return boncdnodeaply
 
-    def getLoadCoup(self, modelinfo, physicdata):
+    def getLoadCoup(self, physicdata):
         forcenodeaply = np.zeros((1, 4))
-        for nforc in range(len(physicdata["POST"])):
-            coupling = physicdata["POST"][nforc]
-            coupling["TYPE"] = physicdata["TYPE"]
+        for nforc in range(len(physicdata['COUPLING']["POST"])):
+            coupling = physicdata['COUPLING']["POST"][nforc]
+            coupling["TYPE"] = physicdata['COUPLING']["TYPE"]
             coupling["STEP"] = int(nforc + 1)
-            fapp = self.loads.getLoadApply(self.model, modelinfo, coupling)
+            fapp = self.loads.getLoadApply(self.model, coupling)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         forcenodeaply = forcenodeaply[1::][::]
         forcenodeaply[forcenodeaply[:, 3].argsort()]
@@ -122,9 +122,9 @@ class SetPhysics:
                     flist.append(
                         {
                             "TYPE": fap["TYPE"],
-                            "DOF": fap["DOF"],
+                            "DOF": 'fx',
                             "VAL": fap["VAL"][fs],
-                            "DIR": fap["DIR"],
+                            "DIR": 'node',
                             "LOCX": 0.0,
                             "LOCY": 0.0,
                             "LOCZ": 0.0,
@@ -218,8 +218,8 @@ class SetPhysics:
                     blist.append(
                         {
                             "TYPE": bap["TYPE"],
-                            "DOF": bap["DOF"],
-                            "DIR": bap["DIR"],
+                            "DOF": 'ux',
+                            "DIR": 'node',
                             "LOCX": 0.0,
                             "LOCY": 0.0,
                             "LOCZ": 0.0,

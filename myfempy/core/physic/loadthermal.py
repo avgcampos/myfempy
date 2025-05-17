@@ -11,7 +11,7 @@ from myfempy.core.utilities import (gauss_points, get_elemen_from_nodelist,
 class LoadThermal(Thermal):
     """Thermal Load Class <ConcreteClassService>"""
 
-    def getLoadApply(Model, modelinfo, forcelist):
+    def getLoadApply(Model, forcelist):
         forcenodeaply = np.zeros((1, 4))
 
         # if forcelist['TYPE'] == "forcenode":
@@ -19,23 +19,23 @@ class LoadThermal(Thermal):
         #     forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
 
         if forcelist["TYPE"] == "heatfluxedge":
-            fapp = LoadThermal.ForceEdgeLoadApply(Model, modelinfo, forcelist)
+            fapp = LoadThermal.ForceEdgeLoadApply(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
 
         elif forcelist['TYPE'] == "heatfluxsurf":
-            fapp = LoadThermal.ForceSurfLoadApply(Model, modelinfo, forcelist)
+            fapp = LoadThermal.ForceSurfLoadApply(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
 
         elif forcelist["TYPE"] == "convectionedge":
-            fapp = LoadThermal.ForceEdgeLoadApply(Model, modelinfo, forcelist)
+            fapp = LoadThermal.ForceEdgeLoadApply(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
 
         elif forcelist['TYPE'] == "convectionsurf":
-            fapp = LoadThermal.ForceSurfLoadApply(Model, modelinfo, forcelist)
+            fapp = LoadThermal.ForceSurfLoadApply(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
 
         elif forcelist["TYPE"] == "heatgeneration":
-            fapp = LoadThermal.ForceBodyLoadApply(Model, modelinfo, forcelist)
+            fapp = LoadThermal.ForceBodyLoadApply(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
 
         else:
@@ -44,21 +44,7 @@ class LoadThermal(Thermal):
         forcenodeaply = forcenodeaply[1::][::]
         return forcenodeaply
 
-    def getUpdateMatrix(Model, matrix, loadaply):
-
-        addConv = np.where(loadaply[:, 1] == 15)
-
-        if addConv[0].size:
-            addLoad = loadaply[addConv, :][0]
-            matrix["stiffness"] = Model.element.getUpdateMatrix(
-                Model, matrix["stiffness"], addLoad
-            )
-        return matrix
-
-    def getUpdateLoad(self):
-        return None
-
-    def ForceNodeLoadApply(modelinfo, forcelist):
+    def ForceNodeLoadApply(Model, forcelist):
         forcenodedof = np.zeros((1, 4))
         nodelist = [
             forcelist["DIR"],
@@ -68,10 +54,10 @@ class LoadThermal(Thermal):
             forcelist["TAG"],
         ]
         node_list_fc, dir_fc = get_nodes_from_list(
-            nodelist, modelinfo["coord"], modelinfo["regions"]
+            nodelist, Model.coord,  Model.regions
         )
         force_value_vector = np.ones_like(node_list_fc) * float(forcelist["VAL"])
-        fc_type_dof = modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(
+        fc_type_dof = Model.modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(
             node_list_fc
         )
         for j in range(len(node_list_fc)):
@@ -89,15 +75,15 @@ class LoadThermal(Thermal):
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
 
-    def ForceBodyLoadApply(Model, modelinfo, forcelist):
+    def ForceBodyLoadApply(Model, forcelist):
         forcenodedof = np.zeros((1, 4))
         heatgen = float(forcelist["VAL"])
-        inci = modelinfo["inci"]
-        coord = modelinfo["coord"]
-        tabmat = modelinfo["tabmat"]
-        tabgeo = modelinfo["tabgeo"]
-        intgauss = modelinfo["intgauss"]
-        fc_type_dof = modelinfo["dofs"]["f"][forcelist["DOF"]]
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
+        fc_type_dof = Model.modelinfo["dofs"]["f"][forcelist["DOF"]]
         for ee in range(inci.shape[0]):
             force_value_vector, nodelist = LoadThermal.__body_force_volumetric(
                 Model,
@@ -125,7 +111,7 @@ class LoadThermal(Thermal):
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
 
-    def ForceEdgeLoadApply(Model, modelinfo, forcelist):
+    def ForceEdgeLoadApply(Model, forcelist):
         nodelist = [
             forcelist["DIR"],
             forcelist["LOCX"],
@@ -134,15 +120,15 @@ class LoadThermal(Thermal):
             forcelist["TAG"],
         ]  # forcelist[3:]
         node_list_fc, dir_fc = get_nodes_from_list(
-            nodelist, modelinfo["coord"], modelinfo["regions"]
+            nodelist, Model.coord, Model.regions
         )
         force_value = float(forcelist["VAL"])
         force_dirc = forcelist["DOF"]
-        inci = modelinfo["inci"]
-        coord = modelinfo["coord"]
-        tabmat = modelinfo["tabmat"]
-        tabgeo = modelinfo["tabgeo"]
-        intgauss = modelinfo["intgauss"]
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
         fc_type = forcelist["DOF"]
         elmlist = get_elemen_from_nodelist(inci, node_list_fc)
         forcenodedof = np.zeros((1, 4))
@@ -164,7 +150,7 @@ class LoadThermal(Thermal):
                 fc_type,
             )
             
-            fc_type_dof = modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(
+            fc_type_dof = Model.modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(
                 nodelist
             )
 
@@ -183,7 +169,7 @@ class LoadThermal(Thermal):
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
 
-    def ForceSurfLoadApply(Model, modelinfo, forcelist):
+    def ForceSurfLoadApply(Model, forcelist):
         nodelist = [
             forcelist["DIR"],
             forcelist["LOCX"],
@@ -192,15 +178,15 @@ class LoadThermal(Thermal):
             forcelist["TAG"],
         ]
         node_list_fc, dir_fc = get_nodes_from_list(
-            nodelist, modelinfo["coord"], modelinfo["regions"]
+            nodelist, Model.coord, Model.regions
         )
         force_value = float(forcelist["VAL"])
         force_dirc = forcelist["DOF"]
-        inci = modelinfo["inci"]
-        coord = modelinfo["coord"]
-        tabmat = modelinfo["tabmat"]
-        tabgeo = modelinfo["tabgeo"]
-        intgauss = modelinfo["intgauss"]
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
         fc_type = forcelist["DOF"]
         elmlist = get_elemen_from_nodelist(inci, node_list_fc)
         forcenodedof = np.zeros((1, 4))
@@ -221,7 +207,7 @@ class LoadThermal(Thermal):
                 fc_type,
             )
             
-            fc_type_dof = modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(
+            fc_type_dof = Model.modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(
                 nodelist
             )
 
@@ -239,6 +225,21 @@ class LoadThermal(Thermal):
                 forcenodedof = np.append(forcenodedof, fcdof, axis=0)
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
+
+    def getUpdateMatrix(Model, matrix, loadaply):
+
+        addConv = np.where(loadaply[:, 1] == 15)
+
+        if addConv[0].size:
+            addLoad = loadaply[addConv, :][0]
+            matrix["stiffness"] = Model.element.getUpdateMatrix(
+                Model, matrix["stiffness"], addLoad
+            )
+        return matrix
+
+    def getUpdateLoad(self):
+        return None
+
 
     def __body_force_volumetric(
         Model,

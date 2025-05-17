@@ -12,47 +12,73 @@ from myfempy.core.utilities import (gauss_points, get_elemen_from_nodelist,
 class LoadStructural(Structural):
     """Structural Load Class <ConcreteClassService>"""
 
-    def getLoadApply(Model, modelinfo, forcelist):
+    def getLoadApply(Model, forcelist):
         forcenodeaply = np.zeros((1, 4))
         if forcelist["TYPE"] == "forcenode":
-            fapp = LoadStructural.ForceNodeLoadApply(modelinfo, forcelist)
+            fapp = LoadStructural.ForceNodeLoadApply(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         elif forcelist["TYPE"] == "forceedge":
-            fapp = LoadStructural.ForceEdgeLoadApply(Model, modelinfo, forcelist)
+            fapp = LoadStructural.ForceEdgeLoadApply(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         elif forcelist["TYPE"] == "forcebeam":
-            fapp = LoadStructural.ForceBeamLoadApply(Model, modelinfo, forcelist)
+            fapp = LoadStructural.ForceBeamLoadApply(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         elif forcelist["TYPE"] == "forcesurf":
-            fapp = LoadStructural.ForceSurfLoadApply(Model, modelinfo, forcelist)
+            fapp = LoadStructural.ForceSurfLoadApply(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         elif forcelist["TYPE"] == "forcebody":
-            fapp = LoadStructural.ForceBodyLoadApply(Model, modelinfo, forcelist)
+            fapp = LoadStructural.ForceBodyLoadApply(Model, forcelist)
+            forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
+        elif forcelist["TYPE"] == "forceintbalance":
+            fapp = LoadStructural.ForceInternalBalance(Model)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         else:
             pass
         forcenodeaply = forcenodeaply[1::][::]
         return forcenodeaply
+    
+    def ForceInternalBalance(Model):
+        forcenodedof = np.zeros((1, 4))
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
+        for ee in range(inci.shape[0]):
+            force_value_vector, nodelist = LoadStructural.__internal_balance(
+                Model,
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                intgauss,
+                ee,
+            )
+            
+            try:
+                fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fy"], Model.modelinfo["dofs"]["f"]["fz"]], len(nodelist),)
+                nodelist = np.repeat(nodelist, 3)
+            except:
+                fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fy"]], len(nodelist),)
+                nodelist = np.repeat(nodelist, 2)
 
-    def getUpdateMatrix(Model, matrix, loadaply):
+            for doff in range(force_value_vector.shape[1]):          
+                for j in range(len(nodelist)):
+                    fcdof = np.array(
+                        [
+                            [
+                                int(nodelist[j]),
+                                fc_type_dof[j],
+                                force_value_vector[j, doff],
+                                doff+1,
+                            ]
+                        ]
+                    )
+                    forcenodedof = np.append(forcenodedof, fcdof, axis=0)
+        forcenodedof = forcenodedof[1::][::]
+        return forcenodedof
 
-        addSpring = np.where(loadaply[:, 1] == 16)
-        addMass = np.where(loadaply[:, 1] == 15)
-
-        if addSpring[0].size:
-            addLoad = loadaply[addSpring, :][0]
-            matrix["stiffness"] = Model.element.getUpdateMatrix(Model, matrix["stiffness"], addLoad)
-
-        if addMass[0].size:
-            addLoad = loadaply[addMass, :][0]
-            matrix["mass"] = Model.element.getUpdateMatrix(Model, matrix["mass"], addLoad)
-
-        return matrix
-
-    def getUpdateLoad(self):
-        return None
-
-    def ForceNodeLoadApply(modelinfo, forcelist):
+    def ForceNodeLoadApply(Model, forcelist):
         forcenodedof = np.zeros((1, 4))
         nodelist = [
             forcelist["DIR"],
@@ -62,10 +88,10 @@ class LoadStructural(Structural):
             forcelist["TAG"],
         ]
         node_list_fc, dir_fc = get_nodes_from_list(
-            nodelist, modelinfo["coord"], modelinfo["regions"]
+            nodelist, Model.coord,  Model.regions
         )
         force_value_vector = np.ones_like(node_list_fc) * float(forcelist["VAL"])
-        fc_type_dof = modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(
+        fc_type_dof =  Model.modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(
             node_list_fc
         )
         for j in range(len(node_list_fc)):
@@ -83,15 +109,15 @@ class LoadStructural(Structural):
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
 
-    def ForceBodyLoadApply(Model, modelinfo, forcelist):
+    def ForceBodyLoadApply(Model, forcelist):
         forcenodedof = np.zeros((1, 4))
         gravity_value = float(forcelist["VAL"])
-        inci = modelinfo["inci"]
-        coord = modelinfo["coord"]
-        tabmat = modelinfo["tabmat"]
-        tabgeo = modelinfo["tabgeo"]
-        intgauss = modelinfo["intgauss"]
-        fc_type_dof = modelinfo["dofs"]["f"][forcelist["DOF"]]
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
+        fc_type_dof = Model.modelinfo["dofs"]["f"][forcelist["DOF"]]
         for ee in range(inci.shape[0]):
             force_value_vector, nodelist = LoadStructural.__body_force_volumetric(
                 Model,
@@ -120,7 +146,7 @@ class LoadStructural(Structural):
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
 
-    def ForceEdgeLoadApply(Model, modelinfo, forcelist):
+    def ForceEdgeLoadApply(Model, forcelist):
         nodelist = [
             forcelist["DIR"],
             forcelist["LOCX"],
@@ -129,15 +155,15 @@ class LoadStructural(Structural):
             forcelist["TAG"],
         ]  # forcelist[3:]
         node_list_fc, dir_fc = get_nodes_from_list(
-            nodelist, modelinfo["coord"], modelinfo["regions"]
+            nodelist, Model.coord, Model.regions
         )
         force_value = float(forcelist["VAL"])
         force_dirc = forcelist["DOF"]
-        inci = modelinfo["inci"]
-        coord = modelinfo["coord"]
-        tabmat = modelinfo["tabmat"]
-        tabgeo = modelinfo["tabgeo"]
-        intgauss = modelinfo["intgauss"]
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
         fc_type = forcelist["DOF"]
         elmlist = get_elemen_from_nodelist(inci, node_list_fc)
         forcenodedof = np.zeros((1, 4))
@@ -167,13 +193,13 @@ class LoadStructural(Structural):
                 shape_set = Model.shape.getShapeSet()
                 nodesce = shape_set["nodesconecedge"]
                 if int(norm[0]) == 1 and int(norm[1]) == 0:
-                    fc_type_dof = modelinfo["dofs"]["f"]["fx"] * np.ones_like(nodelist)
+                    fc_type_dof = Model.modelinfo["dofs"]["f"]["fx"] * np.ones_like(nodelist)
                 elif int(norm[0]) == 0 and int(norm[1]) == 1:
-                    fc_type_dof = modelinfo["dofs"]["f"]["fy"] * np.ones_like(nodelist)
+                    fc_type_dof = Model.modelinfo["dofs"]["f"]["fy"] * np.ones_like(nodelist)
                 else:
-                    fc_type_dof = np.tile([modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"]], nodesce,) 
+                    fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fy"]], nodesce,) 
             else:
-                fc_type_dof = modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(
+                fc_type_dof = Model.modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(
                     nodelist
                 )
 
@@ -192,7 +218,7 @@ class LoadStructural(Structural):
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
 
-    def ForceSurfLoadApply(Model, modelinfo, forcelist):
+    def ForceSurfLoadApply(Model, forcelist):
         nodelist = [
             forcelist["DIR"],
             forcelist["LOCX"],
@@ -201,15 +227,15 @@ class LoadStructural(Structural):
             forcelist["TAG"],
         ]  # forcelist[3:]
         node_list_fc, dir_fc = get_nodes_from_list(
-            nodelist, modelinfo["coord"], modelinfo["regions"]
+            nodelist, Model.coord, Model.regions
         )
         force_value = float(forcelist["VAL"])
         force_dirc = forcelist["DOF"]
-        inci = modelinfo["inci"]
-        coord = modelinfo["coord"]
-        tabmat = modelinfo["tabmat"]
-        tabgeo = modelinfo["tabgeo"]
-        intgauss = modelinfo["intgauss"]
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
         fc_type = forcelist["DOF"]
         elmlist = get_elemen_from_nodelist(inci, node_list_fc)
         forcenodedof = np.zeros((1, 4))
@@ -239,21 +265,21 @@ class LoadStructural(Structural):
                 shape_set = Model.shape.getShapeSet()
                 nodescf = shape_set["nodesconecface"]
                 if int(norm[0]) == 1 and int(norm[1]) == 0 and int(norm[2]) == 0:
-                    fc_type_dof = modelinfo["dofs"]["f"]["fx"] * np.ones_like(nodelist)
+                    fc_type_dof = Model.modelinfo["dofs"]["f"]["fx"] * np.ones_like(nodelist)
                 elif int(norm[0]) == 0 and int(norm[1]) == 1 and int(norm[2]) == 0:
-                    fc_type_dof = modelinfo["dofs"]["f"]["fy"] * np.ones_like(nodelist)
+                    fc_type_dof = Model.modelinfo["dofs"]["f"]["fy"] * np.ones_like(nodelist)
                 elif int(norm[0]) == 0 and int(norm[1]) == 0 and int(norm[2]) == 1:
-                    fc_type_dof = modelinfo["dofs"]["f"]["fz"] * np.ones_like(nodelist)
+                    fc_type_dof = Model.modelinfo["dofs"]["f"]["fz"] * np.ones_like(nodelist)
                 elif int(norm[0]) == 1 and int(norm[1]) == 1 and int(norm[2]) == 0:
-                    fc_type_dof = np.tile([modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"]], nodescf,)
+                    fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fy"]], nodescf,)
                 elif int(norm[0]) == 1 and int(norm[1]) == 0 and int(norm[2]) == 1:
-                    fc_type_dof = np.tile([modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fz"]], nodescf,)
+                    fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fz"]], nodescf,)
                 elif int(norm[0]) == 0 and int(norm[1]) == 1 and int(norm[2]) == 1:
-                    fc_type_dof = np.tile([modelinfo["dofs"]["f"]["fy"], modelinfo["dofs"]["f"]["fz"]], nodescf,)      
+                    fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fy"], Model.modelinfo["dofs"]["f"]["fz"]], nodescf,)      
                 else:
-                    fc_type_dof = np.tile([modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"], modelinfo["dofs"]["f"]["fz"]], nodescf,)  
+                    fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fy"], Model.modelinfo["dofs"]["f"]["fz"]], nodescf,)  
             else:
-                fc_type_dof = modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(nodelist)
+                fc_type_dof = Model.modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(nodelist)
             
             for j in range(len(nodelist)):
                 fcdof = np.array(
@@ -270,7 +296,7 @@ class LoadStructural(Structural):
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
 
-    def ForceBeamLoadApply(Model, modelinfo, forcelist):
+    def ForceBeamLoadApply(Model, forcelist):
         nodelist = [
             forcelist["DIR"],
             forcelist["LOCX"],
@@ -279,15 +305,15 @@ class LoadStructural(Structural):
             forcelist["TAG"],
         ]  # forcelist[3:]
         node_list_fc, dir_fc = get_nodes_from_list(
-            nodelist, modelinfo["coord"], modelinfo["regions"]
+            nodelist, Model.coord, Model.regions
         )
         force_value = float(forcelist["VAL"])
         force_dirc = forcelist["DOF"]
-        inci = modelinfo["inci"]
-        coord = modelinfo["coord"]
-        tabmat = modelinfo["tabmat"]
-        tabgeo = modelinfo["tabgeo"]
-        intgauss = modelinfo["intgauss"]
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
         fc_type = forcelist["DOF"]
         elmlist = get_elemen_from_nodelist(inci, node_list_fc)
         forcenodedof = np.zeros((1, 4))
@@ -316,12 +342,12 @@ class LoadStructural(Structural):
 
             if forcelist["DOF"] == "pressure":
                 if int(norm[0]) == 1 and int(norm[1]) == 0:
-                    fc_type_dof = modelinfo["dofs"]["f"]["fx"] * np.ones_like(nodeslist)
+                    fc_type_dof = Model.modelinfo["dofs"]["f"]["fx"] * np.ones_like(nodeslist)
                 elif int(norm[0]) == 0 and int(norm[1]) == 1:
-                    fc_type_dof = modelinfo["dofs"]["f"]["fy"] * np.ones_like(nodeslist)
+                    fc_type_dof = Model.modelinfo["dofs"]["f"]["fy"] * np.ones_like(nodeslist)
                 else:
                     fc_type_dof = np.tile(
-                        [modelinfo["dofs"]["f"]["fx"], modelinfo["dofs"]["f"]["fy"]],
+                        [Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fy"]],
                         int(len(nodes) / nodedof),
                     )  # modelinfo["dofs"]["f"]["fy"] * np.ones_like(nodelist)
             else:
@@ -350,6 +376,58 @@ class LoadStructural(Structural):
                 forcenodedof = np.append(forcenodedof, fcdof, axis=0)
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
+
+    def getUpdateMatrix(Model, matrix, loadaply):
+
+        addSpring = np.where(loadaply[:, 1] == 16)
+        addMass = np.where(loadaply[:, 1] == 15)
+
+        if addSpring[0].size:
+            addLoad = loadaply[addSpring, :][0]
+            matrix["stiffness"] = Model.element.getUpdateMatrix(Model, matrix["stiffness"], addLoad)
+
+        if addMass[0].size:
+            addLoad = loadaply[addMass, :][0]
+            matrix["mass"] = Model.element.getUpdateMatrix(Model, matrix["mass"], addLoad)
+
+        return matrix
+
+    def getUpdateLoad(self):
+        return None
+
+
+    def __internal_balance(
+        Model,
+        inci,
+        coord,
+        tabmat,
+        tabgeo,
+        intgauss,
+        element_number,
+    ):
+        # internal balance forces
+        elem_set = Model.element.getElementSet()
+        nodedof = len(elem_set["dofs"]["d"])
+        shape_set = Model.shape.getShapeSet()
+        nodecon = len(shape_set["nodes"])
+        type_shape = shape_set["key"]
+        edof = nodecon * nodedof
+        nodelist = Model.shape.getNodeList(inci, element_number)
+        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
+        C = Model.material.getElasticTensor(tabmat, inci, element_number)
+        pt, wt = gauss_points(type_shape, intgauss)
+        len_sigma = len(elem_set["tensor"])
+        force_value_vector = np.zeros((edof, len_sigma))
+        for ip in range(intgauss):
+            for jp in range(intgauss):
+                for kp in range(intgauss):
+                    detJ = Model.shape.getdetJacobi(np.array([pt[ip], pt[jp], pt[kp]]), elementcoord)
+                    diffN = Model.shape.getDiffShapeFuntion(np.array([pt[ip], pt[jp], pt[kp]]), nodedof)
+                    invJ = Model.shape.getinvJacobi(np.array([pt[ip], pt[jp], pt[kp]]), elementcoord, nodedof)
+                    B = Model.element.getB(diffN, invJ)
+                    force_value_vector += np.dot(B.transpose(), C) * abs(detJ) * wt[ip] * wt[jp] * wt[kp]
+        # force_value_vector = np.reshape(force_value_vector, (edof, 3))
+        return force_value_vector, nodelist
 
     def __body_force_volumetric(
         Model,

@@ -214,7 +214,6 @@ solverdata = fea.Solve(solverset)
 
 # print(solverdata['solution']['U'])
 
-
 postprocset = {"SOLVERDATA": solverdata,
                 "COMPUTER": {'thermal': {'temp': True, 'heatflux': True}},
                 "PLOTSET": {'show': True, 'filename': 'SIM_TIRA_BIMETALICA_HEAT', 'savepng': True},
@@ -222,7 +221,6 @@ postprocset = {"SOLVERDATA": solverdata,
                 "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True}},
             }
 postprocdata = fea.PostProcess(postprocset)
-
 
 ### new sim
 

@@ -25,7 +25,7 @@ class SetModel:
 
     def setTabMat(self, modeldata):
         tabmat, mat_lib = SetModel.__tabmat(self, modeldata["MATERIAL"])
-        self.tabmat = tabmat
+        # self.tabmat = tabmat
         self.mat_lib = mat_lib
         return tabmat
 
@@ -34,7 +34,7 @@ class SetModel:
 
     def setTabGeo(self, modeldata):
         tabgeo, geo_lib = SetModel.__tabgeo(self, modeldata["GEOMETRY"])
-        self.tabgeo = tabgeo
+        # self.tabgeo = tabgeo
         self.geo_lib = geo_lib
         return tabgeo
 
@@ -49,7 +49,7 @@ class SetModel:
         inci, mesh_type_list = SetModel.__inci(
             self, self.elemlist, self.mat_lib, self.geo_lib
         )
-        self.inci = inci
+        # self.inci = inci
         self.mesh_type_list = mesh_type_list
         return inci
 
@@ -59,7 +59,7 @@ class SetModel:
     def setCoord(self, modeldata):
         coordlist = SetModel.__coordlist(self, modeldata)
         coord = SetModel.__coord(self, coordlist)
-        self.coord = coord
+        # self.coord = coord
         return coord
 
     def getCoord(self, modeldata):

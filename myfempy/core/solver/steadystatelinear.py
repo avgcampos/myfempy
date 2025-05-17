@@ -17,46 +17,15 @@ class SteadyStateLinear(Solver):
     """
 
     # @profile
-    def getMatrixAssembler(
-        Model, inci, coord, tabmat, tabgeo, intgauss, SYMM=None, MP=None
-    ):
+    def getMatrixAssembler(Model, SYMM=None, MP=None):
         matrix = dict()
-
         if SYMM:
-            matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
-                Model,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
-                type_assembler="linear_stiffness",
-                MP=MP,
-            )
+            matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(Model)
         else:
             if MP:
-                matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(
-                    Model,
-                    inci,
-                    coord,
-                    tabmat,
-                    tabgeo,
-                    intgauss,
-                    type_assembler="linear_stiffness",
-                    MP=MP,
-                )
+                matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(Model, MP)
             else:
-                matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
-                    Model,
-                    inci,
-                    coord,
-                    tabmat,
-                    tabgeo,
-                    intgauss,
-                    type_assembler="linear_stiffness",
-                    MP=MP,
-                )
-
+                matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(Model)
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
@@ -68,8 +37,8 @@ class SteadyStateLinear(Solver):
     def getDirichletNH(constrains, nodetot, nodedof):
         return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
 
-    def runSolve(assembly, constrainsdof, modelinfo, solverset):
-        fulldofs = modelinfo["fulldofs"]
+    def runSolve(Model, Physic, assembly, constrainsdof, solverset):
+        fulldofs = Model.modelinfo["fulldofs"]
 
         solution = dict()
         nsteps = setSteps(solverset["STEPSET"])
@@ -77,9 +46,9 @@ class SteadyStateLinear(Solver):
         stiffness = assembly["stiffness"]
         forcelist = assembly["loads"]
 
-        U0 = zeros((fulldofs), dtype=float64)  # empty((fulldofs, 1))
-        U1 = zeros((fulldofs), dtype=float64)  # empty((fulldofs, 1))
-        U = zeros((fulldofs, nsteps), dtype=float64)  # empty((fulldofs, nsteps))
+        U0 = zeros((fulldofs), dtype=float64)           # empty((fulldofs, 1))
+        U1 = zeros((fulldofs), dtype=float64)           # empty((fulldofs, 1))
+        U = zeros((fulldofs, nsteps), dtype=float64)    # empty((fulldofs, nsteps))
         Uc = assembly["bcdirnh"]
 
         freedof = constrainsdof["freedof"]

@@ -17,73 +17,32 @@ class DynamicEigenLinear(Solver):
     Dynamic Eigen (modal problem) Linear Solver Class <ConcreteClassService>
     """
 
-    def getMatrixAssembler(
-        Model, inci, coord, tabmat, tabgeo, intgauss, SYMM=None, MP=None
-    ):
+    def getMatrixAssembler(Model, SYMM=None, MP=None):
         matrix = dict()
         if SYMM:
             matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
-                type_assembler="linear_stiffness",
-                MP=MP,
             )
             matrix["mass"] = AssemblerSYMM.getMassConsistentGlobalMatrixAssembler(
                 Model,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
-                type_assembler="mass_consistent",
-                MP=MP,
             )
         else:
             if MP:
                 matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(
                     Model,
-                    inci,
-                    coord,
-                    tabmat,
-                    tabgeo,
-                    intgauss,
-                    type_assembler="linear_stiffness",
                     MP=MP,
                 )
                 matrix["mass"] = AssemblerFULLPOOL.getMassConsistentGlobalMatrixAssembler(
                     Model,
-                    inci,
-                    coord,
-                    tabmat,
-                    tabgeo,
-                    intgauss,
-                    type_assembler="linear_stiffness",
                     MP=MP,
                 )
             else:
                 matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
                     Model,
-                    inci,
-                    coord,
-                    tabmat,
-                    tabgeo,
-                    intgauss,
-                    type_assembler="linear_stiffness",
-                    MP=MP,
+
                 )
                 matrix["mass"] = AssemblerFULL.getMassConsistentGlobalMatrixAssembler(
                     Model,
-                    inci,
-                    coord,
-                    tabmat,
-                    tabgeo,
-                    intgauss,
-                    type_assembler="linear_stiffness",
-                    MP=MP,
                 )
         return matrix
 
@@ -104,13 +63,13 @@ class DynamicEigenLinear(Solver):
             dtype=float64,
         )
 
-    def runSolve(assembly, constrainsdof, modelinfo, solverset):
-        fulldofs = modelinfo["fulldofs"]
+    def runSolve(Model, Physic, assembly, constrainsdof, solverset):
+        fulldofs = Model.modelinfo["fulldofs"]
         solution = dict()
         modeEnd = setSteps(solverset["STEPSET"])
         stiffness = assembly["stiffness"]
         mass = assembly["mass"]
-        forcelist = assembly["loads"]
+        # forcelist = assembly["loads"]
         U = zeros((fulldofs, modeEnd), dtype=float64)
         freedof = constrainsdof["freedof"]
         try:

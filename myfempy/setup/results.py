@@ -46,7 +46,7 @@ class setPostProcess(ABC):
 
         if "structural" in postprocset["COMPUTER"].keys():
             result_solu = np.zeros(
-                (SOLUTION.shape[1], self.modelinfo["coord"].shape[0], 3)
+                (SOLUTION.shape[1], self.model.coord.shape[0], 3)
             )
             for ns in range(SOLUTION.shape[1]):
                 result_solu[ns, :, :], sol_title = setPostProcess.__displ(
@@ -74,8 +74,8 @@ class setPostProcess(ABC):
                 result_stress = np.zeros(
                     (
                         SOLUTION.shape[1],
-                        self.modelinfo["inci"].shape[0],
-                        2 * self.modelinfo["tensor"] + 4,
+                        self.model.inci.shape[0],
+                        2 * self.model.modelinfo["tensor"] + 4,
                     )
                 )
 
@@ -155,7 +155,7 @@ class setPostProcess(ABC):
 
         if "thermal" in postprocset["COMPUTER"].keys():
             result_solu = np.zeros(
-                (SOLUTION.shape[1], self.modelinfo["coord"].shape[0], 1)
+                (SOLUTION.shape[1], self.model.coord.shape[0], 1)
             )
             for st in range(SOLUTION.shape[1]):
                 result_solu[st, :, :], sol_title = setPostProcess.__displ(
@@ -183,8 +183,8 @@ class setPostProcess(ABC):
                 result_stress = np.zeros(
                     (
                         SOLUTION.shape[1],
-                        self.modelinfo["inci"].shape[0],
-                        2 * self.modelinfo["tensor"] + 2,
+                        self.model.inci.shape[0],
+                        2 * self.model.modelinfo["tensor"] + 2,
                     )
                 )
 
@@ -217,7 +217,7 @@ class setPostProcess(ABC):
         plotset = dict()
         hist_X = []
         hist_Y = []
-        plotset["nodedof"] = self.modelinfo["nodedof"]
+        plotset["nodedof"] = self.model.modelinfo["nodedof"]
 
         max_steps = len(postporc_result["SOLUTION"])
 
@@ -230,7 +230,7 @@ class setPostProcess(ABC):
             # plotset["fignumb"] = 99
             # plotset["rstl"] = [0, modelinfo["ntensor"][0] + 1]
             val_X, val_Y, xlabel, ylabel = setPostProcess.__tracker_value(
-                postporc_result, postprocset, plotset, self.modelinfo["coord"]
+                postporc_result, postprocset, plotset, self.model.coord
             )
             hist_X.append(val_X)
             hist_Y.append(val_Y)
@@ -254,7 +254,7 @@ class setPostProcess(ABC):
             + postprocset["PLOTSET"]["filename"]
             + "_myfempy_solver-status.txt"
         )
-        write2log(filename, postprocset["OUTPUT"], self.modelinfo, postporc_result)
+        write2log(self.model, self.physic, postprocset["OUTPUT"], postporc_result, filename)
 
     def __tovtkplot(self, postprocset, postporc_result):
         """_summary_
@@ -266,14 +266,14 @@ class setPostProcess(ABC):
         # path = os.getcwd()
         plotdata = dict()
 
-        plotdata["inci"] = self.modelinfo["inci"]
-        plotdata["nodecon"] = self.modelinfo["nodecon"]
+        plotdata["inci"] = self.model.inci
+        plotdata["nodecon"] = self.model.modelinfo["nodecon"]
         plotdata["filename"] = (
             str(self.path) + "/" + postprocset["PLOTSET"]["filename"] + "_post_process"
         )
-        plotdata["coord"] = self.modelinfo["coord"]
+        plotdata["coord"] = self.model.coord
         plotdata["material_CELL_DATA_val"] = (
-            (np.array([(self.modelinfo["inci"][:, 2])])).T
+            (np.array([(self.model.inci[:, 2])])).T
         ).astype(int)
         plotdata["material_CELL_DATA_title"] = ["Material_Set"]
 
@@ -378,7 +378,7 @@ class setPostProcess(ABC):
         Returns:
             _description_
         """
-        disp = self.model.element.getElementDeformation(U, self.modelinfo)
+        disp = self.model.element.getElementDeformation(U, self.model.modelinfo)
         title = self.model.element.setTitleDeformation()
         return disp, title
 
@@ -392,20 +392,20 @@ class setPostProcess(ABC):
             _description_
         """
         stress_list = np.zeros(
-            (self.modelinfo["nelem"], self.modelinfo["tensor"] + 1), dtype=float
+            (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1), dtype=float
         )
 
         strain_list = np.zeros(
-            (self.modelinfo["nelem"], self.modelinfo["tensor"] + 1), dtype=float
+            (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1), dtype=float
         )
 
-        compliance_list = np.zeros((self.modelinfo["nelem"], 1), dtype=float)
+        compliance_list = np.zeros((self.model.modelinfo["nelem"], 1), dtype=float)
 
-        factor_of_safety = np.zeros((self.modelinfo["nelem"], 1), dtype=float)
+        factor_of_safety = np.zeros((self.model.modelinfo["nelem"], 1), dtype=float)
 
-        pt, wt = gauss_points(self.modelinfo["type_shape"], 1)
+        pt, wt = gauss_points(self.model.modelinfo["type_shape"], 1)
 
-        for ee in range(self.modelinfo["nelem"]):
+        for ee in range(self.model.modelinfo["nelem"]):
 
             epsilon, strain = self.model.material.getElementStrain(
                 self.model, U, pt[0], ee
@@ -416,7 +416,7 @@ class setPostProcess(ABC):
             )
 
             strain_energy = self.model.material.getStrainEnergyDensity(
-                sigma, epsilon, self.modelinfo["elemvol"][ee]
+                sigma, epsilon, self.model.elemvol[ee]
             )
 
             FoS = self.model.material.getFailureCriteria(stress)
@@ -447,16 +447,16 @@ class setPostProcess(ABC):
             _description_
         """
         stress_list = np.zeros(
-            (self.modelinfo["nelem"], self.modelinfo["tensor"] + 1), dtype=float
+            (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1), dtype=float
         )
 
         strain_list = np.zeros(
-            (self.modelinfo["nelem"], self.modelinfo["tensor"] + 1), dtype=float
+            (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1), dtype=float
         )
 
-        pt, wt = gauss_points(self.modelinfo["type_shape"], 1)
+        pt, wt = gauss_points(self.model.modelinfo["type_shape"], 1)
 
-        for ee in range(self.modelinfo["nelem"]):
+        for ee in range(self.model.modelinfo["nelem"]):
 
             epsilon, strain = self.model.material.getElementGradTemp(
                 self.model, U, pt[0], ee

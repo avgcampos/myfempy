@@ -15,43 +15,23 @@ class SteadyStateLinearIterative(Solver):
     Steady State Linear Iterative Solver Class <ConcreteClassService>
     """
 
-    def getMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, SYMM, MP):
+    def getMatrixAssembler(Model, SYMM, MP):
 
         matrix = dict()
 
         if SYMM:
             matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
                 Model,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
-                type_assembler="linear_stiffness",
-                MP=MP,
             )
         else:
             if MP:
                 matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(
                     Model,
-                    inci,
-                    coord,
-                    tabmat,
-                    tabgeo,
-                    intgauss,
-                    type_assembler="linear_stiffness",
                     MP=MP,
                 )
             else:
                 matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
                     Model,
-                    inci,
-                    coord,
-                    tabmat,
-                    tabgeo,
-                    intgauss,
-                    type_assembler="linear_stiffness",
-                    MP=MP,
                 )
         return matrix
 
@@ -64,8 +44,8 @@ class SteadyStateLinearIterative(Solver):
     def getDirichletNH(constrains, nodetot, nodedof):
         return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
 
-    def runSolve(assembly, constrainsdof, modelinfo, solverset):
-        fulldofs = modelinfo["fulldofs"]
+    def runSolve(Model, Physic, assembly, constrainsdof, solverset):
+        fulldofs = Model.modelinfo["fulldofs"]
 
         solution = dict()
         nsteps = setSteps(solverset["STEPSET"])

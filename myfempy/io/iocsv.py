@@ -7,7 +7,7 @@ import csv
 import numpy as np
 
 
-def write2log(log_file, log_data, modelinfo, solstatus):
+def write2log(Model, Physic, log_data, solstatus, log_file):
     with open(log_file, "w") as file_object:
         file_object.write(
             "===============================================================================\n"
@@ -21,10 +21,10 @@ def write2log(log_file, log_data, modelinfo, solstatus):
         if "get" in log_data.keys():
             if "nelem" in log_data["get"].keys():
                 file_object.write("\n")
-                file_object.write("GET NELEM " + str(len(modelinfo["inci"])) + "\n")
+                file_object.write("GET NELEM " + str(len(Model.inci)) + "\n")
             if "nnode" in log_data["get"].keys():
                 file_object.write("\n")
-                file_object.write("GET NNODE " + str(len(modelinfo["coord"])) + "\n")
+                file_object.write("GET NNODE " + str(len(Model.coord)) + "\n")
             if "inci" in log_data["get"].keys():
                 file_object.write("\n")
                 file_object.write("LIST OF ELEMENTS\n")
@@ -33,18 +33,18 @@ def write2log(log_file, log_data, modelinfo, solstatus):
                         "ELEM", "KEY", "MAT", "GEO", "NODES"
                     )
                 )
-                for row in range(len(modelinfo["inci"])):
-                    node_list = modelinfo["inci"][row][4:].astype(
+                for row in range(len(Model.inci)):
+                    node_list = Model.inci[row][4:].astype(
                         int
                     )  # node_list[np.nonzero(node_list)].tolist()
                     node_list = node_list[np.nonzero(node_list)].tolist()
                     node_list = " ".join(str(x) for x in node_list)
                     file_object.write(
                         "{0:<7}{1:<7}{2:<7}{3:<7}{4:<25}\n".format(
-                            modelinfo["inci"][row][0].astype(int),
-                            modelinfo["inci"][row][1].astype(int),
-                            modelinfo["inci"][row][2].astype(int),
-                            modelinfo["inci"][row][3].astype(int),
+                            Model.inci[row][0].astype(int),
+                            Model.inci[row][1].astype(int),
+                            Model.inci[row][2].astype(int),
+                            Model.inci[row][3].astype(int),
                             node_list,
                         )
                     )
@@ -54,61 +54,61 @@ def write2log(log_file, log_data, modelinfo, solstatus):
                 file_object.write(
                     "{0:<7}{1:<10}{2:<10}{3:<10}\n".format("NODE", "X", "Y", "Z")
                 )
-                for row in range(len(modelinfo["coord"])):
+                for row in range(len(Model.coord)):
                     file_object.write(
                         "{0:<7}{1:<10}{2:<10}{3:<10}\n".format(
-                            modelinfo["coord"][row][0].astype(int),
-                            modelinfo["coord"][row][1],
-                            modelinfo["coord"][row][2],
-                            modelinfo["coord"][row][3],
+                            Model.coord[row][0].astype(int),
+                            Model.coord[row][1],
+                            Model.coord[row][2],
+                            Model.coord[row][3],
                         )
                     )
             if "boundcond_list" in log_data["get"].keys():
                 file_object.write("\n")
                 file_object.write("LIST OF CONSTRAINTS\n")
                 file_object.write("{0:<7}{1:<10}\n".format("BC", "NODE"))
-                for row in range(len(modelinfo["constrains"])):
-                    bc_type = modelinfo["constrains"][row][0]
+                for row in range(len(Physic.constrains)):
+                    bc_type = Physic.constrains[row][0]
                     if bc_type == 0:
                         file_object.write(
                             "{0:<7}{1:<10}\n".format(
-                                "FULL", modelinfo["constrains"][row][1].astype(int)
+                                "FULL", Physic.constrains[row][1].astype(int)
                             )
                         )
                     elif bc_type == 1:
                         file_object.write(
                             "{0:<7}{1:<10}\n".format(
-                                "UX", modelinfo["constrains"][row][1].astype(int)
+                                "UX", Physic.constrains[row][1].astype(int)
                             )
                         )
                     elif bc_type == 2:
                         file_object.write(
                             "{0:<7}{1:<10}\n".format(
-                                "UY", modelinfo["constrains"][row][1].astype(int)
+                                "UY", Physic.constrains[row][1].astype(int)
                             )
                         )
                     elif bc_type == 3:
                         file_object.write(
                             "{0:<7}{1:<10}\n".format(
-                                "UZ", modelinfo["constrains"][row][1].astype(int)
+                                "UZ", Physic.constrains[row][1].astype(int)
                             )
                         )
                     elif bc_type == 4:
                         file_object.write(
                             "{0:<7}{1:<10}\n".format(
-                                "RX", modelinfo["constrains"][row][1].astype(int)
+                                "RX", Physic.constrains[row][1].astype(int)
                             )
                         )
                     elif bc_type == 5:
                         file_object.write(
                             "{0:<7}{1:<10}\n".format(
-                                "RY", modelinfo["constrains"][row][1].astype(int)
+                                "RY", Physic.constrains[row][1].astype(int)
                             )
                         )
                     elif bc_type == 6:
                         file_object.write(
                             "{0:<7}{1:<10}\n".format(
-                                "RZ", modelinfo["constrains"][row][1].astype(int)
+                                "RZ", Physic.constrains[row][1].astype(int)
                             )
                         )
                     else:
@@ -126,55 +126,55 @@ def write2log(log_file, log_data, modelinfo, solstatus):
                     if fc_type == 1:
                         file_object.write(
                             "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(
-                                modelinfo["forces"][row][0].astype(int),
+                               Physic.forces[row][0].astype(int),
                                 "FX",
-                                modelinfo["forces"][row][2],
-                                modelinfo["forces"][row][3].astype(int),
+                                Physic.forces[row][2],
+                                Physic.forces[row][3].astype(int),
                             )
                         )
                     elif fc_type == 2:
                         file_object.write(
                             "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(
-                                modelinfo["forces"][row][0].astype(int),
+                                Physic.forces[row][0].astype(int),
                                 "FY",
-                                modelinfo["forces"][row][2],
-                                modelinfo["forces"][row][3].astype(int),
+                                Physic.forces[row][2],
+                                Physic.forces[row][3].astype(int),
                             )
                         )
                     elif fc_type == 3:
                         file_object.write(
                             "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(
-                                modelinfo["forces"][row][0].astype(int),
+                                Physic.forces[row][0].astype(int),
                                 "FZ",
-                                modelinfo["forces"][row][2],
-                                modelinfo["forces"][row][3].astype(int),
+                                Physic.forces[row][2],
+                                Physic.forces[row][3].astype(int),
                             )
                         )
                     elif fc_type == 4:
                         file_object.write(
                             "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(
-                                modelinfo["forces"][row][0].astype(int),
+                                Physic.forces[row][0].astype(int),
                                 "TX",
-                                modelinfo["forces"][row][2],
-                                modelinfo["forces"][row][3].astype(int),
+                                Physic.forces[row][2],
+                                Physic.forces[row][3].astype(int),
                             )
                         )
                     elif fc_type == 5:
                         file_object.write(
                             "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(
-                                modelinfo["forces"][row][0].astype(int),
+                                Physic.forces[row][0].astype(int),
                                 "TY",
-                                modelinfo["forces"][row][2],
-                                modelinfo["forces"][row][3].astype(int),
+                                Physic.forces[row][2],
+                                Physic.forces[row][3].astype(int),
                             )
                         )
                     elif fc_type == 6:
                         file_object.write(
                             "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(
-                                modelinfo["forces"][row][0].astype(int),
+                                Physic.forces[row][0].astype(int),
                                 "TZ",
-                                modelinfo["forces"][row][2],
-                                modelinfo["forces"][row][3].astype(int),
+                                Physic.forces[row][2],
+                                Physic.forces[row][3].astype(int),
                             )
                         )
                     else:
@@ -203,21 +203,21 @@ def write2log(log_file, log_data, modelinfo, solstatus):
                         "DAMP",
                     )
                 )
-                for row in range(len(modelinfo["tabmat"])):
+                for row in range(len(Model.tabmat)):
                     file_object.write(
                         "{0:<7}{1:<10}{2:<10}{3:<10}{4:<10}{5:<10}{6:<10}{7:<10}{8:<10}{9:<10}{10:<10}{11:<10}\n".format(
                             str(row + 1),
-                            modelinfo["tabmat"][row][0],
-                            modelinfo["tabmat"][row][1],
-                            modelinfo["tabmat"][row][2],
-                            modelinfo["tabmat"][row][3],
-                            modelinfo["tabmat"][row][4],
-                            modelinfo["tabmat"][row][5],
-                            modelinfo["tabmat"][row][6],
-                            modelinfo["tabmat"][row][7],
-                            modelinfo["tabmat"][row][8],
-                            modelinfo["tabmat"][row][9].astype(int),
-                            modelinfo["tabmat"][row][10].astype(int),
+                            Model.tabmat[row][0],
+                            Model.tabmat[row][1],
+                            Model.tabmat[row][2],
+                            Model.tabmat[row][3],
+                            Model.tabmat[row][4],
+                            Model.tabmat[row][5],
+                            Model.tabmat[row][6],
+                            Model.tabmat[row][7],
+                            Model.tabmat[row][8],
+                            Model.tabmat[row][9].astype(int),
+                            Model.tabmat[row][10].astype(int),
                         )
                     )
             if "tabgeo" in log_data["get"].keys():
@@ -237,20 +237,20 @@ def write2log(log_file, log_data, modelinfo, solstatus):
                         "ID",
                     )
                 )
-                for row in range(len(modelinfo["tabgeo"])):
+                for row in range(len(Model.tabgeo)):
                     file_object.write(
                         "{0:<7}{1:<10}{2:<10}{3:<10}{4:<10}{5:<10}{6:<10}{7:<10}{8:<10}{9:<10}{10:<10}\n".format(
                             str(row + 1),
-                            modelinfo["tabgeo"][row][0],
-                            modelinfo["tabgeo"][row][1],
-                            modelinfo["tabgeo"][row][2],
-                            modelinfo["tabgeo"][row][3],
-                            modelinfo["tabgeo"][row][4],
-                            modelinfo["tabgeo"][row][5],
-                            modelinfo["tabgeo"][row][6],
-                            modelinfo["tabgeo"][row][7],
-                            modelinfo["tabgeo"][row][8],
-                            modelinfo["tabgeo"][row][9].astype(int),
+                            Model.tabgeo[row][0],
+                            Model.tabgeo[row][1],
+                            Model.tabgeo[row][2],
+                            Model.tabgeo[row][3],
+                            Model.tabgeo[row][4],
+                            Model.tabgeo[row][5],
+                            Model.tabgeo[row][6],
+                            Model.tabgeo[row][7],
+                            Model.tabgeo[row][8],
+                            Model.tabgeo[row][9].astype(int),
                         )
                     )
         # =============================================================================================================
@@ -272,7 +272,7 @@ def write2log(log_file, log_data, modelinfo, solstatus):
             )
             file_object.write(
                 "{0:<30} : {1:<10} DOF\n".format(
-                    "NUMBER OF EQUATION ", str(modelinfo["fulldofs"])
+                    "NUMBER OF EQUATION ", str(Model.modelinfo["fulldofs"])
                 )
             )
             file_object.write(

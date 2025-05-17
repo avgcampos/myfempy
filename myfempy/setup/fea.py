@@ -80,36 +80,37 @@ class newAnalysis:
         try:
             self.model = SetModel(Mesh, Element, Shape, Material, Geometry)
             self.model.modeldata = modeldata
-            self.model.intgauss = GaussPoints
+            # self.model.intgauss = GaussPoints
             logging.info("TRY SET FEMODEL -- SUCCESS")
         except:
             logging.warning("TRY SET FEMODEL -- FAULT")
             
-        self.modelinfo = dict()
-        self.modelinfo["inci"] = newAnalysis.getInci(self)
-        self.modelinfo["coord"] = newAnalysis.getCoord(self)
-        self.modelinfo["tabmat"] = newAnalysis.getTabmat(self)
-        self.modelinfo["tabgeo"] = newAnalysis.getTabgeo(self)
-        self.modelinfo["intgauss"] = GaussPoints
         
+        self.model.inci = newAnalysis.getInci(self)
+        self.model.coord = newAnalysis.getCoord(self)
+        self.model.tabmat = newAnalysis.getTabmat(self)
+        self.model.tabgeo = newAnalysis.getTabgeo(self)
+        self.model.intgauss = GaussPoints
+
+        self.model.modelinfo = dict()
         try:
-            self.modelinfo["regions"] = newAnalysis.getRegions(self)
+            self.model.regions = newAnalysis.getRegions(self)
         except:
-            self.modelinfo["regions"] = []
+            self.model.regions = []
         elem_set = self.model.element.getElementSet()
-        self.modelinfo["tensor"] = len(elem_set["tensor"])
-        self.modelinfo["dofs"] = elem_set["dofs"]
-        self.modelinfo["nodedof"] = len(elem_set["dofs"]["d"])
-        self.modelinfo["type_element"] = elem_set["key"]
+        self.model.modelinfo["tensor"] = len(elem_set["tensor"])
+        self.model.modelinfo["dofs"] = elem_set["dofs"]
+        self.model.modelinfo["nodedof"] = len(elem_set["dofs"]["d"])
+        self.model.modelinfo["type_element"] = elem_set["key"]
         shape_set = self.model.shape.getShapeSet()
-        self.modelinfo["shapeid"] = shape_set["id"]
-        self.modelinfo["nodecon"] = len(shape_set["nodes"])
-        self.modelinfo["elemdofs"] = len(shape_set["nodes"]) * self.modelinfo["nodedof"]
-        self.modelinfo["type_shape"] = shape_set["key"]
-        self.modelinfo["elemid"] = int(f'{elem_set["id"]}{shape_set["id"]}')
-        self.modelinfo["nnode"] = len(self.model.coord)
-        self.modelinfo["nelem"] = len(self.model.inci)
-        self.modelinfo["fulldofs"] = len(elem_set["dofs"]["d"]) * len(self.model.coord)
+        self.model.modelinfo["shapeid"] = shape_set["id"]
+        self.model.modelinfo["nodecon"] = len(shape_set["nodes"])
+        self.model.modelinfo["elemdofs"] = len(shape_set["nodes"]) * self.model.modelinfo["nodedof"]
+        self.model.modelinfo["type_shape"] = shape_set["key"]
+        self.model.modelinfo["elemid"] = int(f'{elem_set["id"]}{shape_set["id"]}')
+        self.model.modelinfo["nnode"] = len(self.model.coord)
+        self.model.modelinfo["nelem"] = len(self.model.inci)
+        self.model.modelinfo["fulldofs"] = len(elem_set["dofs"]["d"]) * len(self.model.coord)
 
     def Physic(self, physicdata):
         """
@@ -119,60 +120,70 @@ class newAnalysis:
             physicdata -- data information
         """
         print_console("pre")
-        self.modelinfo["physic"] = physicdata["PHYSIC"]
+        # self.model.modelinfo["physic"] = physicdata["PHYSIC"]
         try:
             Loads, BoundCond = newAnalysis.__setDomain(physicdata)
+            self.physic = SetPhysics(self.model, Loads, BoundCond)
+            self.physic.physicdata = physicdata
             logging.info("TRY SET PHYSICS -- SUCCESS")
         except:
+            self.physic = []
             logging.warning("TRY SET PHYSICS -- FAULT")
 
-        self.physic = SetPhysics(self.model, Loads, BoundCond)
-        # self.physic.physicdata = physicdata
-        self.modelinfo["forces"] = newAnalysis.getLoadApply(self)
-
-        constrains = newAnalysis.getBCApply(self)
-        if any(constrains[:, 1] == 11):
-            self.modelinfo["csleft"] = constrains[
-                np.where(constrains[:, 1] == 11)[0], 0
-            ]
-            self.modelinfo["csright"] = constrains[
-                np.where(constrains[:, 1] == 12)[0], 0
-            ]
-            self.modelinfo["constrains"] = constrains
-        else:
-            self.modelinfo["constrains"] = constrains
+        try:
+            self.physic.forces = newAnalysis.getLoadApply(self)
+            logging.info("TRY SET PHYSICS.FORCES -- SUCCESS")
+        except:
+            self.physic.forces = []
+            logging.warning("TRY SET PHYSICS.FORCES -- FAULT")
 
         if "COUPLING" in physicdata.keys():
-            self.modelinfo["coupling"] = physicdata["COUPLING"]
-            LoadCoup = newAnalysis.__setCoupling(physicdata)
+            coupling_load_zero = self.physic.forces
+            LoadCoup, BoundCond = newAnalysis.__setCoupling(physicdata)
             self.physic = SetPhysics(self.model, LoadCoup, BoundCond)
-            self.modelinfo["forces"] = np.append(
-                self.modelinfo["forces"], newAnalysis.getCouplingInterface(self), axis=0
+            self.physic.physicdata = physicdata
+            self.physic.forces = np.append(
+                coupling_load_zero, newAnalysis.getCouplingInterface(self), axis=0
             )
+            
+        try:
+            constrains = newAnalysis.getBCApply(self)
+            if any(constrains[:, 1] == 11):
+                self.physic.csleft = constrains[
+                    np.where(constrains[:, 1] == 11)[0], 0
+                ]
+                self.physic.csright = constrains[
+                    np.where(constrains[:, 1] == 12)[0], 0
+                ]
+                self.physic.constrains = constrains
+            else:
+                self.physic.constrains = constrains
+            logging.info("TRY SET PHYSICS.CONSTRAINS -- SUCCESS")
+        except:
+            self.physic.constrains = []
+            logging.warning("TRY SET PHYSICS.CONSTRAINS -- FAULT")
 
         # self.loadaply = FEANewAnalysis.getLoadApply(self)
         # self.constrains = FEANewAnalysis.getBCApply(self)
 
-    def Assembly(self):
+    def Assembly(self, Model):
         """
         Assembly assembly of fe model algebric system
 
         Returns:
             matrix and vector from fe model
         """
-        inci = self.modelinfo["inci"]
-        coord = self.modelinfo["coord"]
-        tabmat = self.modelinfo["tabmat"]
-        tabgeo = self.modelinfo["tabgeo"]
-        intgauss = self.modelinfo["intgauss"]
+        # inci = self.model.inci
+        # coord = self.model.coord
+        # tabmat = self.model.tabmat
+        # tabgeo = self.model.tabgeo
+        # intgauss = self.model.intgauss
         try:
-            matrix = newAnalysis.getGlobalMatrix(
-                self, inci, coord, tabmat, tabgeo, intgauss, self.symm, self.mp
-            )
+            matrix = newAnalysis.getGlobalMatrix(self, Model, self.symm, self.mp)
             logging.info("TRY RUN GLOBAL ASSEMBLY -- SUCCESS")
         except:
             logging.warning("TRY RUN GLOBAL ASSEMBLY -- FAULT")
-        loadaply = self.modelinfo["forces"]
+        loadaply = self.physic.forces
         try:
             matrix = newAnalysis.getUpdateMatrix(self, matrix, loadaply)
             logging.info("TRY RUN UPDATE ASSEMBLY -- SUCCESS")
@@ -222,20 +233,19 @@ class newAnalysis:
             solverset["solverstatus"]["ncpu"] = "SERIAL_" + str(1) + "_CORE"
         # loading_bar_v1(10,"SOLVER")
         starttime = time()
-        assembly, forcelist = newAnalysis.Assembly(self)
+        assembly, forcelist = newAnalysis.Assembly(self, Model=self.model)
         endttime = time()
         solverset["solverstatus"]["timeasb"] = abs(endttime - starttime)
         solverset["solverstatus"]["memorysize"] = (assembly["stiffness"].todense().nbytes)/1e6
         # loading_bar_v1(50,"SOLVER")
-        constrains = self.modelinfo["constrains"]
-        nsteps = setSteps(solverset["STEPSET"])
-        constrainsdof = dict()
         try:
+            constrains = self.physic.constrains
             freedof, fixedof, constdof = newAnalysis.getConstrains(self, constrains)
             logging.info("TRY RUN CONSTRAINS -- SUCCESS")
         except:
             logging.warning("TRY RUN CONSTRAINS -- FAULT")
         # loading_bar_v1(60,"SOLVER")
+        constrainsdof = dict()
         constrainsdof["freedof"] = freedof
         constrainsdof["fixedof"] = fixedof
         constrainsdof["constdof"] = constdof
@@ -244,6 +254,7 @@ class newAnalysis:
             logging.info("TRY SET DNH CONSTRAINS -- SUCCESS")
         except:
             logging.warning("TRY SET DNH CONSTRAINS -- FAULT")
+        nsteps = setSteps(solverset["STEPSET"])
         if forcelist.shape[1] != nsteps:
             forcelist = np.repeat(forcelist, nsteps, axis=1)
         else:
@@ -257,9 +268,7 @@ class newAnalysis:
         # loading_bar_v1(80,"SOLVER")
         try:
             starttime = time()
-            solverset["solution"] = self.solver.runSolve(
-                assembly, constrainsdof, self.modelinfo, solverset
-            )
+            solverset["solution"] = self.solver.runSolve(self.model, self.physic, assembly, constrainsdof, solverset)
             endttime = time()
             solverset["solverstatus"]["timesim"] = abs(endttime - starttime)
             logging.info("TRY RUN SOLVER -- SUCCESS")
@@ -274,38 +283,13 @@ class newAnalysis:
 
         Arguments:
             previewdata -- data information
-        """
-        # modelinfo = dict()
-        # modelinfo["coord"] = self.coord   #FEANewAnalysis.getCoord(self)
-        # modelinfo["inci"] = self.inci     #FEANewAnalysis.getInci(self)
-        # modelinfo["tabgeo"] = self.tabgeo #FEANewAnalysis.getTabgeo(self)
-        # shape_set = self.model.shape.getShapeSet()
-        # elem_set = self.model.element.getElementSet()
-        # self.modelinfo["nodecon"] = len(shape_set['nodes'])
-        # self.modelinfo["elemid"] = elem_set['id']
-        # try:
-        #     self.regions = self.model.mesh.getRegionsList(self.model.mesh.getElementConection(self.model.modeldata['MESH']))
-        # except:
-        #     self.regions = []
-        # modelinfo["regions"] = self.regions
-        # try:
-        #      modelinfo["forces"] = FEANewAnalysis.getLoadApply(self)
-        # except:
-        #     pass
-        #     # modelinfo["forces"] = []
-        # try:
-        #     modelinfo["constrains"] = FEANewAnalysis.getBCApply(self)
-        # except:
-        #     pass
-        #     modelinfo["constrains"] = []
-        # modelinfo["forces"] = FEANewAnalysis.getLoadApply(self)
-        # modelinfo["constrains"] = FEANewAnalysis.getBCApply(self)
-        
+        """        
         try:
-            preview_plot(previewdata, self.modelinfo, str(self.path))
-            logging.info("TRY RUN PREVIEW PLOT -- SUCCESS")
+            preview_plot(self.model, previewdata, str(self.path), self.physic)
+        #     logging.info("TRY RUN PREVIEW PLOT -- SUCCESS")
         except:
-            logging.warning("TRY RUN PREVIEW PLOT -- FAULT")
+            preview_plot(self.model, previewdata, str(self.path))
+        #     logging.warning("TRY RUN PREVIEW PLOT -- FAULT")
 
     def PostProcess(self, postprocset):
         """
@@ -320,28 +304,32 @@ class newAnalysis:
         print_console("post")
         postprocdata = []
 
-        self.modelinfo["elemvol"] = newAnalysis.getElementVolume(
+        self.model.elemvol = newAnalysis.getElementVolume(
             self,
-            self.modelinfo["inci"],
-            self.modelinfo["coord"],
-            self.modelinfo["tabgeo"],
+            self.model.inci,
+            self.model.coord,
+            self.model.tabgeo,
         )
 
-        try:
-            if "COMPUTER" in postprocset.keys():
-                postprocdata = setPostProcess.getCompute(self, postprocset)
-            if "TRACKER" in postprocset.keys():
-                setPostProcess.getTracker(self, postprocset, postprocdata)
-            if "OUTPUT" in postprocset.keys():
-                postprocdata["log"] = []
-                log_file = setPostProcess.getLog(self, postprocset, postprocdata)
-                postprocdata["log"].append(log_file)
-                logging.info("TRY GET POST PROCESS -- SUCCESS")
-        except:
-            logging.warning("TRY GET POST PROCESS -- FAULT")
+        # try:
+        if "COMPUTER" in postprocset.keys():
+            postprocdata = setPostProcess.getCompute(self, postprocset)
+        if "TRACKER" in postprocset.keys():
+            setPostProcess.getTracker(self, postprocset, postprocdata)
+        if "OUTPUT" in postprocset.keys():
+            postprocdata["log"] = []
+            log_file = setPostProcess.getLog(self, postprocset, postprocdata)
+            postprocdata["log"].append(log_file)
+            logging.info("TRY GET POST PROCESS -- SUCCESS")
+    # except:
+        #     logging.warning("TRY GET POST PROCESS -- FAULT")
         return postprocdata
 
-    # gettings
+    # GET MODEL
+
+    def getModel(self):
+        return self.model
+
     def getModelInfo(self):
         """
         getModelInfo _summary_
@@ -349,7 +337,7 @@ class newAnalysis:
         Returns:
             _description_
         """
-        return self.modelinfo
+        return self.model.modelinfo
 
     def getInci(self):
         return self.model.getInci(self.model.modeldata)
@@ -364,7 +352,7 @@ class newAnalysis:
         return self.model.getTabGeo(self.model.modeldata)
 
     def getIntGauss(self):
-        return self.modelinfo["intgauss"]
+        return self.model.intgauss
 
     def getElementVolume(self, inci, coord, tabgeo):
         vol = np.zeros((inci.shape[0]))
@@ -387,16 +375,35 @@ class newAnalysis:
         return self.model.element.getMassConsistentMat(
             self.model, inci, coord, tabmat, tabgeo, intgauss, element_number
         )
-
-    def getGlobalMatrix(
-        self, inci, coord, tabmat, tabgeo, intgauss, SYMM=None, MP=None
-    ):
-        
-        
-        return self.solver.getMatrixAssembler(
-            self.model, inci, coord, tabmat, tabgeo, intgauss, SYMM=SYMM, MP=MP
+    
+    def getRegions(self):
+        return self.model.mesh.getRegionsList(
+            self.model.mesh.getElementConection(self.model.modeldata["MESH"])
         )
 
+    # GET SOLVER
+    def getGlobalMatrix(self, Model, SYMM=None, MP=None):
+        return self.solver.getMatrixAssembler(Model, SYMM=SYMM, MP=MP)
+
+    def getConstrains(self, constrains):
+        nodetot = len(self.model.coord)
+        return self.solver.getConstrains(
+            constrains, nodetot, self.model.modelinfo["nodedof"]
+        )
+
+    def getDirichletNH(self, constrains):
+        nodetot = len(self.model.coord)
+        return self.solver.getDirichletNH(
+            constrains, nodetot, self.model.modelinfo["nodedof"]
+        )
+
+    def getLoadArray(self, loadaply):
+        nodetot = len(self.model.coord)
+        return self.solver.getLoadAssembler(
+            loadaply, nodetot, self.model.modelinfo["nodedof"]
+        )
+
+    # GET PHYSIC
     def getForceList(self):
         return self.physic.getForceList(self.modelinfo["domain"])
 
@@ -404,41 +411,21 @@ class newAnalysis:
         return self.physic.getBoundCondList(self.modelinfo["domain"])
 
     def getLoadApply(self):
-        return self.physic.getLoadApply(self.modelinfo)
+        return self.physic.getLoadApply(self.physic.physicdata)
 
     def getBCApply(self):
-        return self.physic.getBoundCondApply(self.modelinfo)
-
-    def getConstrains(self, constrains):
-        nodetot = len(self.modelinfo["coord"])
-        freedof, fixedof, constdof = self.solver.getConstrains(
-            constrains, nodetot, self.modelinfo["nodedof"]
-        )
-        return freedof, fixedof, constdof
-
-    def getDirichletNH(self, constrains):
-        nodetot = len(self.modelinfo["coord"])
-        return self.solver.getDirichletNH(
-            constrains, nodetot, self.modelinfo["nodedof"]
-        )
-
-    def getLoadArray(self, loadaply):
-        nodetot = len(self.modelinfo["coord"])
-        return self.solver.getLoadAssembler(
-            loadaply, nodetot, self.modelinfo["nodedof"]
-        )
-
+        return self.physic.getBoundCondApply(self.physic.physicdata)
+    
     def getCouplingInterface(self):
-        return self.physic.getLoadCoup(self.modelinfo, self.modelinfo["coupling"])
+        return self.physic.getLoadCoup(self.physic.physicdata)
 
     def getUpdateMatrix(self, matrix, addval):
         return self.physic.getUpdateMatrix(matrix, addval)
+    
+    def getElementFromNodesList(self, nodelist):
+        return self.physic.getElementList(self.model.inci, nodelist)
 
-    def getRegions(self):
-        return self.model.mesh.getRegionsList(
-            self.model.mesh.getElementConection(self.model.modeldata["MESH"])
-        )
-
+    # OUTHERS
     def getNodesFromRegions(self, set: int, type: str):
         if type == "point":
             domain_nodelist = newAnalysis.getRegions(self)[0][1][set - 1][1]
@@ -449,10 +436,6 @@ class newAnalysis:
         else:
             domain_nodelist = []
         return domain_nodelist
-
-    def getElementFromNodesList(self, nodelist):
-        return self.physic.getElementList(self.modelinfo["inci"], nodelist)
-    
 
     # settings FEA ANALYSIS <privates>
     def __setMesh(modeldata):
