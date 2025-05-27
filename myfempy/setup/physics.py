@@ -187,33 +187,64 @@ class SetPhysics:
                         )
             else:
                 if "LOC" in bap.keys():
-                    blist.append(
-                        {
-                            "TYPE": bap["TYPE"],
-                            "DOF": bap["DOF"],
-                            "DIR": bap["DIR"],
-                            "LOCX": bap["LOC"]["x"],
-                            "LOCY": bap["LOC"]["y"],
-                            "LOCZ": bap["LOC"]["z"],
-                            "TAG": 0,
-                            "VAL": 0.0,
-                            "STEP": 0,
-                        }
-                    )
+                    if "STEP" in bap.keys():
+                        blist.append(
+                            {
+                                "TYPE": bap["TYPE"],
+                                "DOF": bap["DOF"],
+                                "DIR": bap["DIR"],
+                                "LOCX": bap["LOC"]["x"],
+                                "LOCY": bap["LOC"]["y"],
+                                "LOCZ": bap["LOC"]["z"],
+                                "TAG": 0,
+                                "VAL": 0.0,
+                                "STEP": bap["STEP"],
+                            }
+                        )
+                    else:
+                        blist.append(
+                            {
+                                "TYPE": bap["TYPE"],
+                                "DOF": bap["DOF"],
+                                "DIR": bap["DIR"],
+                                "LOCX": bap["LOC"]["x"],
+                                "LOCY": bap["LOC"]["y"],
+                                "LOCZ": bap["LOC"]["z"],
+                                "TAG": 0,
+                                "VAL": 0.0,
+                                "STEP": 0,
+                            }
+                        )
+                    
                 elif "TAG" in bap.keys():
-                    blist.append(
-                        {
-                            "TYPE": bap["TYPE"],
-                            "DOF": bap["DOF"],
-                            "DIR": bap["DIR"],
-                            "LOCX": 0.0,
-                            "LOCY": 0.0,
-                            "LOCZ": 0.0,
-                            "TAG": bap["TAG"],
-                            "VAL": 0.0,
-                            "STEP": 0,
-                        }
-                    )
+                    if "STEP" in bap.keys():
+                        blist.append(
+                            {
+                                "TYPE": bap["TYPE"],
+                                "DOF": bap["DOF"],
+                                "DIR": bap["DIR"],
+                                "LOCX": 0.0,
+                                "LOCY": 0.0,
+                                "LOCZ": 0.0,
+                                "TAG": bap["TAG"],
+                                "VAL": 0.0,
+                                "STEP": bap["STEP"],
+                            }
+                        )
+                    else:
+                        blist.append(
+                            {
+                                "TYPE": bap["TYPE"],
+                                "DOF": bap["DOF"],
+                                "DIR": bap["DIR"],
+                                "LOCX": 0.0,
+                                "LOCY": 0.0,
+                                "LOCZ": 0.0,
+                                "TAG": bap["TAG"],
+                                "VAL": 0.0,
+                                "STEP": 0,
+                            }
+                        )
                 else:
                     blist.append(
                         {

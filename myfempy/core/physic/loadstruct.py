@@ -29,23 +29,25 @@ class LoadStructural(Structural):
         elif forcelist["TYPE"] == "forcebody":
             fapp = LoadStructural.ForceBodyLoadApply(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
-        elif forcelist["TYPE"] == "forceintbalance":
-            fapp = LoadStructural.ForceInternalBalance(Model)
+        elif forcelist["TYPE"] == "strainzero":
+            fapp = LoadStructural.ForceStrainZero(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         else:
             pass
         forcenodeaply = forcenodeaply[1::][::]
         return forcenodeaply
     
-    def ForceInternalBalance(Model):
+
+    def ForceStrainZero(Model, forcelist):
         forcenodedof = np.zeros((1, 4))
+        strain_zero = np.array(forcelist["VAL"])
         inci = Model.inci
         coord = Model.coord
         tabmat = Model.tabmat
         tabgeo = Model.tabgeo
         intgauss = Model.intgauss
         for ee in range(inci.shape[0]):
-            force_value_vector, nodelist = LoadStructural.__internal_balance(
+            force_value_vector, nodelist = LoadStructural.__strain_zero(
                 Model,
                 inci,
                 coord,
@@ -53,6 +55,7 @@ class LoadStructural(Structural):
                 tabgeo,
                 intgauss,
                 ee,
+                strain_zero,
             )
             
             try:
@@ -62,19 +65,19 @@ class LoadStructural(Structural):
                 fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fy"]], len(nodelist),)
                 nodelist = np.repeat(nodelist, 2)
 
-            for doff in range(force_value_vector.shape[1]):          
-                for j in range(len(nodelist)):
-                    fcdof = np.array(
+            # for doff in range(force_value_vector.shape[1]):          
+            for j in range(len(nodelist)):
+                fcdof = np.array(
+                    [
                         [
-                            [
-                                int(nodelist[j]),
-                                fc_type_dof[j],
-                                force_value_vector[j, doff],
-                                doff+1,
-                            ]
+                            int(nodelist[j]),
+                            fc_type_dof[j],
+                            force_value_vector[j],
+                            int(forcelist["STEP"]),
                         ]
-                    )
-                    forcenodedof = np.append(forcenodedof, fcdof, axis=0)
+                    ]
+                )
+                forcenodedof = np.append(forcenodedof, fcdof, axis=0)
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
 
@@ -396,7 +399,7 @@ class LoadStructural(Structural):
         return None
 
 
-    def __internal_balance(
+    def __strain_zero(
         Model,
         inci,
         coord,
@@ -404,6 +407,7 @@ class LoadStructural(Structural):
         tabgeo,
         intgauss,
         element_number,
+        strain_zero,
     ):
         # internal balance forces
         elem_set = Model.element.getElementSet()
@@ -417,16 +421,19 @@ class LoadStructural(Structural):
         C = Model.material.getElasticTensor(tabmat, inci, element_number)
         pt, wt = gauss_points(type_shape, intgauss)
         len_sigma = len(elem_set["tensor"])
-        force_value_vector = np.zeros((edof, len_sigma))
+        force_value_vector = np.zeros((edof, 1))
+
+        # strain_zero_vector = 0.5*strain_zero*np.eye(len(elem_set['tensor']))
+
         for ip in range(intgauss):
             for jp in range(intgauss):
-                for kp in range(intgauss):
-                    detJ = Model.shape.getdetJacobi(np.array([pt[ip], pt[jp], pt[kp]]), elementcoord)
-                    diffN = Model.shape.getDiffShapeFuntion(np.array([pt[ip], pt[jp], pt[kp]]), nodedof)
-                    invJ = Model.shape.getinvJacobi(np.array([pt[ip], pt[jp], pt[kp]]), elementcoord, nodedof)
-                    B = Model.element.getB(diffN, invJ)
-                    force_value_vector += np.dot(B.transpose(), C) * abs(detJ) * wt[ip] * wt[jp] * wt[kp]
-        # force_value_vector = np.reshape(force_value_vector, (edof, 3))
+                # for kp in range(intgauss):
+                detJ = Model.shape.getdetJacobi(np.array([pt[ip], pt[jp]]), elementcoord)
+                diffN = Model.shape.getDiffShapeFuntion(np.array([pt[ip], pt[jp]]), nodedof)
+                invJ = Model.shape.getinvJacobi(np.array([pt[ip], pt[jp]]), elementcoord, nodedof)
+                B = Model.element.getB(diffN, invJ)
+                force_value_vector += np.dot(np.dot(B.transpose(), C), strain_zero.reshape(-1, 1)) * abs(detJ) * wt[ip] * wt[jp] #* wt[kp]
+        force_value_vector = np.reshape(force_value_vector, (edof))
         return force_value_vector, nodelist
 
     def __body_force_volumetric(

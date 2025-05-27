@@ -60,7 +60,7 @@ Implementar as seguintes soluções de análise:
 		- [ ] Timoshenko Space Beam
         - [ ] Plate Kirchhoff
         - [ ] Plate Reissner-Mindlin
-        - [ ] Homogeinização/ micro escala (tensor)
+        - [X] Homogeinização/ micro escala (tensor)
 		- [ ] Grande Deslocamento
 		- [ ] Plasticidade
 		- [X] Heat Plane

@@ -56,7 +56,7 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
                 )
                 for row in range(len(Model.coord)):
                     file_object.write(
-                        "{0:<7}{1:<10}{2:<10}{3:<10}\n".format(
+                        "{0:<7}{1:<20}{2:<20}{3:<20}\n".format(
                             Model.coord[row][0].astype(int),
                             Model.coord[row][1],
                             Model.coord[row][2],

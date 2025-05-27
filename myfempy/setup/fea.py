@@ -112,6 +112,13 @@ class newAnalysis:
         self.model.modelinfo["nelem"] = len(self.model.inci)
         self.model.modelinfo["fulldofs"] = len(elem_set["dofs"]["d"]) * len(self.model.coord)
 
+        self.model.elemvol = newAnalysis.getElementVolume(
+            self,
+            self.model.inci,
+            self.model.coord,
+            self.model.tabgeo,
+        )
+
     def Physic(self, physicdata):
         """
         Physic physics set load and boundary conditions
@@ -197,7 +204,7 @@ class newAnalysis:
         
         return matrix, forcelist
 
-    def Solve(self, solverset):
+    def Solve(self, solverset=None):
         """
         runSolve run the solver set
 
@@ -212,9 +219,9 @@ class newAnalysis:
         # self.modelinfo = dict()
         # self.modelinfo['coord'] = self.coord
         # self.modelinfo['regions'] = self.regions
-        solverset["solverstatus"] = dict()
         # loading_bar_v1(5,"SOLVER")
         try:
+            solverset["solverstatus"] = dict()
             self.symm = solverset["SYMM"]
             if self.symm:
                 solverset["solverstatus"]["typeasmb"] = "SYMMETRIC"
@@ -303,13 +310,6 @@ class newAnalysis:
         """
         print_console("post")
         postprocdata = []
-
-        self.model.elemvol = newAnalysis.getElementVolume(
-            self,
-            self.model.inci,
-            self.model.coord,
-            self.model.tabgeo,
-        )
 
         # try:
         if "COMPUTER" in postprocset.keys():

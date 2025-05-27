@@ -214,7 +214,7 @@ bc2 = {
     }
 
 bc_cs_l = {
-    'TYPE': 'csymm',  # csleft
+    'TYPE': 'cycsym',  # csleft
     'DOF': 'left',
     'DIR': 'line',
     'TAG': 3,
@@ -222,7 +222,7 @@ bc_cs_l = {
 
 
 bc_cs_r = {
-    'TYPE': 'csymm',  # csleft
+    'TYPE': 'cycsym',  # csleft
     'DOF': 'right',
     'DIR': 'line',
     'TAG': 1,

@@ -67,10 +67,10 @@ class StaticLinearCyclicSymmPlane(Solver):
             fixed_constrain, nodetot, nodedof
         )
 
-        # testl = in1d(fixedof_constrain, fixed_left_dof, assume_unique=True, invert = True)
-        # testr = in1d(fixedof_constrain, fixed_right_dof, assume_unique=True, invert = True)
+        testl = in1d(freedof, fixed_left_dof, assume_unique=True)
+        testr = in1d(freedof, fixed_right_dof, assume_unique=True)
 
-        # fixedof_constrain = fixedof_constrain[testl == testr]
+        freedof = freedof[testl == testr]
 
         fixedof = [fixed_left_dof, fixed_right_dof, fixedof_constrain]
 
@@ -88,13 +88,8 @@ class StaticLinearCyclicSymmPlane(Solver):
         leftdof = constrainsdof["fixedof"][0]
         rightdof = constrainsdof["fixedof"][1]
         fixeddof = constrainsdof["fixedof"][2]
-        freedof = constrainsdof["freedof"]
+        interdof = constrainsdof["freedof"]
         constdof = constrainsdof["constdof"]
-
-        testl = in1d(freedof, leftdof, assume_unique=True)
-        testr = in1d(freedof, rightdof, assume_unique=True)
-
-        interdof = freedof[testl == testr]
 
         stiffness = assembly["stiffness"]
         forcelist = assembly["loads"]
@@ -165,22 +160,26 @@ class StaticLinearCyclicSymmPlane(Solver):
 
         fixed_list_con_cs = setdiff1d(fixeddof, rightdof)
 
-        fixed_list_full = setdiff1d(fixed_list_con_cs, leftdof)
+        # fixed_list_full = setdiff1d(fixed_list_con_cs, leftdof)
 
         leftdof_con_cs = where(
             in1d(fulldof_con_cs, leftdof, assume_unique=True) == True
         )[0]
+
         interdof_con_cs = where(
             in1d(fulldof_con_cs, interdof, assume_unique=True) == True
         )[0]
+
         free_list_full = concatenate((interdof, leftdof, rightdof), axis=0)
+
         rightdof_con_cs = where(
             in1d(free_list_full, rightdof, assume_unique=True) == True
         )[0]
 
-        fixedof_con_cs = where(
-            in1d(fulldof_con_cs, fixed_list_con_cs, assume_unique=True) == True
-        )[0]
+        # fixedof_con_cs = where(
+        #     in1d(fulldof_con_cs, fixed_list_con_cs, assume_unique=True) == True
+        # )[0]
+
         freedof_con_cs = where(
             in1d(fulldof_con_cs, fixed_list_con_cs, assume_unique=True) == False
         )[0]
