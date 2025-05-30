@@ -2,7 +2,7 @@
 
 Este repositório tem como objetivo principal desenvolver testes e configurar uma nova versão do projeto **myfempy** (new version) baseando-se totalmente em programação orientada a objetos (OOP).
 Esta nova versão permitirá uma expansão da atual versão do **myfempy** para alta performance computacional (HPC), além de uma capacidade grande de leitura de dados, o que não é possível atualmente devido a sua complexidade de classes.
-Um avanço futuro, será de enviar dados para que o solver execute a solução em paralelo (multi-core) e também realizar a análise em multi-física ([Fluid-Structure interaction](https://en.wikipedia.org/wiki/Fluidstructure_interaction) 
+Um avanço futuro, será de enviar dados para que o solver execute a solução em paralelo (multi-core) e também realizar a análise em multi-física ([Fluid-Structure interaction](https://en.wikipedia.org/wiki/Fluid%E2%80%93structure_interaction) 
 e [Thermal-Structure interaction](https://en.wikipedia.org/wiki/Thermal_stress)).
 
 Com o objetivo de deixar o projeto limpo e claro nesta jornada de desenvolvimento, será utilizado as normativas da _clean archicteture_ e da _bridge design pattern_ para códigos com OOP.
@@ -38,29 +38,34 @@ Implementar as seguintes soluções de análise:
 	1. Solver:
 
 		1. Permanente linear
-			- [X] Direto
-			- [X] Iterativo
-			- [X] Dinâmico Modal (eigen)
-			- [X] Dinâmico FRF (direto)
-			- [ ] Dinâmico FRF (modal)
+
+			- [X] Direct
+			- [X] Iterative
+			- [X] Dynamic Modal (Eigen)
+			- [X] Dynamic FRF (Direct)
+			- [ ] Dynamic FRF (Modal)
             - [X] Cyclic Symmetry
-			- [ ] Flambagem (eigen)
-			- [X] Phononic Crystal 2D (Elastic Plane Wave in Periodic Structures)
+			- [ ] Buckling (Eigen)
+			- [X] Phononic Crystal 2D (Plane Wave Elastic in Periodic Micro Cell)
+
 		2. Transiênte linear
+
 			- [ ] Algo. Newmark
+
 		3. Non Linear
+
 			- [ ] Algo. Newton Raphson
 
     2. Comportamento mecânico de material:
 
-        - [X] Plane stress
-        - [X] Plane strain
-        - [X] Solid
+        - [X] Plane Stress
+        - [X] Plane Strain
+        - [X] Solid Elastic
 		- [X] Euler-Bernouilli Space Beam
 		- [ ] Timoshenko Space Beam
         - [ ] Plate Kirchhoff
         - [ ] Plate Reissner-Mindlin
-        - [X] Homogeinização/ micro escala (tensor)
+        - [X] Homogenized Elastic Tensor/ Heterogeneous Material Micro Base Cell
 		- [ ] Grande Deslocamento
 		- [ ] Plasticidade
 		- [X] Heat Plane
@@ -83,8 +88,11 @@ Implementar as seguintes soluções de análise:
 	4. Acoplamento MMulti-físico:
 
 		1. Multi-material
+
 			- [X] Interface de multi-material (multi E, v, ...)
+
 		2. Acoplamento multi-físico
+
 			- [X] Thermal-Structure interaction
 			- [ ] Fluid-Structure interaction
 			- [ ] Acoustic-Structure interaction

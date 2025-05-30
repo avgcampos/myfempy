@@ -11,11 +11,11 @@ class MeshGmsh(Mesh):
     """Mesh GMSH Class <ConcreteClassService>"""
 
     def getElementConection(set_mesh):
-        conec, nodes = MeshGmsh.__setmesh_from_gmsh(set_mesh)
+        conec, __ = MeshGmsh.__setmesh_from_gmsh(set_mesh)
         return conec
 
     def getNodesCoord(set_mesh):
-        conec, nodes = MeshGmsh.__setmesh_from_gmsh(set_mesh)
+        __, nodes = MeshGmsh.__setmesh_from_gmsh(set_mesh)
         return nodes
 
     def getElementList(conec, meshset, modeldata):

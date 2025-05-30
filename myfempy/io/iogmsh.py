@@ -62,10 +62,10 @@ def get_gmsh_msh(filename, meshdata):
         + " -o "
         + (filename + ".msh1")
     )
-    # os.system("echo GENERATING MESH FROM EXTERNAL GMSH")
+    os.system("echo GENERATING MESH FROM EXTERNAL GMSH")
     os.system(cmd)
     os.system("echo MESH IS DONE")
-    # os.system("echo SAVING AND EXIT")
+    # os.system("echo SAVING")
 
 
 def get_gmsh_geo(filename, meshdata):

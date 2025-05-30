@@ -14,7 +14,7 @@ from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps, gauss_points
 
 
-class HomogenizationPlane(Solver):
+class HomogenPlaneInfPeriodic(Solver):
     """
     Homogenization Plane Solver Class <ConcreteClassService>
     """

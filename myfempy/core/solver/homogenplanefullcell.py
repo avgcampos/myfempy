@@ -11,7 +11,7 @@ from myfempy.core.solver.assemblersymm import AssemblerSYMM
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps, gauss_points
 
-class HomogenizationPlane(Solver):
+class HomogenPlane(Solver):
     """
     Homogenization Plane Solver Class <ConcreteClassService>
     """
