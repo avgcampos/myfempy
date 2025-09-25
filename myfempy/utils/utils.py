@@ -94,7 +94,7 @@ def print_console(sc):
         )
     elif sc == "post":
         print(
-            "\r***************    P O S T - P R O C E S S   C O M P U T E D    ***************"
+            "\r***************   P O S T - P R O C E S S   C O M P U T I N G   ***************"
         )
     elif sc == "thank":
         print("\n")

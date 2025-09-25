@@ -5,7 +5,6 @@ import sys
 from time import time
 
 import numpy as np
-import scipy.sparse as sp
 
 from myfempy.core.utilities import setSteps
 # from myfempy.core.solver import getSolver
@@ -186,7 +185,7 @@ class newAnalysis:
         # tabgeo = self.model.tabgeo
         # intgauss = self.model.intgauss
         try:
-            matrix = newAnalysis.getGlobalMatrix(self, Model, self.symm, self.mp)
+            matrix = newAnalysis.getGlobalMatrix(self, Model, self.model.inci, self.model.coord, self.model.tabmat, self.model.tabgeo, self.model.intgauss, self.symm, self.mp)
             logging.info("TRY RUN GLOBAL ASSEMBLY -- SUCCESS")
         except:
             logging.warning("TRY RUN GLOBAL ASSEMBLY -- FAULT")
@@ -326,7 +325,6 @@ class newAnalysis:
         return postprocdata
 
     # GET MODEL
-
     def getModel(self):
         return self.model
 
@@ -382,8 +380,34 @@ class newAnalysis:
         )
 
     # GET SOLVER
-    def getGlobalMatrix(self, Model, SYMM=None, MP=None):
-        return self.solver.getMatrixAssembler(Model, SYMM=SYMM, MP=MP)
+    def getGlobalMatrix(self, Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, SYMM=None, MP=None):
+
+        # try:
+        #     inci = inci
+        # except:
+        #     inci = Model.inci
+
+        # try:
+        #     coord = coord
+        # except:
+        #     coord = Model.coord
+
+        # try:
+        #     tabmat = tabmat
+        # except:
+        #     tabmat = Model.tabmat
+
+        # try:
+        #     tabgeo = tabgeo
+        # except:
+        #     tabgeo = Model.tabgeo
+
+        # try:
+        #     intgauss = intgauss
+        # except:
+        #     intgauss = Model.intgauss
+
+        return self.solver.getMatrixAssembler(Model, inci = inci, coord = coord, tabmat = tabmat, tabgeo = tabgeo, intgauss = intgauss, SYMM=SYMM, MP=MP)
 
     def getConstrains(self, constrains):
         nodetot = len(self.model.coord)
@@ -404,6 +428,9 @@ class newAnalysis:
         )
 
     # GET PHYSIC
+    def getPhysic(self):
+        return self.physic
+
     def getForceList(self):
         return self.physic.getForceList(self.modelinfo["domain"])
 

@@ -20,22 +20,22 @@ class HomogenPlaneInfPeriodic(Solver):
     """
 
     def getMatrixAssembler(
-        Model, SYMM=None, MP=None
+        Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, SYMM=None, MP=None
     ):
         matrix = dict()
         if SYMM:
             matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
-                Model,
+                Model, inci, coord, tabmat, tabgeo, intgauss,
             )
         else:
             if MP:
                 matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(
-                    Model,
+                    Model, inci, coord, tabmat, tabgeo, intgauss,
                     MP=MP,
                 )
             else:
                 matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
-                    Model,
+                    Model, inci, coord, tabmat, tabgeo, intgauss,
                 )
         return matrix
     

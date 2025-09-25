@@ -15,23 +15,23 @@ class SteadyStateLinearIterative(Solver):
     Steady State Linear Iterative Solver Class <ConcreteClassService>
     """
 
-    def getMatrixAssembler(Model, SYMM, MP):
+    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, SYMM = None, MP = None):
 
         matrix = dict()
 
         if SYMM:
             matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
-                Model,
+                Model, inci, coord, tabmat, tabgeo, intgauss,
             )
         else:
             if MP:
                 matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(
-                    Model,
+                    Model, inci, coord, tabmat, tabgeo, intgauss,
                     MP=MP,
                 )
             else:
                 matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
-                    Model,
+                    Model, inci, coord, tabmat, tabgeo, intgauss,
                 )
         return matrix
 

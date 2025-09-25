@@ -3,27 +3,27 @@ message: "If you use this software, please cite it as below."
 authors:
   - family-names: "Garcia Campos"
     given-names: "Antonio Vinicius"
-    email: antonio.garcia@ufpi.edu.br
+    email: 3deasycaebr.contato@gmail.com
     orcid: 'https://orcid.org/0000-0003-1678-384X'
 title: 'Myfempy is a python package for scientific analysis based on finite element method'
-version: v0.8.0
-doi: 10.5281/zenodo.6376521
-date-released: 2022-07-27
-url: 'https://github.com/avgcampos/myfempy'
+version: v1.5.1
+doi: 10.5281/zenodo.6958796
+date-released: 2022-08-03
+url: 'https://github.com/easycae-3d/myfempy'
 license: GPL
 preferred-citation:
   type: software
   authors:
   - family-names: Garcia Campos
     given-names: Antonio Viniciuss
-    email: antonio.garcia@ufpi.edu.br
+    email: 3deasycaebr.contato@gmail.com
     orcid: 'https://orcid.org/0000-0003-1678-384X'
   title: 'myfempy'
-  month: 7
+  month: 8
   year: 2022
   publisher: "Zenodo"
-  version: v0.8.0
-  doi: "10.5281/zenodo.6376521"
-  url: 'https://github.com/avgcampos/myfempy'
+  version: v1.5.1
+  doi: "10.5281/zenodo.6958796"
+  url: 'https://github.com/easycae-3d/myfempy'
   
 

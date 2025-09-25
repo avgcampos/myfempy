@@ -22,7 +22,7 @@ class AssemblerFULLPOOL(Assembler):
     Assembler Full System Class <ConcreteClassService>
     """
     # @profile
-    def getLinearStiffnessGlobalMatrixAssembler(Model, MP=None):
+    def getLinearStiffnessGlobalMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP=None):
         inci = Model.inci
         coord = Model.coord
         tabmat = Model.tabmat

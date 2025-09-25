@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from numpy import dot, float64, zeros
 from scipy.sparse.linalg import spsolve
+import scipy.sparse as sp
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
 from myfempy.core.solver.assemblerfull_parallel import AssemblerFULLPOOL
@@ -17,15 +18,20 @@ class SteadyStateLinear(Solver):
     """
 
     # @profile
-    def getMatrixAssembler(Model, SYMM=None, MP=None):
+    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, SYMM=None, MP=None):
+       
         matrix = dict()
+        
         if SYMM:
-            matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(Model)
+            assembler = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss)
         else:
             if MP:
-                matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(Model, MP)
+                assembler = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, MP)
             else:
-                matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(Model)
+                assembler = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss)
+        
+        matrix["stiffness"] = assembler #sp.load_npz('sparse_matrix.npz')
+        
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):

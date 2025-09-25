@@ -141,7 +141,7 @@ Have you found this software useful for your research? Star the project and cite
 
 ```bash
 
-Campos, A. V. G. (2022). myfempy. Zenodo. https://doi.org/10.5281/zenodo.15756128
+Antonio Vinicius Garcia Campos. (2022). myfempy (1.5.1). Zenodo. https://doi.org/10.5281/zenodo.6958796
 
 ```
 
@@ -152,12 +152,12 @@ Campos, A. V. G. (2022). myfempy. Zenodo. https://doi.org/10.5281/zenodo.1575612
 @software{antonio_vinicius_garcia_campos_2022_6958796,
 author       = {Antonio Vinicius Garcia Campos},
 title        = {myfempy},
-month        = jul,
+month        = aug,
 year         = 2022,
 publisher    = {Zenodo},
-version      = {3},
-doi          = {10.5281/zenodo.15756128},
-url          = {https://doi.org/10.5281/zenodo.15756128}
+version      = {1.5.1},
+doi          = {10.5281/zenodo.6958796},
+url          = {https://doi.org/10.5281/zenodo.6958796}
 }
 
 ```

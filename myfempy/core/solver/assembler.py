@@ -25,3 +25,7 @@ class Assembler(ABC):
     @abstractmethod
     def getRotationMatrix():
         pass
+
+    @abstractmethod
+    def getSaveAssemblerFile():
+        pass
