@@ -248,7 +248,7 @@ class PhononicCrystalInPlane(Solver):
                     k=modeEnd,
                     sigma=1, 
                     which="LM",
-                    maxiter=1000,
+                    # maxiter=1000,
                 )
             except:
                 pass

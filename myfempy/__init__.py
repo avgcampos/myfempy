@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 
 from .core.solver.homogenplanefullcell import HomogenPlane
-from .core.solver.homogenplaneinfperiodic import HomogenPlaneInfPeriodic
+# from .core.solver.homogenplaneinfperiodic import HomogenPlaneInfPeriodic
 from .core.solver.phonocrystalinplane import PhononicCrystalInPlane
 from .core.solver.cyclicsymm import StaticLinearCyclicSymmPlane
 from .core.solver.dynharmonicresponse import DynamicHarmonicResponseLinear
@@ -35,7 +35,7 @@ __all__ = [
     "DynamicHarmonicResponseLinear",
     "PhononicCrystalInPlane",
     "HomogenPlane",
-    "HomogenPlaneInfPeriodic"
+    # "HomogenPlaneInfPeriodic"
     "Mesh",
     "Shape",
     "Element",

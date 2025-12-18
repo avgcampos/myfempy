@@ -88,6 +88,24 @@ class AssemblerSYMM(Assembler):
 
     def getMassConsistentGlobalMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None):
         
+        if inci is None:
+            inci = Model.inci
+        
+        if coord is None:
+            coord = Model.coord
+        
+        if tabmat is None:
+            tabmat = Model.tabmat
+       
+        if tabgeo is None:
+            tabgeo = Model.tabgeo
+       
+        if intgauss is None:
+            intgauss = Model.intgauss
+       
+        else:
+            pass
+
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()

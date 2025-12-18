@@ -265,7 +265,6 @@ class HomogenPlaneInfPeriodic(Solver):
                     diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp]]), nodedof)
                     invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp]]), elementcoord, nodedof)
                     B = Model.element.getB(diffN, invJ)
-                    
                     # CHelm += Ci * (eye(ntensor) - dot(B, ui)) * abs(detJ) * wt[ip] * wt[jp]
                     CHelm +=  (Ci - dot(Ci, dot(B, ui))) * t * abs(detJ) * wt[ip] * wt[jp]
 

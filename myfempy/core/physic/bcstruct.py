@@ -20,8 +20,8 @@ class BoundCondStruct(Structural):
         elif bclist["TYPE"] == "cycsym":
             bcapp = BoundCondStruct.__BCCycSym(Model, bclist)
             boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
-        elif bclist["TYPE"] == "periplane":
-            bcapp = BoundCondStruct.__BCPeriPlane(Model, bclist)
+        elif bclist["TYPE"] == "bloch":
+            bcapp = BoundCondStruct.__BCBlochPlane(Model, bclist)
             boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
         else:
             pass
@@ -114,7 +114,7 @@ class BoundCondStruct(Structural):
         boncdnodeaply = boncdnodeaply[1::][::]
         return boncdnodeaply
     
-    def __BCPeriPlane(Model, bclist):
+    def __BCBlochPlane(Model, bclist):
         boncdnodeaply = np.zeros((1, 4))
 
         nodelist = [

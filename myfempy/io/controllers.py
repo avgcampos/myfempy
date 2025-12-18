@@ -1,4 +1,4 @@
-from myfempy.io.iogmsh import get_gmsh_geo, get_gmsh_msh
+from myfempy.io.iogmsh import set_gmsh_geo, get_gmsh_msh
 
 def setElement(set_element):
     if set_element["TYPE"] == "structbeam":
@@ -100,7 +100,7 @@ def setMesh(set_mesh):
             pass
         else:
             filename = set_mesh["user_path"] + "/" + set_mesh["filename"]
-            get_gmsh_geo(filename, set_mesh)
+            set_gmsh_geo(filename, set_mesh)
             get_gmsh_msh(filename, set_mesh)
         from myfempy.core.mesh.gmsh import MeshGmsh
         return MeshGmsh

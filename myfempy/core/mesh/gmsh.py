@@ -44,9 +44,9 @@ class MeshGmsh(Mesh):
 
     def __setmesh_from_gmsh(set_mesh):
         if "meshimport" in set_mesh.keys():
-            conec, nodes = MeshGmsh.__convert_from_msh1(set_mesh["user_path"] + "/" + set_mesh["meshimport"]['object'])
+            conec, nodes = MeshGmsh.__convert_from_msh2(set_mesh["user_path"] + "/" + set_mesh["meshimport"]['object'])
         else:
-            conec, nodes = MeshGmsh.__convert_from_msh1(
+            conec, nodes = MeshGmsh.__convert_from_msh2(
                 set_mesh["user_path"] + "/" + set_mesh["filename"]
             )
         return conec, nodes
@@ -54,6 +54,40 @@ class MeshGmsh(Mesh):
     def __convert_from_msh1(filename):
         file_imp = filename + ".msh1"
         with open(file_imp, "r") as file_object:
+            file_object.readline()
+            NNOD = int(file_object.readline())
+            nodelist = [[None] * 4]
+            for ii in range(0, NNOD):
+                line = file_object.readline()
+                lineaux = line.split()
+                contstr = lineaux[0:4]
+                nodelist.append(
+                    [
+                        float(contstr[0]),
+                        float(contstr[1]),
+                        float(contstr[2]),
+                        float(contstr[3]),
+                    ]
+                )
+            nodelist = nodelist[1::][::]
+            file_object.readline()
+            file_object.readline()
+            NELM = int(file_object.readline())
+            conec_elm = []
+            for kk in range(0, NELM):
+                line = file_object.readline()
+                lineaux = line.split()
+                conec_elm.append(list(map(float, lineaux[:])))
+
+        return conec_elm, nodelist
+    
+
+    def __convert_from_msh2(filename):
+        file_imp = filename + ".msh2"
+        with open(file_imp, "r") as file_object:
+            file_object.readline()
+            file_object.readline()
+            file_object.readline()
             file_object.readline()
             NNOD = int(file_object.readline())
             nodelist = [[None] * 4]

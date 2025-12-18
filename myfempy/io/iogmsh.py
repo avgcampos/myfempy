@@ -7,7 +7,6 @@ import os
 # import numpy as np
 from numpy import abs
 
-
 def meshid2gmshid(elemid):
     # https://gmsh.info/dev/doc/texinfo/gmsh.pdf
     # space + dofnode + numbconecelem + firstorder(1)/secondorder(2)
@@ -60,7 +59,7 @@ def get_gmsh_msh(filename, meshdata):
         + " "
         + gmsh_key(meshdata["meshconfig"]["mesh"])
         + " -o "
-        + (filename + ".msh1")
+        + (filename + ".msh2")
     )
     os.system("echo GENERATING MESH FROM EXTERNAL GMSH")
     os.system(cmd)
@@ -68,7 +67,7 @@ def get_gmsh_msh(filename, meshdata):
     # os.system("echo SAVING")
 
 
-def get_gmsh_geo(filename, meshdata):
+def set_gmsh_geo(filename, meshdata):
     with open((filename + ".geo"), "w") as file_object:
         file_object.write("// GMSH GEOMETRY FILE FROM MYFEMPY\n")
         file_object.write('SetFactory("OpenCASCADE");\n')
