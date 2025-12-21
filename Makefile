@@ -1,5 +1,5 @@
-#Makefile to dev user
-.PHONY: install format lint test sec doc prof build
+#Makefile for developer users
+.PHONY: install format lint test sec doc site prof build
 
 install:
 	pip install -r requirements.txt
@@ -17,6 +17,8 @@ sec:
 	pip-audit
 doc:
 	mkdocs serve
+site:
+	mkdocs build
 prof:
 	kernprof -l -v .\__shakedown\profile_test_myfempy.py
 #python -m line_profiler static_line.py.lprof

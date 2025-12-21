@@ -1,16 +1,16 @@
 site_name: Myfempy Online Documentation
-site_url: https://avgcampos.github.io/myfempy/
+site_url: https://myfempy.readthedocs.io/en/latest/
 nav:
     - Home: index.md
     - Tutorial: tutorial.md
-    - User Guide: user_guide.md
+    - User's Manual: user_manual.md
     - Development: development.md
     - Documentation: documentation.md
     - Contribution: contribution.md
     - Theory: theory.md
 theme:
     name: readthedocs
-    logo: assets/logo.png
+    logo: assets/logo2.png
     favicon: assets/favicon.png
 plugins:
     - search
@@ -19,7 +19,7 @@ plugins:
             python:
                 options:
                     allow_inspection: true
-    # - with-pdf
+    # - pdf-export
     - mermaid2
 extra_javascript:
     - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML

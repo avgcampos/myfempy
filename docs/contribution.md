@@ -1,14 +1,14 @@
-# Estilos gerais utilizados no projeto
+# General Styles Used in the Project
 
-**Regras para realizar upload {*commit*} no projeto myfempy**
+**Rules for Uploading {*commit*} to the myfempy Project**
 
-Este repositório destina-se ao gerenciamento das versões de desenvolvimento do projeto **myfempy**. Para que se tenha um código claro e limpo, as seguintes regras são aplicadas para manter um padrão geral do projeto.
+This repository is intended for managing the development versions of the **myfempy** project. To maintain clear and clean code, the following rules are applied to ensure a general project standard.
 
-## Estilo dos códigos *.py*
+## Style of *.py* Codes
 
-O padrão utilizado na sintax da escrita dos códigos é o [PEP8](https://peps.python.org/pep-0008).
+The syntax used for writing the code is [PEP8](https://peps.python.org/pep-0008).
 
-### Padrão de criação de classes *class AbcAbc*
+### Class Creation Pattern *class AbcAbc*
 
 ```python
 
@@ -16,16 +16,16 @@ O padrão utilizado na sintax da escrita dos códigos é o [PEP8](https://peps.p
 
 class AbcAbc: # class name
 
-    def __init__(self, x:int, y:float, z:str):  # constructor method in python
+def __init__(self, x:int, y:float, z:str): # constructor method in python
 
-        # add parameter in class
-        self.x = x
-        self.y = y
-        self.z = z
+# add parameter in class
+self.x = x
+self.y = y
+self.z = z
 
 ```
 
-### Padrão de criação de funções *def abc_abc*
+### Function Creation Pattern *def abc_abc*
 
 ```python
 
@@ -33,116 +33,125 @@ class AbcAbc: # class name
 
 def abc_abc(x:int, y:float): # function
 
-    soma_x = x + x
-    div_y = x/y
+sum_x = x + x
 
-    return div_y
+div_y = x/y
+
+return div_y
 
 ```
 
-## ```__doc__``` de classes e funções
+## ```__doc__``` for classes and functions
 
-Toda classe e função deve conter sua documentação interna {```__doc__```}.
+Every class and function must contain its internal documentation {```__doc__```}.
 
-### Procedimento
+### Procedure
 
-1. Utilizar a referência [PEP8](https://peps.python.org/pep-0008)
+1. Use the reference [PEP8](https://peps.python.org/pep-0008)
 
-2. Apresentar em uma única linha o que aquela classe ou função executa
+2. Present in a single line what that class or function does
 
-3. Use comentarios para informações adicionais
+3. Use comments for additional information
 
-4. Todas as entradas e saídas e a tipagem de dados deve ser indicados
+4. All inputs and outputs and data types must be indicated
 
-5. O idioma padrão é o inglês técnico
+5. The default language is technical English
 
-Exemplo:
+Example:
 
 ```python
 
 # the file name is abcabc.py
 # '__doc__' to a short documentation, try AbcAbc.__doc__ ....
 
-__doc__ = """ 
-This is a short documentation of class AbcAbc...
+__doc__ = """ This is a short documentation of class AbcAbc...
 """
 class AbcAbc: # class name
-    """
-    Abc: class
+"""
+Abc: class
 
-    This class do...
-    """    
+This class does...
 
-    def __init__(self, x:int, y:float, z:str):  # constructor method in python
-        """
-        This class do...
+"""
 
-        Args:
-            x (int): int number
-            y (float): float number
-            z (str): string name
-        """        
+def __init__(self, x:int, y:float, z:str): # constructor method in python
+"""
+This class do...
 
-        # add parameter in class
-        self.x = x
-        self.y = y
-        self.z = z
+Args:
 
-    def abc_abc(self): # class function
+x (int): int number
 
-        """
-        This function do...
+y (float): float number
+z (str): string name
 
-        Returns:
-            div_y (float): _description_
-        """        
+""
 
-        soma_x = self.x + self.x
-        div_y = self.x/soma_x
+# add parameter in class
+self.x = x
+self.y = y
+self.z = z
 
-        return div_y
+def abc_abc(self): # class function
+
+""
+This function do...
+
+Returns:
+
+div_y (float): _description_
+
+""
+
+soma_x = self.x + self.x
+
+div_y = self.x/soma_x
+
+return div_y
+
 ```
 
-## Documentação online
+## Online Documentation
 
-O padrão utilizado para escrever a documentação oficial do projeto é no formato [Markdown](https://www.markdownguide.org/basic-syntax).
+The standard used to write the official project documentation is in [Markdown](https://www.markdownguide.org/basic-syntax) format.
 
-Atualmente o projeto utiliza o pacote [mkdocs](https://www.mkdocs.org/) para gerar a documentação online {*.html*}, que é hospedada no site [GitHub Page](https://avgcampos.github.io/myfempy/).
+Currently, the project uses the [mkdocs](https://www.mkdocs.org/) package to generate online documentation {*.html*}, which is hosted on the [GitHub Page](https://avgcampos.github.io/myfempy/) website.
 
-O *sphinx* converte arquivos *.rst* {reStruturedText} para *.html/pdf* de uma forma prática. Também é possível converter arquivos *.md* {markdown} em *.rst*, uma opção interessante é [mdToRst](https://github.com/kata198/mdToRst) ou de forma onlline com o [vertopal](https://www.vertopal.com/).
+*sphinx* converts *.rst* {reStructuredText} files to *.html/pdf* in a practical way. It is also possible to convert *.md* {markdown} files to *.rst*; an interesting option is [mdToRst](https://github.com/kata198/mdToRst) or online with [vertopal](https://www.vertopal.com/).
 
-### Procedimento de atualização da documentação online
+### Procedure for updating the online documentation
 
-1. Para editar a documentação online oficial do projeto basta atualizar os arquivos *.md* na pasta **\docs**.
+1. To edit the official online project documentation, simply update the *.md* files in the **\docs** folder.
 
-2. Gere uma documentação automática a partir do arquivo de configuração *mkdocs.yml* com o comando:
+2. Generate automatic documentation from the *mkdocs.yml* configuration file using the command:
 
 ```bash
 
->> mkdocs build     # constroe os arquivos em \site
+>> mkdocs build # builds the files in \site
 
->> mkdocs gh-deploy # deploy para o endereço de hospedagem no github pages
+>> mkdocs gh-deploy # deploys to the hosting address on GitHub Pages
 
 or
 
->> make doc         # constroe e gera a documentação local
+>> make doc # builds and generates local documentation
 
 ```
 
-Veja a seção [```__doc__``` de classes e funções]
+See the [```__doc__``` section on classes and functions]
 
-6.Verificar se não a **bugs** na documentação.
+6. Check for **bugs** in the documentation.
 
-# Testes, bugs, e documentação
+# Tests, bugs, and documentation
 
-## Utilizando o line_profiler para verificar performance do código, linha-linha
+## Using line_profiler to check code performance, line by line
 
 ```python
 
 @profile
 def slow_function(a, b, c):
-    ...
-	
+
+...
+
 ```
 
 ```bash
@@ -153,61 +162,44 @@ def slow_function(a, b, c):
 
 ```
 
-## Teste de verificação manual, antes realizar o commit para o _main_
+## Manual verification test, before committing to _main_
 
-Executar na pasta principal do projeto \myfempy
+Run in the project's main folder \myfempy
 
 ```bash
 
->> black nome_do_script.py/<pasta>  # biblioteca que formata o código de acordo com a PEP 8
+>> black script_name.py/<folder> # library that formats the code according to PEP 8
 
+>> flake8 --extend-ignore=E501{line too long (82>79 characters) error} script_name.py/<folder> # framework that checks the style and quality of Python code
 
->> flake8 --extend-ignore=E501{line too long (82>79 characters) erro} nome_do_script.py/<pasta> #framework que checa o estilo e qualidade de código Python
+>> `isort script_name.py/<folder>` # Python library to automatically format imports according to PEP 8
 
->> isort nome_do_script.py/<pasta> # biblioteca Python para formatar automaticamente as importações de acordo com a PEP 8
-
->> interrogate -vv nome_do_script.py/<pasta> # framework para verificar a ausência de documentações (docstring) no código.
+`>> interrogate -vv script_name.py/<folder>` # framework to check for missing documentation (docstring) in the code.
 
 ```
 
-Estes sistemas também podem ser verificados de forma automatica via *Makefile*. Faça,
+These systems can also be checked automatically via *Makefile*. Do the following:
 
 ```bash
->> make install # instala o pacote com poetry
+>> make install # installs the package with poetry
 
->> make format  # verifica a formação com black e isort
+>> make format # checks the formatting with black and isort
 
->> make lint    # verifica a o estilo (PEP 08) com flake8 e interrogate
+>> make lint # checks the style (PEP 08) with flake8 and interrogate
 
->> make test    # test arquivos de itegração do pacote com pytest
+>> make test # tests the package integration files with pytest
 
->> make sec     # verifica vulnerabilidades com pip-audit
+>> make sec # checks for vulnerabilities with pip-audit
+
 ```
 
 https://medium.com/gbtech/aprimorando-qualidade-de-c%C3%B3digo-python-com-black-flake8-isort-e-interrogate-d5c089121357
 
 # Git
 
-Faça,
+Do the following:
 
 ```bash
-git status        # verifica as modificações no sistema
+git status # checks the system modifications
 
-git add <file>... # to update what will be committed
-
-git commit -m 'Commit menssage' # commit
-
-git push         # push para a _main_ do projeto
-```
-
-Após realizar o envio das modificações, faça realeases quando necessário, utilize tags das versões como marcadores e gere os changelogs para documentar as modificações ao longo do projeto.
-
-# Instalação do pacote
-
-Faça, sempre crie um ambiente de desenvolvimento separado do principal
-
-```bash
-
-pip install .   # instala o pacote myfempy do pyproject.toml
-
-```
+git add <file>... # to update what

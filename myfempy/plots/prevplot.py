@@ -12,8 +12,7 @@ from myfempy.io.iovtk import convert_to_vtk
 from myfempy.plots.meshquality import MeshProp
 from myfempy.plots.physics import (view_beam_crossSection, view_bondcond_point,
                                    view_listforce, view_text_point)
-
-# from myfempy.utils.utils import get_version
+from myfempy.utils.utils import get_version
 
 
 # @profile
@@ -168,7 +167,7 @@ def build_preview(previewset: dict, path):
     file_name = str(path + "/" + previewset["RENDER"]["filename"] + ".vtk")
     renderer = vtk.vtkRenderer()
     renderer_window = vtk.vtkRenderWindow()
-    renderer_window.SetSize(600, 480)
+    renderer_window.SetSize(640, 480)
     renderer.SetBackground(0.0, 0.0, 0.0)
     reader = vtk.vtkUnstructuredGridReader()
     reader.SetFileName(file_name)
@@ -281,8 +280,8 @@ def build_preview(previewset: dict, path):
         actor.GetProperty().SetLineWidth(1.0)
     text_logo = vtk.vtkTextActor()
     text_logo.SetInput(
-        "MYFEMPY "
-        + ' < PreProc--Model >\nPress "w" to wireframe view \nPress "q" to exit\continue'
+        "MYFEMPY " + get_version() + 
+        '\n > press "w" to wireframe view \n > press "q" to exit and continue'
     )
     txtprop = text_logo.GetTextProperty()
     txtprop.SetFontFamilyToArial()

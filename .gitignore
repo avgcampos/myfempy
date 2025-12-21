@@ -4,8 +4,9 @@
 __dev/
 __shakedown/
 out/
-__dev__setup_wrap_cy_pyx.py
 tests/
+__dev__setup_wrap_cy_pyx.py
+
 
 # Profile/ Tests
 *.py.lprof

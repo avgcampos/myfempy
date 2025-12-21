@@ -6,7 +6,6 @@ import vedo as vd
 
 # from myfempy.utils.utils import get_logo, get_version
 
-
 def post_show_mesh(file2plot: str, plotset: dict):
     """vedo code"""
 

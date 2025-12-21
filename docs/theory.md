@@ -1,6 +1,6 @@
 # Theory Basic
 
-Teoria FEM básica
+Theory Finite Element Method Basic
 
 ## MathJax Test Page
 

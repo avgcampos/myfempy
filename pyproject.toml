@@ -43,7 +43,7 @@ classifiers = [
 ]
 
 [project.urls]
-Documentation = "myfempy.readthedocs.io/en/latest/"
+Documentation = "https://myfempy.readthedocs.io/en/latest/"
 Repository = "https://github.com/avgcampos/myfempy/releases"
 GitHub = "https://github.com/avgcampos/myfempy"
 

@@ -1,3 +1,3 @@
 # Tutorial
 
-Exemplos com uso de códigos do git
+Examples using git code.

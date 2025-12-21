@@ -309,19 +309,18 @@ class newAnalysis:
         """
         print_console("post")
         postprocdata = []
-
-        # try:
-        if "COMPUTER" in postprocset.keys():
-            postprocdata = setPostProcess.getCompute(self, postprocset)
-        if "TRACKER" in postprocset.keys():
-            setPostProcess.getTracker(self, postprocset, postprocdata)
-        if "OUTPUT" in postprocset.keys():
-            postprocdata["log"] = []
-            log_file = setPostProcess.getLog(self, postprocset, postprocdata)
-            postprocdata["log"].append(log_file)
+        try:
+            if "COMPUTER" in postprocset.keys():
+                postprocdata = setPostProcess.getCompute(self, postprocset)
+            if "TRACKER" in postprocset.keys():
+                setPostProcess.getTracker(self, postprocset, postprocdata)
+            if "OUTPUT" in postprocset.keys():
+                postprocdata["log"] = []
+                log_file = setPostProcess.getLog(self, postprocset, postprocdata)
+                postprocdata["log"].append(log_file)
             logging.info("TRY GET POST PROCESS -- SUCCESS")
-    # except:
-        #     logging.warning("TRY GET POST PROCESS -- FAULT")
+        except:
+                logging.warning("TRY GET POST PROCESS -- FAULT")
         return postprocdata
 
     # GET MODEL

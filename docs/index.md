@@ -4,7 +4,7 @@
 
 The **myfempy** project is under development, updates and code modifications may occur in future versions without prior notice from the developers.
 
-![myfempy_logo](assets\logo.png)
+![myfempy_logo](assets\logo2.png)
 
 Copyright © Antonio Vinicius G. Campos 2022. Processo INPI BR512022001484-0
 
@@ -116,12 +116,6 @@ documents versions can be found in web version and pdf [link]().
 The changelog is available
 [here](https://github.com/avgcampos/myfempy/releases)
 
-## Features
-
-The *main myfempy features* are available here:
-
--   [Features
-    List](https://github.com/easycae-3d/myfempy/blob/main/docs/Myfempy%20Features.pdf)
 
 ## License
 

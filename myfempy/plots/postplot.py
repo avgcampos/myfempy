@@ -10,7 +10,6 @@ __doc__ = """
 Plotter Post Process
 """
 
-
 def postproc_plot(postprocset: dict, postporc_result: dict, modelinfo: dict):
     plotset = dict()
     hist_X = []
@@ -31,7 +30,7 @@ def postproc_plot(postprocset: dict, postporc_result: dict, modelinfo: dict):
 
             # hist_X = hist_X[1::][::]
             # hist_Y = hist_Y[1::][::]
-            writer2csv_file("TRACKER_csvfile.txt", [hist_X, hist_Y], [xlabel, ylabel])
+            writer2csv("TRACKER_csvfile.txt", [hist_X, hist_Y], [xlabel, ylabel])
 
     if "PLOTSET" in postprocset.keys():
         if postprocset["PLOTSET"]["show"]:

@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from myfempy.felib.physics.getnode import search_nodexyz
+from myfempy.core.utilities import search_nodexyz
 from myfempy.io.iocsv import writer2csv
 
 __doc__ = """
@@ -86,7 +86,7 @@ def forces_plot(
             plt.ylabel(ylabel)
             plt.grid(True)
             cont += 1
-            writer2csv_file(
+            writer2csv(
                 "BEAM-BALANCE_" + str(nbeam[bb]) + "_csvfile.txt",
                 [val_X, val_Y],
                 [xlabel, ylabel],
