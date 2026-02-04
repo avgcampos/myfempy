@@ -10,10 +10,6 @@ build:
   tools:
     python: "3.8"
 
-  jobs:
-    pre_install:
-      - pip install mkdocs-material
-
 mkdocs:
   configuration: mkdocs.yml
 

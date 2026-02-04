@@ -47,6 +47,7 @@ mkdocstrings-python==0.7.1
 python-markdown-math==0.8
 mkdocs-with-pdf==0.9.3
 mkdocs-mermaid2-plugin==1.1.1
+mkdocs-material
 packaging==21.3
     # via mkdocs
 pymdown-extensions==9.5
