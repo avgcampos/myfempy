@@ -548,7 +548,7 @@ class newAnalysis:
 
     # GET MODEL
     def getModel(self) -> object:
-        """GET object related to the current simulation model
+        """get object related to the current simulation model
 
         Returns:
             object
@@ -556,7 +556,7 @@ class newAnalysis:
         return self.model
 
     def getModelInfo(self) -> dict:
-        """GET model info
+        """get model info
 
         Returns:
             dict
@@ -564,7 +564,7 @@ class newAnalysis:
         return self.model.modelinfo
 
     def getInci(self) -> npt.NDArray[np.float64]:
-        """GET mesh properties table
+        """get mesh properties table
 
         Returns:
             npt.NDArray[np.float64]
@@ -572,7 +572,7 @@ class newAnalysis:
         return self.model.getInci(self.model.modeldata)
 
     def getCoord(self) -> npt.NDArray[np.float64]:
-        """GET mesh grid coordinate
+        """get mesh grid coordinate
 
         Returns:
             npt.NDArray[np.float64]
@@ -580,7 +580,7 @@ class newAnalysis:
         return self.model.getCoord(self.model.modeldata)
 
     def getTabmat(self) -> list:
-        """GET table of material properties
+        """get table of material properties
 
         Returns:
             list
@@ -588,7 +588,7 @@ class newAnalysis:
         return self.model.getTabMat(self.model.modeldata)
 
     def getTabgeo(self) -> list:
-        """GET table of geometry properties
+        """get table of geometry properties
 
         Returns:
             list
@@ -596,7 +596,7 @@ class newAnalysis:
         return self.model.getTabGeo(self.model.modeldata)
 
     def getIntGauss(self) -> int:
-        """GET Gaussian numerical integration number
+        """get Gaussian numerical integration number
 
         Returns:
             int
@@ -604,7 +604,7 @@ class newAnalysis:
         return self.model.intgauss
 
     def getElementVolume(self, inci:npt.NDArray[np.float64], coord:npt.NDArray[np.float64], tabgeo:list) -> npt.NDArray[np.float64]:
-        """GET elements volumes list
+        """get elements volumes list
 
         Arguments:
             inci -- npt.NDArray[np.float64]
@@ -624,7 +624,7 @@ class newAnalysis:
     def getElemStifLinearMat(
         self, inci: npt.NDArray[np.float64], coord: npt.NDArray[np.float64], tabmat: list, tabgeo: list, intgauss: int, element_number: int
     ) -> npt.NDArray[np.float64]:
-        """GET elementar linear stiffness matrix
+        """get elementar linear stiffness matrix
 
         Arguments:
             inci -- npt.NDArray[np.float64]
@@ -644,7 +644,7 @@ class newAnalysis:
     def getElemMassConsistentMat(
         self, inci: npt.NDArray[np.float64], coord: npt.NDArray[np.float64], tabmat: list, tabgeo: list, intgauss: int, element_number: int
     ) -> npt.NDArray[np.float64]:
-        """GET elementar linear mass matrix
+        """get elementar linear mass matrix
 
         Arguments:
             inci -- npt.NDArray[np.float64]
@@ -662,7 +662,7 @@ class newAnalysis:
         )
     
     def getRegions(self) -> list:
-        """GET regions from gmsh mesh only
+        """get regions from gmsh mesh only
 
         Returns:
             list
@@ -673,7 +673,7 @@ class newAnalysis:
 
     # GET SOLVER
     def getGlobalMatrix(self, Model, inci:npt.NDArray[np.float64] = None, coord:npt.NDArray[np.float64] = None, tabmat:list = None, tabgeo:list = None, intgauss:int = None, SYMM:bool=None, MP:bool=None) -> npt.NDArray[np.float64]:
-        """GET global assembler matrix 
+        """get global assembler matrix 
 
         Arguments:
             Model -- object related to the current simulation model
@@ -693,7 +693,7 @@ class newAnalysis:
         return self.solver.getMatrixAssembler(Model, inci = inci, coord = coord, tabmat = tabmat, tabgeo = tabgeo, intgauss = intgauss, SYMM=SYMM, MP=MP)
 
     def getConstrains(self, constrains:list) -> npt.NDArray[np.float64]:
-        """GET constrains boundary conditions list
+        """get constrains boundary conditions list
 
         Arguments:
             constrains -- _description_
@@ -707,7 +707,7 @@ class newAnalysis:
         )
 
     def getDirichletNH(self, constrains:list) -> npt.NDArray[np.float64]:
-        """GET dirichlet non-homogeneous boundary conditions list
+        """get dirichlet non-homogeneous boundary conditions list
 
         Arguments:
             constrains -- _description_
@@ -721,7 +721,7 @@ class newAnalysis:
         )
 
     def getLoadArray(self, loadaply:list) -> npt.NDArray[np.float64]:
-        """GET loads arrays
+        """get loads arrays
 
         Arguments:
             loadaply -- _description_
@@ -736,7 +736,7 @@ class newAnalysis:
 
     # GET PHYSIC
     def getPhysic(self) -> object:
-        """GET physic object
+        """get physic object
 
         Returns:
             _description_
@@ -744,7 +744,7 @@ class newAnalysis:
         return self.physic
 
     def getForceList(self) -> list:
-        """GET forces list
+        """get forces list
 
         Returns:
             _description_
@@ -752,7 +752,7 @@ class newAnalysis:
         return self.physic.getForceList(self.modelinfo["domain"])
 
     def getBoundCondList(self) -> list:
-        """GET boundary conditions list
+        """get boundary conditions list
 
         Returns:
             _description_
@@ -760,7 +760,7 @@ class newAnalysis:
         return self.physic.getBoundCondList(self.modelinfo["domain"])
 
     def getLoadApply(self) -> npt.NDArray[np.float64]:
-        """GET loads applied array on model
+        """get loads applied array on model
 
         Returns:
             _description_
@@ -768,7 +768,7 @@ class newAnalysis:
         return self.physic.getLoadApply(self.physic.physicdata)
 
     def getBCApply(self) -> npt.NDArray[np.float64]:
-        """GET boundary conditions applied array on model
+        """get boundary conditions applied array on model
 
         Returns:
             _description_
@@ -776,7 +776,7 @@ class newAnalysis:
         return self.physic.getBoundCondApply(self.physic.physicdata)
     
     def getCouplingInterface(self) -> list:
-        """GET coupling interface list
+        """get coupling interface list
 
         Returns:
             _description_
@@ -784,7 +784,7 @@ class newAnalysis:
         return self.physic.getLoadCoup(self.physic.physicdata)
 
     def getUpdateMatrix(self, matrix, addval) -> npt.NDArray[np.float64]:
-        """GET updated matrix
+        """get updated matrix
 
         Arguments:
             matrix -- _description_
@@ -796,7 +796,7 @@ class newAnalysis:
         return self.physic.getUpdateMatrix(matrix, addval)
     
     def getElementFromNodesList(self, nodelist) -> list:
-        """GET elements from nodes list
+        """get elements from nodes list
 
         Arguments:
             nodelist -- _description_
@@ -808,7 +808,7 @@ class newAnalysis:
 
     # OUTHERS
     def getNodesFromRegions(self, set: int, type: str) -> list:
-        """GET nodes from regions gmsh mesh only
+        """get nodes from regions gmsh mesh only
 
         Arguments:
             set -- _description_

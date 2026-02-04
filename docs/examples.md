@@ -1,6 +1,6 @@
 # Examples and Benchmarks
 
-Many examples are provided for various types of problems that the project currently addresses. More examples exploring new functionalities will be added in the future. To verify the accuracy of myfempy, several [Benchmarks Reports](#benchmarks-reports) (e.g. analytics, ansys, etc.) are available below.
+Many examples are provided for various types of problems that the project currently addresses. More examples exploring new functionalities will be added in the future. To verify the accuracy of myfempy, several Benchmarks Reports (e.g. analytics, ansys, etc.) are available below.
 
 But first, follow these steps:
 
