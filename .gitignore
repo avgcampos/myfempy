@@ -15,7 +15,6 @@ __dev__setup_wrap_cy_pyx.py
 # Prerequisites
 *.d
 *.c
-*.html
 *.pyd
 
 # Object files
