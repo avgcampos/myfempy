@@ -4,15 +4,15 @@
 
 The **myfempy** project is under development, updates and code modifications may occur in future versions without prior notice from the developers.
 
-![myfempy_logo](assets\logo2.png)
+![logo2](assets/logo2.png)
 
-Copyright © Antonio Vinicius G. Campos 2022. Processo INPI BR512022001484-0
+Copyright © Antonio Vinicius G. Campos 2022-2026. Processo INPI BR512022001484-0
 
 ## About
 
 **myfempy** is a python package based on finite element method to multiphysics analysis. The code is open source and *intended for educational and scientific purposes only, not recommended to commercial use*. The name **myfempy** is an acronym for **M**ultiph**Y**sics **F**inite **E**lements **M**odule to **PY**thon. You can help us by contributing with the main project, send us a mensage [Github Discussions](https://github.com/avgcampos/myfempy/discussions/10). **If you use myfempy in your research, the  developers would be grateful if you could cite in your work.**
 
-![home](assets\sim.png)
+![sim](assets/sim.png)
 
 ## Installation
 

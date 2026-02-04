@@ -133,7 +133,7 @@ The Service class is responsible for executing commands. It contains both getter
 Finally, the Service class itself serves as an abstraction. The actual implementations are delegated to the Concrete Service class, which performs the computations and delivers the required results. This completes the class arrangement employed in the project’s development.
 
 
-![](assets\myfempy_class_design.png)
+![myfempy_class_design](assets/myfempy_class_design.png)
 
 As an example, let's look at a user request:
 
@@ -142,9 +142,9 @@ The client request is to calculate the stiffness matrix of a QUAD4 element. The 
 
 For an overview, view the files during the project drafting phase.
 
-[MYFEMPY Bridge Pattern Class Map [PDF]](assets\myfempy_class_map-class_object_map.pdf)
+[MYFEMPY Bridge Pattern Class Map [PDF]](assets/myfempy_class_map-class_object_map.pdf)
 
-[MYFEMPY Layers of Project Draft [PDF]](assets\myfempy_layers.pdf)
+[MYFEMPY Layers of Project Draft [PDF]](assets/myfempy_layers.pdf)
 
 For more details, see the object-oriented code bridge pattern
 [Wiki Bridge pattern](https://en.wikipedia.org/wiki/Bridge_pattern)
