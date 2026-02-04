@@ -15,12 +15,12 @@
 
 [project]
 name = "myfempy"
-description = "Myfempy is a python package based on finite element analysis to multiphysics solutions."
+description = "A Python library based on finite element method to multiphysics analysis"
 authors = [
-    {name = "Antonio Vinicius Garcia Campos", email = "antviniciuscampos@gmail.com"},
+    {name = "Antonio Vinicius Garcia Campos"},
 ]
 readme = "README.md"
-version = "0.8.2"
+version = "0.9.0"
 license = {file = "LICENSE.md"}
 requires-python = ">= 3.8"
 dependencies = [
@@ -43,9 +43,10 @@ classifiers = [
 ]
 
 [project.urls]
+Homepage = "https://github.com/avgcampos/myfempy"
 Documentation = "https://myfempy.readthedocs.io/en/latest/"
-Repository = "https://github.com/avgcampos/myfempy/releases"
-GitHub = "https://github.com/avgcampos/myfempy"
+Changelog = "https://github.com/avgcampos/myfempy/releases"
+Discussions = "https://github.com/avgcampos/myfempy/discussions"
 
 ### Cython Compiler
 [build-system]

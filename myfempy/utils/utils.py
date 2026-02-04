@@ -5,16 +5,17 @@ Utils
 import importlib.metadata
 import os
 import sys
-
 from art import tprint
 
+def get_about():
+    try:
+        with open(os.getcwd()+'/myfempy/utils/about.txt', 'r', encoding='utf-8') as file:
+            conteudo = file.read()
+            print(conteudo)
+    except FileNotFoundError:
+        print("About file not found")
 
 def get_version():
-    """_summary_
-
-    Returns:
-        _description_
-    """
     try:
         __version__ = importlib.metadata.version("myfempy")
     except:
@@ -23,7 +24,6 @@ def get_version():
 
 
 def get_logo():
-    """_summary_"""
     print(
         "================================================================================="
     )
@@ -35,14 +35,6 @@ def get_logo():
 
 
 def newDir(file_dir):
-    """_summary_
-
-    Arguments:
-        file_dir -- _description_
-
-    Returns:
-        _description_
-    """
     path = os.getcwd()
     if not os.path.exists(path + "/" + file_dir):
         os.makedirs(path + "/" + file_dir)
@@ -51,7 +43,6 @@ def newDir(file_dir):
 
 
 def clear_console():
-    """_summary_"""
     if os.name == "posix":  # linux/mac
         _ = os.system("clear")
     else:  # windows
@@ -59,15 +50,9 @@ def clear_console():
 
 
 def loading_bar_v1(pct, name):
-    """_summary_
-
-    Arguments:
-        pct -- _description_
-        name -- _description_
-    """
     sys.stdout.write(
         "\r"
-        # + name
+        + name
         + ">> "
         + "|%-50s" % ("%" * int(pct * 0.7) + "|" + str(round(pct)) + "%")
     )
@@ -75,11 +60,6 @@ def loading_bar_v1(pct, name):
 
 
 def print_console(sc):
-    """_summary_
-
-    Arguments:
-        sc -- _description_
-    """
     if sc == "pre":
         print(
             "\r******************   P R E - P R O C E S S   L O A D I N G   ******************"

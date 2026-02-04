@@ -80,7 +80,6 @@ class AssemblerSYMM(Assembler):
         A_sp_scipy = coo_matrix((val_band, (ith_band, jth_band)), shape=(sdof, sdof), dtype=FLT64).tocsr()
         A_sp_scipy += A_sp_scipy.transpose()
         A_sp_scipy += coo_matrix((val_diag, (ith_diag, ith_diag)), shape=(sdof, sdof), dtype=FLT64).tocsr()
-
         return A_sp_scipy
 
     def getNonLinearStiffnessGlobalMatrixAssembler():
@@ -146,15 +145,10 @@ class AssemblerSYMM(Assembler):
                 )
             )
 
-        mtKG_sp_sym = coo_matrix(
-            (val_band, (ith_band, jth_band)), shape=(sdof, sdof)
-        ).tocsr()
-        mtKG_sp_sym += mtKG_sp_sym.transpose()
-        mtKG_sp_sym += coo_matrix(
-            (val_diag, (ith_diag, ith_diag)), shape=(sdof, sdof)
-        ).tocsr()
-
-        return mtKG_sp_sym
+        A_sp_scipy = coo_matrix((val_band, (ith_band, jth_band)), shape=(sdof, sdof), dtype=FLT64).tocsr()
+        A_sp_scipy += A_sp_scipy.transpose()
+        A_sp_scipy += coo_matrix((val_diag, (ith_diag, ith_diag)), shape=(sdof, sdof), dtype=FLT64).tocsr()
+        return A_sp_scipy
 
     def getMassLumpedGlobalMatrixAssembler():
         pass

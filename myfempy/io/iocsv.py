@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-__doc__ = """
-Filters I/O
-"""
 import csv
 
 import numpy as np
@@ -66,7 +63,7 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
             if "boundcond_list" in log_data["get"].keys():
                 file_object.write("\n")
                 file_object.write("LIST OF CONSTRAINTS\n")
-                file_object.write("{0:<7}{1:<10}\n".format("BC", "NODE"))
+                file_object.write("{0:<7}{1:<10}\n".format("DOF", "NODE"))
                 for row in range(len(Physic.constrains)):
                     bc_type = Physic.constrains[row][0]
                     if bc_type == 0:
@@ -121,8 +118,8 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
                         "NODE", "TYPE", "VALUE", "STEP"
                     )
                 )
-                for row in range(len(modelinfo["forces"])):
-                    fc_type = modelinfo["forces"][row][1]
+                for row in range(len(Physic.forces)):
+                    fc_type = Physic.forces[row][1]
                     if fc_type == 1:
                         file_object.write(
                             "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(

@@ -5,10 +5,6 @@ import numpy as np
 from myfempy.core.utilities import search_nodexyz
 from myfempy.io.iocsv import writer2csv
 
-__doc__ = """
-Plot XY
-"""
-
 
 def plot(x: np.ndarray, y: np.ndarray, xlabel: str, ylabel: str, fignumb: int):
     """plot function"""

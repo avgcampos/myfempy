@@ -1,0 +1,40 @@
+## Mesh and Preview Model
+
+1. manual mesh generation
+
+2. legacy/simple mesh generation
+
+3. MYFEMPY API GMSH mesh basic commands
+
+4. MYFEMPY API GMSH mesh advanced commands
+
+5. MYFEMPY API GMSH mesh solids commands
+
+6. MYFEMPY API GMSH mesh importing CAD models(.stp/.step) commands
+
+7. MYFEMPY API GMSH mesh importing MESH file (.msh2) commands
+
+## Material Setting
+
+1. isotropic meterial
+
+2. user material
+
+## Loads and Boundary Conditions
+
+1. settings for a structural model
+
+2. settings for a MYFEMPY API GMSH
+
+3. settings for a heat model
+
+## Solver and Post-Processing
+
+1. static strucutural simulation
+
+2. vibration strucutural simulation
+
+3. heat simulation
+
+4. thermo-mechanical coupling simulation
+	

@@ -2,16 +2,47 @@ site_name: Myfempy Online Documentation
 site_url: https://myfempy.readthedocs.io/en/latest/
 nav:
     - Home: index.md
-    - Tutorial: tutorial.md
-    - User's Manual: user_manual.md
+    - User's Guide: user_manual.md
+    - FEM Theory: theory.md
     - Development: development.md
-    - Documentation: documentation.md
-    - Contribution: contribution.md
-    - Theory: theory.md
+    - Examples: examples.md
+    - API Documentation: api/myfempy/setup/fea.html
 theme:
-    name: readthedocs
+    # name: readthedocs
+    name: material
+    font:
+        text: Roboto Mono
+    palette:
+        primary: light blue # or 'indigo', 'blue', 'teal', etc.
+        accent: orange
+        # Palette toggle for automatic mode
+        media: "(prefers-color-scheme)"
+        toggle:
+            icon: material/brightness-auto
+            name: Switch to light mode
+
+        # Palette toggle for light mode
+        media: "(prefers-color-scheme: light)"
+        scheme: default 
+        toggle:
+            icon: material/brightness-7
+            name: Switch to dark mode
+
+        # Palette toggle for dark mode
+        media: "(prefers-color-scheme: dark)"
+        scheme: slate
+        toggle:
+            icon: material/brightness-4
+            name: Switch to system preference
+    highlightjs: true
+    hljs_languages:
+        - python
     logo: assets/logo2.png
     favicon: assets/favicon.png
+    features:
+        - content.code.copy
+        - search.highlight
+        - navigation.instant
 plugins:
     - search
     - mkdocstrings:
@@ -19,9 +50,27 @@ plugins:
             python:
                 options:
                     allow_inspection: true
+                    docstring_style: google
     # - pdf-export
-    - mermaid2
+    # - mermaid2
 extra_javascript:
-    - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+    - javascripts/mathjax.js
+    - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+    - stylesheets/extra.css
 markdown_extensions:
-    - mdx_math
+    - pymdownx.arithmatex:
+        generic: true
+    - pymdownx.highlight:
+        anchor_linenums: true
+        line_spans: __span
+        pygments_lang_class: true
+    - pymdownx.superfences:
+        custom_fences:
+            - name: mermaid
+              class: mermaid
+              format: !!python/name:pymdownx.superfences.fence_code_format
+    - pymdownx.snippets:
+    - pymdownx.pathconverter:
+        base_path: '' # default: ''
+        relative_path: '' # default ''
+

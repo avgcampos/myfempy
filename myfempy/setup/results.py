@@ -14,18 +14,6 @@ from myfempy.io.iovtk import convert_to_vtk
 class setPostProcess(ABC):
     """PostProcess Class <ClassOrder>"""
 
-    # def __init__(self) -> None:
-
-    # self.domain = Model.domain
-    # self.coord = Model.coord
-    # self.inci = Model.inci
-    # self.ntensor = Model.ntensor
-    # self.nnode = Model.nnode
-    # self.nelem = Model.nelem
-    # self.dofe = Model.dofe
-    # self.nodecon = Model.nodecon
-    # self.elemid = Model.elemid
-    # self.modelinfo
     def getCompute(self, postprocset):
         """_summary_
 

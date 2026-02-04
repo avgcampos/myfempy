@@ -15,7 +15,9 @@ python-markdown-math
 mkdocs-pdf-export-plugin
 mkdocs-mermaid2-plugin
 mkdocstrings[python]
+mkdocs-material
 autodoc
+pdoc
 flake8
 black
 isort

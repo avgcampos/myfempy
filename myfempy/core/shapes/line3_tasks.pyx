@@ -28,7 +28,7 @@ cdef FLT64 [:, ::1] MATN(FLT64 [::1] r_coord):
     N_view[1, 11] = 0.25*(0.5*r0**5 + 0.5*r0**4 - 0.5*r0**3 - 0.5*r0**2)
     N_view[1, 13] = 0.25*(4*r0**4 - 8*r0**2 + 4)
     N_view[1, 17] = 0.25*(2*r0**5 - 4*r0**3 + 2*r0)
-    N_view[2, 2] = 0.25*(3*r0**5 - 2*r0**4 -5*r0**3 + 4*r0**2)
+    N_view[2, 2] = 0.25*(3*r0**5 - 2*r0**4 - 5*r0**3 + 4*r0**2)
     N_view[2, 4] = 0.25*(0.5*r0**5 - 0.5*r0**4 - 0.5*r0**3 + 0.5*r0**2)
     N_view[2, 8] = 0.25*(-3*r0**5 - 2*r0**4 + 5*r0**3 + 4*r0**2)
     N_view[2, 10] = 0.25*(0.5*r0**5 + 0.5*r0**4 - 0.5*r0**3 - 0.5*r0**2)
@@ -121,7 +121,7 @@ def ShapeFunctions(FLT64 [::1] r_coord, INT32 nodedof):
     matN = np.zeros((4, 3*nodedof), dtype=np.float64) 
     cdef FLT64 [:, ::1] mat_N = matN
     mat_N = shape_function
-    return matN
+    return mat_N
 
 @boundscheck(False) # turn off bounds-checking for entire function
 @wraparound(False)  # turn off negative index wrapping for entire function           
@@ -131,7 +131,7 @@ def DiffShapeFuntion(FLT64 [::1] r_coord, INT32 nodedof):
     matdiffN = np.zeros((1, 9), dtype=np.float64) 
     cdef FLT64 [:, ::1] mat_diff_N = matdiffN
     mat_diff_N = diff_shape_function
-    return matdiffN
+    return mat_diff_N
 
 @boundscheck(False) # turn off bounds-checking for entire function
 @wraparound(False)  # turn off negative index wrapping for entire function           

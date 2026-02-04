@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-
 from .core.solver.homogenplanefullcell import HomogenPlane
 # from .core.solver.homogenplaneinfperiodic import HomogenPlaneInfPeriodic
 from .core.solver.phonocrystalinplane import PhononicCrystalInPlane
@@ -14,13 +13,14 @@ from .setup.fea import newAnalysis
 from .core.elements.element import Element
 from .core.geometry.geometry import Geometry
 from .core.shapes.shape import Shape
-from.core.mesh.mesh import Mesh
+from .core.mesh.mesh import Mesh
 from .core.material.material import Material
+
 from .core.material.planestress import PlaneStress
 from .core.material.planestrain import PlaneStrain
 from .core.material.uniaxialstress import UniAxialStress
+from .core.material.solidelastic import SolidElastic
 from .core.material.heatplane import HeatPlane
-
 
 from .utils.utils import get_version
 __version__ = get_version()
@@ -44,5 +44,6 @@ __all__ = [
     "PlaneStress",
     "PlaneStrain",
     "UniAxialStress",
+    "SolidElastic",
     "HeatPlane",
 ]

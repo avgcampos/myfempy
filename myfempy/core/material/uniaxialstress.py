@@ -41,17 +41,16 @@ class UniAxialStress(Material):
 
         if type_shape == "line3":
             R = getRotational_Matrix(np.array(elementcoord[0:6]), 6)
+            elementcoord_local = get3D_LocalVector(elementcoord, 3)
         else:  # line2
             R = getRotational_Matrix(np.array(elementcoord[0:6]), 4)
+            elementcoord_local = get3D_LocalVector(elementcoord, 2)           
 
-        if type_shape == "line3":
-            elementcoord_local = get3D_LocalVector(elementcoord, 3)
-        else:
-            elementcoord_local = get3D_LocalVector(elementcoord, 2)
-
-        diffN = Model.shape.getDiffDiffShapeFuntion(np.array([ptg]), nodedof)
+        detJ = Model.shape.getdetJacobi(np.array([ptg]), elementcoord_local)
         
-        invJ = Model.shape.getinvJacobi(np.array([ptg]), elementcoord, nodedof)
+        diffN = Model.shape.getDiffDiffShapeFuntion(np.array([ptg]), nodedof, detJ)
+        
+        invJ = Model.shape.getinvJacobi(np.array([ptg]), elementcoord_local, nodedof)
         
         B = Model.element.getB(diffN, invJ)
 
@@ -78,7 +77,7 @@ class UniAxialStress(Material):
             strn_elm_normal_bendingXZ_max,
             strn_elm_normal_bendingXZ_min,
             strn_elm_shear_torsion_max,
-            0.0,
+            0.00000000000,
         ]
 
         return epsilon, strain
@@ -86,12 +85,12 @@ class UniAxialStress(Material):
     def getTitleStrain():
         title = [
             "STRAIN_NORMAL_TENSION",
-            "STRAIN_NORMAL_BENDINGXY_MAX",
-            "STRAIN_NORMAL_BENDINGXY_MIN",
-            "STRAIN_NORMAL_BENDINGXZ_MAX",
-            "STRAIN_NORMAL_BENDINGXZ_MIN",
+            "STRAIN_NORMAL_BENDING_XY_MAX",
+            "STRAIN_NORMAL_BENDING_XY_MIN",
+            "STRAIN_NORMAL_BENDING_XZ_MAX",
+            "STRAIN_NORMAL_BENDING_XZ_MIN",
             "STRAIN_SHEAR_TORSION",
-            "null",
+            "NULL",
         ]
         return title
 

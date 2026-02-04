@@ -15,7 +15,7 @@ from myfempy.core.utilities import gauss_points
 
 class StructuralSolid(Element):
     """Solid Structural Element Class <ConcreteClassService>"""
-
+    
     def getElementSet():
         elemset = {
             "def": "3D-space 3-node_dofs",

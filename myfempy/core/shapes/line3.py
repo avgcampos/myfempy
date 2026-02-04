@@ -35,14 +35,27 @@ class Line3(Shape):
 
         return isops[side]
 
-    def getShapeFunctions(r_coord, nodedof):
-        return ShapeFunctions(r_coord, nodedof)
-
+    def getShapeFunctions(r_coord, nodedof, detJ):
+        shapeN = ShapeFunctions(r_coord, nodedof)
+        shapeN[1, 5] = 2 * detJ * shapeN[1, 5] #* wt[ip]
+        shapeN[1, 11] =2 * detJ * shapeN[1, 11] #* wt[ip]
+        shapeN[1, 17] = 2 * detJ * shapeN[1, 17] #* wt[ip]
+        shapeN[2, 4] = 2 * detJ *  shapeN[2, 4] #* wt[ip]
+        shapeN[2, 10] = 2 * detJ * shapeN[2, 10] #* wt[ip]
+        shapeN[2, 16] = 2 * detJ * shapeN[2, 16] #* wt[ip]
+        return shapeN
     def getDiffShapeFuntion(r_coord, nodedof):
         return DiffShapeFuntion(r_coord, nodedof)
 
-    def getDiffDiffShapeFuntion(r_coord, nodedof):
-        return DiffDiffShapeFuntion(r_coord, nodedof)
+    def getDiffDiffShapeFuntion(r_coord, nodedof, detJ):
+        diffN = DiffDiffShapeFuntion(r_coord, nodedof)
+        diffN[1, 5] = 2 * detJ * diffN[1, 5] #* wt[ip]
+        diffN[1, 11] =2 * detJ * diffN[1, 11] #* wt[ip]
+        diffN[1, 17] = 2 * detJ * diffN[1, 17] #* wt[ip]
+        diffN[2, 4] = 2 * detJ *  diffN[2, 4] #* wt[ip]
+        diffN[2, 10] = 2 * detJ * diffN[2, 10] #* wt[ip]
+        diffN[2, 16] = 2 * detJ * diffN[2, 16] #* wt[ip]
+        return diffN
 
     def getJacobian(r_coord, element_coord):
         return Jacobian(r_coord, element_coord)

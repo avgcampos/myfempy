@@ -4,7 +4,7 @@ from myfempy.core.geometry.geometry import Geometry
 
 
 class RectangleTube(Geometry):
-    """Rectangle Tube Geometry Class <ConcreteClassService>"""
+    """Rectangle ("Thin Hollow") Tube Geometry Class <ConcreteClassService>"""
 
     def GeometrySet():
         geoset = {"geo": "rectangle_tube", "idgeo": 11}
@@ -16,8 +16,8 @@ class RectangleTube(Geometry):
         t = dim_sec["t"]
 
         A = b * h - ((b - 2 * t) * (h - 2 * t))
-        Izz = (1 / 12) * (b * h**3) - (1 / 12) * ((b - 2 * t) * (h - 2 * t) ** 3)
-        Iyy = (1 / 12) * (h * b**3) - (1 / 12) * ((h - 2 * t) * (b - 2 * t) ** 3)
+        Izz = 0.08333333333333 * (b * h**3) - 0.08333333333333 * ((b - 2 * t) * (h - 2 * t) ** 3)
+        Iyy = 0.08333333333333 * (h * b**3) - 0.08333333333333 * ((h - 2 * t) * (b - 2 * t) ** 3)
         Jxx = Iyy + Izz
 
         sect_prop = {
@@ -32,12 +32,14 @@ class RectangleTube(Geometry):
     def getCGCoord(tabgeo, inci, element_number):
         b = tabgeo[int(inci[element_number, 3] - 1)]["B"]
         h = tabgeo[int(inci[element_number, 3] - 1)]["H"]
+        AREA = tabgeo[int(inci[element_number, 3] - 1)]["AREACS"]
+        IZZ = tabgeo[int(inci[element_number, 3] - 1)]["INERZZ"]
 
         y_max = h * 0.5
         y_min = -h * 0.5
         z_max = b * 0.5
         z_min = -b * 0.5
-        r_max = y_max
+        r_max = np.sqrt(IZZ/AREA)
 
         cg = {
             "y_max": y_max,

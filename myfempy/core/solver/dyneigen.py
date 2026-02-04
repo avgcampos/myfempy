@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-from numpy import (arange, concatenate, empty, float64, newaxis, pi, sqrt,
+from numpy import (array, arange, concatenate, empty, float64, newaxis, pi, sqrt,
                    unique, zeros)
 from scipy.sparse.linalg import eigsh
 

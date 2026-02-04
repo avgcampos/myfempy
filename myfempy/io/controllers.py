@@ -25,6 +25,14 @@ def setElement(set_element):
         from myfempy.core.elements.heatSolid import HeatSolid
         return HeatSolid
     
+    # TO DO
+    elif set_element["TYPE"] == "fluid2d":
+        pass
+
+    # TO DO
+    elif set_element["TYPE"] == "fluid3d":
+        pass
+
     elif set_element["TYPE"] == "userelement":
         NewClass = set_element["CLASS"]
         return NewClass
@@ -181,41 +189,61 @@ def setMaterial(set_material):
         
         else:
             pass
+    # TO DO
+    elif set_material["MAT"] == "fluid":
+        pass
     
     else:
         pass
 
 
 def setGeometry(set_geometry):
-    if set_geometry["GEO"] == "thickness":
+    if set_geometry["GEO"] == 'thickness':
         from myfempy.core.geometry.thickness import Thickness
         return Thickness
 
-    elif set_geometry["GEO"] == "rectangle":
-        from myfempy.core.geometry.rectangle import Rectangle
-        return Rectangle
-
-    elif set_geometry["GEO"] == "rectangle_tube":
-        from myfempy.core.geometry.rectangle_tube import RectangleTube
-        return RectangleTube
-
-    elif set_geometry["GEO"] == "circle":
-        from myfempy.core.geometry.circle import Circle
-        return Circle
-
-    elif set_geometry["GEO"] == "circle_tube":
-        from myfempy.core.geometry.circle_tube import CircleTube
-        return CircleTube
-
-    elif set_geometry["GEO"] == "isection":
-        from myfempy.core.geometry.isection import ISection
-        return ISection
-
-    elif set_geometry["GEO"] == "userdefined":
+    elif set_geometry["GEO"] == 'solid':
         from myfempy.core.geometry.userdefined import UserDefined
-        return UserDefined
+        return UserDefined        
+    
+    elif set_geometry["GEO"] == 'frame':
+        if set_geometry["SECTION"] == "rectangle":
+            from myfempy.core.geometry.rectangle import Rectangle
+            return Rectangle
 
-    elif set_geometry["TYPE"] == "usergeometry":
+        elif set_geometry["SECTION"] == "rectangle_tube":
+            from myfempy.core.geometry.rectangle_tube import RectangleTube
+            return RectangleTube
+
+        elif set_geometry["SECTION"] == "circle":
+            from myfempy.core.geometry.circle import Circle
+            return Circle
+
+        elif set_geometry["SECTION"] == "circle_tube":
+            from myfempy.core.geometry.circle_tube import CircleTube
+            return CircleTube
+
+        elif set_geometry["SECTION"] == "isection":
+            from myfempy.core.geometry.isection import ISection
+            return ISection
+        
+        elif set_geometry["SECTION"] == "tsection":
+            from myfempy.core.geometry.tsection import TSection
+            return TSection
+        
+        elif set_geometry["SECTION"] == "csection":
+            from myfempy.core.geometry.csection import CSection
+            return CSection
+        
+        elif set_geometry["SECTION"] == "lsection":
+            from myfempy.core.geometry.lsection import LSection
+            return LSection
+
+        elif set_geometry["SECTION"] == "userdefined":
+            from myfempy.core.geometry.userdefined import UserDefined
+            return UserDefined
+
+    elif set_geometry["GEO"] == "usergeometry":
         NewClass = set_geometry["CLASS"]
         return NewClass
 
@@ -262,12 +290,12 @@ def setPoints2NumericalIntegration(type_shape):
             "line2": 2,
             "line3": 4,
             "tria3": 1,
-            "tria6": 7,
+            "tria6": 3,
             "quad4": 2,
             "quad8": 3,
             "tetr4": 4,
-            "tetr10": 5,
+            # "tetr10": 5,
             "hexa8": 2,
-            "hexa20": 3,
+            # "hexa20": 3,
         }
     return shape[type_shape]

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class Element(ABC):
     """Element API Class <ClassService>"""
-
+    
     @abstractmethod
     def getElementSet():
         pass

@@ -4,7 +4,7 @@ from myfempy.core.geometry.geometry import Geometry
 
 
 class ISection(Geometry):
-    """I Section Geometry Class <ConcreteClassService>"""
+    """I ("Wide-Flange") Section Geometry Class <ConcreteClassService>"""
 
     def GeometrySet():
         geoset = {"geo": "isection", "idgeo": 30}
@@ -17,8 +17,8 @@ class ISection(Geometry):
         d = dim_sec["d"]
 
         A = 2 * b * d + t * (h - 2 * d)
-        Izz = (b * h**3) / 12 - ((b - t) * (h - 2 * d) ** 3) / 12
-        Iyy = ((h - 2 * d) * t**3) / 12 + 2 * (d * b**3) / 12
+        Izz = 0.08333333333333 * (b * h**3) - 0.08333333333333 * ((b - t) * (h - 2 * d) ** 3)
+        Iyy = 0.08333333333333 * ((h - 2 * d) * t**3) + 0.16666666666666 * (d * b**3)
         Jxx = Iyy + Izz
 
         sect_prop = {

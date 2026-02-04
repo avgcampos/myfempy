@@ -29,8 +29,8 @@ class MeshGmsh(Mesh):
                     [
                         contelm,
                         meshset,
-                        modeldata["MATERIAL"]["PROPMAT"][int(conec[ee][3]) - 1]["NAME"],
-                        modeldata["GEOMETRY"]["PROPGEO"][int(conec[ee][3]) - 1]["NAME"],
+                        modeldata["MATERIAL"]["PROPMAT"][int(conec[ee][4]) - 1]["NAME"],
+                        modeldata["GEOMETRY"]["PROPGEO"][int(conec[ee][4]) - 1]["NAME"],
                         (np.array(conec[ee][5:])).astype(int).tolist(),
                     ]
                 )
@@ -127,7 +127,7 @@ class MeshGmsh(Mesh):
         ptn0 = 0
         for ee in range(len(conec)):
             if int(conec[ee][1]) == 15:
-                ptn1 = int(conec[ee][3])
+                ptn1 = int(conec[ee][4])
                 if ptn1 != ptn0:
                     contptn += 1
                 reglist["reglist"].append(
@@ -139,7 +139,7 @@ class MeshGmsh(Mesh):
                 )
                 ptn0 = ptn1
             elif (int(conec[ee][1]) == 1) or (int(conec[ee][1]) == 8):
-                edg1 = int(conec[ee][3])
+                edg1 = int(conec[ee][4])
                 if edg1 != edg0:
                     contedg += 1
                 reglist["reglist"].append(
@@ -151,7 +151,7 @@ class MeshGmsh(Mesh):
                 )
                 edg0 = edg1
             elif (int(conec[ee][1]) == 2) or (int(conec[ee][1]) == 3):
-                sfr1 = int(conec[ee][3])
+                sfr1 = int(conec[ee][4])
                 if sfr1 != sfr0:
                     contsfr += 1
                 reglist["reglist"].append(

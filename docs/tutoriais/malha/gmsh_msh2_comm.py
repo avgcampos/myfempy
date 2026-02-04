@@ -60,7 +60,7 @@ geo = {
 
 # ----------------------------------------------------
 
-# import mesh .vtk
+# import mesh .msh2
 
 meshdata = {"GMSH": {'filename': 'tutorial_06b',
                      'meshimport':{'object':'tutorial_06_mesh'},

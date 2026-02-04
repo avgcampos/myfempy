@@ -6,9 +6,6 @@ from myfempy.io.iocsv import write2log, writer2csv
 from myfempy.plots.plotmesh import post_show_mesh
 from myfempy.plots.plotxy import forces_plot, frf_plot, tracker_plot
 
-__doc__ = """
-Plotter Post Process
-"""
 
 def postproc_plot(postprocset: dict, postporc_result: dict, modelinfo: dict):
     plotset = dict()

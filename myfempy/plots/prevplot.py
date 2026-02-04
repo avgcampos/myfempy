@@ -271,29 +271,31 @@ def build_preview(previewset: dict, path):
                     f"beam_extrude_actor_{i_node} = view_beam_crossSection(dimSection, typSection, coord_bcs, scala_view)"
                 )
                 i_node += 1
+    
     actor = vtk.vtkActor()
     actor.SetMapper(mapper)
     actor.GetProperty().EdgeVisibilityOn()
     if previewset["RENDER"]["lines"] == False:
         actor.GetProperty().EdgeVisibilityOff()
     else:
-        actor.GetProperty().SetLineWidth(1.0)
+        actor.GetProperty().SetLineWidth(4.0)
+    
     text_logo = vtk.vtkTextActor()
     text_logo.SetInput(
         "MYFEMPY " + get_version() + 
-        '\n > press "w" to wireframe view \n > press "q" to exit and continue'
+        '\n> press "w" to wireframe view \n> press "s" to surface view \n> press "r" to reset view \n> press "q" to exit and continue'
     )
     txtprop = text_logo.GetTextProperty()
     txtprop.SetFontFamilyToArial()
     txtprop.SetFontSize(20)
     txtprop.SetColor(1, 1, 1)
-    text_logo.SetDisplayPosition(10, 400)
+    text_logo.SetDisplayPosition(20, 370)
     colors = vtk.vtkNamedColors()
-    backgroundColor = colors.GetColor3d("DarkSlateGray")
-    actorColor = colors.GetColor3d("Tomato")
-    axis1Color = colors.GetColor3d("Salmon")
-    axis2Color = colors.GetColor3d("PaleGreen")
-    axis3Color = colors.GetColor3d("LightSkyBlue")
+    # backgroundColor = colors.GetColor3d("DarkSlateGray")
+    # actorColor = colors.GetColor3d("Tomato")
+    axis1Color = colors.GetColor3d("red")
+    axis2Color = colors.GetColor3d("red")
+    axis3Color = colors.GetColor3d("red")
     cubeAxesActor = vtk.vtkCubeAxesActor()
     cubeAxesActor.SetBounds(actor.GetBounds())
     cubeAxesActor.SetCamera(renderer.GetActiveCamera())

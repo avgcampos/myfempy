@@ -4,11 +4,6 @@ import vedo as vd
 
 # from myfempy.utils.utils import get_version
 
-__doc__ = """
-Mesh Quality Calc.
-"""
-
-
 class MeshProp:
     def __init__(self, plotset: dict, path):
         self.plotset = plotset

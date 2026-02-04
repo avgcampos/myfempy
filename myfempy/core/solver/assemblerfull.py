@@ -63,9 +63,6 @@ class AssemblerFULL(Assembler):
             ith, jth, val = AssemblerFULL.__getVectorization(ith, jth, val, loc, matrix, ee, elemdof)
         
         A_sp_scipy_csr = coo_matrix((val, (ith, jth)), shape=(sdof, sdof), dtype=FLT64).tocsr()
-
-        # AssemblerFULL.__getSaveAssemblerFile(A_sp_scipy_csr)
-
         return A_sp_scipy_csr
 
     def getNonLinearStiffnessGlobalMatrixAssembler():
@@ -90,7 +87,6 @@ class AssemblerFULL(Assembler):
         else:
             pass
 
-
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
@@ -113,11 +109,7 @@ class AssemblerFULL(Assembler):
                 ith, jth, val, loc, matrix, ee, elemdof
             )
 
-        A_sp_scipy_csc = coo_matrix((val, (ith, jth)), shape=(sdof, sdof))
-        A_sp_scipy_csr = A_sp_scipy_csc.tocsr()
-
-        # AssemblerFULL.__getSaveAssemblerFile(A_sp_scipy_csr)
-
+        A_sp_scipy_csr = coo_matrix((val, (ith, jth)), shape=(sdof, sdof), dtype=FLT64).tocsr()
         return A_sp_scipy_csr
 
     def getMassLumpedGlobalMatrixAssembler():

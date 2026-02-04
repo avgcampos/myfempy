@@ -4,7 +4,7 @@ from myfempy.core.geometry.geometry import Geometry
 
 
 class Rectangle(Geometry):
-    """Rectangle Geometry Class <ConcreteClassService>"""
+    """Rectangle ("Solid") Geometry Class <ConcreteClassService>"""
 
     def GeometrySet():
         geoset = {"geo": "rectangle", "idgeo": 10}
@@ -15,8 +15,8 @@ class Rectangle(Geometry):
         h = dim_sec["h"]
 
         A = b * h
-        Izz = (1 / 12) * b * h**3
-        Iyy = (1 / 12) * h * b**3
+        Izz = 0.08333333333333 * b * h**3
+        Iyy = 0.08333333333333 * h * b**3
         Jxx = Iyy + Izz
 
         sect_prop = {
@@ -36,8 +36,8 @@ class Rectangle(Geometry):
         y_min = -h * 0.5
         z_max = b * 0.5
         z_min = -b * 0.5
-        r_max = y_max
-
+        r_max = 0.2887 * b
+                                                                          
         cg = {
             "y_max": y_max,
             "y_min": y_min,

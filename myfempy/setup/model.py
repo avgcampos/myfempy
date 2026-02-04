@@ -121,7 +121,7 @@ class SetModel:
             "STIF": "STIF",
             "DAMP": "DAMP",
         }
-        tabmat = [{}] * nmat  # np.zeros((nmat, len(key_mat_list)))
+        tabmat = [{}] * nmat 
         for mm in range(nmat):
             mat_lib[matlist["PROPMAT"][mm]["NAME"]] = mm + 1
             for pp in range(len(key_mat_list)):
@@ -130,10 +130,7 @@ class SetModel:
                     mat_prop[key] = matlist["PROPMAT"][mm][key]
                 else:
                     mat_prop[key] = 0.0
-            # matset = self.material.getMaterialSet()
-            # idtyp = matset["idtyp"]  # mat_def(matlist[mm]["MAT"])
-            # idmat = matset["idmat"]  # mat_beh(matlist[mm]["DEF"])
-            # tabmat[mm] = {key:mat_prop[key]}
+
             tabmat[mm] = {
                 "EXX": mat_prop["EXX"],
                 "VXY": mat_prop["VXY"],
@@ -157,7 +154,6 @@ class SetModel:
 
     def __tabgeo(self, geolist):
         """get geometry table"""
-
         ngeo = len(geolist["PROPGEO"])
         geo_lib = dict()
         geo_prop = dict()
@@ -171,6 +167,11 @@ class SetModel:
             "H": "h",
             "T": "t",
             "D": "d",
+            "YMAX": "y_max",
+            "YMIN": "y_min",
+            "ZMAX": "z_max",
+            "ZMIN": "z_min",
+            "RMAX": "r_max",
             "ID": "ID",
         }
         tabgeo = [{}] * ngeo  # np.zeros((ngeo, len(key_geo_list) + 1))
@@ -205,6 +206,11 @@ class SetModel:
                     "H": h,
                     "T": t,
                     "D": d,
+                    "YMAX": 1.0,
+                    "YMIN": -1.0,
+                    "ZMAX": 1.0,
+                    "ZMIN": -1.0,
+                    "RMAX": 1.0,
                     "ID": idgeo,
                 }
 
@@ -219,6 +225,17 @@ class SetModel:
                 geoset = self.geometry.GeometrySet()
                 idgeo = geoset["idgeo"]
 
+                y_max, y_min, z_max, z_min, r_max = 1.0, -1.0, 1.0, -1.0, 1.0
+
+                if 'CG' in geolist["PROPGEO"][gg].keys(): 
+                    y_max = geolist["PROPGEO"][gg]["CG"]["y_max"]
+                    y_min = geolist["PROPGEO"][gg]["CG"]["y_min"]
+                    z_max = geolist["PROPGEO"][gg]["CG"]["z_max"]
+                    z_min = geolist["PROPGEO"][gg]["CG"]["z_min"]
+                    r_max = geolist["PROPGEO"][gg]["CG"]["r_max"]
+                else:
+                    pass
+
                 tabgeo[gg] = {
                     "AREACS": geo_prop["AREACS"],
                     "INERZZ": geo_prop["INERZZ"],
@@ -229,6 +246,11 @@ class SetModel:
                     "H": geo_prop["H"],
                     "T": geo_prop["T"],
                     "D": geo_prop["D"],
+                    "YMAX": y_max,
+                    "YMIN": y_min,
+                    "ZMAX": z_max,
+                    "ZMIN": z_min,
+                    "RMAX": r_max,
                     "ID": idgeo,
                 }
         return tabgeo, geo_lib

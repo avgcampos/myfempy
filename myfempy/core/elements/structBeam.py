@@ -7,8 +7,7 @@ INT32 = int32
 FLT64 = float64
 
 from myfempy.core.elements.element import Element
-from myfempy.core.utilities import (gauss_points, get3D_LocalVector,
-                                    getRotational_Matrix)
+from myfempy.core.utilities import (gauss_points, get3D_LocalVector, getRotational_Matrix)
 
 
 class StructuralBeam(Element):
@@ -69,9 +68,11 @@ class StructuralBeam(Element):
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
         if type_shape == "line3":
             elementcoord_local = get3D_LocalVector(elementcoord, 3)
-        else:
+            R = getRotational_Matrix(elementcoord, 6)
+        else:  # line2
             elementcoord_local = get3D_LocalVector(array(elementcoord), 2)
-
+            R = getRotational_Matrix(elementcoord, 4)
+        # R = R.transpose()
         D = Model.material.getElasticTensor(tabmat, inci, element_number)
         AREA = tabgeo[int(inci[element_number, 3] - 1)]["AREACS"]
         IZZ = tabgeo[int(inci[element_number, 3] - 1)]["INERZZ"]
@@ -82,16 +83,12 @@ class StructuralBeam(Element):
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
         for ip in range(intgauss):
             detJ = Model.shape.getdetJacobi(array([pt[ip]]), elementcoord_local)
-            diffN = Model.shape.getDiffDiffShapeFuntion(array([pt[ip]]), nodedof)
-            invJ = Model.shape.getinvJacobi(array([pt[ip]]), elementcoord, nodedof)
+            diffN = Model.shape.getDiffDiffShapeFuntion(array([pt[ip]]), nodedof,detJ)            
+            invJ = Model.shape.getinvJacobi(array([pt[ip]]), elementcoord_local, nodedof)
             B = StructuralBeam.getB(diffN, invJ)
             BCB = B.transpose().dot(C).dot(B)
-            K_elem_mat += BCB * abs(detJ) * wt[ip]
-        if type_shape == "line3":
-            R = getRotational_Matrix(elementcoord, 6)
-        else:  # line2
-            R = getRotational_Matrix(elementcoord, 4)
-        K_elem_mat = dot(dot(transpose(R), K_elem_mat), R)
+            K_elem_mat += BCB * abs(detJ) * wt[ip]            
+        K_elem_mat = R.transpose().dot(K_elem_mat).dot(R) #dot(dot(transpose(R), K_elem_mat), R)
         return K_elem_mat
 
     def getMassConsistentMat(
@@ -109,20 +106,16 @@ class StructuralBeam(Element):
             elementcoord_local = get3D_LocalVector(elementcoord, 3)
         else:
             elementcoord_local = get3D_LocalVector(elementcoord, 2)
-        rho = tabmat[int(inci[element_number, 2]) - 1][
-            "RHO"
-        ]  # tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
-        AREA = tabgeo[int(inci[element_number, 3] - 1)][
-            "AREACS"
-        ]  # tabgeo[int(inci[element_number, 3] - 1), 4]
+        rho = tabmat[int(inci[element_number, 2]) - 1]["RHO"]
+        AREA = tabgeo[int(inci[element_number, 3] - 1)]["AREACS"] 
         IXX = tabgeo[int(inci[element_number, 3] - 1)]["INERXX"]
         R = array([[rho * AREA, rho * AREA, rho * AREA, rho * IXX]]) * eye(4)
         pt, wt = gauss_points(type_shape, intgauss)
         M_elem_mat = zeros((edof, edof), dtype=FLT64)
         for ip in range(intgauss):
             detJ = Model.shape.getdetJacobi(array([pt[ip]]), elementcoord_local)
-            N = Model.shape.getShapeFunctions(array([pt[ip]]), nodedof)
-            NRN = N.transpose().dot(R).dot(N)
+            N = Model.shape.getShapeFunctions(array([pt[ip]]), nodedof, detJ)
+            NRN = array(N).transpose().dot(R).dot(N)
             M_elem_mat += NRN * abs(detJ) * wt[ip]
         return M_elem_mat
 

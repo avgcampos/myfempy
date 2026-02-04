@@ -24,8 +24,8 @@ cdef FLT64 [:, ::1] MATN(FLT64 [::1] r_coord):
     N_view[0][6] = 0.5*(1 + r0)
     N_view[1][1] = 0.25*(r0**3 - 3*r0 + 2)
     N_view[1][5] = 0.25*(0.5*r0**3 - 0.5*r0**2 -0.5*r0 + 0.5)
-    N_view[1][7] = 0.25*(r0**3 + 3*r0 + 2)
-    N_view[1][11] = 0.25*(0.5*r0**3 + 0.5*r0**2 -0.5*r0 - 0.5)
+    N_view[1][7] = 0.25*(-r0**3 + 3*r0 + 2)
+    N_view[1][11] = 0.25*(0.5*r0**3 + 0.5*r0**2 -0.5*r0 - 0.5)  
     N_view[2][2] = 0.25*(r0**3 - 3*r0 + 2)
     N_view[2][4] = 0.25*(0.5*r0**3 - 0.5*r0**2 -0.5*r0 + 0.5)
     N_view[2][8] = 0.25*(-r0**3 + 3*r0 + 2)
@@ -104,7 +104,6 @@ def ShapeFunctions(FLT64 [::1] r_coord, INT32 nodedof):
     matN = np.zeros((4, 2*nodedof), dtype=np.float64) 
     cdef FLT64 [:, ::1] mat_N = matN
     mat_N = shape_function
-    
     return mat_N
 
 @boundscheck(False) # turn off bounds-checking for entire function

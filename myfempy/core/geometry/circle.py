@@ -4,7 +4,7 @@ from myfempy.core.geometry.geometry import Geometry
 
 
 class Circle(Geometry):
-    """Circle Geometry Class <ConcreteClassService>"""
+    """Circle ("Solid") Geometry Class <ConcreteClassService>"""
 
     def GeometrySet():
         geoset = {"geo": "circle", "idgeo": 20}
@@ -13,8 +13,8 @@ class Circle(Geometry):
     def getSectionProp(dim_sec):
         d = dim_sec["d"]
 
-        A = (1 / 4) * np.pi * d**2
-        Izz = (1 / 64) * np.pi * d**4
+        A = 0.25 * np.pi * d**2
+        Izz = 0.015625 * np.pi * d**4
         Iyy = Izz
         Jxx = Iyy + Izz
 
@@ -34,7 +34,7 @@ class Circle(Geometry):
         y_min = -d * 0.5
         z_max = d * 0.5
         z_min = -d * 0.5
-        r_max = y_max
+        r_max = d * 0.5
 
         cg = {
             "y_max": y_max,

@@ -13,10 +13,10 @@ class UserDefined(Geometry):
     def getCGCoord(tabgeo, inci, element_number):
 
         cg = {
-            "y_max": 1.0,
-            "y_min": -1.0,
-            "z_max": 1.0,
-            "z_min": -1.0,
-            "r_max": 1.0,
+            "y_max": tabgeo[int(inci[element_number, 3] - 1)]["YMAX"],
+            "y_min": tabgeo[int(inci[element_number, 3] - 1)]["YMIN"],
+            "z_max": tabgeo[int(inci[element_number, 3] - 1)]["ZMAX"],
+            "z_min": tabgeo[int(inci[element_number, 3] - 1)]["ZMIN"],
+            "r_max": tabgeo[int(inci[element_number, 3] - 1)]["RMAX"],
         }
         return cg

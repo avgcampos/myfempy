@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-__doc__ = """
-I/O VTK
-"""
 import numpy as np
 
 

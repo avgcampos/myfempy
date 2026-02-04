@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-__doc__ = """
-GMSH GEN MESH
-"""
 import os
 
 # import numpy as np
@@ -226,7 +223,7 @@ def set_gmsh_geo(filename, meshdata):
 
         else:
             if "cadimport" in meshdata.keys():
-                file_object.write('Merge "' + meshdata["cadimport"] + '";\n')
+                file_object.write('Merge "' + meshdata["cadimport"]['object'] + '";\n')
             else:
                 npl = 0
                 phl = 0
