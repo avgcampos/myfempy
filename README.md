@@ -11,7 +11,7 @@ Copyright © Antonio Vinicius G. Campos 2022. Processo INPI BR512022001484-0
 [![Python Versions]()]()
 [![Documentation Status](https://readthedocs.org/projects/myfempy/badge/?version=latest)](https://myfempy.readthedocs.io/en/latest/?badge=latest)
 [![PyPI]()]() [![conda]()]()
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6958796.svg)](https://doi.org/10.5281/zenodo.6958796)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6958796.svg)](https://doi.org/10.5281/zenodo.15756128)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=avgcampos_myfempy&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=avgcampos_myfempy)
 [![Downloads]]()
 [![lics](https://img.shields.io/badge/license-GPL-blue.svg)](https://en.wikipedia.org/wiki/GNU_General_Public_License)
