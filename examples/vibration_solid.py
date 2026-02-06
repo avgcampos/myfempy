@@ -23,7 +23,7 @@ geo = {"NAME": "Solid"}
 # MODEL SET
 LX = 100
 LY = 100
-esize = 20
+esize = 5
 
 # gmsh config
 points = [

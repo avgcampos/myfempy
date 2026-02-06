@@ -43,10 +43,9 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/avgcampos/myfempy"
-Documentation = "https://myfempy.readthedocs.io/en/latest/"
-Changelog = "https://github.com/avgcampos/myfempy/releases"
-Discussions = "https://github.com/avgcampos/myfempy/discussions"
+Code = "https://github.com/avgcampos/myfempy"
+Homepage = "https://myfempy.readthedocs.io/en/latest/"
+Releases = "https://github.com/avgcampos/myfempy/releases"
 
 ### Cython Compiler
 [build-system]
