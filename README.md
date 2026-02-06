@@ -110,7 +110,7 @@ try
 ## Tutorial
 
 An **User's Guide** is available
-[here](user_manual.md).
+[here](https://myfempy.readthedocs.io/en/latest/user_manual/).
 
 Many **Examples** are available
 [here](https://github.com/avgcampos/myfempy/tree/main/examples).
