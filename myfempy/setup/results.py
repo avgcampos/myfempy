@@ -15,16 +15,7 @@ class setPostProcess(ABC):
     """PostProcess Class <ClassOrder>"""
 
     def getCompute(self, postprocset):
-        """_summary_
-
-        Arguments:
-            postprocset -- _description_
-
-        Returns:
-            _description_
-        """
         # print_console("post")
-
         postprocdata = dict()
         postprocdata["SOLUTION"] = []
         postprocdata["solverstatus"] = postprocset["SOLVERDATA"]["solverstatus"]
@@ -240,24 +231,18 @@ class setPostProcess(ABC):
             str(self.path)
             + "/"
             + postprocset["PLOTSET"]["filename"]
-            + "_myfempy_solver-status.txt"
+            + "_myfempy_solver-log.txt"
         )
-        write2log(self.model, self.physic, postprocset["OUTPUT"], postporc_result, filename)
+        write2log(self.model, self.physic, postprocset["REPORT"], postporc_result, filename)
 
     def __tovtkplot(self, postprocset, postporc_result):
-        """_summary_
-
-        Arguments:
-            postporc_result -- _description_
-            postprocset -- _description_
-        """
         # path = os.getcwd()
         plotdata = dict()
 
         plotdata["inci"] = self.model.inci
         plotdata["nodecon"] = self.model.modelinfo["nodecon"]
         plotdata["filename"] = (
-            str(self.path) + "/" + postprocset["PLOTSET"]["filename"] + "_post_process"
+            str(self.path) + "/" + postprocset["PLOTSET"]["filename"] + "_myfempy_postprocess"
         )
         plotdata["coord"] = self.model.coord
         plotdata["material_CELL_DATA_val"] = (
@@ -282,7 +267,7 @@ class setPostProcess(ABC):
                         str(self.path)
                         + "/"
                         + postprocset["PLOTSET"]["filename"]
-                        + "_post_process_step-"
+                        + "_myfempy_postprocess_step-"
                         + str(st)
                     )
 
@@ -358,27 +343,11 @@ class setPostProcess(ABC):
                 pass
 
     def __displ(self, U):
-        """_summary_
-
-        Arguments:
-            U -- _description_
-
-        Returns:
-            _description_
-        """
         disp = self.model.element.getElementDeformation(U, self.model.modelinfo)
         title = self.model.element.setTitleDeformation()
         return disp, title
 
     def __stress(self, U):
-        """_summary_
-
-        Arguments:
-            U -- _description_
-
-        Returns:
-            _description_
-        """
         stress_list = np.zeros(
             (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1), dtype=float
         )
@@ -426,14 +395,6 @@ class setPostProcess(ABC):
         return result, title
 
     def __heatflux(self, U):
-        """_summary_
-
-        Arguments:
-            U -- _description_
-
-        Returns:
-            _description_
-        """
         stress_list = np.zeros(
             (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1), dtype=float
         )
@@ -465,8 +426,6 @@ class setPostProcess(ABC):
         return result, title
 
     def __tracker_value(postporc_result, postprocset, plotset, coord):
-        """trancker plot function"""
-
         if "point" in postprocset["TRACKER"].keys():
             node_coordX = float(postprocset["TRACKER"]["point"]["x"])
             node_coordY = float(postprocset["TRACKER"]["point"]["y"])

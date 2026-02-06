@@ -54,7 +54,7 @@ modeldata = {
         
     "MESH": {
             'TYPE': 'gmsh',
-            'filename': 'bench_vibra',
+            'filename': 'mesh_gmsh',
             'pointlist': points,
             'linelist': lines,
             'planelist': plane,
@@ -110,29 +110,22 @@ massadd = {
     'VAL': [1.4],
     }
 
-bc_node_left = {
+bc_nodes_left = {
     'TYPE': 'fixed',
     'DOF': 'full',
     'DIR': 'edgex',
     'LOC': {'x': 0, 'y': 999, 'z': 0},
     }
 
-bc_node_right = {
-    'TYPE': 'fixed',
-    'DOF': 'full',
-    'DIR': 'node',
-    'LOC': {'x': LX, 'y': LY/2, 'z': 0},
-    }
-
 physicdata = {
     "PHYSIC": {"DOMAIN": "structural",
                 "LOAD": [],
-                "BOUNDCOND": [bc_node_left],
+                "BOUNDCOND": [bc_nodes_left],
     },
     }
 fea.Physic(physicdata)
 
-previewset = {'RENDER': {'filename': 'bench_vibra_preview', 'show': True, 'scale': 10, 'savepng': True, 'lines': False,
+previewset = {'RENDER': {'filename': 'preview', 'show': True, 'scale': 10, 'savepng': True, 'lines': False,
                         'plottags': {
                         # 'line': True
                         'point': True
@@ -158,8 +151,8 @@ postprocdata = {"SOLVERDATA": solverdata,
                 "COMPUTER": {
                     'structural': {'modes': True},
                     },
-                "PLOTSET": {'filename': 'bench_vibra', 'savepng': True},
-                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True}},           
+                "PLOTSET": {'filename': 'output', 'savepng': True},
+                "REPORT": {'log': True, 'get': {'nelem': True, 'nnode': True}},           
                 }
 
 postporc_result = fea.PostProcess(postprocdata)

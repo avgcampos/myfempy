@@ -8,6 +8,8 @@ The **myfempy** project is under development, updates and code modifications may
 
 Copyright © Antonio Vinicius G. Campos 2022-2026. Processo INPI BR512022001484-0
 
+[TOC]
+
 ## About
 
 **myfempy** is a python package based on finite element method to multiphysics analysis. The code is open source and *intended for educational and scientific purposes only, not recommended to commercial use*. The name **myfempy** is an acronym for **M**ultiph**Y**sics **F**inite **E**lements **M**odule to **PY**thon. You can help us by contributing with the main project, send us a mensage [Github Discussions](https://github.com/avgcampos/myfempy/discussions/10). **If you use myfempy in your research, the  developers would be grateful if you could cite in your work.**
@@ -80,20 +82,20 @@ try
 >> pip install numpy, cython, scipy, vedo
 ```
 
-Outhers prerequisites
+Others prerequisites
 
 -   [gmsh/External Generator Mesh](https://gmsh.info/) - Gmsh is an open
     source 3D finite element mesh generator with a built-in CAD engine
     and post-processor. *Notes: 1 - Gmsh is NOT part of myfempy
     projects; 2 - Is Needed install Gmsh manually*
 
+-   [gmsh API python](https://pypi.org/project/gmsh/)
+
 try
 
 ``` bash
 >> pip install --upgrade gmsh
 ```
-
--   [gmsh PyPi](https://pypi.org/project/gmsh/)
 
 ## Tutorial
 

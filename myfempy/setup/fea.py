@@ -54,7 +54,7 @@ class newAnalysis:
         except:
             self.path = newDir("out")
         logging.basicConfig(
-            filename=str(self.path) + "/" + "myfempy_log.log",
+            filename=str(self.path) + "/" + "myfempy_api-log.log",
             encoding="utf-8",
             level=logging.DEBUG,
             filemode="w",
@@ -537,7 +537,7 @@ class newAnalysis:
                 postprocdata = setPostProcess.getCompute(self, postprocset)
             if "TRACKER" in postprocset.keys():
                 setPostProcess.getTracker(self, postprocset, postprocdata)
-            if "OUTPUT" in postprocset.keys():
+            if "REPORT" in postprocset.keys():
                 postprocdata["log"] = []
                 log_file = setPostProcess.getLog(self, postprocset, postprocdata)
                 postprocdata["log"].append(log_file)
@@ -835,6 +835,7 @@ class newAnalysis:
         set_mesh = dict()
         set_mesh = modeldata["MESH"]
         set_mesh["SHAPE"] = modeldata["ELEMENT"]["SHAPE"]
+        set_mesh["user_path"] = modeldata["MESH"]["user_path"]
         return setMesh(set_mesh)
 
     def __setShape(modeldata):

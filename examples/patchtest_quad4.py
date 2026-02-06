@@ -1,3 +1,4 @@
+
 from myfempy import newAnalysis
 from myfempy import SteadyStateLinear
 
@@ -184,7 +185,7 @@ print(solverdata['solution']['U'])
 postprocset = {"SOLVERDATA": solverdata,
                 "COMPUTER": {'structural': {'displ': True, 'stress': True}},
                 "PLOTSET": {'show': True, 'filename': 'PatchTest', 'savepng': True},
-                "OUTPUT": {'log': True, 'get':{
+                "REPORT": {'log': True, 'get':{
                         'nelem': True,
                         'nnode': True,
                         'inci': True,

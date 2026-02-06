@@ -1,3 +1,7 @@
+import sys
+# setting path
+sys.path.append('../myfempy')
+
 from myfempy import newAnalysis
 from myfempy import DynamicEigenLinear
 
@@ -19,7 +23,7 @@ geo = {"NAME": "Solid"}
 # MODEL SET
 LX = 100
 LY = 100
-esize = 5
+esize = 20
 
 # gmsh config
 points = [
@@ -41,7 +45,7 @@ plane = [[1, 2, 3, 4]]
 modeldata = {
    "MESH": {
         'TYPE': 'gmsh',
-        'filename': 'tests',
+        'filename': 'mesh_gmsh',
         'pointlist': points,
         'linelist': lines,
         'planelist': plane,
@@ -74,6 +78,7 @@ modeldata = {
     },
 }
 fea.Model(modeldata)
+
 physicdata = {
     "PHYSIC": {"DOMAIN": "structural",
                "LOAD": [],
@@ -82,7 +87,7 @@ physicdata = {
 }
 fea.Physic(physicdata)
 
-previewset = {'RENDER': {'filename': 'vibra_solid', 'show': True, 'scale': 8, 'savepng': True, 'lines': True,
+previewset = {'RENDER': {'filename': 'preview', 'show': True, 'scale': 8, 'savepng': True, 'lines': True,
                         #  'plottags': {'point': True},
                          },
               }
@@ -104,7 +109,7 @@ postprocset = {"SOLVERDATA": solverdata,
                 "COMPUTER": {
                     'structural': {'modes': True},
                     },
-                "PLOTSET": {'filename': 'vibra_solid', 'savepng': True},
-                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True}},           
+                "PLOTSET": {'filename': 'output', 'savepng': True},
+                "REPORT": {'log': True, 'get': {'nelem': True, 'nnode': True}},           
                 }
 postprocdata = fea.PostProcess(postprocset)

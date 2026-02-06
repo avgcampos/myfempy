@@ -1,3 +1,6 @@
+
+[TOC]
+
 # User’s Guide
 
 This guide introduces the components and commands that define the configuration file required to execute an analysis using **MYFEMPY**. Depending on the problem setup, adjustments may be necessary; please refer to the _help_ or _API_ documentation for details. Additional [Tutorials](#tutorials) are provided at the end of this guide.
@@ -70,30 +73,17 @@ A typical analysis workflow involves submitting requests (Python dictionaries) t
 
 The main API provides direct access to the core components of the project, enabling construction of the **Model**, definition of **Physics**, and execution of the **Solution**.
 
-**Model Class**  
-  - Element  
-  - Shape  
-  - Mesh  
-  - Material  
-  - Geometry  
-
-**Physics Class**  
-  - Loads  
-  - Boundary Conditions  
-  - Coupling (Multi-Physics)  
-
-**Results Class**  
-  - Post-processing and data export  
 
 ```mermaid
 graph LR
 User --> API
-API --> SOLVER
-SOLVER --> Model
-SOLVER --> Physics
-SOLVER --> Results
+API --> Model
+API --> Physics
+API --> Solve
+API --> Results
 
 Model --> Element
+Model --> Shape
 Model --> Mesh
 Model --> Material
 Model --> Geometry
@@ -103,7 +93,53 @@ Physics --> BoundCond
 Physics --> Coupling
 
 Results --> PostProcess
+
+Solve --> Assembler
+Solve --> Solver
 ```
+
+### Abstract implementation of the API ClassService
+
+**Model Class**  
+  - Element  
+    ```python
+    --8<-- "myfempy/core/elements/element.py"
+    ```
+  - Shape
+    ```python
+    --8<-- "myfempy/core/shapes/shape.py"
+    ```
+  - Mesh
+    ```python
+    --8<-- "myfempy/core/mesh/mesh.py"
+    ```  
+  - Material
+    ```python
+    --8<-- "myfempy/core/material/material.py"
+    ```  
+  - Geometry
+    ```python
+    --8<-- "myfempy/core/geometry/geometry.py"
+    ```  
+
+**Physics Class**  
+  - Loads and Bound. Cond.
+    ```python
+    --8<-- "myfempy/core/physic/structural.py"
+    ```
+
+**Solver Class**  
+  - Assembler
+    ```python
+    --8<-- "myfempy/core/solver/assembler.py"
+    ```  
+  - Solve
+    ```python
+    --8<-- "myfempy/core/solver/solver.py"
+    ```    
+
+**Results Class**  
+  - Post-processing and data export  
 
 ## Pre-Process
 
@@ -921,33 +957,19 @@ postprocdata = fea.PostProcess(postprocset)
 ### Useful Links
 
 [GMSH](https://pypi.org/project/gmsh/)
-
 [FreeCAD](https://www.freecad.org/index.php?lang=pt_BR)
-
 [Python](https://www.python.org/)
-
 [NumPy](https://numpy.org/)
-
 [SciPy](https://scipy.org/pt/)
-
 [Computer-aided design](https://en.wikipedia.org/wiki/Computer-aided_design)
-
 [Finite element method](https://en.wikipedia.org/wiki/Finite_element_method)
-
 [Young's modulus](https://en.wikipedia.org/wiki/Young%27s_modulus)
-
 [Poisson's ratio](https://en.wikipedia.org/wiki/Poisson%27s_ratio)
-
 [Shear modulus](https://en.wikipedia.org/wiki/Shear_modulus)
-
 [Density](https://en.wikipedia.org/wiki/Density)
-
 [List of moments of inertia](https://en.wikipedia.org/wiki/List_of_moments_of_inertia)
-
 [Boundary value problem](https://en.wikipedia.org/wiki/Boundary_value_problem)
-
 [Gaussian quadrature](https://en.wikipedia.org/wiki/Gaussian_quadrature)
-
 [International System of Units](https://en.wikipedia.org/wiki/International_System_of_Units)
 
 ### Table 1 - Elements List

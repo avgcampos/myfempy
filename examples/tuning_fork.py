@@ -4,7 +4,7 @@ from myfempy import DynamicEigenLinear
 # ===============================================================================
 #                                   FEA
 # ===============================================================================
-fea = newAnalysis(DynamicEigenLinear)
+fea = newAnalysis(DynamicEigenLinear, 'sim')
 # MODEL SET
 mat = {
     "NAME": "Aluminum_Alloy",
@@ -18,8 +18,8 @@ geo = {"NAME": "Solid"}
 modeldata = {
    "MESH": {
         'TYPE': 'gmsh',
-        'filename': 'tuning_fork_mesh',
-        # !!! COLOCAR O CAD NO DIRETORIO OUT !!!
+        'filename': 'mesh_gmsh',
+        # !!! COLOCAR O CAD NO DIRETORIO DA SIMULACAO !!!
         'cadimport': {'object': 'tuning_fork.STEP'}, 
         'meshconfig': {
             'mesh': 'tetr4',
@@ -30,7 +30,7 @@ modeldata = {
     "ELEMENT": {
         'TYPE': 'structsolid',
         'SHAPE': 'tetr4',
-        'INTGAUSS': 4,
+        # 'INTGAUSS': 4,
     },
 
     "MATERIAL": {
@@ -46,13 +46,6 @@ modeldata = {
 }
 fea.Model(modeldata)
 
-bc = {
-    'TYPE': 'fixed',
-    'DOF': 'full',
-    'DIR': 'plane',
-    'TAG': 5,
-    }
-
 physicdata = {
     "PHYSIC": {"DOMAIN": "structural",
                "LOAD": [],
@@ -61,13 +54,11 @@ physicdata = {
 }
 fea.Physic(physicdata)
 
-previewset = {'RENDER': {'filename': 'tuning_fork', 'show': True, 'scale': 4, 'savepng': True, 'lines': False,
+previewset = {'RENDER': {'filename': 'preview', 'show': True, 'scale': 4, 'savepng': True, 'lines': True,
                         #  'plottags': {'plane': True}
                          },
               }
 fea.PreviewAnalysis(previewset)
-
-# sys.exit()
 
 # #-------------------------------- SOLVER -------------------------------------#
 solverset = {"STEPSET": {'type': 'table',  # mode, freq, time ...
@@ -85,7 +76,7 @@ postprocset = {"SOLVERDATA": solverdata,
                 "COMPUTER": {
                     'structural': {'modes': True},
                     },
-                "PLOTSET": {'filename': 'tuning_fork_modes', 'savepng': True},
-                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True}},           
+                "PLOTSET": {'filename': 'output', 'savepng': True},
+                "REPORT": {'log': True, 'get': {'nelem': True, 'nnode': True}},           
                 }
 postprocdata = fea.PostProcess(postprocset)

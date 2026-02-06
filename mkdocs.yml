@@ -3,9 +3,10 @@ site_url: https://myfempy.readthedocs.io/en/latest/
 nav:
     - Home: index.md
     - User's Guide: user_manual.md
-    - FEM Theory: theory.md
-    - Development: development.md
     - Examples: examples.md
+    - Development: development.md
+    - Gallery: gallery.md
+    - FEM Theory [under construction]: theory.md
     - API Documentation: api/myfempy/setup/fea.html
 theme:
     # name: readthedocs
@@ -73,4 +74,10 @@ markdown_extensions:
     - pymdownx.pathconverter:
         base_path: '' # default: ''
         relative_path: '' # default ''
+    # - attr_list
+    # - md_in_html
+    - pymdownx.blocks.caption
+    - toc:
+        permalink: true # Adiciona um link para o cabeçalho ao passar o mouse
+        toc_depth: 2-3  # Define a profundidade dos títulos (ex: h2 e h3)
 

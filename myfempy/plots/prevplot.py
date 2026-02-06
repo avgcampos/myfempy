@@ -278,7 +278,7 @@ def build_preview(previewset: dict, path):
     if previewset["RENDER"]["lines"] == False:
         actor.GetProperty().EdgeVisibilityOff()
     else:
-        actor.GetProperty().SetLineWidth(4.0)
+        actor.GetProperty().SetLineWidth(1.0)
     
     text_logo = vtk.vtkTextActor()
     text_logo.SetInput(

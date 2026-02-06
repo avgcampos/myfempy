@@ -10,7 +10,7 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
             "===============================================================================\n"
         )
         file_object.write(
-            "                                   MYFEMPY                                     \n"
+            "                        M Y F E M P Y   -   R E P O R T                        \n"
         )
         file_object.write(
             "===============================================================================\n"
@@ -254,7 +254,7 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
         if "log" in log_data.keys():
             file_object.write("\n")
             file_object.write(
-                "+------------------S O L V E R   S T A T U S------------------+\n"
+                "+---------------------------- S O L V E R   L O G ----------------------------+\n"
             )
             file_object.write(
                 "{0:<30} : {1:<10} SEC\n".format(

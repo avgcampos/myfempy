@@ -6,7 +6,7 @@ The **myfempy** project is under development, updates and code modifications may
 
 ![myfempy_logo](docs/assets/logo2.png)
 
-Copyright © Antonio Vinicius G. Campos 2022. Processo INPI BR512022001484-0
+Copyright © Antonio Vinicius G. Campos 2022-2026. Processo INPI BR512022001484-0
 
 [![Python](https://img.shields.io/badge/built%20with-Python3.8-green.svg)](https://www.python.org/)
 [![Documentation Status](https://readthedocs.org/projects/myfempy/badge/?version=latest)](https://myfempy.readthedocs.io/en/latest/?badge=latest)
@@ -92,20 +92,20 @@ try
 >> pip install numpy, cython, scipy, vedo
 ```
 
-Outhers prerequisites
+Others prerequisites
 
 -   [gmsh/External Generator Mesh](https://gmsh.info/) - Gmsh is an open
     source 3D finite element mesh generator with a built-in CAD engine
     and post-processor. *Notes: 1 - Gmsh is NOT part of myfempy
     projects; 2 - Is Needed install Gmsh manually*
 
+-   [gmsh API python](https://pypi.org/project/gmsh/)
+
 try
 
 ``` bash
 >> pip install --upgrade gmsh
 ```
-
--   [gmsh PyPi](https://pypi.org/project/gmsh/)
 
 ## Tutorial
 

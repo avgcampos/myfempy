@@ -1,3 +1,7 @@
+import sys
+# setting path
+sys.path.append('../myfempy')
+
 from myfempy import newAnalysis
 from myfempy import DynamicEigenLinear
 
@@ -38,18 +42,18 @@ lines = [
 modeldata = {
    "MESH": {
         'TYPE': 'gmsh',
-        'filename': 'test_line_force_x',
+        'filename': 'mesh_gmsh',
         'pointlist': points,
         'linelist': lines,
         'meshconfig': {
-            'mesh': 'line3',
+            'mesh': 'line2',
             "numbernodes": nelx + 1,
             }
     },
 
     "ELEMENT": {
         'TYPE': 'structbeam',
-        'SHAPE': 'line3',
+        'SHAPE': 'line2',
         # 'INTGAUSS': 4,
     },
 
@@ -67,54 +71,22 @@ modeldata = {
 }
 fea.Model(modeldata)
 
-f1 = {
-    'TYPE': 'forcenode',
-    'DOF': 'fy',
-    'DIR': 'node',
-    'LOC': {'x': LX, 'y': 0, 'z': 0},
-    'VAL': [-10],
-    }
-
-f1b = {
-    'TYPE': 'forcebeam',
-    'DOF': 'fy',
-    'DIR': 'edgey',
-    'LOC': {'x': 999, 'y': 0, 'z': 0},
-    'VAL': [-100],
-    }
-
-f2 = {
-    'TYPE': 'forcenode',
-    'DOF': 'tz',
-    'DIR': 'node',
-    'LOC': {'x': 10, 'y': 10, 'z': 0},
-    'VAL': [5000],
-    }
-
-bc1 = {
+bc = {
     'TYPE': 'fixed',
     'DOF': 'full',
     'DIR': 'node',
     'LOC': {'x': 0, 'y': 0, 'z': 0},
     }
 
-bc2 = {
-    'TYPE': 'fixed',
-    'DOF': 'uz',
-    'DIR': 'edgey',
-    'LOC': {'x': 999, 'y': 0, 'z': 0},
-    }
-
-
 physicdata = {
     "PHYSIC": {"DOMAIN": "structural",
                "LOAD": [],
-               "BOUNDCOND": [bc1],
+               "BOUNDCOND": [bc],
     },
 }
 fea.Physic(physicdata)
 
-previewset = {'RENDER': {'filename': 'beam', 'show': True, 'scale': 20, 'savepng': True, 'lines': False,
+previewset = {'RENDER': {'filename': 'preview', 'show': True, 'scale': 20, 'savepng': True, 'lines': False,
                          },
               }
 fea.PreviewAnalysis(previewset)
@@ -133,7 +105,7 @@ print(solverdata['solution']['FREQ'])
 
 postprocset = {"SOLVERDATA": solverdata,
                 "COMPUTER": {'structural': {'modes': True}},
-                "PLOTSET": {'show': True, 'filename': 'test_shakedown', 'savepng': True},
-                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True}},
+                "PLOTSET": {'show': True, 'filename': 'output', 'savepng': True},
+                "REPORT": {'log': True, 'get': {'nelem': True, 'nnode': True}},
             }
 postprocdata = fea.PostProcess(postprocset)

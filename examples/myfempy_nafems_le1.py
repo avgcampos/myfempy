@@ -1,3 +1,7 @@
+import sys
+# setting path
+sys.path.append('../myfempy')
+
 from myfempy import newAnalysis
 from myfempy import SteadyStateLinear
 import numpy as np
@@ -5,7 +9,7 @@ import numpy as np
 # ===============================================================================
 #                                   FEA
 # ===============================================================================
-fea = newAnalysis(SteadyStateLinear)
+fea = newAnalysis(SteadyStateLinear, 'sim')
 
 mat = {
     "NAME": "aco",
@@ -21,7 +25,7 @@ geo = {
 modeldata = {
    "MESH": {
         'TYPE': 'gmsh',
-        'filename': 'bench_nafems_le1',
+        'filename': 'mesh_gmsh',
         "meshimport": {'object': 'nafems_le1_mesh_quad4_fine'}, 
         'meshconfig': {
             'mesh': 'quad4',
@@ -31,7 +35,7 @@ modeldata = {
     "ELEMENT": {
         'TYPE': 'structplane',
         'SHAPE': 'quad4',
-        'INTGAUSS': 8,
+        'INTGAUSS': 2,
     },
 
     "MATERIAL": {
@@ -79,7 +83,7 @@ physicdata = {
 }
 fea.Physic(physicdata)
 
-previewset = {'RENDER': {'filename': 'bench_nafems_le1', 'show': True, 'scale': 4, 'savepng': True, 'lines': False,
+previewset = {'RENDER': {'filename': 'preview', 'show': True, 'scale': 4, 'savepng': True, 'lines': False,
                          'plottags': {'line': True}
                          },
               }
@@ -97,9 +101,8 @@ solverdata = fea.Solve(solverset)
 
 postprocset = {"SOLVERDATA": solverdata,
                 "COMPUTER": {'structural': {'displ': True, 'stress': True}},
-                "PLOTSET": {'show': True, 'filename': 'bench_nafems_le1', 'savepng': True},
-                # "TRACKER": {'point': {'x': 0, 'y': 0, 'z': 0, 'dof':1}},
-                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True}}, #'coord': True
+                "PLOTSET": {'show': True, 'filename': 'output', 'savepng': True},
+                "REPORT": {'log': True, 'get': {'nelem': True, 'nnode': True}},
             }
 postprocdata = fea.PostProcess(postprocset)
 

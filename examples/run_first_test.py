@@ -42,12 +42,6 @@ mat = {
 geo = {
     "NAME": "sec",
     "THICKN": 40,
-    # "DIM":{
-    #     "b":203,
-    #     "h":203,
-    #     "t":25.4,
-    #     "d":0,
-    # },
     }
 
 # ===============================================================================
@@ -56,7 +50,7 @@ geo = {
 # MODEL SET
 LX = 1200
 LY = 80
-esize = 5
+esize = 10
 points = [
     [0, 0, 0],
     [LX, 0, 0],
@@ -79,7 +73,7 @@ plane = [[1, 2, 3, 4]]
 modeldata = {
    "MESH": {
         'TYPE': 'gmsh',
-        'filename': 'tests',
+        'filename': 'mesh_gmsh',
         # "meshimport": 'object_dir',
         'pointlist': points,
         'linelist': lines,
@@ -87,7 +81,6 @@ modeldata = {
         # 'arc': arcs,
         'meshconfig': {
             'mesh': 'hexa8',   #quad4 tria3
-            "numbernodes": 2,
             'sizeelement': 2*esize,
             'extrude': 40,
             'meshmap': {'on': True,
@@ -104,7 +97,7 @@ modeldata = {
     },
 
     "MATERIAL": {
-        "MAT": 'uniaxialstress',
+        "MAT": 'solidelastic',
         "TYPE": 'isotropic',
         "PROPMAT": [mat],
     },
@@ -127,19 +120,19 @@ fea.Model(modeldata)
 bc = {
     'TYPE': 'fixed',  
     'DOF': 'full',
-    'DIR': 'point',
-    'TAG': 1,
+    'DIR': 'plane',
+    'TAG': 5,
     }
 
 # ===============================================================================
 # set load
 # ===============================================================================
 fr = {
-    'TYPE': 'forcenode',
-    'DOF': 'fx',
-    'DIR': 'point',
-    'TAG': 2,
-    'VAL': [1.5625],
+    'TYPE': 'forcesurf',
+    'DOF': 'fy',
+    'DIR': 'plane',
+    'TAG': 3,
+    'VAL': [-1.5625],
     }
 
 physicdata = {
@@ -157,8 +150,8 @@ fea.Physic(physicdata)
 # ===============================================================================
 # preview config.
 # ===============================================================================
-previewset = {'RENDER': {'filename': 'plane_stress', 'show': True, 'scale': 5, 'savepng': True, 'lines': False,
-                         'plottags': {'point': True},
+previewset = {'RENDER': {'filename': 'preview', 'show': True, 'scale': 5, 'savepng': True, 'lines': False,
+                        #  'plottags': {'plane': True},
                         #  'cs': True,
                          },
               }
@@ -181,9 +174,9 @@ solverdata = fea.Solve(solverset)
 # ===============================================================================
 postprocset = {"SOLVERDATA": solverdata,
                 "COMPUTER": {'structural': {'displ': True, 'stress': True}},
-                "PLOTSET": {'show': True, 'filename': 'test', 'savepng': True},
+                "PLOTSET": {'show': True, 'filename': 'output', 'savepng': True},
                 # "TRACKER": {'point': {'x': 0, 'y': 0, 'z': 0, 'dof':1}},
-                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True}}, #'coord': True
+                "REPORT": {'log': True, 'get': {'nelem': True, 'nnode': True}}, #'coord': True
             }
 postprocdata = fea.PostProcess(postprocset)
 

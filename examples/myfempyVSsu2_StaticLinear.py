@@ -1,12 +1,18 @@
 
+import sys
+# setting path
+sys.path.append('../myfempy')
+
 from myfempy import newAnalysis
 from myfempy import SteadyStateLinear
+
+import numpy as np
 
 # ===============================================================================
 #                                   FEA
 # ===============================================================================
 
-fea = newAnalysis(SteadyStateLinear)
+fea = newAnalysis(SteadyStateLinear, 'su2_test')
 
 mat = {
     "NAME": "material",
@@ -44,7 +50,7 @@ modeldata = {
 
    "MESH": {
         'TYPE': 'gmsh',
-        'filename': 'data_mesh',
+        'filename': 'mesh_gmsh',
         'pointlist': points,
         'linelist': lines,
         'planelist': plane,
@@ -103,9 +109,8 @@ fea.Physic(physicdata)
 
 
 previewset = {'RENDER': {'filename': 'model_preview', 'show': True, 'scale': 2, 'savepng': True, 'lines': False,
-                        #  'plottags': {'line': True}
+                         'plottags': {'line': True}
                          },
-            #   'LABELS': {'show': True, 'lines': True, 'scale': 1},
               }
 fea.PreviewAnalysis(previewset)
 
@@ -118,9 +123,16 @@ solverset = {"STEPSET": {'type': 'table',
              }
 solverdata = fea.Solve(solverset)
 
+print(np.max(np.abs(solverdata['solution']['U'])))
+
 postprocset = {"SOLVERDATA": solverdata,
                 "COMPUTER": {'structural': {'displ': True, 'stress': True}},
                 "PLOTSET": {'show': True, 'filename': 'solution', 'savepng': True},
-                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True}},
+                "REPORT": {'log': True,
+                           'get': {
+                                'nelem': True,
+                                'nnode': True
+                                }
+                                },
             }
 postprocdata = fea.PostProcess(postprocset)

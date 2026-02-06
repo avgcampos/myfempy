@@ -42,7 +42,7 @@ lines = [[2, 1],
 modeldata = {
    "MESH": {
         'TYPE': 'gmsh',
-        'filename': 'data_mesh',
+        'filename': 'mesh_gmsh',
         'pointlist': points,
         'linelist': lines,
         'meshconfig': {
@@ -116,9 +116,9 @@ physicdata = {
 }
 fea.Physic(physicdata)
 
-previewset = {'RENDER': {'filename': 'beam', 'show': True, 'scale': 15, 'savepng': True, 'lines': True,
+previewset = {'RENDER': {'filename': 'preview', 'show': True, 'scale': 15, 'savepng': True, 'lines': True,
                          'plottags': {'point': True},
-                        'cs': True,
+                        # 'cs': True,
                          },
             #   'LABELS': {'show': True, 'lines': True, 'scale': 1},
               }
@@ -137,9 +137,9 @@ print(solverdata['solution']['U'])
 
 postprocset = {"SOLVERDATA": solverdata,
                 "COMPUTER": {'structural': {'displ': True, 'stress': True}},
-                "PLOTSET": {'show': True, 'filename': 'test_shakedown', 'savepng': True},
+                "PLOTSET": {'show': True, 'filename': 'output', 'savepng': True},
                 # "TRACKER": {'point': {'x': 0, 'y': 0, 'z': 0, 'dof':1}},
-                "OUTPUT": {'log': True, 'get':{
+                "REPORT": {'log': True, 'get':{
                         'nelem': True,
                         'nnode': True,
                         'inci': True,
