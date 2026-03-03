@@ -1,7 +1,11 @@
 
 [TOC]
 
-# Project Updates and Users Contributions
+# Users Contributions and Project Updates
+
+## Users Contributions
+
+Users are free to contribute to the project. If using MyFempy, please cite or contact the main author (see homepage). If you have suggestions, please open an [issue](https://github.com/avgcampos/myfempy/issues) on the project's main GitHub page; the author appreciates any feedback.
 
 ## Development Current Stages  
 
@@ -152,9 +156,124 @@ For an overview, view the files during the project drafting phase.
 For more details, see the object-oriented code bridge pattern
 [Wiki Bridge pattern](https://en.wikipedia.org/wiki/Bridge_pattern)
 
-## Users Contributions
+## Project Tree Structure
 
-Users are free to contribute to the project. If using MyFempy, please cite or contact the main author (see homepage). If you have suggestions, please open an [issue](https://github.com/avgcampos/myfempy/issues) on the project's main GitHub page; the author appreciates any feedback.
+``` bash
+/myfempy
+|   __init__.py
+|
++---core
+|   |   utilities.py
+|   |
+|   +---elements
+|   |   |   element.py
+|   |   |   heatPlane.py
+|   |   |   heatSolid.py
+|   |   |   structBeam.py
+|   |   |   structPlane.py
+|   |
+|   +---geometry
+|   |   |   circle.py
+|   |   |   circle_tube.py
+|   |   |   csection.py
+|   |   |   geometry.py
+|   |   |   isection.py
+|   |   |   lsection.py
+|   |   |   rectangle.py
+|   |   |   rectangle_tube.py
+|   |   |   thickness.py
+|   |   |   tsection.py
+|   |   |   userdefined.py
+|   |
+|   +---material
+|   |   |   heatplane.py
+|   |   |   heatsolid.py
+|   |   |   material.py
+|   |   |   planestrain.py
+|   |   |   planestress.py
+|   |   |   solidelastic.py
+|   |   |   uniaxialstress.py
+|   |
+|   +---mesh
+|   |   |   gmsh.py
+|   |   |   legacyline2.py
+|   |   |   legacyquad4.py
+|   |   |   legacytria3.py
+|   |   |   mesh.py
+|   |
+|   +---physic
+|   |   |   bcstruct.py
+|   |   |   bcthermal.py
+|   |   |   loadstruct.py
+|   |   |   loadthermal.py
+|   |   |   structural.py
+|   |   |   thermal.py
+|   |   |   thermstructcoup.py
+|   |
+|   +---shapes
+|   |   |   hexa8.py
+|   |   |   hexa8_tasks.pyx
+|   |   |   line2.py
+|   |   |   line2_tasks.pyx
+|   |   |   line3.py
+|   |   |   line3_tasks.pyx
+|   |   |   quad4.py
+|   |   |   quad4_tasks.pyx
+|   |   |   quad8.py
+|   |   |   quad8_tasks.pyx
+|   |   |   shape.py
+|   |   |   tetr4.py
+|   |   |   tetr4_tasks.pyx
+|   |   |   tria3.py
+|   |   |   tria3_tasks.pyx
+|   |   |   tria6.py
+|   |   |   tria6_tasks.pyx
+|   |
+|   +---solver
+|   |   |   assembler.py
+|   |   |   assemblerfull.py
+|   |   |   assemblerfull_cython.pyx
+|   |   |   assemblerfull_numpy.py
+|   |   |   assemblerfull_parallel.py
+|   |   |   assemblersymm.py
+|   |   |   assemblersymm_cython.pyx
+|   |   |   assemblersymm_numpy.py
+|   |   |   cyclicsymm.py
+|   |   |   dyneigen.py
+|   |   |   dynharmonicresponse.py
+|   |   |   homogenplanefullcell.py
+|   |   |   homogenplaneinfperiodic.py
+|   |   |   phonocrystalinplane.py
+|   |   |   solver.py
+|   |   |   steadystatelinear.py
+|   |   |   steadystatelineariterative.py
+|
++---io
+|   |   controllers.py
+|   |   iocsv.py
+|   |   iogmsh.py
+|   |   iovtk.py
+|
++---plots
+|   |   meshquality.py
+|   |   physics.py
+|   |   plotmesh.py
+|   |   plotxy.py
+|   |   postplot.py
+|   |   prevplot.py
+|
++---api
+|   |   main.py
+|   |   model.py
+|   |   physics.py
+|   |   results.py
+|
++---utils
+|   |   about.txt
+|   |   utils.py
+
+```
+
 
 ## General Styles Used in the Myfempy Project
 

@@ -45,6 +45,8 @@ Many Examples are available to download [here](https://github.com/avgcampos/myfe
 You can use this code to first test required to check myfempy install
 [Relatório de Benchmark (PT-BR PDF)](benchs/estatico1.pdf)
 
+![Relatório de Benchmark (PT-BR PDF)](gallery/displ_fixed_beam.png)
+
 ```python linenums="1"
 --8<-- "examples/run_first_test.py"
 ```
@@ -52,15 +54,38 @@ You can use this code to first test required to check myfempy install
 #### static_linear_beam3d_LoganBook.py
 [Relatório de Benchmark (PT-BR PDF)](benchs/estatico2.pdf)
 
+![Relatório de Benchmark (PT-BR PDF)](gallery/static_linear_beam3d_LoganBook.png)
+
 ```python linenums="1"
 --8<-- "examples/static_linear_beam3d_LoganBook.py"
 ```
 
 #### myfempy_nafems_le1.py
 [Relatório de Benchmark (PT-BR PDF)](benchs/estatico3.pdf)
+[Extra files download](https://github.com/avgcampos/myfempy/blob/main/examples/myfempy_nafems_le1_meshes.zip)
+
+![Relatório de Benchmark (PT-BR PDF)](gallery/nafems_test.png)
 
 ```python linenums="1"
 --8<-- "examples/myfempy_nafems_le1.py"
+```
+
+#### tapered_bar.py
+[Relatório de Benchmark (PT-BR PDF)](benchs/estatico4.pdf)
+
+![Relatório de Benchmark (PT-BR PDF)](gallery/tapered_bar.png)
+
+```python linenums="1"
+--8<-- "examples/tapered_bar.py"
+```
+
+#### stress_concentration.py
+[Relatório de Benchmark (PT-BR PDF)](benchs/estatico5.pdf)
+
+![Relatório de Benchmark (PT-BR PDF)](gallery/stress_concentration.png)
+
+```python linenums="1"
+--8<-- "examples/stress_concentration.py"
 ```
 
 #### patchtest_quad4.py
@@ -75,6 +100,7 @@ Analysis to convergence of myfempy solver with [su2](https://su2code.github.io/t
 
 Resposta do MYFEMPY
 ![Relatório de Benchmark (PT-BR PDF)](gallery/myfempy_su2_test_displ.png)
+
 ```python linenums="1"
 --8<-- "examples/myfempyVSsu2_StaticLinear.py"
 ```
@@ -83,6 +109,8 @@ Resposta do MYFEMPY
 
 #### vibration_plane.py
 [Relatório de Benchmark (PT-BR PDF)](benchs/vibracoes1.pdf)
+
+![Relatório de Benchmark (PT-BR PDF)](gallery/vibration_plane.png)
 
 ```python linenums="1"
 --8<-- "examples/vibration_plane.py"
@@ -102,6 +130,9 @@ Resposta do MYFEMPY
 
 #### tuning_fork.py
 [Relatório de Benchmark (PT-BR PDF)](benchs/vibracoes3.pdf)
+[Extra file download](https://github.com/avgcampos/myfempy/blob/main/examples/tuning_fork.STEP)
+
+![Relatório de Benchmark (PT-BR PDF)](gallery/vibration_tuning_fork.png)
 
 ```python linenums="1"
 --8<-- "examples/tuning_fork.py"

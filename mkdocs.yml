@@ -7,7 +7,7 @@ nav:
     - Development: development.md
     - Gallery: gallery.md
     - FEM Theory [under construction]: theory.md
-    - API Documentation: api/myfempy/setup/fea.html
+    - API Documentation: api/index.html
 theme:
     # name: readthedocs
     name: material
@@ -52,6 +52,7 @@ plugins:
                 options:
                     allow_inspection: true
                     docstring_style: google
+    # - with-pdf
     # - pdf-export
     # - mermaid2
 extra_javascript:

@@ -8,7 +8,52 @@ from myfempy.core.shapes.tetr4_tasks import (DiffShapeFuntion, Jacobian,
                                              LocKey, NodeCoord, NodeList,
                                              ShapeFunctions, detJacobi,
                                              invJacobi)
-from myfempy.core.utilities import poly_area
+from myfempy.core.utilities import poly_area, unit_normal
+
+
+__docformat__ = "google"
+
+__doc__ = """
+
+==========================================================================
+                            __                                
+         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
+        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
+        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
+        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
+                    |___/                       |_|     |___/ 
+        myfempy -- MultiphYsics Finite Element Module to PYthon    
+                    COMPUTATIONAL ANALYSIS PROGRAM                   
+        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
+==========================================================================
+This Python file is part of myfempy project.
+
+myfempy is a python package based on finite element method to multiphysics
+analysis. The code is open source and *intended for educational and scientific
+purposes only, not recommended to commercial use. The name myfempy is an acronym
+for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
+with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
+If you use myfempy in your research, the  developers would be grateful if you 
+could cite in your work.
+																		
+The code is written by Antonio Vinicius Garcia Campos.                                  
+																		
+A github repository, with the most up to date version of the code,      
+can be found here: https://github.com/avgcampos/myfempy.                 
+																		
+The code is open source and intended for educational and scientific     
+purposes only. If you use myfempy in your research, the developers      
+would be grateful if you could cite this. The myfempy project is published
+under the GPLv3, see the myfempy LICENSE on
+https://github.com/avgcampos/myfempy/blob/main/LICENSE.
+																		
+Disclaimer:                                                             
+The authors reserve all rights but do not guarantee that the code is    
+free from errors. Furthermore, the authors shall not be liable in any   
+event caused by the use of the program.
+
+"""
+
 
 class Tetra4(Shape):
     """Tetrahedron 4-Node Shape Class <ConcreteClassService>"""
@@ -28,15 +73,13 @@ class Tetra4(Shape):
             "nodesconecface": 3,
         }
         return shapeset
-
-    # tetra4 sides
+    
     def getIsoParaSide(side, r):
-        # r = 0/ s = 1/ t = 2
         isops = {
-            "0": [r[0], r[1], 0.0],  # [r, s, 0]
-            "1": [r[0], 0.0, r[1]],  # [r, 0, t]
-            "2": [0.0, r[0], r[1]],  # [0, s, t]
-            "3": [r[0], 1 - r[0] - r[1], r[1]],  # [r, 1 - r, 1 - r]
+            "0": [r[0], r[1], 0.0],  
+            "1": [r[0], 0.0, r[1]],  
+            "2": [0.0, r[0], r[1]],  
+            "3": [r[0], 1 - r[0] - r[1], r[1]], 
         }
         return isops[side]
     
@@ -44,9 +87,9 @@ class Tetra4(Shape):
         
         nodes_conec_dic = {
             '0': [0, 1, 2],
-            '1': [0, 1, 3],
+            '1': [0, 3, 1],
             '2': [0, 2, 3],
-            '3': [1, 2, 3],
+            '3': [3, 2, 1],
         }
         
         nodes_conec = nodes_conec_dic[side]
@@ -78,45 +121,47 @@ class Tetra4(Shape):
     def getSideAxis(set_side):
         side = {
             '0 1 2': '0',
-            # '0 2 1': '0',
-            # '1 0 2': '0',
-            # '1 2 0': '0',
-            # '2 0 1': '0',
-            # '2 1 0': '0',
             '0 1 3': '1',
-            # '1 0 3': '1',
-            # '3 1 0': '1',
-            # '3 0 1': '1',
-            # '0 1 3': '1',
-            # '0 3 1': '1',
             '0 2 3': '2',
-            # '0 3 2': '2',
-            # '2 0 3': '2',
-            # '2 3 0': '2',
-            # '3 0 2': '2',
-            # '3 2 0': '2',
             '1 2 3': '3',
-            # '1 3 2': '3',
-            # '2 1 3': '3',
-            # '2 3 1': '3',
-            # '3 1 2': '3',
-            # '3 2 1': '3',
         }
         return side[set_side]
 
-    def getNormalFace(elementcoord, get_side):
-        faces = array([
-                [elementcoord[0], elementcoord[1], elementcoord[2]],  # Face 0
-                [elementcoord[0], elementcoord[1], elementcoord[3]],  # Face 1
-                [elementcoord[0], elementcoord[2], elementcoord[3]],  # Face 2
-                [elementcoord[1], elementcoord[2], elementcoord[3]]   # Face 3
-            ])
-        face = faces[int(get_side)]
-        # Compute the outward normal vector of the face
-        v1 = face[1] - face[0]
-        v2 = face[2] - face[0]
-        normal = cross(v1, v2)
-        normal *= 1.0/norm(normal)  # Normalize
+    def getNormalFace(elementcoord, side):
+        
+        nodes_conec_dic = {
+            '0': [0, 1, 2],
+            '1': [0, 3, 1],
+            '2': [0, 2, 3],
+            '3': [3, 2, 1],
+        }
+
+        nodes_conec = nodes_conec_dic[side]
+                        
+        no1 = nodes_conec[0]
+        no2 = nodes_conec[1]
+        no3 = nodes_conec[2]
+        
+        coord_x_no1 = elementcoord[no1, 0]
+        coord_y_no1 = elementcoord[no1, 1]
+        coord_z_no1 = elementcoord[no1, 2]
+        coord_x_no2 = elementcoord[no2, 0]
+        coord_y_no2 = elementcoord[no2, 1]
+        coord_z_no2 = elementcoord[no2, 2]
+        coord_x_no3 = elementcoord[no3, 0]
+        coord_y_no3 = elementcoord[no3, 1]
+        coord_z_no3 = elementcoord[no3, 2]
+        
+        poly = array(
+            [
+                [coord_x_no1, coord_y_no1, coord_z_no1],
+                [coord_x_no2, coord_y_no2, coord_z_no2],
+                [coord_x_no3, coord_y_no3, coord_z_no3],
+            ]
+        )
+
+        normal = unit_normal(poly[0], poly[1], poly[2])
+        normal = array(normal)
         return normal
 
     def getShapeFunctions(r_coord, nodedof):

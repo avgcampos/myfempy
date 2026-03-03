@@ -9,6 +9,50 @@ from myfempy.core.utilities import (gauss_points, get_elemen_from_nodelist,
                                     unit_normal)
 
 
+__docformat__ = "google"
+
+__doc__ = """
+
+==========================================================================
+                            __                                
+         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
+        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
+        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
+        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
+                    |___/                       |_|     |___/ 
+        myfempy -- MultiphYsics Finite Element Module to PYthon    
+                    COMPUTATIONAL ANALYSIS PROGRAM                   
+        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
+==========================================================================
+This Python file is part of myfempy project.
+
+myfempy is a python package based on finite element method to multiphysics
+analysis. The code is open source and *intended for educational and scientific
+purposes only, not recommended to commercial use. The name myfempy is an acronym
+for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
+with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
+If you use myfempy in your research, the  developers would be grateful if you 
+could cite in your work.
+																		
+The code is written by Antonio Vinicius Garcia Campos.                                  
+																		
+A github repository, with the most up to date version of the code,      
+can be found here: https://github.com/avgcampos/myfempy.                 
+																		
+The code is open source and intended for educational and scientific     
+purposes only. If you use myfempy in your research, the developers      
+would be grateful if you could cite this. The myfempy project is published
+under the GPLv3, see the myfempy LICENSE on
+https://github.com/avgcampos/myfempy/blob/main/LICENSE.
+																		
+Disclaimer:                                                             
+The authors reserve all rights but do not guarantee that the code is    
+free from errors. Furthermore, the authors shall not be liable in any   
+event caused by the use of the program.
+
+"""
+
+
 class LoadStructural(Structural):
     """Structural Load Class <ConcreteClassService>"""
 
@@ -89,6 +133,7 @@ class LoadStructural(Structural):
             forcelist["LOCY"],
             forcelist["LOCZ"],
             forcelist["TAG"],
+            forcelist["MESHNODE"],
         ]
         node_list_fc, dir_fc = get_nodes_from_list(
             nodelist, Model.coord,  Model.regions
@@ -156,6 +201,7 @@ class LoadStructural(Structural):
             forcelist["LOCY"],
             forcelist["LOCZ"],
             forcelist["TAG"],
+            forcelist["MESHNODE"],
         ]  # forcelist[3:]
         node_list_fc, dir_fc = get_nodes_from_list(
             nodelist, Model.coord, Model.regions
@@ -228,6 +274,7 @@ class LoadStructural(Structural):
             forcelist["LOCY"],
             forcelist["LOCZ"],
             forcelist["TAG"],
+            forcelist["MESHNODE"],
         ]  # forcelist[3:]
         node_list_fc, dir_fc = get_nodes_from_list(
             nodelist, Model.coord, Model.regions
@@ -306,6 +353,7 @@ class LoadStructural(Structural):
             forcelist["LOCY"],
             forcelist["LOCZ"],
             forcelist["TAG"],
+            forcelist["MESHNODE"],
         ]  # forcelist[3:]
         node_list_fc, dir_fc = get_nodes_from_list(
             nodelist, Model.coord, Model.regions
@@ -491,20 +539,17 @@ class LoadStructural(Structural):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number - 1)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        t = tabgeo[int(inci[element_number - 1, 3] - 1)][
-            "THICKN"
-        ]  # tabgeo[int(inci[elem - 1, 3] - 1), 4]
-        # nodes, idx_conec, __ = np.intersect1d(nodelist, node_list_fc, assume_unique=True, return_indices=True)
+        t = tabgeo[int(inci[element_number - 1, 3] - 1)]["THICKN"]
         test = np.in1d(nodelist, node_list_fc, assume_unique=True)
         nodes = np.array(nodelist)[test]
-        idx_conec = np.where(test == True)[0]
+        nodes_conec = np.where(test == True)[0]
         norm = np.zeros((2))
-        if len(idx_conec) < 2:
+        if len(nodes_conec) < 2:
             nodes = np.repeat(nodes, 2)
             force_value_vector = np.zeros((len(nodes)))
             pass
         else:
-            idx_conec = np.array2string(idx_conec)
+            idx_conec = np.array2string(nodes_conec)
             get_side = Model.shape.getSideAxis(idx_conec[1:-1]) 
             if fc_type == "fx":
                 T = np.array([[force_value], [0.0]])  # force_value
@@ -515,8 +560,8 @@ class LoadStructural(Structural):
             elif fc_type == "pressure":  #  -->[+]<--                
                 normal = Model.shape.getNormalEdge(elementcoord, get_side)
                 PN = force_value * normal
-                T = np.sign(force_value)*(np.abs(np.array(PN).reshape(-1, 1)))
-                # T = -1 * np.array(PN).reshape(-1, 1)
+                # T = np.sign(force_value)*(np.abs(np.array(PN).reshape(-1, 1)))
+                T = np.array(PN).reshape(-1, 1)
                 norm = np.abs(np.array(normal))
                 norm[np.abs(norm) < 1e-6] = 0
                 norm = (norm >= 1e-6).astype(int) #norm/norm        
@@ -575,10 +620,11 @@ class LoadStructural(Structural):
             elif fc_type == "pressure":  #  -->[+]<--
                 normal = Model.shape.getNormalFace(elementcoord, get_side) # [pt[ip], pt[jp]]
                 PN = force_value*normal
-                T = np.sign(force_value)*(np.abs(np.array(PN).reshape(-1, 1)))
+                # T = np.sign(force_value)*(np.abs(np.array(PN).reshape(-1, 1)))
+                T = np.array(PN).reshape(-1, 1)
                 norm = np.abs(np.array(normal))
                 norm[np.abs(norm) < 1e-6] = 0
-                norm = (norm >= 1e-6).astype(int) #norm/norm 
+                norm = (norm >= 1e-6).astype(int) #norm/norm
             else:
                 T = np.array([[0.0], [0.0], [0.0]])
             pt, wt = gauss_points(type_shape, intgauss)
@@ -623,10 +669,6 @@ class LoadStructural(Structural):
         edof = nodecon * nodedof
         nodelist = Model.shape.getNodeList(inci, element_number - 1)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        t = tabgeo[int(inci[element_number - 1, 3] - 1)][
-            "THICKN"
-        ]  # tabgeo[int(inci[elem - 1, 3] - 1), 4]
-        # nodes, idx_conec, __ = np.intersect1d(nodelist, node_list_fc, assume_unique=True, return_indices=True)
         test = np.in1d(nodelist, node_list_fc, assume_unique=True)
         nodes = np.array(nodelist)[test]
         idx_conec = np.where(test == True)[0]

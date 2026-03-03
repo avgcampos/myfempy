@@ -10,6 +10,50 @@ from myfempy.core.shapes.quad4_tasks import (DiffShapeFuntion, Jacobian,
 from myfempy.core.shapes.shape import Shape
 
 
+__docformat__ = "google"
+
+__doc__ = """
+
+==========================================================================
+                            __                                
+         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
+        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
+        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
+        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
+                    |___/                       |_|     |___/ 
+        myfempy -- MultiphYsics Finite Element Module to PYthon    
+                    COMPUTATIONAL ANALYSIS PROGRAM                   
+        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
+==========================================================================
+This Python file is part of myfempy project.
+
+myfempy is a python package based on finite element method to multiphysics
+analysis. The code is open source and *intended for educational and scientific
+purposes only, not recommended to commercial use. The name myfempy is an acronym
+for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
+with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
+If you use myfempy in your research, the  developers would be grateful if you 
+could cite in your work.
+																		
+The code is written by Antonio Vinicius Garcia Campos.                                  
+																		
+A github repository, with the most up to date version of the code,      
+can be found here: https://github.com/avgcampos/myfempy.                 
+																		
+The code is open source and intended for educational and scientific     
+purposes only. If you use myfempy in your research, the developers      
+would be grateful if you could cite this. The myfempy project is published
+under the GPLv3, see the myfempy LICENSE on
+https://github.com/avgcampos/myfempy/blob/main/LICENSE.
+																		
+Disclaimer:                                                             
+The authors reserve all rights but do not guarantee that the code is    
+free from errors. Furthermore, the authors shall not be liable in any   
+event caused by the use of the program.
+
+"""
+
+
 class Quad4(Shape):
     """Quadrilateral 4-Node Shape Class <ConcreteClassService>"""
 
@@ -52,12 +96,8 @@ class Quad4(Shape):
     def getSideAxis(set_side):
         side = {
             "0 1": "0",
-            # "1 0": "0",
             "1 2": "1",
-            # "2 1": "1",
             "2 3": "2",
-            # "3 2": "2",
-            # "3 0": "3",
             "0 3": "3",
         }
         return side[set_side]
@@ -68,28 +108,14 @@ class Quad4(Shape):
             '0': [0, 1],
             '1': [1, 2],
             '2': [2, 3],
-            '3': [0, 3],
+            '3': [3, 0],
         }
         
         nodes_conec = nodes_conec_dic[side]
         
         noi = nodes_conec[0]
         noj = nodes_conec[1]
-        
-        # vetor_aresta = array([elementcoord[noj, 0] - elementcoord[noi, 0], elementcoord[noj, 1] - elementcoord[noi, 1]])
-        # L = norm(vetor_aresta)
-        # normal = array([-vetor_aresta[1], vetor_aresta[0]]) / L
-        
-        # normal = zeros((2))
-        # dx = abs(elementcoord[noj, 0] - elementcoord[noi, 0])
-        # dy = abs(elementcoord[noj, 1] - elementcoord[noi, 1])
-        # L = sqrt(dx**2 + dy**2)
-        # # tx = (-dy / L) * force_value
-        # # ty = (dx / L) * force_value
-        # # T = np.array([[tx], [ty]])  # force_value
-        # normal[0] = dy / L
-        # normal[1] = dx / L
-        
+                
         normal = zeros((2))
         dx = elementcoord[noj, 0] - elementcoord[noi, 0]
         dy = elementcoord[noj, 1] - elementcoord[noi, 1]

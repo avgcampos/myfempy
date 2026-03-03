@@ -20,7 +20,7 @@ doc:
 site:
 	mkdocs build
 apidoc:
-	pdoc --output-dir docs/api myfempy/setup/fea.py
+	pdoc --output-dir docs/api myfempy/api/main.py
 prof:
 	kernprof -l -v .\__shakedown\profile_test_myfempy.py
 #	python -m line_profiler static_line.py.lprof

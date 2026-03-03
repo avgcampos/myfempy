@@ -1,4 +1,3 @@
-
 """
 ==============================================================================
 MYFEMPY example runscript
@@ -9,6 +8,8 @@ MYFEMPY example runscript
 @Description : This example can be used as an initial analysis to test the complete
 installation of the myfempy code. A report (PT-BR) is available to verify the program's
 compatibility. See the user guide or _help_ for more information about commands.
+
+Usage: >>> python run_fist_test.py
 """
 
 # environ['OMP_NUM_THREADS'] = '1'        #win

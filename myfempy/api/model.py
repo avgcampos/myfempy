@@ -3,6 +3,48 @@ from __future__ import annotations
 from myfempy.io.controllers import setPoints2NumericalIntegration
 import numpy as np
 
+__docformat__ = "google"
+
+__doc__ = """
+
+==========================================================================
+                            __                                
+         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
+        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
+        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
+        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
+                    |___/                       |_|     |___/ 
+        myfempy -- MultiphYsics Finite Element Module to PYthon    
+                    COMPUTATIONAL ANALYSIS PROGRAM                   
+        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
+==========================================================================
+This Python file is part of myfempy project.
+
+myfempy is a python package based on finite element method to multiphysics
+analysis. The code is open source and *intended for educational and scientific
+purposes only, not recommended to commercial use. The name myfempy is an acronym
+for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
+with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
+If you use myfempy in your research, the  developers would be grateful if you 
+could cite in your work.
+																		
+The code is written by Antonio Vinicius Garcia Campos.                                  
+																		
+A github repository, with the most up to date version of the code,      
+can be found here: https://github.com/avgcampos/myfempy.                 
+																		
+The code is open source and intended for educational and scientific     
+purposes only. If you use myfempy in your research, the developers      
+would be grateful if you could cite this. The myfempy project is published
+under the GPLv3, see the myfempy LICENSE on
+https://github.com/avgcampos/myfempy/blob/main/LICENSE.
+																		
+Disclaimer:                                                             
+The authors reserve all rights but do not guarantee that the code is    
+free from errors. Furthermore, the authors shall not be liable in any   
+event caused by the use of the program.
+
+"""
 
 class SetModel:
     """Model Class <ClassOrder>"""
@@ -129,8 +171,7 @@ class SetModel:
                 if key in matlist["PROPMAT"][mm].keys():
                     mat_prop[key] = matlist["PROPMAT"][mm][key]
                 else:
-                    mat_prop[key] = 0.0
-
+                    mat_prop[key] = "NULL"
             tabmat[mm] = {
                 "EXX": mat_prop["EXX"],
                 "VXY": mat_prop["VXY"],
@@ -220,14 +261,14 @@ class SetModel:
                     if key in geolist["PROPGEO"][gg].keys():
                         geo_prop[key] = geolist["PROPGEO"][gg][key]
                     else:
-                        geo_prop[key] = 0.0
+                        geo_prop[key] = "NULL"
 
                 geoset = self.geometry.GeometrySet()
                 idgeo = geoset["idgeo"]
 
-                y_max, y_min, z_max, z_min, r_max = 1.0, -1.0, 1.0, -1.0, 1.0
+                y_max, y_min, z_max, z_min, r_max = "NULL", "NULL", "NULL", "NULL", "NULL"
 
-                if 'CG' in geolist["PROPGEO"][gg].keys(): 
+                if 'CG' in geolist["PROPGEO"][gg].keys():
                     y_max = geolist["PROPGEO"][gg]["CG"]["y_max"]
                     y_min = geolist["PROPGEO"][gg]["CG"]["y_min"]
                     z_max = geolist["PROPGEO"][gg]["CG"]["z_max"]

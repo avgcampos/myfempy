@@ -9,6 +9,49 @@ import numpy as np
 import vtk
 
 
+__docformat__ = "google"
+
+__doc__ = """
+
+==========================================================================
+                            __                                
+         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
+        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
+        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
+        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
+                    |___/                       |_|     |___/ 
+        myfempy -- MultiphYsics Finite Element Module to PYthon    
+                    COMPUTATIONAL ANALYSIS PROGRAM                   
+        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
+==========================================================================
+This Python file is part of myfempy project.
+
+myfempy is a python package based on finite element method to multiphysics
+analysis. The code is open source and *intended for educational and scientific
+purposes only, not recommended to commercial use. The name myfempy is an acronym
+for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
+with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
+If you use myfempy in your research, the  developers would be grateful if you 
+could cite in your work.
+																		
+The code is written by Antonio Vinicius Garcia Campos.                                  
+																		
+A github repository, with the most up to date version of the code,      
+can be found here: https://github.com/avgcampos/myfempy.                 
+																		
+The code is open source and intended for educational and scientific     
+purposes only. If you use myfempy in your research, the developers      
+would be grateful if you could cite this. The myfempy project is published
+under the GPLv3, see the myfempy LICENSE on
+https://github.com/avgcampos/myfempy/blob/main/LICENSE.
+																		
+Disclaimer:                                                             
+The authors reserve all rights but do not guarantee that the code is    
+free from errors. Furthermore, the authors shall not be liable in any   
+event caused by the use of the program.
+
+"""
+
 def view_listforce(coord: np.ndarray, frcApy_vet: np.ndarray, scala_view: float):
     """vtk code"""
 
@@ -92,7 +135,7 @@ def view_listforce(coord: np.ndarray, frcApy_vet: np.ndarray, scala_view: float)
         center_cone2 = (coordX_force, coordY_force - 3 * height_cone / 2, coordZ_force)
         color_fr = (0.9, 0.6, 0.2)
     cone1 = vtk.vtkConeSource()
-    cone1.SetResolution(1)
+    cone1.SetResolution(3)
     cone1.SetHeight(height_cone)
     cone1.SetRadius(0.15 * height_cone)
     cone1.SetCenter(center_cone1)
@@ -104,7 +147,7 @@ def view_listforce(coord: np.ndarray, frcApy_vet: np.ndarray, scala_view: float)
     fr_point_actor_cone1.GetProperty().SetLineWidth(0.5)
     fr_point_actor_cone1.GetProperty().SetColor(color_fr)  # (R,G,B)
     cone2 = vtk.vtkConeSource()
-    cone2.SetResolution(1)
+    cone2.SetResolution(3)
     cone2.SetHeight(height_cone)
     cone2.SetRadius(0.15 * height_cone)
     cone2.SetCenter(center_cone2)
@@ -272,7 +315,7 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
 
     cone = vtk.vtkConeSource()
-    cone.SetResolution(1)
+    cone.SetResolution(3)
     cone.SetHeight(height_cone)
     cone.SetRadius(0.5 * height_cone)
     cone.SetCenter(center_cone)

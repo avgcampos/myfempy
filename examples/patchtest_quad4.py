@@ -1,4 +1,3 @@
-
 from myfempy import newAnalysis
 from myfempy import SteadyStateLinear
 

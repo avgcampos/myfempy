@@ -33,7 +33,7 @@ To install myfempy manually in your directory, following the steps
 1.  Clone/ Download the main code latest version from
     [github/myfempy/main](https://github.com/easycae-3d/myfempy/)
 2.  Unzip the pack in your preferred location
-3.  In the **myfempy-main** folder, open a terminal and enter with the
+3.  In the **myfempy** folder, open a terminal and enter with the
     command:
 
 ``` bash
@@ -55,13 +55,13 @@ environments](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-
 
 ## Dependencies
 
-**Myfempy** can be used in systems based on Linux, MacOS and Windows, and requires Python 3 to running.
+**Myfempy** can be used in systems based on Linux and Windows, MacOS (has not been tested), and requires Python 3 to running.
 
 Installation prerequisites, required to build **myfempy**
 
 You can use either of two python development environments to run myfempy
 
--   [Python 3.x](https://www.python.org/) - *Python is a programming
+-   [Python 3.11.x](https://www.python.org/) - *Python is a programming
     language that lets you work quickly and integrate systems more
     effectively.*
 -   [Anaconda](https://www.anaconda.com/) - *Anaconda offers the easiest
@@ -71,7 +71,7 @@ You can use either of two python development environments to run myfempy
 Basic python packages required for using **myfempy**
 
 The following python packages are required to run myfempy. Before to
-install myfempy-main, install this packages. Check if they are already
+install myfempy, install this packages. Check if they are already
 installed on your machine
 
 -   [numpy](https://numpy.org/) - The fundamental package for scientific

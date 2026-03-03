@@ -357,10 +357,13 @@ def get_nodes_from_list(nodelist, coord, regions):
         return nodes, dir_fc
 
     elif nodelist[0] == "node":
-        node_coordX = float(nodelist[1])
-        node_coordY = float(nodelist[2])
-        node_coordZ = float(nodelist[3])
-        nodes = search_nodexyz(node_coordX, node_coordY, node_coordZ, coord, tol)
+        if nodelist[5][0] == -1:
+            node_coordX = float(nodelist[1])
+            node_coordY = float(nodelist[2])
+            node_coordZ = float(nodelist[3])
+            nodes = search_nodexyz(node_coordX, node_coordY, node_coordZ, coord, tol)
+        else:
+            nodes =  array(nodelist[5][:])
         # nodesapply.append(nodes)
         dir_fc = "x"
         return nodes, dir_fc

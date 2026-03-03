@@ -14,18 +14,57 @@ from myfempy.io.controllers import (setElement, setGeometry, setMaterial,
                                     setPoints2NumericalIntegration)
 
 from myfempy.plots.prevplot import preview_plot
-from myfempy.setup.model import SetModel
-from myfempy.setup.physics import SetPhysics
-from myfempy.setup.results import setPostProcess
+from myfempy.api.model import SetModel
+from myfempy.api.physics import SetPhysics
+from myfempy.api.results import setPostProcess
 from myfempy.utils.utils import (clear_console, get_logo, get_version,
                                  loading_bar_v1, newDir, print_console, get_about)
 
 __docformat__ = "google"
 
 __doc__ = """
-module for performing finite element analysis with the myfempy package.
+API module for performing finite element analysis with the myfempy package.
 
-![](docs/assets/logo2.png)
+------------------------------------------------------------------------
+                                        __                                
+                     _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
+                    | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
+                    | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
+                    |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
+                                |___/                       |_|     |___/ 
+
+                    myfempy -- MultiphYsics Finite Element Module to PYthon    
+                                COMPUTATIONAL ANALYSIS PROGRAM                   
+                    Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos
+
+------------------------------------------------------------------------
+
+This Python file is part of myfempy project.
+
+myfempy is a python package based on finite element method to multiphysics
+analysis. The code is open source and intended for educational and scientific
+purposes only, not recommended to commercial use. The name myfempy is an acronym
+for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
+with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
+If you use myfempy in your research, the  developers would be grateful if you 
+could cite in your work.
+																		
+The code is written by Antonio Vinicius Garcia Campos.                                  
+																		
+A github repository, with the most up to date version of the code,      
+can be found here: https://github.com/avgcampos/myfempy.                 
+																		
+The code is open source and intended for educational and scientific     
+purposes only. If you use myfempy in your research, the developers      
+would be grateful if you could cite this. The myfempy project is published
+under the GPLv3, see the myfempy LICENSE on
+https://github.com/avgcampos/myfempy/blob/main/LICENSE.
+																		
+Disclaimer:                                                             
+The authors reserve all rights but do not guarantee that the code is    
+free from errors. Furthermore, the authors shall not be liable in any   
+event caused by the use of the program.
+
 """                             
 
 class newAnalysis:
@@ -405,7 +444,7 @@ class newAnalysis:
             ```
 
         Returns:
-            solverset
+            solverdata
         """
         print_console("solver")
         try:
@@ -513,17 +552,21 @@ class newAnalysis:
                 postprocset = {"SOLVERDATA": solverdata,
                                 "COMPUTER": {'structural': {'displ': True, 'stress': True}},
                                 "PLOTSET": {'show': True, 'filename': 'PatchTest', 'savepng': True},
-                                "OUTPUT": {'log': True, 'get':{
+                                "REPORT": {
+                                    'log': True, 
+                                    'get':{
                                         'nelem': True,
                                         'nnode': True,
                                         'inci': True,
                                         'coord':True,
                                         'tabmat':True,
                                         'tabgeo':True,
-                                        'boundcond_list':True,
-                                        'forces_list':True,
+                                        'bc_list':True,
+                                        'lo_list':True,
+                                        'numpy_decimals': int,
+                                        'u_list': True,
                                     }
-                            }}
+                                }}
                 postprocdata = fea.PostProcess(postprocset)
             ```
 
@@ -535,8 +578,8 @@ class newAnalysis:
         try:
             if "COMPUTER" in postprocset.keys():
                 postprocdata = setPostProcess.getCompute(self, postprocset)
-            if "TRACKER" in postprocset.keys():
-                setPostProcess.getTracker(self, postprocset, postprocdata)
+            if "PLOT" in postprocset.keys():
+                setPostProcess.getPlotCSV(self, postprocset, postprocdata)
             if "REPORT" in postprocset.keys():
                 postprocdata["log"] = []
                 log_file = setPostProcess.getLog(self, postprocset, postprocdata)
@@ -743,21 +786,22 @@ class newAnalysis:
         """
         return self.physic
 
-    def getForceList(self) -> list:
-        """get forces list
+    # [bug]
+    # def getForceList(self) -> list:
+    #     """get forces list
 
-        Returns:
-            _description_
-        """
-        return self.physic.getForceList(self.modelinfo["domain"])
+    #     Returns:
+    #         _description_
+    #     """
+    #     return self.physic.getForceList(self.modelinfo["domain"])
 
-    def getBoundCondList(self) -> list:
-        """get boundary conditions list
+    # def getBoundCondList(self) -> list:
+    #     """get boundary conditions list
 
-        Returns:
-            _description_
-        """
-        return self.physic.getBoundCondList(self.modelinfo["domain"])
+    #     Returns:
+    #         _description_
+    #     """
+    #     return self.physic.getBoundCondList(self.modelinfo["domain"])
 
     def getLoadApply(self) -> npt.NDArray[np.float64]:
         """get loads applied array on model

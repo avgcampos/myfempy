@@ -43,7 +43,7 @@ geo = {
 #     [0, 100, 0],
 # ]
          
-# arcs = [[50, [0, 0, 0], ['0', 'Pi/2']]]
+# circle = [[50, [0, 0, 0], ['0', 'Pi/2']]]
 
 # lines = [[1, 2],
 #          [2, 3],
@@ -57,7 +57,7 @@ geo = {
 #                      'pointlist': points,
 #                      'linelist': lines,
 #                      'planelist': plane,
-#                      'arc': arcs,
+#                      'circle': circle,
 #                      'meshconfig': {
 #                          'mesh': 'quad4',   #quad4
 #                          'elem': 'plane41', #plane41
@@ -107,7 +107,7 @@ geo = {
 #          [4, 1], # line 4
 #          ]
 
-# arcs = [[30, [150, 100, 0], ['0', '2*Pi']], # line 5
+# circle = [[30, [150, 100, 0], ['0', '2*Pi']], # line 5
 #         [10, [30, 150, 0], ['0', '2*Pi']],  # line 6
 #         [10, [30, 50, 0], ['0', '2*Pi']],   # line 7
 #         ]
@@ -124,7 +124,7 @@ geo = {
 # meshdata = {"GMSH": {'filename': 'tutorial_04b',
 #                      'pointlist': points,
 #                      'linelist': lines,
-#                      'arc': arcs,
+#                      'circle': circle,
 #                      'planelist': plane,
 #                      'meshconfig': {
 #                          'mesh': 'quad4',   #quad4
@@ -315,7 +315,7 @@ geo = {
 #     [5, 2], # line 7
 #     ]   
 
-# arcs = [[50, [0, 0, 0], ['0', 'Pi/2']], # line 8
+# circle = [[50, [0, 0, 0], ['0', 'Pi/2']], # line 8
 #         ]
          
 # plane = [[1, 2, 3, 4, 8], # plane 1
@@ -325,7 +325,7 @@ geo = {
 # meshdata = {"GMSH": {'filename': 'tutorial_04e',
 #                      'pointlist': points,
 #                      'linelist': lines,
-#                      'arc': arcs,
+#                      'circle': circle,
 #                      'planelist': plane,
 #                      'meshconfig': {
 #                          'mesh': 'tria3',   #quad4
@@ -374,7 +374,7 @@ geo = {
 #     # [4, 1],
 #          ]
 
-# arcs = [[200, [0, 0, 0], ['0', '2*Pi']],[100, [0, 0, 0], ['0', '2*Pi']]]
+# circle = [[200, [0, 0, 0], ['0', '2*Pi']],[100, [0, 0, 0], ['0', '2*Pi']]]
 
 # plane = [[1],[-2]]
 
@@ -382,7 +382,7 @@ geo = {
 #                      'pointlist': points,
 #                      'linelist': lines,
 #                      'planelist': plane,
-#                      'arc': arcs,
+#                      'circle': circle,
 #                      'meshconfig': {
 #                          'mesh': 'tria3',   #quad4
 #                          'elem': 'plane31', #plane41
@@ -433,7 +433,7 @@ geo = {
 #          [6, 4],
 #          ]
 
-# arcs = [[50, [0, 0, 0], ['0', 'Pi/2']]]
+# circle = [[50, [0, 0, 0], ['0', 'Pi/2']]]
 
 # plane = [[1, 2, 3, 4, 7],[5, 6, 7]]
 
@@ -441,7 +441,7 @@ geo = {
 #                      'pointlist': points,
 #                      'linelist': lines,
 #                      'planelist': plane,
-#                      'arc': arcs,
+#                      'circle': circle,
 #                      'meshconfig': {
 #                          'mesh': 'quad4',   #quad4
 #                          'elem': 'plane41', #plane41
@@ -489,7 +489,7 @@ lines = [[1, 2], # 1
          [2, 5], # 5
          ]
 
-arcs = [[50, [0, 0, 0], ['0', 'Pi/4']],    # 6
+circle = [[50, [0, 0, 0], ['0', 'Pi/4']],    # 6
         [50, [0, 0, 0], ['Pi/4', 'Pi/2']]] # 7
 
 plane = [[1, 5, 6, 4],
@@ -499,7 +499,7 @@ meshdata = {"GMSH": {'filename': 'tutorial_04h',
                      'pointlist': points,
                      'linelist': lines,
                      'planelist': plane,
-                     'arc': arcs,
+                     'circle': circle,
                      'meshconfig': {
                          'mesh': 'quad4',   #quad4
                          'elem': 'plane41', #plane41

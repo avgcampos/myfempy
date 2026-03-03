@@ -4,7 +4,56 @@ import csv
 import numpy as np
 
 
+__docformat__ = "google"
+
+__doc__ = """
+
+==========================================================================
+                            __                                
+         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
+        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
+        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
+        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
+                    |___/                       |_|     |___/ 
+        myfempy -- MultiphYsics Finite Element Module to PYthon    
+                    COMPUTATIONAL ANALYSIS PROGRAM                   
+        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
+==========================================================================
+This Python file is part of myfempy project.
+
+myfempy is a python package based on finite element method to multiphysics
+analysis. The code is open source and *intended for educational and scientific
+purposes only, not recommended to commercial use. The name myfempy is an acronym
+for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
+with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
+If you use myfempy in your research, the  developers would be grateful if you 
+could cite in your work.
+																		
+The code is written by Antonio Vinicius Garcia Campos.                                  
+																		
+A github repository, with the most up to date version of the code,      
+can be found here: https://github.com/avgcampos/myfempy.                 
+																		
+The code is open source and intended for educational and scientific     
+purposes only. If you use myfempy in your research, the developers      
+would be grateful if you could cite this. The myfempy project is published
+under the GPLv3, see the myfempy LICENSE on
+https://github.com/avgcampos/myfempy/blob/main/LICENSE.
+																		
+Disclaimer:                                                             
+The authors reserve all rights but do not guarantee that the code is    
+free from errors. Furthermore, the authors shall not be liable in any   
+event caused by the use of the program.
+
+"""
+
 def write2log(Model, Physic, log_data, solstatus, log_file):
+    
+    if "numpy_decimals" in log_data["get"].keys():
+        np_decimals = log_data["get"]["numpy_decimals"]
+    else:
+        np_decimals = 4
+
     with open(log_file, "w") as file_object:
         file_object.write(
             "===============================================================================\n"
@@ -53,203 +102,120 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
                 )
                 for row in range(len(Model.coord)):
                     file_object.write(
-                        "{0:<7}{1:<20}{2:<20}{3:<20}\n".format(
+                        "{0:<7}{1:<10}{2:<10}{3:<10}\n".format(
                             Model.coord[row][0].astype(int),
-                            Model.coord[row][1],
-                            Model.coord[row][2],
-                            Model.coord[row][3],
+                            Model.coord[row][1].round(decimals=np_decimals),
+                            Model.coord[row][2].round(decimals=np_decimals),
+                            Model.coord[row][3].round(decimals=np_decimals),
                         )
                     )
-            if "boundcond_list" in log_data["get"].keys():
-                file_object.write("\n")
-                file_object.write("LIST OF CONSTRAINTS\n")
-                file_object.write("{0:<7}{1:<10}\n".format("DOF", "NODE"))
-                for row in range(len(Physic.constrains)):
-                    bc_type = Physic.constrains[row][0]
-                    if bc_type == 0:
-                        file_object.write(
-                            "{0:<7}{1:<10}\n".format(
-                                "FULL", Physic.constrains[row][1].astype(int)
-                            )
-                        )
-                    elif bc_type == 1:
-                        file_object.write(
-                            "{0:<7}{1:<10}\n".format(
-                                "UX", Physic.constrains[row][1].astype(int)
-                            )
-                        )
-                    elif bc_type == 2:
-                        file_object.write(
-                            "{0:<7}{1:<10}\n".format(
-                                "UY", Physic.constrains[row][1].astype(int)
-                            )
-                        )
-                    elif bc_type == 3:
-                        file_object.write(
-                            "{0:<7}{1:<10}\n".format(
-                                "UZ", Physic.constrains[row][1].astype(int)
-                            )
-                        )
-                    elif bc_type == 4:
-                        file_object.write(
-                            "{0:<7}{1:<10}\n".format(
-                                "RX", Physic.constrains[row][1].astype(int)
-                            )
-                        )
-                    elif bc_type == 5:
-                        file_object.write(
-                            "{0:<7}{1:<10}\n".format(
-                                "RY", Physic.constrains[row][1].astype(int)
-                            )
-                        )
-                    elif bc_type == 6:
-                        file_object.write(
-                            "{0:<7}{1:<10}\n".format(
-                                "RZ", Physic.constrains[row][1].astype(int)
-                            )
-                        )
-                    else:
-                        pass
-            if "forces_list" in log_data["get"].keys():
-                file_object.write("\n")
-                file_object.write("LIST OF FORCES\n")
-                file_object.write(
-                    "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(
-                        "NODE", "TYPE", "VALUE", "STEP"
-                    )
-                )
-                for row in range(len(Physic.forces)):
-                    fc_type = Physic.forces[row][1]
-                    if fc_type == 1:
-                        file_object.write(
-                            "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(
-                               Physic.forces[row][0].astype(int),
-                                "FX",
-                                Physic.forces[row][2],
-                                Physic.forces[row][3].astype(int),
-                            )
-                        )
-                    elif fc_type == 2:
-                        file_object.write(
-                            "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(
-                                Physic.forces[row][0].astype(int),
-                                "FY",
-                                Physic.forces[row][2],
-                                Physic.forces[row][3].astype(int),
-                            )
-                        )
-                    elif fc_type == 3:
-                        file_object.write(
-                            "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(
-                                Physic.forces[row][0].astype(int),
-                                "FZ",
-                                Physic.forces[row][2],
-                                Physic.forces[row][3].astype(int),
-                            )
-                        )
-                    elif fc_type == 4:
-                        file_object.write(
-                            "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(
-                                Physic.forces[row][0].astype(int),
-                                "TX",
-                                Physic.forces[row][2],
-                                Physic.forces[row][3].astype(int),
-                            )
-                        )
-                    elif fc_type == 5:
-                        file_object.write(
-                            "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(
-                                Physic.forces[row][0].astype(int),
-                                "TY",
-                                Physic.forces[row][2],
-                                Physic.forces[row][3].astype(int),
-                            )
-                        )
-                    elif fc_type == 6:
-                        file_object.write(
-                            "{0:<7}{1:<10}{2:<25}{3:<10}\n".format(
-                                Physic.forces[row][0].astype(int),
-                                "TZ",
-                                Physic.forces[row][2],
-                                Physic.forces[row][3].astype(int),
-                            )
-                        )
-                    else:
-                        pass
+
+
             if "tabmat" in log_data["get"].keys():
                 file_object.write("\n")
                 file_object.write("LIST OF MATERIAL PROPERTY\n")
-                file_object.write(
-                    "{0:<7}{1:<10}{2:<10}{3:<10}{4:<10}{5:<10}{6:<10}{7:<10}{8:<10}{9:<10}{10:<10}{11:<10}{12:<10}{13:<10}{14:<10}{15:<10}{16:<10}\n".format(
-                        "EXX",
-                        "VXY",
-                        "GXY",
-                        "EYY",
-                        "VYZ",
-                        "GYZ",
-                        "EZZ",
-                        "VZX",
-                        "GZX",
-                        "RHO",
-                        "KXX",
-                        "KYY",
-                        "KZZ",
-                        "CTE",
-                        "VIS",
-                        "STIF",
-                        "DAMP",
-                    )
-                )
+
                 for row in range(len(Model.tabmat)):
-                    file_object.write(
-                        "{0:<7}{1:<10}{2:<10}{3:<10}{4:<10}{5:<10}{6:<10}{7:<10}{8:<10}{9:<10}{10:<10}{11:<10}\n".format(
-                            str(row + 1),
-                            Model.tabmat[row][0],
-                            Model.tabmat[row][1],
-                            Model.tabmat[row][2],
-                            Model.tabmat[row][3],
-                            Model.tabmat[row][4],
-                            Model.tabmat[row][5],
-                            Model.tabmat[row][6],
-                            Model.tabmat[row][7],
-                            Model.tabmat[row][8],
-                            Model.tabmat[row][9].astype(int),
-                            Model.tabmat[row][10].astype(int),
-                        )
-                    )
+                    file_object.write("------------------------\n")
+                    file_object.write("{0:<12}{1:<3}\n".format("MATERIAL", row + 1))
+                    file_object.write("{0:<10}{1:<10}\n".format("PROPMAT", "VALUE"))
+                    for key in Model.tabmat[row]:
+                        value_propmat = Model.tabmat[row][key]
+                        if value_propmat == "NULL":
+                            pass
+                        else:
+                            file_object.write("{0:<10}{1:<10}\n".format(key, value_propmat))
+
             if "tabgeo" in log_data["get"].keys():
                 file_object.write("\n")
-                file_object.write("LIST OF MATERIAL PROPERTY\n")
+                file_object.write("LIST OF GEOMETRY PROPERTY\n")
+
+                for row in range(len(Model.tabgeo)):
+                    file_object.write("------------------------\n")
+                    file_object.write("{0:<12}{1:<3}\n".format("GEOMETRY", row + 1))
+                    file_object.write("{0:<10}{1:<10}\n".format("PROPGEO", "VALUE"))
+                    for key in Model.tabgeo[row]:
+                        value_propmat = Model.tabgeo[row][key]
+                        if value_propmat == "NULL":
+                            pass
+                        else:
+                            file_object.write("{0:<10}{1:<10}\n".format(key, value_propmat))
+
+            if "bc_list" in log_data["get"].keys():
+                file_object.write("\n")
+                file_object.write("LIST OF BOUNDARY CONDITIONS\n")
                 file_object.write(
-                    "{0:<7}{1:<10}{2:<10}{3:<10}{4:<10}{5:<10}{6:<10}{7:<10}{8:<10}{9:<10}}\n".format(
-                        "AREACS",
-                        "INERYY",
-                        "INERZZ",
-                        "INERXX",
-                        "THICKN",
-                        "b",
-                        "h",
-                        "t",
-                        "d",
-                        "ID",
+                    "{0:<7}{1:<10}{2:<16}{3:<10}\n".format(
+                        "NODE", "DOF", "VALUE", "STEP"
                     )
                 )
-                for row in range(len(Model.tabgeo)):
+                model_dict = Model.modelinfo["dofs"]["d"]
+                for row in range(len(Physic.constrains)):
+                    bc_type = Physic.constrains[row][1]
+                    if bc_type == 0:
+                        file_object.write(
+                            "{0:<7}{1:<10}{2:<16}{3:<10}\n".format(
+                                Physic.constrains[row][0].astype(int),
+                                "full",
+                                Physic.constrains[row][2].round(decimals=np_decimals),
+                                Physic.constrains[row][3].astype(int),
+                            )
+                        )
+                    else:
+                        bc_dof = next((k for k, v in model_dict.items() if v == bc_type), None)
+                        file_object.write(
+                            "{0:<7}{1:<10}{2:<16}{3:<10}\n".format(
+                                Physic.constrains[row][0].astype(int),
+                                bc_dof,
+                                Physic.constrains[row][2],
+                                Physic.constrains[row][3].astype(int),
+                            )
+                        )
+
+            if "lo_list" in log_data["get"].keys():
+                file_object.write("\n")
+                file_object.write("LIST OF LOADS\n")
+                file_object.write(
+                    "{0:<7}{1:<20}{2:<16}{3:<10}\n".format(
+                        "NODE", "TYPE", "VALUE", "STEP"
+                    )
+                )
+                model_dict = Model.modelinfo["dofs"]["f"]
+                for row in range(len(Physic.forces)):
+                    fc_type = Physic.forces[row][1]
+
+                    fc_dof = next((k for k, v in model_dict.items() if v == fc_type), None)
+
                     file_object.write(
-                        "{0:<7}{1:<10}{2:<10}{3:<10}{4:<10}{5:<10}{6:<10}{7:<10}{8:<10}{9:<10}{10:<10}\n".format(
-                            str(row + 1),
-                            Model.tabgeo[row][0],
-                            Model.tabgeo[row][1],
-                            Model.tabgeo[row][2],
-                            Model.tabgeo[row][3],
-                            Model.tabgeo[row][4],
-                            Model.tabgeo[row][5],
-                            Model.tabgeo[row][6],
-                            Model.tabgeo[row][7],
-                            Model.tabgeo[row][8],
-                            Model.tabgeo[row][9].astype(int),
+                        "{0:<7}{1:<20}{2:<16}{3:<10}\n".format(
+                            Physic.forces[row][0].astype(int),
+                            fc_dof,
+                            Physic.forces[row][2].round(decimals=np_decimals),
+                            Physic.forces[row][3].astype(int),
                         )
                     )
+
+            if "u_list" in log_data["get"].keys():
+                file_object.write("\n")
+                file_object.write("LIST OF SOLUTIONS\n")
+                model_dict = list(Model.modelinfo["dofs"]["d"].keys()) 
+                for row in range(len(solstatus['SOLUTION'])):
+                    file_object.write("------------------------\n")
+                    file_object.write("{0:<7}{1:<4}\n".format("STEP", row + 1))
+                    file_object.write('dof, ' + str(model_dict)[1:-1])
+                    file_object.write("\n")
+                    array_sol = solstatus['SOLUTION'][row][Model.element.setTitleDeformation()][:, :len(model_dict)]
+                    line_dof = 0
+                    for line in array_sol:
+                        line_str = ", ".join(map(str, line.round(decimals=np_decimals)))
+                        file_object.write(str(line_dof) + ', ' + line_str + "\n")
+                        line_dof+=1
+                
+            else:
+                file_object.write("\n")
+                file_object.write("log_data['get']: key erro\n")
+                pass
+
         # =============================================================================================================
         if "log" in log_data.keys():
             file_object.write("\n")

@@ -1,3 +1,6 @@
+import sys
+# setting path
+sys.path.append('../myfempy')
 
 from myfempy import newAnalysis
 from myfempy import StaticLinearCyclicSymmPlane
@@ -13,7 +16,7 @@ fea = newAnalysis(StaticLinearCyclicSymmPlane)
 
 mat1 = {
     "NAME": "material_1",
-    "VXX": 0.3,
+    "VXY": 0.3,
     "EXX": 2E5,    # MPa
     "MAT": 'isotropic',
     "DEF": 'planestress'
@@ -21,7 +24,7 @@ mat1 = {
 
 mat2 = {
     "NAME": "material_2",
-    "VXX": 0.3,
+    "VXYs": 0.3,
     "EXX": 2E5,    # MPa
     "MAT": 'isotropic',
     "DEF": 'planestress'

@@ -11,6 +11,50 @@ from myfempy.io.iocsv import write2log, writer2csv
 from myfempy.io.iovtk import convert_to_vtk
 
 
+__docformat__ = "google"
+
+__doc__ = """
+
+==========================================================================
+                            __                                
+         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
+        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
+        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
+        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
+                    |___/                       |_|     |___/ 
+        myfempy -- MultiphYsics Finite Element Module to PYthon    
+                    COMPUTATIONAL ANALYSIS PROGRAM                   
+        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
+==========================================================================
+This Python file is part of myfempy project.
+
+myfempy is a python package based on finite element method to multiphysics
+analysis. The code is open source and *intended for educational and scientific
+purposes only, not recommended to commercial use. The name myfempy is an acronym
+for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
+with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
+If you use myfempy in your research, the  developers would be grateful if you 
+could cite in your work.
+																		
+The code is written by Antonio Vinicius Garcia Campos.                                  
+																		
+A github repository, with the most up to date version of the code,      
+can be found here: https://github.com/avgcampos/myfempy.                 
+																		
+The code is open source and intended for educational and scientific     
+purposes only. If you use myfempy in your research, the developers      
+would be grateful if you could cite this. The myfempy project is published
+under the GPLv3, see the myfempy LICENSE on
+https://github.com/avgcampos/myfempy/blob/main/LICENSE.
+																		
+Disclaimer:                                                             
+The authors reserve all rights but do not guarantee that the code is    
+free from errors. Furthermore, the authors shall not be liable in any   
+event caused by the use of the program.
+
+"""
+
+
 class setPostProcess(ABC):
     """PostProcess Class <ClassOrder>"""
 
@@ -192,7 +236,7 @@ class setPostProcess(ABC):
 
         return postprocdata
 
-    def getTracker(self, postprocset, postporc_result):
+    def getPlotCSV(self, postprocset, postporc_result):
         plotset = dict()
         hist_X = []
         hist_Y = []
@@ -208,7 +252,7 @@ class setPostProcess(ABC):
             # plotset["val_list"] = postporc_result['solution'][st]['val']
             # plotset["fignumb"] = 99
             # plotset["rstl"] = [0, modelinfo["ntensor"][0] + 1]
-            val_X, val_Y, xlabel, ylabel = setPostProcess.__tracker_value(
+            val_X, val_Y, xlabel, ylabel = setPostProcess.__hist_value(
                 postporc_result, postprocset, plotset, self.model.coord
             )
             hist_X.append(val_X)
@@ -248,7 +292,7 @@ class setPostProcess(ABC):
         plotdata["material_CELL_DATA_val"] = (
             (np.array([(self.model.inci[:, 2])])).T
         ).astype(int)
-        plotdata["material_CELL_DATA_title"] = ["Material_Set"]
+        plotdata["material_CELL_DATA_title"] = ["TOPOLOGY"]
 
         # if "structural" in postprocset["COMPUTER"].keys():
         #     if "displ" in postprocset["COMPUTER"]["structural"].keys():
@@ -425,71 +469,29 @@ class setPostProcess(ABC):
         title = np.concatenate((tistrs, tistrn), axis=0)
         return result, title
 
-    def __tracker_value(postporc_result, postprocset, plotset, coord):
-        if "point" in postprocset["TRACKER"].keys():
-            node_coordX = float(postprocset["TRACKER"]["point"]["x"])
-            node_coordY = float(postprocset["TRACKER"]["point"]["y"])
-            node_coordZ = float(postprocset["TRACKER"]["point"]["z"])
-            hist_node = search_nodexyz(
-                node_coordX, node_coordY, node_coordZ, coord, 1e-3
-            )
-            # hist_node = hist_node[0]-1
-            # plotset["rstl"] = nodedof[0]*hist_node - (nodedof[0]-postprocset["TRACKER"]["data"]["displ"]["dof"])
-            val_Y = postporc_result["SOLUTION"][plotset["step"]]["val"][
-                hist_node[0] - 1, postprocset["TRACKER"]["point"]["dof"]
-            ]
+    def __hist_value(postporc_result, postprocset, plotset, coord):
+        if "point" in postprocset["PLOT"].keys():
+            node_coordX = float(postprocset["PLOT"]["point"]["x"])
+            node_coordY = float(postprocset["PLOT"]["point"]["y"])
+            node_coordZ = float(postprocset["PLOT"]["point"]["z"])
+            hist_node = search_nodexyz(node_coordX, node_coordY, node_coordZ, coord, 1e-3)
+            val_Y = postporc_result["SOLUTION"][plotset["step"]]["val"][hist_node[0] - 1, postprocset["PLOT"]["point"]["dof"]]
             val_X = plotset["step"] + 1
             xlabel = "STEP"
             ylabel = "DISPL NODE: " + str(hist_node)
 
-        elif "data" in postprocset["TRACKER"].keys():
-            # node_coordX = float(postprocset["TRACKER"]["point"]["x"])
-            # node_coordY = float(postprocset["TRACKER"]["point"]["y"])
-            # node_coordZ = float(postprocset["TRACKER"]["point"]["z"])
-            # hist_node = search_nodexyz(node_coordX, node_coordY, node_coordZ, coord, 1e-3)
-            # hist_node = hist_node[0]-1
-            # plotset["rstl"] = nodedof[0]*hist_node - (nodedof[0]-postprocset["TRACKER"]["data"]["displ"]["dof"])
-            val_Y = postprocset["TRACKER"]["data"][
-                "y_data"
-            ]  # plotset["val_list"][hist_node, postprocset["TRACKER"]["point"]["dof"]]
-            val_X = postprocset["TRACKER"]["data"]["x_data"]  # plotset["step"]
-            xlabel = postprocset["TRACKER"]["data"]["x_label"]
-            ylabel = postprocset["TRACKER"]["data"]["y_label"]
+        elif "data" in postprocset["PLOT"].keys():
+            val_Y = postprocset["PLOT"]["data"]["y_data"]  
+            val_X = postprocset["PLOT"]["data"]["x_data"]  
+            xlabel = postprocset["PLOT"]["data"]["x_label"]
+            ylabel = postprocset["PLOT"]["data"]["y_label"]
 
-        # elif "max" in postprocset["TRACKER"].keys():
-        #     val_Y = max(abs(plotset["val_list"][:, 0]))
-        #     val_X = plotset["step"]
-        #     xlabel = "STEP"
-        #     ylabel = "DISPL MAG MAX"
-
-        # elif "min" in postprocset["TRACKER"].keys():
-        #     val_Y = min(abs(plotset["val_list"][:, 0]))
-        #     val_X = plotset["step"]
-        #     xlabel = "STEP"
-        #     ylabel = "DISPL MAG MIN"
-
-        elif "frf" in postprocset["TRACKER"].keys():
-            node_coordX = float(postprocset["TRACKER"]["frf"]["x"])
-            node_coordY = float(postprocset["TRACKER"]["frf"]["y"])
-            node_coordZ = float(postprocset["TRACKER"]["frf"]["z"])
-            hist_node = search_nodexyz(
-                node_coordX, node_coordY, node_coordZ, coord, 1e-6
-            )
-            rstl = plotset["nodedof"] * (hist_node[0] - 1) - (
-                plotset["nodedof"] - postprocset["TRACKER"]["frf"]["dof"] - 1
-            )
-            # val_Y = 20*np.log((abs(plotset["val_list"][rstl, :]))/10E-12)
-            # val_Y = 20*np.log((abs(postporc_result['frf'][plotset["step"]]['val'][rstl, :]))/10E-12)
-            val_Y = 20 * np.log(
-                (
-                    abs(
-                        postporc_result["SOLUTION"][plotset["step"]]["VAL"][
-                            hist_node[0] - 1, postprocset["TRACKER"]["frf"]["dof"]
-                        ]
-                    )
-                )
-                # / 10e-12
-            )
+        elif "freq" in postprocset["PLOT"].keys():
+            node_coordX = float(postprocset["PLOT"]["freq"]["x"])
+            node_coordY = float(postprocset["PLOT"]["freq"]["y"])
+            node_coordZ = float(postprocset["PLOT"]["freq"]["z"])
+            hist_node = search_nodexyz(node_coordX, node_coordY, node_coordZ, coord, 1e-6)
+            val_Y = 20 * np.log((abs(postporc_result["SOLUTION"][plotset["step"]]["VAL"][hist_node[0] - 1, postprocset["PLOT"]["freq"]["dof"] - 1])))
             val_X = postporc_result["SOLUTION"][plotset["step"]]["FREQ"]
             xlabel = "FREQUENCY RESPONSE [Hz]"
             ylabel = "FREQUENCY RESPONSE [dB]"
@@ -499,5 +501,4 @@ class setPostProcess(ABC):
             val_Y = 0
             xlabel = "erro"
             ylabel = "erro"
-        # plot(val_X, val_Y, xlabel, ylabel, plotset["fignumb"])
         return val_X, val_Y, xlabel, ylabel
