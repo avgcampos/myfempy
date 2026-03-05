@@ -14,8 +14,8 @@ theme:
     font:
         text: Roboto Mono
     palette:
-        primary: light blue # or 'indigo', 'blue', 'teal', etc.
-        accent: orange
+        primary: blue # or 'indigo', 'blue', 'teal', etc.
+        accent: red
         # Palette toggle for automatic mode
         media: "(prefers-color-scheme)"
         toggle:

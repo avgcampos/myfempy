@@ -1,109 +1,225 @@
 '''
-myfempy Tutorial 02
 
-Geração da malha por meio da opção legacy
+Simulação de vibração modal
 
 '''
-
-# Imports
-
-from myfempy import ModelGen
-from myfempy import Solver
-from myfempy import PostProcess
-from myfempy import postproc_plot
-from myfempy import preview_plot
-from math import pi
-
 import sys
+# setting path
+sys.path.append('../myfempy')
+import sys
+import numpy as np
+import matplotlib.pyplot as plt
 
-# Definição do material, geometria 
+from myfempy import newAnalysis
+from myfempy import DynamicEigenLinear
 
-mat = {
-    "NAME": "material",
-    "VXX": 0.25,
-    "EXX": 200E6,
-    "MAT": 'isotropic',
-    "DEF": 'axial'
+import time
+
+#===============================================================================
+#                                   FEA
+#===============================================================================
+fea = newAnalysis(DynamicEigenLinear)
+
+mat1 = {
+    "NAME": "mat1",
+    "VXY": 0.3,
+    "EXX": 210E6,
+    "RHO": 7850,
     }
 
-
-geo = {
-    "NAME": "geo",
-    "SEC":"I",
-    'DIM':{'b':100,'h':150,'t':5,'d':5}}
-
-# Linha (malha beam 2) 500 mm
-
-meshdata = {"LEGACY": {'lx': 400, 'mesh': 'line2', 'elem': 'beam21', 'nx': 2},
-            "PROPMAT": [mat],
-            "PROPGEO": [geo],
-            # "FORCES": [force],
-            # "BOUNDCOND": [bondcond],
-            # "QUADRATURE": {'meth': 'gaussian', 'npp': 4},
-            # "DOMAIN":'structural'
-            }
-
-
-modelinfo = ModelGen.get_model(meshdata)
-
-previewset = {'RENDER': {'filename': 'tutorial_02a', 'show': True, 'scale': 1, 'savepng': True, 'lines': True, 'cs': True},
-              }
-
-preview_plot(previewset, modelinfo)
-
-
-sys.exit()
-# Definição do material, geometria 
-
-mat = {
-    "NAME": "material",
-    "VXX": 0.25,
-    "EXX": 200E6,
-    "MAT": 'isotropic',
-    "DEF": 'planestress'
+mat2 = {
+    "NAME": "mat2",
+    "VXX": 0.3,
+    "EXX": 1E6,
+    "RHO": 1,
     }
 
 geo = {
-    "NAME": "geometria",
-    "THICKN": 1.0
+    "NAME": "espessura1",
+    "THICKN": 0.1,
+    # "DIM": [b, h, t, d],
     }
 
+# MODEL SET
 
-# Retangulo estado plano (malha quad 4) 100 x 50 mm
+# nelx = 10
+# nely = 5
 
-meshdata = {"LEGACY": {'lx': 100, 'ly': 50, 'mesh': 'quad4', 'elem': 'plane41', 'nx': 10, 'ny': 5},
-            "PROPMAT": [mat],
-            "PROPGEO": [geo],
-            # "FORCES": [force],
-            # "BOUNDCOND": [bondcond],
-            # "QUADRATURE": {'meth': 'gaussian', 'npp': 4},
-            # "DOMAIN":'structural'
-            }
+# nodes = [[1, 0, 0, 0],
+#          [2, nelx, 0, 0],
+#          [3, nelx, nely, 0],
+#          [4, 0, nely, 0],
+#         #  [5, 1, 1, 0],
+#         #  [6, 0, 1, 0],
+#          ]
 
+# conec = [[1, 1, 1, 1, 2, 3, 4],
+#         #  [2, 2, 1, 2, 3, 4, 5],
+#          ]
 
-modelinfo = ModelGen.get_model(meshdata)
+# MODEL SET
+LX = 8 # 80
+LY = 8 # 60
 
-previewset = {'RENDER': {'filename': 'tutorial_02b', 'show': True, 'scale': 1, 'savepng': True, 'lines': True},
+nelx = 4 # 40 # 80 # 160
+nely = 4 # 30 # 60 # 120
+
+# esize = 0.25
+
+# # gmsh config
+# points = [
+#     [0, 0, 0],
+#     [LX, 0, 0],
+#     [LX, LY, 0],
+#     [0, LY, 0]
+# ]
+         
+# lines = [[1, 2],
+#          [2, 3],
+#          [3, 4],
+#          [4, 1],
+#          ]
+
+# plane = [[1, 2, 3, 4]]
+
+modeldata = {
+    # "MESH": {
+    #     'TYPE': 'add',
+    #     'COORD': nodes,
+    #     'INCI': conec,
+    # },
+        
+    "MESH": {
+        'TYPE': 'legacy',
+        'LX': LX,
+        'LY': LY,
+        'NX': nelx,
+        'NY': nely,
+        },
+        
+    # "MESH": {
+    #         'TYPE': 'gmsh',
+    #         'filename': 'test_mfoop_gmsh_01',
+    #         # "meshimport": 'object_dir',
+    #         'pointlist': points,
+    #         'linelist': lines,
+    #         'planelist': plane,
+    #         # 'arc': arcs,
+    #         'meshconfig': {
+    #             'mesh': 'quad4',   #quad4
+    #             'sizeelement': 2 * esize,
+    #             # 'extrude': 20,
+    #             'meshmap': {'on': True,
+    #                         'edge': 'all', #'all'
+    #                     #  "numbernodes": 10,
+    #             }}
+    #     },
+
+    "ELEMENT": {
+        'TYPE': 'structplane',
+        'SHAPE': 'quad4',
+        'INTGAUSS': 4,
+    },
+
+    "MATERIAL": {
+        "MAT": 'planestress',
+        "TYPE": 'isotropic',
+        "PROPMAT": [mat2],
+    },
+    
+    "GEOMETRY": {
+        "GEO": 'thickness',
+        "PROPGEO": [geo],
+    },
+}
+fea.Model(modeldata)
+
+forcespring_left = {
+    'TYPE': 'forcenode',
+    'DOF': 'spring2ground',
+    'DIR': 'point',
+    'TAG': 1,
+    'VAL': [1000.0],
+    }
+
+forcespring_right = {
+    'TYPE': 'forcenode',
+    'DOF': 'spring2ground',
+    'DIR': 'point',
+    'TAG': 2,
+    'VAL': [1000.0],
+    }
+
+massadd = {
+    'TYPE': 'forcenode',
+    'DOF': 'masspoint',
+    'DIR': 'node', #'point', #'node',
+    'LOC': {'x': LX/2, 'y': LY/2, 'z': 0},
+    'VAL': [1.4],
+    }
+
+bc_node_left = {
+    'TYPE': 'fixed',
+    'DOF': 'full',
+    'DIR': 'node',                 # node
+    'LOC': {'x': 0, 'y': LY/2, 'z': 0},
+    }
+
+bc_node_right = {
+    'TYPE': 'fixed',
+    'DOF': 'full',
+    'DIR': 'node',
+    'LOC': {'x': LX, 'y': LY/2, 'z': 0},
+    }
+
+physicdata = {
+    "PHYSIC": {"DOMAIN": "structural",
+                "LOAD": [],
+                "BOUNDCOND": [],
+    },
+    }
+fea.Physic(physicdata)
+
+# loadaply = fea.getLoadApply()
+# # bcaply = fea.getBCApply()
+# print(loadaply)
+# print(bcaply)
+# print(fea.getLoadArray(loadaply))
+# print(fea.getDirichletNH(bcaply))
+# print('forca total [N]', np.sum(loadaply[:,2]))
+
+previewset = {'RENDER': {'filename': 'squad', 'show': True, 'scale': 10, 'savepng': True, 'lines': False,
+                        # 'plottags': {
+                        # # 'line': True
+                        # 'point': True
+                        #       }
+                         },
+            #   'LABELS': {'show': True, 'lines': True, 'scale': 1},
               }
+fea.PreviewAnalysis(previewset)
 
-preview_plot(previewset, modelinfo)
+# sys.exit()
 
-
-# Retangulo estado plano (malha tria 3) 100 x 50 mm
-
-meshdata = {"LEGACY": {'lx': 100, 'ly': 50, 'mesh': 'tria3', 'elem': 'plane31', 'nx': 10, 'ny': 5},
-            "PROPMAT": [mat],
-            "PROPGEO": [geo],
-            # "FORCES": [force],
-            # "BOUNDCOND": [bondcond],
-            # "QUADRATURE": {'meth': 'gaussian', 'npp': 4},
-            # "DOMAIN":'structural'
+# #-------------------------------- SOLVER -------------------------------------#
+solverset = {"STEPSET": {'type': 'mode',  # mode, freq, time ...
+                        'start': 0,
+                        'end': 10,
+                        'step': 1},
+             'SYMM':False,
+            #  'MP':True,
             }
+solverdata = fea.Solve(solverset)
 
+print(solverdata['solution']['FREQ'])
 
-modelinfo = ModelGen.get_model(meshdata)
+postprocdata = {"SOLVERDATA": solverdata,
+                "COMPUTER": {
+                    'structural': {'modes': True},
+                    # 'structural': {'frf': True}
+                    },
+                "PLOTSET": {'filename': 'test_dynamic', 'savepng': True},
+                # "TRACKER": {'frf': {'x': 16, 'y': 1, 'z': 0, 'dof':0}},
+                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True}},           
+                }
 
-previewset = {'RENDER': {'filename': 'tutorial_02c', 'show': True, 'scale': 1, 'savepng': True, 'lines': True},
-              }
-
-preview_plot(previewset, modelinfo)
+postporc_result = fea.PostProcess(postprocdata)

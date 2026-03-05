@@ -1,690 +1,360 @@
 '''
-myfempy Tutorial 04
 
-Geração da malha com gmsh/ criação de curvas e furos e áreas compostas
-
-Necessario instalação prévia do gmsh (não nativo do myfempy)
+Simulação com iteração termo-mecânico em sólido 3D
 
 '''
+from os import environ
+environ['OMP_NUM_THREADS'] = '1'        #win
+import numpy as np
+import matplotlib.pyplot as plt
 
-# Imports
+from myfempy import newAnalysis
+from myfempy import SteadyStateLinear, SteadyStateLinearIterative
 
-from myfempy import ModelGen
-from myfempy import Solver
-from myfempy import PostProcess
-from myfempy import postproc_plot
-from myfempy import preview_plot
+from time import time
 
-import sys
+# ===============================================================================
+#                                   FEA
+# ===============================================================================
 
-# Definição do material, geometria 
+fea = newAnalysis(SteadyStateLinear)
 
-mat1 = {
-    "NAME": "material1",
-    "VXX": 0.25,
-    "EXX": 200E6,
-    "MAT": 'isotropic',
-    "DEF": 'planestress'
+steel = {
+    "NAME": "steel",
+    "KXX": 0.0605,	    # W/mm·°C  
+    "KYY": 0.0605,
+    "KZZ": 0.0605,
+    "VXY": 0.30,
+    "EXX": 200E3,       # N/mm^2 --> MPa
+    "RHO": 7.85E-06,    # kg/mm^3
+    "CTE": 12E-6        # (mm/mm) /°C
     }
 
-mat2 = {
-    "NAME": "material2",
-    "VXX": 0.25,
-    "EXX": 200E6,
-    "MAT": 'isotropic',
-    "DEF": 'planestress'
+copper = {
+    "NAME": "copper",
+    "KXX": 0.4230,	    # W/mm·°C  
+    "KYY": 0.4230,
+    "KZZ": 0.4230,
+    "VXY": 0.33,
+    "EXX": 110E3,       # N/mm^2 --> MPa
+    "RHO": 7.85E-06,    # kg/mm^3
+    "CTE": 17E-6        # (mm/mm) /°C
     }
 
-geo1 = {
-    "NAME": "geometria1",
-    "THICKN": 1.0
+geo = {
+    "NAME": "espessura",
+    "THICKN": 5, # mm
     }
-
-geo2 = {
-    "NAME": "geometria2",
-    "THICKN": 1.0
-    }
-
-
-# #-----------------------------------------------------
-
-# # 1/4 de placa com furo central (dia. 100 mm) estado plano (malha quad 4) 200 x 200 mm
-
-# f1 = {
-#     'DEF': 'forceedge',
-#     'DOF': 'fx',
-#     'DIR': 'edge',
-#     'TAG': 1,
-#     'VAL': [1000.0],
-#     }
-
-# bc1 = {
-#     'DEF': 'fixed',
-#     'DOF': 'ux',
-#     'DIR': 'edge',
-#     'TAG': 3,
-#     }
-
-# bc2 = {
-#     'DEF': 'fixed',
-#     'DOF': 'uy',
-#     'DIR': 'edge',
-#     'TAG': 4,
-#     }
-
-
-# points = [
-#     [100, 0, 0],
-#     [100, 100, 0],
-#     [0, 100, 0],
-# ]
-         
-# lines = [[1, 2],
-#          [2, 3],
-#          [3, 5],
-#          [4, 1],
-#          ]
-
-# arcs = [[50, [0, 0, 0], ['0', 'Pi/2']]]
-
-# plane = [[1, 2, 3, 4, 5]]
-
-# meshdata = {"GMSH": {'filename': 'tutorial_04a',
-#                      'pointlist': points,
-#                      'linelist': lines,
-#                      'planelist': plane,
-#                      'arc': arcs,
-#                      'meshconfig': {
-#                          'mesh': 'quad4',   #quad4
-#                          'elem': 'plane41', #plane41
-#                          'sizeelement': 5,
-#                          'meshmap': {'on': True,
-#                                      'edge': 'all', #'all'
-#                                     #  "numbernodes": 10,
-#                                      }
-#                          }
-#                      },
-#             "PROPMAT": [mat1],
-#             "PROPGEO": [geo1],
-#             "FORCES": [f1],
-#             "BOUNDCOND": [bc1, bc2],
-#             }
-
-# modelinfo = ModelGen.get_model(meshdata)
-
-# previewset = {'RENDER': {'filename': 'tutorial_04a',
-#                          'show': True, 'scale': 10,
-#                          'savepng': True,
-#                          'lines': True,
-#                          'plottags': {'point': True,
-#                                       'edge': True}},
-#               }
-
-# preview_plot(previewset, modelinfo)
-
-
-# sys.exit()
-
-
-#------------------------------------------
-
-# # Placa completa multiplos furos (dia. 10, 10, 30 mm) estado plano (malha quad 4) 200 x 200 mm
-
-# points = [
-#     [0, 0, 0],
-#     [200, 0, 0],
-#     [200, 200, 0],
-#     [0, 200, 0],
-# ]
-         
-
-# lines = [[1, 2], # line 1
-#          [2, 3], # line 2
-#          [3, 4], # line 3
-#          [4, 1], # line 4
-#          ]
-
-# arcs = [[30, [150, 100, 0], ['0', '2*Pi']], # line 5
-#         [10, [30, 150, 0], ['0', '2*Pi']],  # line 6
-#         [10, [30, 50, 0], ['0', '2*Pi']],   # line 7
-#         ]
-         
-# plane = [[1, 2, 3, 4],
-#         [-5],
-#         [-6],
-#         [-7],
-#         # [5],
-#         # [6],
-#         # [7]
-#         ]
-
-# meshdata = {"GMSH": {'filename': 'tutorial_04b',
-#                      'pointlist': points,
-#                      'linelist': lines,
-#                      'arc': arcs,
-#                      'planelist': plane,
-#                      'meshconfig': {
-#                          'mesh': 'quad4',   #quad4
-#                          'elem': 'plane41', #plane41
-#                          'sizeelement': 10,
-#                         #  'meshmap': {'on': True,
-#                         #              'edge': [5], #'all'
-#                         #              "numbernodes": 60,
-#                         #              }
-#                          }
-#                      },
-#             "PROPMAT": [mat1,mat2,mat2,mat2],
-#             "PROPGEO": [geo1,geo1,geo1,geo1],
-#             }
-
-
-# modelinfo = ModelGen.get_model(meshdata)
-
-# previewset = {'RENDER': {'filename': 'tutorial_04b',
-#                          'show': True, 'scale': 10,
-#                          'savepng': True,
-#                          'lines': True,
-#                          'plottags': {
-#                             # 'point': True,
-#                             # 'edge': True,
-#                             'surf': True
-#                                       }},
-#             'LABELS': {'show': True, 'lines': True, 'scale': 0.2},
-#               }
-
-# preview_plot(previewset, modelinfo)
-
-
-
-
-# # ------------------------------------------------------
-
-# # Placa completa furo quadrado central (dia. 50 mm) estado plano (malha quad 4) 200 x 200 mm
-
-# points = [
-#     [0, 0, 0],
-#     [200, 0, 0],
-#     [200, 100, 0],
-#     [0, 100, 0],
-#     [75, 25, 0],
-#     [125, 25, 0],
-#     [125, 75, 0],
-#     [75, 75, 0],
-#     ]
-         
-
-# lines = [[1, 2], # line 1
-#          [2, 3], # line 2
-#          [3, 4], # line 3
-#          [4, 1], # line 4
-#          [5, 6], # line 5
-#          [6, 7], # line 6
-#          [7, 8], # line 7
-#          [8, 5], # line 8
-#          ]
-
-         
-# plane = [[1, 2, 3, 4],
-#         [-5, -6, -7, -8],
-#         # [5, 6, 7, 8]
-#         ]
-
-# meshdata = {"GMSH": {'filename': 'tutorial_04c',
-#                      'pointlist': points,
-#                      'linelist': lines,
-#                      'planelist': plane,
-#                      'meshconfig': {
-#                          'mesh': 'quad4',   #quad4
-#                          'elem': 'plane41', #plane41
-#                          'sizeelement': 5,
-#                          'meshmap': {'on': True,
-#                                      'edge': 'all', #'all'
-#                                     #  "numbernodes": 10,
-#                                      }
-#                          }
-#                      },
-#             "PROPMAT": [mat1,mat2],
-#             "PROPGEO": [geo1,geo2],
-#             }
-
-
-# modelinfo = ModelGen.get_model(meshdata)
-
-# previewset = {'RENDER': {'filename': 'tutorial_04c',
-#                          'show': True, 'scale': 2,
-#                          'savepng': True,
-#                          'lines': True,
-#                          'plottags': {
-#                             'point': True,
-#                             # 'edge': True,
-#                             # 'surf': True
-#                             }},
-#             'LABELS': {'show': True, 'lines': True, 'scale': 0.1},
-#               }
-
-# preview_plot(previewset, modelinfo)
-
-
-
-
-
-# ------------------------------------------------------
-
-# Duas Placa composta estado plano (malha quad 4) 200 x 200 mm
-
-mat2 = {
-    "NAME": "material2",
-    "VXX": 0.25,
-    "EXX": 2000E18,
-    "MAT": 'isotropic',
-    "DEF": 'planestress'
-    }
-
-f1 = {
-    'DEF': 'forceedge',
-    'DOF': 'fx',
-    'DIR': 'edge',
-    'TAG': 6,
-    'VAL': [-10],
-    }
-
-bc1 = {
-    'DEF': 'fixed',
-    'DOF': 'all',
-    'DIR': 'edge',
-    'TAG': 4,
-    }
-
-bc2 = {
-    'DEF': 'fixed',
-    'DOF': 'uy',
-    'DIR': 'edge',
-    'TAG': 3,
-    }
-
-bc3 = {
-    'DEF': 'fixed',
-    'DOF': 'uy',
-    'DIR': 'edge',
-    'TAG': 1,
-    }
-
-bc4 = {
-    'DEF': 'fixed',
-    'DOF': 'uy',
-    'DIR': 'edge',
-    'TAG': 7,
-    }
-
-bc5 = {
-    'DEF': 'fixed',
-    'DOF': 'uy',
-    'DIR': 'edge',
-    'TAG': 5,
-    }
-
 
 points = [
-    [0, 0, 0],     # point 1
-    [100, 0, 0],   # point 2
-    [100, 100, 0], # point 3
-    [0, 100, 0],   # point 4
-    [200, 0, 0],   # point 5
-    [200, 100, 0], # point 6
-    ]
+    [0, 0, 0],
+    [200, 0, 0],
+    [0, 10, 0],
+    [200, 10, 0],
+    [0, 20, 0],
+    [200, 20, 0]
+]
          
-
-lines = [[1, 2], # line 1
-         [2, 3], # line 2
-         [3, 4], # line 3
-         [4, 1], # line 4
-         [2, 5], # line 5
-         [5, 6], # line 6
-         [6, 3], # line 7
+lines = [[1, 2],
+         [2, 4],
+         [3, 4],
+         [3, 1],
+         [6, 4],
+         [5, 6],
+         [5, 3],
          ]
 
-         
-plane = [[1, 2, 3, 4], # plane 1
-        [5, 6, 7, 2],  # plane 2
-        ]
+plane = [[1, 2, 3, 4], [3, 5, 6, 7]]
 
-meshdata = {"GMSH": {'filename': 'tutorial_04d',
-                     'pointlist': points,
-                     'linelist': lines,
-                     'planelist': plane,
-                     'meshconfig': {
-                         'mesh': 'quad4',   #quad4
-                         'elem': 'plane41', #plane41
-                         'sizeelement': 5,
-                         'meshmap': {'on': True,
-                                     'edge': 'all', #'all' [2, 5, 6, 7]
-                                    #  "numbernodes": 5,
-                                     }
-                         }
-                     },
-            "PROPMAT": [mat2, mat1],
-            "PROPGEO": [geo1, geo1],
-            "FORCES": [f1],
-            "BOUNDCOND": [bc1, bc2, bc3],
-            "QUADRATURE":{'meth':'gaussian','npp':4},
-            "DOMAIN":'structural'
+modeldata = {
+   "MESH": {
+        'TYPE': 'gmsh',
+        'filename': 'test_line_force_x',
+        # "meshimport": 'object_dir',
+        'pointlist': points,
+        'linelist': lines,
+        'planelist': plane,
+        # 'arc': arcs,
+        'meshconfig': {
+            'mesh': 'hexa8',   #quad4
+            'sizeelement': 4,
+            'extrude': 20,
+            'meshmap': {'on': True,
+                        'edge': 'all', #'all'
+                        "numbernodes": [10],
             }
-
-
-modelinfo = ModelGen.get_model(meshdata)
-
-
-previewset = {'RENDER': {'filename': 'tutorial_04d',
-                         'show': True, 'scale': 5,
-                         'savepng': True,
-                         'lines': True,
-                         'plottags': {
-                            # 'point': True,
-                            'edge': True,
-                            # 'surf': True
-                            }},
-            # 'LABELS': {'show': True, 'lines': True, 'scale': 0.5}, 
-              }
-
-preview_plot(previewset, modelinfo)
-
-#-------------------------------- SOLVER -------------------------------------#
-solverset = {"SOLVER": 'SLIPRE', #SLI
-             'TOL': 1E-8,
-             "STEPSET": {'type': 'table',  # mode, freq, time ...
-                         'start': 0,
-                         'end': 1,
-                         'step': 1},
-             }
-
-solution = Solver.get_static_solve(solverset, modelinfo)
-
-#----------------------------- POST-PROCESS ----------------------------------#
-postprocset = {"SOLUTION": solution,
-                "COMPUTER": {'elasticity': {'displ': True, 'stress': True, 'average': True}},
-                "PLOTSET": {'show': True, 'data': {'displ': []}, 'filename': 'tutorial_04d_sim', 'savepng': True},
             }
+    },
 
-postporc_result = PostProcess(modelinfo).compute(postprocset)
+    "ELEMENT": {
+        'TYPE': 'heatsolid',
+        'SHAPE': 'hexa8',
+        # 'INTGAUSS': 7,
+    },
 
-#----------------------------- VIEW SOLUTION ---------------------------------#
-postproc_plot(postprocset, postporc_result, modelinfo)
+    "MATERIAL": {
+        "MAT": 'heatsolid',
+        "TYPE": 'isotropic',
+        "PROPMAT": [copper, steel],
+    },
+    
+    "GEOMETRY": {
+        "GEO": 'thickness',
+        "PROPGEO": [geo, geo],
+    },
+}
+fea.Model(modeldata)
 
+# inci = fea.getInci()
+# coord = fea.getCoord()
+# tabmat = fea.getTabmat()
+# tabgeo = fea.getTabgeo()
+# intgauss = fea.getIntGauss()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ------------------------------------------------------
-
-# # Duas Placa composta com furo em 0,0,0 (dia. 50 mm) estado plano (malha quad 4) 200 x 200 mm
-
-# points = [
-#     [100, 0, 0],   # point 1
-#     [100, 100, 0], # point 2
-#     [0, 100, 0],   # point 3
-#     [200, 0, 0],   # point 4
-#     [200, 100, 0], # point 5
-#     ]
-         
-
-# lines = [
-#     [6, 1], # line 1
-#     [1, 2], # line 2
-#     [2, 3], # line 3
-#     [3, 7], # line 4
-#     [1, 4], # line 5
-#     [4, 5], # line 6
-#     [5, 2], # line 7
-#     ]   
-
-# arcs = [[50, [0, 0, 0], ['0', 'Pi/2']], # line 8
-#         ]
-         
-# plane = [[1, 2, 3, 4, 8], # plane 1
-#         [5, 6, 7, 2],  # plane 2
-#         ]
-
-# meshdata = {"GMSH": {'filename': 'tutorial_04e',
-#                      'pointlist': points,
-#                      'linelist': lines,
-#                      'arc': arcs,
-#                      'planelist': plane,
-#                      'meshconfig': {
-#                          'mesh': 'tria3',   #quad4
-#                          'elem': 'plane31', #plane41
-#                          'sizeelement': 10,
-#                          'meshmap': {'on': True,
-#                                      'edge': [8], #'all'
-#                                      "numbernodes": 20,
-#                                      }
-#                          }
-#                      },
-#             "PROPMAT": [mat1,mat2],
-#             "PROPGEO": [geo1,geo2],
-#             }
+# vol = fea.getElementVolume(inci, coord, tabgeo, intgauss)
+# print(np.sum(vol))
 
 
-# modelinfo = ModelGen.get_model(meshdata)
 
-# previewset = {'RENDER': {'filename': 'tutorial_04e',
-#                          'show': True, 'scale': 10,
-#                          'savepng': True,
-#                          'lines': True,
-#                          'plottags': {
-#                             # 'point': True,
-#                             'edge': True,
-#                             # 'surf': True
-#                             }},
-#             'LABELS': {'show': True, 'lines': True, 'scale': 10},
-#               }
+# # sys.exit()
+q = -0.1 #1      # W/mm2
+# Q = 0.2         # W/mm3
+h = 0.000005    # W/mm2.ºC 0.000005 (air)
+Tinf = 20       # ºC
 
-# preview_plot(previewset, modelinfo)
+heatflux = {
+    'TYPE': 'heatfluxsurf',
+    'DOF': 'heatflux',
+    'DIR': 'edgex',
+    'LOC': {'x': 200, 'y': 999, 'z': 0},
+    'VAL': [0*q],
+    }
 
-# -----------------------------------
+# heatgen = {
+#     'TYPE': 'heatgeneration',
+#     'DOF': 'heatflux',
+#     'DIR': 'node',
+#     # 'LOC': {'x': 0, 'y': 999, 'z': 0},
+#     'VAL': [Q],
+#     }
 
-# # disco (dia. 200 mm) com furo central (dia. 100 mm) estado plano (malha quad 4)
+convc_s1 = {
+    'TYPE': 'convectionedge',
+    'DOF': 'convection',
+    'DIR': 'edgey',
+    'LOC': {'x': 999, 'y': 0, 'z': 0},
+    'VAL': [-h*Tinf],
+    }
 
-# points = [
-#     # [100, 0, 0],
-#     # [100, 100, 0],
-#     # [0, 100, 0],
-# ]
-         
-# lines = [
-#     # [1, 2],
-#     # [2, 3],
-#     # [3, 5],
-#     # [4, 1],
-#          ]
+convc_s2 = {
+    'TYPE': 'convectionedge',
+    'DOF': 'convection',
+    'DIR': 'edgey',
+    'LOC': {'x': 999, 'y': 20, 'z': 0},
+    'VAL': [-h*Tinf],
+    }
 
-# arcs = [[200, [0, 0, 0], ['0', '2*Pi']],[100, [0, 0, 0], ['0', '2*Pi']]]
-
-# plane = [[1],[-2]]
-
-# meshdata = {"GMSH": {'filename': 'tutorial_04f',
-#                      'pointlist': points,
-#                      'linelist': lines,
-#                      'planelist': plane,
-#                      'arc': arcs,
-#                      'meshconfig': {
-#                          'mesh': 'tria3',   #quad4
-#                          'elem': 'plane31', #plane41
-#                          'sizeelement': 40,
-#                          'meshmap': {'on': True,
-#                                      'edge': 'all', #'all'
-#                                     #  "numbernodes": 80,
-#                                      }
-#                          }
-#                      },
-#             "PROPMAT": [mat],
-#             "PROPGEO": [geo],
-#             }
-
-# modelinfo = ModelGen.get_model(meshdata)
-
-# previewset = {'RENDER': {'filename': 'tutorial_04f',
-#                          'show': True, 'scale': 10,
-#                          'savepng': True,
-#                          'lines': True,
-#                          'plottags': {
-#                             'edge': True,
-#                             # 'surf': True
-#                             }},
-#             # 'LABELS': {'show': True, 'lines': True, 'scale': 10},
-#               }
-
-# preview_plot(previewset, modelinfo)
-
-
-# -----------------------------------
-
-# # 1/4 de placa com bara no furo central (dia. 100 mm) estado plano (malha quad 4) 200 x 200 mm
-
-# points = [
-#     [100, 0, 0],
-#     [100, 100, 0],
-#     [0, 100, 0],
-#     [0, 0, 0],
-# ]
-         
-# lines = [[1, 2],
-#          [2, 3],
-#          [3, 6],
-#          [5, 1],
-#          [4, 5],
-#          [6, 4],
-#          ]
-
-# arcs = [[50, [0, 0, 0], ['0', 'Pi/2']]]
-
-# plane = [[1, 2, 3, 4, 7],[5, 6, 7]]
-
-# meshdata = {"GMSH": {'filename': 'tutorial_04g',
-#                      'pointlist': points,
-#                      'linelist': lines,
-#                      'planelist': plane,
-#                      'arc': arcs,
-#                      'meshconfig': {
-#                          'mesh': 'quad4',   #quad4
-#                          'elem': 'plane41', #plane41
-#                          'sizeelement': 10,
-#                          'meshmap': {'on': True,
-#                                      'edge': [7], #'all'
-#                                     #  "numbernodes": 10,
-#                                      }
-#                          }
-#                      },
-#             "PROPMAT": [mat1,mat2],
-#             "PROPGEO": [geo1,geo2],
-#             }
-
-# modelinfo = ModelGen.get_model(meshdata)
-
-# previewset = {'RENDER': {'filename': 'tutorial_04g',
-#                          'show': True, 'scale': 10,
-#                          'savepng': True,
-#                          'lines': True,
-#                          'plottags': {
-#                                 # 'point': True,
-#                                 # 'edge': True,
-#                                 'surf': True,
-#                                 }},
-#               'LABELS': {'show': True, 'lines': True, 'scale': 2},
-#               }
-
-# preview_plot(previewset, modelinfo)
-
-
-# #-----------------------------------------------------
-
-# 1/4 de placa com furo central (dia. 100 mm) estado plano (malha quad 4) 200 x 200 mm malha mapeada
-
-
-# f1 = {
-#     'DEF': 'forceedge',
-#     'DOF': 'fx',
-#     'DIR': 'edge',
-#     'TAG': 1,
-#     'VAL': [1000.0],
+# convc_s3 = {
+#     'TYPE': 'convectionedge',
+#     'DOF': 'convection',
+#     'DIR': 'edgey',
+#     'LOC': {'x': 999, 'y': LY, 'z': 0},
+#     'VAL': [h*Tinf],
 #     }
 
 # bc1 = {
-#     'DEF': 'fixed',
-#     'DOF': 'ux',
-#     'DIR': 'edge',
-#     'TAG': 3,
+#     'TYPE': 'insulated',  
+#     'DOF': 'full',
+#     'DIR': 'edgex',
+#     'LOC': {'x': 0, 'y': 999, 'z': 0},
 #     }
 
 # bc2 = {
-#     'DEF': 'fixed',
-#     'DOF': 'uy',
-#     'DIR': 'edge',
-#     'TAG': 4,
+#     'TYPE': 'insulated',
+#     'DOF': 'full',
+#     'DIR': 'edgey',
+#     'LOC': {'x': 999, 'y': 0, 'z': 0},
 #     }
 
+# bc3 = {
+#     'TYPE': 'insulated',
+#     'DOF': 'full',
+#     'DIR': 'edgex',
+#     'LOC': {'x': LX, 'y': 999, 'z': 0},
+#     }
 
-# points = [
-#     [100, 0, 0],
-#     [100, 100, 0],
-#     [0, 100, 0],
-# ]
-         
-# lines = [[1, 2], # 1
-#          [2, 3], # 2
-#          [3, 7], # 3
-#          [4, 1], # 4
-#          [2, 5], # 5
-#          ]
+bcNH1 = {
+    'TYPE': 'temperature',
+    'DOF': 't',
+    'DIR': 'surfyz',
+    'LOC': {'x': 0, 'y': 999, 'z': 999},
+    'VAL': [200.0],
+    }
 
-# arcs = [[50, [0, 0, 0], ['0', 'Pi/4']],    # 6
-#         [50, [0, 0, 0], ['Pi/4', 'Pi/2']]] # 7
+bcNH2 = {
+    'TYPE': 'temperature',
+    'DOF': 't',
+    'DIR': 'edgex',
+    'LOC': {'x': 200, 'y': 999, 'z': 0},
+    'VAL': [200.0],
+    }
 
-# plane = [[1, 5, 6, 4],
-#          [5, 2, 3, 7]]
+# bcNH3 = {
+#     'TYPE': 'temperature',
+#     'DOF': 't',
+#     'DIR': 'edgey',
+#     'LOC': {'x': 999, 'y': 0, 'z': 0},
+#     'VAL': [100.0],
+#     }
 
-# meshdata = {"GMSH": {'filename': 'tutorial_04h',
-#                      'pointlist': points,
-#                      'linelist': lines,
-#                      'planelist': plane,
-#                      'arc': arcs,
-#                      'meshconfig': {
-#                          'mesh': 'quad4',   #quad4
-#                          'elem': 'plane41', #plane41
-#                          'sizeelement': 10,
-#                          'meshmap': {'on': True,
-#                                      'edge': 'all', #'all'
-#                                      "numbernodes": 10,
-#                                      }
-#                          }
-#                      },
-#             "PROPMAT": [mat],
-#             "PROPGEO": [geo],
-#             "FORCES": [f1],
-#             "BOUNDCOND": [bc1, bc2],
-#             }
+physicdata = {
+    "PHYSIC": {"DOMAIN": "thermal",           # 'fluid' 'thermal'; "COUPLING": 'fsi'
+               "LOAD": [],
+               "BOUNDCOND": [bcNH1],
+    }
+}
+fea.Physic(physicdata)
 
-# modelinfo = ModelGen.get_model(meshdata)
 
-# previewset = {'RENDER': {'filename': 'tutorial_04h',
-#                          'show': True, 'scale': 10,
-#                          'savepng': True,
-#                          'lines': True,
-#                          'plottags': {
-#                             # 'point': True,
-#                             'edge': True
-#                             }},
-#             # 'LABELS': {'show': True, 'lines': True, 'scale': 0.5},   
-#               }
+previewset = {'RENDER': {'filename': 'heat_transfer', 'show': True, 'scale': 5, 'savepng': True, 'lines': True,
+                        #  'plottags': {'line': True}
+                         },
+            #   'LABELS': {'show': True, 'lines': True, 'scale': 1},
+              }
+fea.PreviewAnalysis(previewset)
 
-# preview_plot(previewset, modelinfo)
+
+# #-------------------------------- SOLVER -------------------------------------#
+solverset = {"STEPSET": {'type': 'table',  # mode, freq, time ...
+                        'start': 0,
+                        'end': 1,
+                        'step': 1},
+             'SYMM':True,
+            #  'MP':True,
+            }
+solverdata = fea.Solve(solverset)
+
+# print(solverdata['solution']['U'])
+
+
+postprocset = {"SOLVERDATA": solverdata,
+                "COMPUTER": {'thermal': {'temp': True, 'heatflux': True}},
+                "PLOTSET": {'show': True, 'filename': 'SIM_TIRA_BIMETALICA_HEAT', 'savepng': True},
+                # "TRACKER": {'point': {'x': 0, 'y': 0, 'z': 0, 'dof':1}},
+                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True}},
+            }
+postprocdata = fea.PostProcess(postprocset)
+
+### sova simulação, aplicando os valores do campo de calor da simulação anterior para gerar expansão termica no sólido
+
+modeldata = {
+   "MESH": {
+        'TYPE': 'gmsh',
+        'filename': 'test_line_force_x',
+        # "meshimport": 'object_dir',
+        'pointlist': points,
+        'linelist': lines,
+        'planelist': plane,
+        # 'arc': arcs,
+        'meshconfig': {
+            'mesh': 'hexa8',   #quad4
+            'sizeelement': 4,
+            'extrude': 20,
+            'meshmap': {'on': True,
+                        'edge': 'all', #'all'
+                        "numbernodes": [10],
+            }
+            }
+    },
+
+    "ELEMENT": {
+        'TYPE': 'structsolid',
+        'SHAPE': 'hexa8',
+        # 'INTGAUSS': 7,
+    },
+
+    "MATERIAL": {
+        "MAT": 'solidelastic',
+        "TYPE": 'isotropic',
+        "PROPMAT": [copper, steel],
+    },
+    
+    "GEOMETRY": {
+        "GEO": 'thickness',
+        "PROPGEO": [geo, geo],
+    },
+}
+fea.Model(modeldata)
+
+# fc = {
+#     'TYPE': 'forcenode',
+#     'DOF': 'fy',
+#     'DIR': 'node',
+#     'LOC': {'x': 200, 'y': LY, 'z': 0},
+#     'VAL': [0.0],
+#     }
+
+fc = {
+    'TYPE': 'forcenode',
+    'DOF': 'fy',
+    'DIR': 'edgex',
+    'LOC': {'x': 200, 'y': 999, 'z': 0},
+    'VAL': [0.0],
+    }
+
+# bcb = {
+#     'TYPE': 'fixed',
+#     'DOF': 'uy',
+#     'DIR': 'edgey',
+#     'LOC': {'x': 999, 'y': 0, 'z': 0},
+#     }
+
+bcl = {
+    'TYPE': 'fixed',
+    'DOF': 'full',
+    'DIR': 'surfyz',
+    'LOC': {'x': 0, 'y': 999, 'z': 999},
+    }
+
+# bcr = {
+#     'TYPE': 'fixed',
+#     'DOF': 'full',
+#     'DIR': 'edgex',
+#     'LOC': {'x': LX, 'y': 999, 'z': 0},
+#     }
+
+physicdata = {
+    "PHYSIC": {"DOMAIN": "structural",
+               "LOAD": [],
+               "BOUNDCOND": [bcl],
+    },
+    "COUPLING": {"TYPE": 'thermalstress', # fsi asi
+                 "POST": [postprocdata]
+    },
+    }
+fea.Physic(physicdata)
+
+previewset = {'RENDER': {'filename': 'structural', 'show': True, 'scale': 10, 'savepng': True, 'lines': False,
+                        #  'plottags': {'line': True}
+                         },
+            #   'LABELS': {'show': True, 'lines': True, 'scale': 1},
+              }
+fea.PreviewAnalysis(previewset)
+
+# #-------------------------------- SOLVER -------------------------------------#
+solverset = {"STEPSET": {'type': 'table',  # mode, freq, time ...
+                        'start': 0,
+                        'end': 1,
+                        'step': 1},
+             'SYMM':True,
+            #  'MP':True,
+            }
+solverdata = fea.Solve(solverset)
+
+postprocset = {"SOLVERDATA": solverdata,
+                "COMPUTER": {'structural': {'displ': True, 'stress': True}},
+                "PLOTSET": {'show': True, 'filename': 'SIM_TIRA_BIMETALICA_DISP', 'savepng': True},
+                # "TRACKER": {'point': {'x': 0, 'y': 0, 'z': 0, 'dof':1}},
+                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True}},
+            }
+postprocdata = fea.PostProcess(postprocset)

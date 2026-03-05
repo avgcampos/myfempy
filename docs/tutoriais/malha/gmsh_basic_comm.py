@@ -1,6 +1,4 @@
 '''
-myfempy Tutorial 03
-
 Geração da malha com gmsh
 
 Necessario instalação prévia do gmsh (não nativo do myfempy)
@@ -74,11 +72,9 @@ previewset = {'RENDER': {'filename': 'tutorial_03',
                                       'edge': True}},
               }
 
-# preview_plot(previewset, modelinfo)
-
+preview_plot(previewset, modelinfo)
 
 # Placa L estado plano (malha quad 4) 100 x 100 mm
-
 
 points = [[0, 0, 0],
           [100, 0, 0],
@@ -127,12 +123,9 @@ previewset = {'RENDER': {'filename': 'tutorial_03',
                                       'edge': True}},
               }
 
-# preview_plot(previewset, modelinfo)
-
+preview_plot(previewset, modelinfo)
 
 # Placa H estado plano (malha quad 4) 100 x 100 mm
-
-
 points = [
     [0, 0, 0],
     [20, 0, 0],

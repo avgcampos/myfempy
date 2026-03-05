@@ -1,5 +1,4 @@
 '''
-myfempy Tutorial 01
 
 Geração da malha manual
 
@@ -28,20 +27,20 @@ geo = {
     "THICKN": 1.0
     }
 
-# force = {
-#     'DEF': 'forceedge',
-#     'DOF': 'fx',
-#     'DIR': 'edgex',
-#     'LOC': {'x': 0, 'y': 999, 'z': 0},
-#     'VAL': [1.0],
-#     }
+force = {
+    'DEF': 'forceedge',
+    'DOF': 'fx',
+    'DIR': 'edgex',
+    'LOC': {'x': 0, 'y': 999, 'z': 0},
+    'VAL': [1.0],
+    }
 
-# bondcond = {
-#     'DEF': 'fixed',
-#     'DOF': 'all',
-#     'DIR': 'edgey',
-#     'LOC': {'x': 999, 'y': 0, 'z': 0},
-#     }
+bondcond = {
+    'DEF': 'fixed',
+    'DOF': 'all',
+    'DIR': 'edgey',
+    'LOC': {'x': 999, 'y': 0, 'z': 0},
+    }
 
 # Retangulo estado plano (malha quad 4) 100 x 50 mm
 

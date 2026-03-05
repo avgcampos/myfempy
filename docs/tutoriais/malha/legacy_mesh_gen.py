@@ -1,5 +1,4 @@
 '''
-myfempy Tutorial 02
 
 Geração da malha por meio da opção legacy
 
@@ -51,8 +50,6 @@ previewset = {'RENDER': {'filename': 'tutorial_02a', 'show': True, 'scale': 1, '
 
 preview_plot(previewset, modelinfo)
 
-
-sys.exit()
 # Definição do material, geometria 
 
 mat = {

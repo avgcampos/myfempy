@@ -164,7 +164,7 @@ class newAnalysis:
                     }
                 }
 
-                fea.Model(modeldata)
+                FEA.Model(modeldata)
             ```
         """
         clear_console()
@@ -341,7 +341,7 @@ class newAnalysis:
                                     bcnh_node4_ux, bcnh_node4_uy,]
                     }
                 }
-                fea.Physic(physicdata)
+                FEA.Physic(physicdata)
 
             ```
         """
@@ -440,7 +440,7 @@ class newAnalysis:
                     'MP':False
                 }
 
-                solverdata = fea.Solve(solverset)
+                solverdata = FEA.Solve(solverset)
             ```
 
         Returns:
