@@ -111,8 +111,8 @@ class DynamicHarmonicResponseLinear(Solver):
         freedof = constrainsdof["freedof"]
 
         twopi = 2 * pi
-        freqStart = (twopi) * solverset["STEPSET"]["start"]
-        freqEnd = (twopi) * solverset["STEPSET"]["end"]
+        freqStart = twopi * solverset["STEPSET"]["start"]
+        freqEnd = twopi * solverset["STEPSET"]["end"]
         freqStep = setSteps(solverset["STEPSET"])
         w_range = linspace(freqStart, freqEnd, freqStep)
 

@@ -132,6 +132,7 @@ class HomogenizationPlane(Solver):
         intgauss = Model.intgauss
 
         CH = zeros((ntensor, ntensor))
+        rhoH = 0.0
         for elm in range(inci.shape[0]):
             nodelist = Model.shape.getNodeList(inci, elm)
             elementcoord = Model.shape.getNodeCoord(coord, nodelist)
@@ -141,6 +142,7 @@ class HomogenizationPlane(Solver):
             loc = Model.shape.getLocKey(nodelist, nodedof)
             ui = U[ix_(loc)]
             CHelm = zeros((ntensor, ntensor))
+            rhoHelm = 0.0
             for ip in range(intgauss):
                 for jp in range(intgauss):
                     detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
@@ -148,15 +150,20 @@ class HomogenizationPlane(Solver):
                     invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp]]), elementcoord, nodedof)
                     B = Model.element.getB(diffN, invJ)
                     CHelm +=  (Ci - dot(Ci, dot(B, ui))) * t * abs(detJ) * wt[ip] * wt[jp]
+                    if solverset['RHOH']:
+                        R = tabmat[int(inci[elm, 2]) - 1]["RHO"]
+                        rhoHelm += (R) * t * abs(detJ) * wt[ip] * wt[jp]
 
             CH += CHelm
+            rhoH += rhoHelm
 
         Yx = max(coord[:,1])
         Yy = max(coord[:,2])
 
         CH = CH/(Yx * Yy * t)
+        rhoH = rhoH/(Yx * Yy * t)
 
         solution["U"] = U
         solution["CH"] = CH
-
+        solution['RHOH'] = rhoH            
         return solution

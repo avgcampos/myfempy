@@ -264,10 +264,10 @@ class PhononicCrystalInPlane(Solver):
         U = zeros((fulldofs, mu.shape[0]), dtype=float64)
         freq_waves = zeros((modeEnd, mu.shape[0]), dtype=float64)
         # U0 = zeros((fulldofs), dtype=float64)
-        for kw in range(mu.shape[0]):
+        for kmu in range(mu.shape[0]):
 
-            lambda_x = exp(mu[kw, 0])
-            lambda_y = exp(mu[kw, 1])
+            lambda_x = exp(mu[kmu, 0])
+            lambda_y = exp(mu[kmu, 1])
 
             MAT_R = vstack([ 
                 hstack([Iii, Zil, Zib, Zibl]),
@@ -291,14 +291,14 @@ class PhononicCrystalInPlane(Solver):
                     k=modeEnd,
                     sigma=1, 
                     which="LM",
-                    # maxiter=1000,
+                    maxiter=1000,
                 )
             except:
                 pass
 
             
             # U[:, kw] = dot(MAT_R.todense(), V[:, :modeEnd])
-            freq_waves[:, kw] = sqrt(sort(real(omega)))       # Convertendo valores Reais de Omega
+            freq_waves[:, kmu] = sqrt(sort(real(omega)))       # Convertendo valores Reais de Omega
         
         solution["U"] = U
         solution["FREQ"] = freq_waves

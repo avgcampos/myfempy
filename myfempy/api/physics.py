@@ -165,7 +165,6 @@ class SetPhysics:
                     )
 
                 else:
-
                     flist.append(
                         {
                             "TYPE": fap["TYPE"],

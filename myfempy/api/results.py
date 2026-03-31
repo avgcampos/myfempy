@@ -71,11 +71,16 @@ class setPostProcess(ABC):
             result_solu = np.zeros(
                 (SOLUTION.shape[1], self.model.coord.shape[0], 3)
             )
+           
             for ns in range(SOLUTION.shape[1]):
                 result_solu[ns, :, :], sol_title = setPostProcess.__displ(
                     self, SOLUTION[:, ns]
                 )
-            if "displ" in postprocset["COMPUTER"]["structural"].keys():
+            
+            if (
+                "displ" in postprocset["COMPUTER"]["structural"].keys()
+                and postprocset["COMPUTER"]["structural"]["displ"] == True
+            ):
                 postporc_result["solution"] = []
                 for st in range(SOLUTION.shape[1]):
                     postporc_result["solution"].append(
@@ -118,7 +123,10 @@ class setPostProcess(ABC):
             else:
                 pass
 
-            if "modes" in postprocset["COMPUTER"]["structural"].keys():
+            if (
+                "modes" in postprocset["COMPUTER"]["structural"].keys()
+                and postprocset["COMPUTER"]["structural"]["modes"] == True
+            ):
                 FREQUENCY = postprocset["SOLVERDATA"]["solution"]["FREQ"]
                 postporc_result["solution"] = []
                 for st in range(SOLUTION.shape[1]):
@@ -184,7 +192,10 @@ class setPostProcess(ABC):
                 result_solu[st, :, :], sol_title = setPostProcess.__displ(
                     self, SOLUTION[:, st]
                 )
-            if "temp" in postprocset["COMPUTER"]["thermal"].keys():
+            if (
+                "temp" in postprocset["COMPUTER"]["thermal"].keys()
+                and postprocset["COMPUTER"]["thermal"]["temp"] == True
+            ):
                 postporc_result["solution"] = []
                 for st in range(SOLUTION.shape[1]):
                     postporc_result["solution"].append(
@@ -229,10 +240,11 @@ class setPostProcess(ABC):
                 pass
         else:
             pass
-
+        
+        # save in vtk file
         setPostProcess.__tovtkplot(
             self, postprocset, postporc_result
-        )  # save in vtk file
+        ) 
 
         return postprocdata
 
@@ -486,12 +498,22 @@ class setPostProcess(ABC):
             xlabel = postprocset["PLOT"]["data"]["x_label"]
             ylabel = postprocset["PLOT"]["data"]["y_label"]
 
-        elif "freq" in postprocset["PLOT"].keys():
-            node_coordX = float(postprocset["PLOT"]["freq"]["x"])
-            node_coordY = float(postprocset["PLOT"]["freq"]["y"])
-            node_coordZ = float(postprocset["PLOT"]["freq"]["z"])
+        elif "freq_linear" in postprocset["PLOT"].keys():
+            node_coordX = float(postprocset["PLOT"]["freq_linear"]["x"])
+            node_coordY = float(postprocset["PLOT"]["freq_linear"]["y"])
+            node_coordZ = float(postprocset["PLOT"]["freq_linear"]["z"])
             hist_node = search_nodexyz(node_coordX, node_coordY, node_coordZ, coord, 1e-6)
-            val_Y = 20 * np.log((abs(postporc_result["SOLUTION"][plotset["step"]]["VAL"][hist_node[0] - 1, postprocset["PLOT"]["freq"]["dof"] - 1])))
+            val_Y = abs(postporc_result["SOLUTION"][plotset["step"]]["VAL"][hist_node[0] - 1, postprocset["PLOT"]["freq_linear"]["dof"] - 1])
+            val_X = postporc_result["SOLUTION"][plotset["step"]]["FREQ"]
+            xlabel = "FREQUENCY RESPONSE [Hz]"
+            ylabel = "FREQUENCY RESPONSE [dB]"
+
+        elif "freq_logY" in postprocset["PLOT"].keys():
+            node_coordX = float(postprocset["PLOT"]["freq_logY"]["x"])
+            node_coordY = float(postprocset["PLOT"]["freq_logY"]["y"])
+            node_coordZ = float(postprocset["PLOT"]["freq_logY"]["z"])
+            hist_node = search_nodexyz(node_coordX, node_coordY, node_coordZ, coord, 1e-6)
+            val_Y = 20 * np.log((abs(postporc_result["SOLUTION"][plotset["step"]]["VAL"][hist_node[0] - 1, postprocset["PLOT"]["freq_logY"]["dof"] - 1])))
             val_X = postporc_result["SOLUTION"][plotset["step"]]["FREQ"]
             xlabel = "FREQUENCY RESPONSE [Hz]"
             ylabel = "FREQUENCY RESPONSE [dB]"
