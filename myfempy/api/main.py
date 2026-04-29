@@ -87,17 +87,21 @@ class newAnalysis:
         Keyword Arguments:
             path -- path to output files (default: {None})
         """
-        self.solver = FEASolver
         try:
+            self.solver = FEASolver
             self.path = newDir(path)
+            text_init = "TRY SET NEW ANALYSIS AND SOLVER -- SUCCESS"
         except:
             self.path = newDir("out")
+            text_init = "TRY SET NEW ANALYSIS AND SOLVER -- FAULT"
+            
         logging.basicConfig(
             filename=str(self.path) + "/" + "myfempy_api-log.log",
             encoding="utf-8",
             level=logging.DEBUG,
             filemode="w",
         )
+        logging.info(text_init)
 
     def Model(self, modeldata: dict) -> None:
         """
