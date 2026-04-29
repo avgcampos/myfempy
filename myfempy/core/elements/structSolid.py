@@ -13,6 +13,17 @@ FLT64 = float64
 from myfempy.core.elements.element import Element
 from myfempy.core.utilities import gauss_points
 
+_H = array(
+    [
+        [1, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [0, 1, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0, 1, 0],
+        [0, 0, 1, 0, 0, 0, 1, 0, 0],
+    ],
+    dtype=INT32,
+)
 
 __docformat__ = "google"
 
@@ -83,19 +94,8 @@ class StructuralSolid(Element):
 
 
     def getB(diffN, invJ):
-        H = array(
-            [
-                [1, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [0, 1, 0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 1, 0, 1, 0],
-                [0, 0, 1, 0, 0, 0, 1, 0, 0],
-            ],
-            dtype=INT32,
-        )
         # B = dot(H, dot(invJ, diffN))
-        B = H.dot(invJ).dot(diffN)
+        B = _H.dot(invJ).dot(diffN)
         # B = fastDOT(H, fastDOT(invJ, diffN))
         return B
 

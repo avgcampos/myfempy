@@ -141,6 +141,15 @@ class SetModel:
 
     def __tabmat(self, matlist):
         """get material table"""
+        # matlist["PROPMAT"] = [{'NAME': name} for name in dict.fromkeys(d['NAME'] for d in matlist["PROPMAT"])]
+        vistos = set()
+        new_matlist_propmat = []
+        for item in matlist["PROPMAT"]:
+            if item['NAME'] not in vistos:
+                new_matlist_propmat.append(item)
+                vistos.add(item['NAME'])
+
+        matlist["PROPMAT"] = new_matlist_propmat
         nmat = len(matlist["PROPMAT"])
         mat_lib = dict()
         mat_prop = dict()

@@ -3,7 +3,7 @@ import sys
 sys.path.append('../myfempy')
 
 from myfempy import newAnalysis
-from myfempy import HomogenPlane
+from myfempy import HomogenizationPlane
 from myfempy import PlaneStress
 
 import numpy as np
@@ -13,12 +13,13 @@ from time import time
 # ===============================================================================
 #                                   FEA
 # ===============================================================================
-fea = newAnalysis(HomogenPlane)
+fea = newAnalysis(HomogenizationPlane)
 
 mat = {
     "NAME": "material_dummy",
-    "VXY": 0.33,
-    "EXX": 70E3,    
+    # "VXY": 0.33,
+    # "EXX": 70E3,    
+    'RHO': 1
     }
 
 
@@ -211,6 +212,9 @@ bc_Y1_XY = {
 strainzero = {
     'TYPE': 'strainzero',
     'VAL': [[1,0,0], [0,1,0], [0,0,1]],    # mm/s^2 
+    'DOF': 'none',
+    'DIR':'none',
+    'MESHNODE': 0,
     }
 
 physicdata = {
@@ -225,19 +229,19 @@ physicdata = {
 }
 fea.Physic(physicdata)
 
-# loadaply = fea.getLoadApply()
+loadaply = fea.getLoadApply()
 # bcaply = fea.getBCApply()
-# print(loadaply[:,2])
+# print(bcaply)
 
 # freedof, fixedof, constdof = fea.getConstrains(bcaply)
 # print('free',freedof)
 # print('fixed',fixedof)
 # print('const',constdof)
-# print('forca total [N]', np.sum(loadaply[:,2]))
+print('forca total [N]', np.sum(loadaply[:,2]))
 
 # sys.exit()
 
-previewset = {'RENDER': {'filename': 'cell_preview', 'show': True, 'scale': 4, 'savepng': True, 'lines': False,
+previewset = {'RENDER': {'filename': 'cell_preview', 'show': False, 'scale': 4, 'savepng': True, 'lines': False,
                         #  'plottags': {'line': True}
                          },
             #   'LABELS': {'show': True, 'lines': True, 'scale': 1},
@@ -252,6 +256,7 @@ solverset = {"STEPSET": {'type': 'table',
                         'end': 1,
                         'step': 1},
              'SYMM':True,
+             'RHOH': True,
              }
 solverdata = fea.Solve(solverset)
 
@@ -259,7 +264,7 @@ postprocset = {"SOLVERDATA": solverdata,
                 "COMPUTER": {'structural': {'displ': True, 'stress': True}},
                 "PLOTSET": {'show': True, 'filename': 'test_shakedown', 'savepng': True},
                 # "TRACKER": {'point': {'x': 0, 'y': 0, 'z': 0, 'dof':1}},
-                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True, 'inci': True, 'coord': True}},
+                "REPORT": {'log': True, 'get': {'nelem': True, 'nnode': True, 'inci': True, 'coord': True}},
             }
 postprocdata = fea.PostProcess(postprocset)
 
@@ -267,3 +272,35 @@ postprocdata = fea.PostProcess(postprocset)
 
 CH = solverdata["solution"]['CH']
 print('Homoge. Elastic Tensor\n', CH)
+
+RH = solverdata["solution"]['RHOH']
+print('Homoge. Density\n', RH)
+
+
+# 2. Calcular a matriz de flexibilidade S (S = inv(C))
+S = np.linalg.inv(CH)
+
+# 3. Extrair as propriedades de engenharia
+# No estado plano de tensões:
+# S11 = 1/E1, S22 = 1/E2, S33 = 1/G12
+# S12 = -nu12/E1 => nu12 = -S12 * E1
+# S21 = -nu21/E2 => nu21 = -S21 * E2
+
+E1 = 1 / S[0, 0]
+E2 = 1 / S[1, 1]
+G12 = 1 / S[2, 2]
+
+nu12 = -S[0, 1] * E1
+nu21 = -S[1, 0] * E2
+
+# 4. Exibir resultados
+print(f"--- Propriedades Calculadas ---")
+print(f"Módulo de Young E1:  {E1:10.2f}")
+print(f"Módulo de Young E2:  {E2:10.2f}")
+print(f"Módulo de Cisalhamento G12: {G12:10.2f}")
+print(f"Poisson nu12:        {nu12:10.4f}")
+print(f"Poisson nu21:        {nu21:10.4f}")
+
+# Verificação de simetria (Consistência termodinâmica)
+print(f"\nVerificação (nu12/E1 == nu21/E2):")
+print(f"{nu12/E1:.2e} == {nu21/E2:.2e}")

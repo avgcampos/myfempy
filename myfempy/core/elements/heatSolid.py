@@ -12,6 +12,7 @@ FLT64 = float64
 from myfempy.core.elements.element import Element
 from myfempy.core.utilities import gauss_points
 
+_H = array([[1, 0, 0], [0, 1, 0], [0, 0, 1]], dtype=FLT64)
 
 __docformat__ = "google"
 
@@ -74,8 +75,7 @@ class HeatSolid(Element):
         return elemset
 
     def getB(diffN, invJ):
-        H = array([[1, 0, 0], [0, 1, 0], [0, 0, 1]], dtype=FLT64)
-        B = H.dot(invJ).dot(diffN)
+        B = _H.dot(invJ).dot(diffN)
         return B
 
     # @profile

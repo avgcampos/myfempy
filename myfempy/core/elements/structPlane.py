@@ -25,6 +25,7 @@ FLT32 = float32
 from myfempy.core.elements.element import Element
 from myfempy.core.utilities import gauss_points
 
+_H = array([[1, 0, 0, 0], [0, 0, 0, 1], [0, 1, 1, 0]], dtype=INT32)
 
 __docformat__ = "google"
 
@@ -94,8 +95,7 @@ class StructuralPlane(Element):
 
     # @profile
     def getB(diffN, invJ):
-        H = array([[1, 0, 0, 0], [0, 0, 0, 1], [0, 1, 1, 0]], dtype=INT32)
-        B = H.dot(invJ).dot(diffN)
+        B = _H.dot(invJ).dot(diffN)
         return B
 
     # @profile

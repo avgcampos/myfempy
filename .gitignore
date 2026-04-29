@@ -6,7 +6,7 @@ __shakedown/
 out/
 tests/
 __dev__setup_wrap_cy_pyx.py
-
+requirements.txt
 
 # Profile/ Tests
 *.py.lprof

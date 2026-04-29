@@ -4,7 +4,6 @@ import os
 # import numpy as np
 from numpy import abs
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -92,9 +91,11 @@ def gmsh_key(meshtype: str):
 
 
 def get_gmsh_msh(filename, meshdata):
-    os.system("echo MESHING...")
+    # os.system("echo MESHING...")
     cmd = (
         "gmsh"
+        + " "
+        + "-v 0"
         + " "
         + (filename + ".geo")
         + " "
@@ -102,10 +103,9 @@ def get_gmsh_msh(filename, meshdata):
         + " -o "
         + (filename + ".msh2")
     )
-    os.system("echo GENERATING MESH FROM EXTERNAL GMSH")
+    # os.system("echo GENERATING MESH FROM EXTERNAL GMSH")
     os.system(cmd)
-    os.system("echo MESH IS DONE")
-    # os.system("echo SAVING")
+    # os.system("echo MESH IS DONE")
 
 
 def set_gmsh_geo(filename, meshdata):
@@ -284,16 +284,16 @@ def set_gmsh_geo(filename, meshdata):
                 npladd = 0
                 lplrm = []
                 nplrm = 0
-                for i in range(0, numplalistP):
+                for i in range(0, numplalistP): 
                     if any(jj < 0 for jj in meshdata["planelist"][i][:]):
                         nplrm += 1
-                        lplrm.append(npladd + i)
+                        lplrm.append(i + 1)
                     else:
                         npladd += 1
-                        lplrm.append(npladd)
 
                 addpl = 0
                 if nplrm > 0:
+                    lplrm.insert(0, lplrm[0] - 1)
                     addpl = 1
                     file_object.write(
                         "Plane Surface("

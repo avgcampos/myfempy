@@ -100,30 +100,30 @@ def loading_bar_v1(pct, name):
 
 
 def print_console(sc):
-    if sc == "pre":
+    if sc == "mesh":
         print(
-            "\r******************   P R E - P R O C E S S   L O A D I N G   ******************"
+            "\r[1 / 5]   G E N E R A T I N G   M O D E L"
         )
-    elif sc == "mesh":
+    elif sc == "phy":
         print(
-            "\r**********************   G E N E R A T I N G   M E S H   **********************"
+            "\r[2 / 5]   P H Y S I C S ' S   L O A D I N G"
         )
     elif sc == "solver":
         print(
-            "\r********************   S O L V I N G   E Q U A T I O N S   ********************\n"
+            "\r[3 / 5]   S O L V I N G   E Q U A T I O N S"
+        )
+    elif sc == 'succ':
+        print(
+            "\r[4 / 5]   A N A L Y S I S   S U C C E S S F U L"
         )
     elif sc == "post":
         print(
-            "\r***************   P O S T - P R O C E S S   C O M P U T I N G   ***************"
+            "\r[5 / 5]   P O S T - P R O C E S S   C O M P U T I N G"
         )
     elif sc == "thank":
-        print("\n")
+        # print(
+        #     "\r***************                   M Y F E M P Y                   ***************"
+        # )
         print(
-            "***************       A N A L Y S I S   S U C C E S S F U L       ***************"
-        )
-        print(
-            "***************                   M Y F E M P Y                   ***************"
-        )
-        print(
-            "***************        T H A N K   Y O U   F O R   U S E !        ***************"
+            "\r***************        T H A N K   Y O U   F O R   U S E !        ***************"
         )

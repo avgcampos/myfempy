@@ -209,16 +209,17 @@ class newAnalysis:
         except:
             logging.warning("TRY SET FEMODEL -- FAULT")
             
-        
-        self.model.inci = newAnalysis.getInci(self)
-        self.model.coord = newAnalysis.getCoord(self)
-        self.model.tabmat = newAnalysis.getTabmat(self)
-        self.model.tabgeo = newAnalysis.getTabgeo(self)
+        self.model.inci = self.model.getInci(self.model.modeldata)
+        self.model.coord = self.model.getCoord(self.model.modeldata)
+        self.model.tabmat = self.model.getTabMat(self.model.modeldata)
+        self.model.tabgeo = self.model.getTabGeo(self.model.modeldata)
         self.model.intgauss = GaussPoints
 
         self.model.modelinfo = dict()
         try:
-            self.model.regions = newAnalysis.getRegions(self)
+            self.model.regions = self.model.mesh.getRegionsList(
+            self.model.mesh.getElementConection(self.model.modeldata["MESH"])
+        )
         except:
             self.model.regions = []
         elem_set = self.model.element.getElementSet()
@@ -345,7 +346,7 @@ class newAnalysis:
 
             ```
         """
-        print_console("pre")
+        print_console("phy")
         # self.model.modelinfo["physic"] = physicdata["PHYSIC"]
         try:
             Loads, BoundCond = newAnalysis.__setDomain(physicdata)
@@ -447,6 +448,8 @@ class newAnalysis:
             solverdata
         """
         print_console("solver")
+        print(">>> RUNNING SOLVER:")
+        print(self.solver.__doc__)
         try:
             solverset["solverstatus"] = dict()
             self.symm = solverset["SYMM"]
@@ -509,6 +512,7 @@ class newAnalysis:
         except:
             logging.warning("TRY RUN SOLVER -- FAULT")
         # loading_bar_v1(100,"SOLVER")
+        print_console("succ")
         return solverset
 
     def PreviewAnalysis(self, previewdata) -> None:
@@ -587,6 +591,7 @@ class newAnalysis:
             logging.info("TRY GET POST PROCESS -- SUCCESS")
         except:
                 logging.warning("TRY GET POST PROCESS -- FAULT")
+        print_console("thank")
         return postprocdata
 
     # GET MODEL
@@ -612,7 +617,7 @@ class newAnalysis:
         Returns:
             npt.NDArray[np.float64]
         """
-        return self.model.getInci(self.model.modeldata)
+        return self.model.inci
 
     def getCoord(self) -> npt.NDArray[np.float64]:
         """get mesh grid coordinate
@@ -620,7 +625,7 @@ class newAnalysis:
         Returns:
             npt.NDArray[np.float64]
         """
-        return self.model.getCoord(self.model.modeldata)
+        return self.model.coord
 
     def getTabmat(self) -> list:
         """get table of material properties
@@ -628,15 +633,14 @@ class newAnalysis:
         Returns:
             list
         """
-        return self.model.getTabMat(self.model.modeldata)
-
+        return self.model.tabmat
     def getTabgeo(self) -> list:
         """get table of geometry properties
 
         Returns:
             list
         """
-        return self.model.getTabGeo(self.model.modeldata)
+        return self.model.tabgeo
 
     def getIntGauss(self) -> int:
         """get Gaussian numerical integration number
@@ -645,7 +649,16 @@ class newAnalysis:
             int
         """
         return self.model.intgauss
+    
+    def getRegions(self) -> list:
+        """get regions from gmsh mesh only
 
+        Returns:
+            list
+        """
+        return self.model.regions
+
+    # MELHORAR ESTES COMANDOS
     def getElementVolume(self, inci:npt.NDArray[np.float64], coord:npt.NDArray[np.float64], tabgeo:list) -> npt.NDArray[np.float64]:
         """get elements volumes list
 
@@ -704,15 +717,6 @@ class newAnalysis:
             self.model, inci, coord, tabmat, tabgeo, intgauss, element_number
         )
     
-    def getRegions(self) -> list:
-        """get regions from gmsh mesh only
-
-        Returns:
-            list
-        """
-        return self.model.mesh.getRegionsList(
-            self.model.mesh.getElementConection(self.model.modeldata["MESH"])
-        )
 
     # GET SOLVER
     def getGlobalMatrix(self, Model, inci:npt.NDArray[np.float64] = None, coord:npt.NDArray[np.float64] = None, tabmat:list = None, tabgeo:list = None, intgauss:int = None, SYMM:bool=None, MP:bool=None) -> npt.NDArray[np.float64]:
