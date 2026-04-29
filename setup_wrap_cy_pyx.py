@@ -1,7 +1,6 @@
 
 # >> python setup_wrap_cy_pyx.py build_ext --inplace
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -81,15 +80,15 @@ class build_ext(_build_ext):
             self.distribution.ext_modules = []
 
         extensions=[
-            Extension("*", sources=[".myfempy/core/solver/assemblersymm_cython.pyx"], **extension_kwargs),
-            Extension("*", sources=[".myfempy/core/solver/assemblerfull_cython.pyx"], **extension_kwargs),
-            Extension("*", sources=[".myfempy/core/shapes/line2_tasks.pyx"], **extension_kwargs),
-            Extension("*", sources=[".myfempy/core/shapes/line3_tasks.pyx"], **extension_kwargs),
-            Extension("*", sources=[".myfempy/core/shapes/tria3_tasks.pyx"], **extension_kwargs),
-            Extension("*", sources=[".myfempy/core/shapes/tria6_tasks.pyx"], **extension_kwargs),
-            Extension("*", sources=[".myfempy/core/shapes/quad4_tasks.pyx"], **extension_kwargs),
-            Extension("*", sources=[".myfempy/core/shapes/quad8_tasks.pyx"], **extension_kwargs),
-            Extension("*", sources=[".myfempy/core/shapes/tetr4_tasks.pyx"], **extension_kwargs),
-            Extension("*", sources=[".myfempy/core/shapes/hexa8_tasks.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/solver/assemblersymm_cython.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/solver/assemblerfull_cython.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/line2_tasks.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/line3_tasks.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/tria3_tasks.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/tria6_tasks.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/quad4_tasks.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/quad8_tasks.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/tetr4_tasks.pyx"], **extension_kwargs),
+            Extension("*", sources=["./myfempy/core/shapes/hexa8_tasks.pyx"], **extension_kwargs),
         ]
         self.distribution.ext_modules.extend(cythonize(extensions))
