@@ -4,7 +4,7 @@ from numpy import (arange, array, zeros_like, concatenate, setdiff1d, dot, float
                    sort, pi, where, zeros, sum, real, linspace, ceil, exp, ix_, float64)
 
 FLT64 = float64
-from scipy.sparse import csc_matrix, lil_matrix, eye, hstack, vstack
+from scipy.sparse import csc_matrix, lil_matrix, eye, hstack, vstack, bmat
 from scipy.sparse.linalg import minres, spsolve
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
@@ -14,9 +14,52 @@ from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps, gauss_points
 
 
-class HomogenPlaneInfPeriodic(Solver):
+__docformat__ = "google"
+
+__doc__ = """
+
+==========================================================================
+                            __                                
+         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
+        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
+        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
+        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
+                    |___/                       |_|     |___/ 
+        myfempy -- MultiphYsics Finite Element Module to PYthon    
+                    COMPUTATIONAL ANALYSIS PROGRAM                   
+        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
+==========================================================================
+This Python file is part of myfempy project.
+
+myfempy is a python package based on finite element method to multiphysics
+analysis. The code is open source and *intended for educational and scientific
+purposes only, not recommended to commercial use. The name myfempy is an acronym
+for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
+with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
+If you use myfempy in your research, the  developers would be grateful if you 
+could cite in your work.
+																		
+The code is written by Antonio Vinicius Garcia Campos.                                  
+																		
+A github repository, with the most up to date version of the code,      
+can be found here: https://github.com/avgcampos/myfempy.                 
+																		
+The code is open source and intended for educational and scientific     
+purposes only. If you use myfempy in your research, the developers      
+would be grateful if you could cite this. The myfempy project is published
+under the GPLv3, see the myfempy LICENSE on
+https://github.com/avgcampos/myfempy/blob/main/LICENSE.
+																		
+Disclaimer:                                                             
+The authors reserve all rights but do not guarantee that the code is    
+free from errors. Furthermore, the authors shall not be liable in any   
+event caused by the use of the program.
+
+"""
+
+class HomogenizationPlaneBCPeriodic(Solver):
     """
-    Homogenization Plane Solver Class <ConcreteClassService>
+    Homogenization Plane Boundary Periodic Solver Class <ConcreteClassService>
     """
 
     def getMatrixAssembler(
@@ -100,21 +143,21 @@ class HomogenPlaneInfPeriodic(Solver):
         dofs_bourders = concatenate((pc_left_dof, pc_bottom_dof, pc_bottom_left_dof, pc_right_dof, pc_top_dof, pc_bottom_right_dof, pc_top_left_dof, pc_top_right_dof), axis=0)
         testpc2i = in1d(full_dofs, dofs_bourders, assume_unique=True, invert=True)
         
-        nodes_constrain_XX = constrains[where(constrains[:, 3] == 1)]
-        # nodes_constrain_YY = constrains[where(constrains[:, 3] == 2)]
-        nodes_constrain_XY = constrains[where(constrains[:, 3] == 2)]
+        # nodes_constrain_XX = constrains[where(constrains[:, 3] == 1)]
+        # # nodes_constrain_YY = constrains[where(constrains[:, 3] == 2)]
+        # nodes_constrain_XY = constrains[where(constrains[:, 3] == 2)]
 
-        testfixXX2TL = in1d(nodes_constrain_XX[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
-        nodes_constrain_XX = nodes_constrain_XX[testfixXX2TL,:]
+        # testfixXX2TL = in1d(nodes_constrain_XX[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
+        # nodes_constrain_XX = nodes_constrain_XX[testfixXX2TL,:]
 
-        testfixXX2BR = in1d(nodes_constrain_XX[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
-        nodes_constrain_XX = nodes_constrain_XX[testfixXX2BR,:]
+        # testfixXX2BR = in1d(nodes_constrain_XX[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
+        # nodes_constrain_XX = nodes_constrain_XX[testfixXX2BR,:]
 
-        testfixXY2TL = in1d(nodes_constrain_XY[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
-        nodes_constrain_XY = nodes_constrain_XY[testfixXY2TL,:]
+        # testfixXY2TL = in1d(nodes_constrain_XY[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
+        # nodes_constrain_XY = nodes_constrain_XY[testfixXY2TL,:]
 
-        testfixXY2BR = in1d(nodes_constrain_XY[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
-        nodes_constrain_XY = nodes_constrain_XY[testfixXY2BR,:]
+        # testfixXY2BR = in1d(nodes_constrain_XY[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
+        # nodes_constrain_XY = nodes_constrain_XY[testfixXY2BR,:]
                 
         freedof = full_dofs[testpc2i]
         constdof = [pc_left_dof, pc_bottom_dof, pc_bottom_left_dof, pc_right_dof, pc_top_dof, pc_bottom_right_dof, pc_top_left_dof, pc_top_right_dof]
@@ -152,96 +195,85 @@ class HomogenPlaneInfPeriodic(Solver):
 
         Kg_fem = assembly["stiffness"]
         Fg_fem = assembly["loads"]
+                
+        # --- CONDENSACAO PERIODICA INF ---
 
-        # CONDENSACAO PERIODICA INF
-        KG_cell = vstack([
-                        hstack([Kg_fem[idof, :][:, idof],   Kg_fem[idof, :][:, ldof],   Kg_fem[idof, :][:, bdof],   Kg_fem[idof, :][:, bldof],  Kg_fem[idof, :][:, rdof],   Kg_fem[idof, :][:, tdof],   Kg_fem[idof, :][:, brdof],  Kg_fem[idof, :][:, tldof],  Kg_fem[idof, :][:, trdof]]),
-                        hstack([Kg_fem[ldof, :][:, idof],   Kg_fem[ldof, :][:, ldof],   Kg_fem[ldof, :][:, bdof],   Kg_fem[ldof, :][:, bldof],  Kg_fem[ldof, :][:, rdof],   Kg_fem[ldof, :][:, tdof],   Kg_fem[ldof, :][:, brdof],  Kg_fem[ldof, :][:, tldof],  Kg_fem[ldof, :][:, trdof]]),
-                        hstack([Kg_fem[bdof, :][:, idof],   Kg_fem[bdof, :][:, ldof],   Kg_fem[bdof, :][:, bdof],   Kg_fem[bdof, :][:, bldof],  Kg_fem[bdof, :][:, rdof],   Kg_fem[bdof, :][:, tdof],   Kg_fem[bdof, :][:, brdof],  Kg_fem[bdof, :][:, tldof],  Kg_fem[bdof, :][:, trdof]]),
-                        hstack([Kg_fem[bldof, :][:, idof],  Kg_fem[bldof, :][:, ldof],  Kg_fem[bldof, :][:, bdof],  Kg_fem[bldof, :][:, bldof], Kg_fem[bldof, :][:, rdof],  Kg_fem[bldof, :][:, tdof],  Kg_fem[bldof, :][:, brdof], Kg_fem[bldof, :][:, tldof], Kg_fem[bldof, :][:, trdof]]),
-                        hstack([Kg_fem[rdof, :][:, idof],   Kg_fem[rdof, :][:, ldof],   Kg_fem[rdof, :][:, bdof],   Kg_fem[rdof, :][:, bldof],  Kg_fem[rdof, :][:, rdof],   Kg_fem[rdof, :][:, tdof],   Kg_fem[rdof, :][:, brdof],  Kg_fem[rdof, :][:, tldof],  Kg_fem[rdof, :][:, trdof]]),
-                        hstack([Kg_fem[tdof, :][:, idof],   Kg_fem[tdof, :][:, ldof],   Kg_fem[tdof, :][:, bdof],   Kg_fem[tdof, :][:, bldof],  Kg_fem[tdof, :][:, rdof],   Kg_fem[tdof, :][:, tdof],   Kg_fem[tdof, :][:, brdof],  Kg_fem[tdof, :][:, tldof],  Kg_fem[tdof, :][:, trdof]]),
-                        hstack([Kg_fem[brdof, :][:, idof],  Kg_fem[brdof, :][:, ldof],  Kg_fem[brdof, :][:, bdof],  Kg_fem[brdof, :][:, bldof], Kg_fem[brdof, :][:, rdof],  Kg_fem[brdof, :][:, tdof],  Kg_fem[brdof, :][:, brdof], Kg_fem[brdof, :][:, tldof], Kg_fem[brdof, :][:, trdof]]),
-                        hstack([Kg_fem[tldof, :][:, idof],  Kg_fem[tldof, :][:, ldof],  Kg_fem[tldof, :][:, bdof],  Kg_fem[tldof, :][:, bldof], Kg_fem[tldof, :][:, rdof],  Kg_fem[tldof, :][:, tdof],  Kg_fem[tldof, :][:, brdof], Kg_fem[tldof, :][:, tldof], Kg_fem[tldof, :][:, trdof]]),
-                        hstack([Kg_fem[trdof, :][:, idof],  Kg_fem[trdof, :][:, ldof],  Kg_fem[trdof, :][:, bdof],  Kg_fem[trdof, :][:, bldof], Kg_fem[trdof, :][:, rdof],  Kg_fem[trdof, :][:, tdof],  Kg_fem[trdof, :][:, brdof], Kg_fem[trdof, :][:, tldof], Kg_fem[trdof, :][:, trdof]]),
-                        ])
-        
-        FG_cell = vstack([Fg_fem[idof, :], Fg_fem[ldof, :], Fg_fem[bdof, :], Fg_fem[bldof, :], Fg_fem[rdof, :], Fg_fem[tdof, :], Fg_fem[brdof, :], Fg_fem[tldof, :], Fg_fem[trdof, :]])
+        # Criando a KG_cell de forma mais eficiente
+        # O uso de np.ix_ permite extrair blocos da matriz esparsa sem fatiamentos repetitivos
+        # dofs = [idof, ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof]
+        # Certifique-se de que todos os arrays de DOF sejam 1D
+        dofs = [d.flatten() for d in [idof, ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof]]
 
-        Iii = eye(idof.shape[0], idof.shape[0], dtype=int64)
-        Zil = csc_matrix((idof.shape[0], ldof.shape[0]), dtype=int64)
-        Zib = csc_matrix((idof.shape[0], bdof.shape[0]), dtype=int64)
-        Zibl = csc_matrix((idof.shape[0], bldof.shape[0]), dtype=int64)
-        
-        Zli = csc_matrix((ldof.shape[0], idof.shape[0]), dtype=int64)
-        Ill = eye(ldof.shape[0], ldof.shape[0], dtype=int64)
-        Zlb = csc_matrix((ldof.shape[0], bdof.shape[0]), dtype=int64)
-        Zlbl = csc_matrix((ldof.shape[0], bldof.shape[0]), dtype=int64)
+        blocks = []
+        for row_dof in dofs:
+            row_blocks = []
+            for col_dof in dofs:
+                # Agora o np.ix_ receberá vetores 1D e funcionará corretamente
+                row_blocks.append(Kg_fem[ix_(row_dof, col_dof)])
+            blocks.append(row_blocks)
 
-        Zbi = csc_matrix((bdof.shape[0], idof.shape[0]), dtype=int64)
-        Zbl = csc_matrix((bdof.shape[0], ldof.shape[0]), dtype=int64)
-        Ibb = eye(bdof.shape[0], bdof.shape[0], dtype=int64)
-        Zbbl = csc_matrix((bdof.shape[0], bldof.shape[0]), dtype=int64)
+        KG_cell = bmat(blocks, format='csc')
 
-        Zbli = csc_matrix((bldof.shape[0], idof.shape[0]), dtype=int64)
-        Zbll = csc_matrix((bldof.shape[0], ldof.shape[0]), dtype=int64)
-        Zblb = csc_matrix((bldof.shape[0], bdof.shape[0]), dtype=int64)
-        Iblbl = eye(bldof.shape[0], bldof.shape[0], dtype=int64)
+        # Ajuste da FG_cell para seguir exatamente a mesma ordem de blocos
+        # Criamos uma lista de sub-vetores extraídos de Fg_fem e empilhamos verticalmente
+        fg_blocks = [Fg_fem[d, :] for d in dofs]
+        FG_cell = vstack(fg_blocks, format='csc')
 
-        Zri = csc_matrix((rdof.shape[0], idof.shape[0]), dtype=int64)
-        Irl = eye(rdof.shape[0], ldof.shape[0], dtype=int64)
-        Zrb = csc_matrix((rdof.shape[0], bdof.shape[0]), dtype=int64)
-        Zrbl = csc_matrix((rdof.shape[0], bldof.shape[0]), dtype=int64)
+        # --- DEFINIÇÃO DA MATRIZ DE TRANSFORMAÇÃO (MAT_R) ---
+        # Definindo as dimensões para facilitar a leitura
+        ni, nl, nb, nbl = idof.shape[0], ldof.shape[0], bdof.shape[0], bldof.shape[0]
+        nr, nt, nbr, ntl, ntr = rdof.shape[0], tdof.shape[0], brdof.shape[0], tldof.shape[0], trdof.shape[0]
 
-        Zti = csc_matrix((tdof.shape[0], idof.shape[0]), dtype=int64)
-        Ztl = csc_matrix((tdof.shape[0], ldof.shape[0]), dtype=int64)
-        Itb = eye(tdof.shape[0], bdof.shape[0], dtype=int64)
-        Ztbl = csc_matrix((tdof.shape[0], bldof.shape[0]), dtype=int64)
+        # Matrizes Identidade e Zeros (usando float64 para evitar erros de casting)
+        Iii = eye(ni, ni, dtype=float64)
+        Ill = eye(nl, nl, dtype=float64)
+        Ibb = eye(nb, nb, dtype=float64)
+        Iblbl = eye(nbl, nbl, dtype=float64)
 
-        Zbri = csc_matrix((brdof.shape[0], idof.shape[0]), dtype=int64)
-        Zbrl = csc_matrix((brdof.shape[0], ldof.shape[0]), dtype=int64)
-        Zbrb = csc_matrix((brdof.shape[0], bdof.shape[0]), dtype=int64)
-        Ibrbl = eye(brdof.shape[0], bldof.shape[0], dtype=int64)
+        # Relações de Periodicidade (Identidades que ligam as faces opostas)
+        Irl = eye(nr, nl, dtype=float64)    # Right -> Left
+        Itb = eye(nt, nb, dtype=float64)    # Top -> Bottom
+        Ibrbl = eye(nbr, nbl, dtype=float64) # Bottom-Right -> Bottom-Left
+        Itlbl = eye(ntl, nbl, dtype=float64) # Top-Left -> Bottom-Left
+        Itrbl = eye(ntr, nbl, dtype=float64) # Top-Right -> Bottom-Left
 
-        Ztli = csc_matrix((tldof.shape[0], idof.shape[0]), dtype=int64)
-        Ztll = csc_matrix((tldof.shape[0], ldof.shape[0]), dtype=int64)
-        Ztlb = csc_matrix((tldof.shape[0], bdof.shape[0]), dtype=int64)
-        Itlbl = eye(tldof.shape[0], bldof.shape[0], dtype=int64)
+        # Matriz de Restrição MAT_R usando bmat (muito mais limpo que hstack/vstack manuais)
+        MAT_R = bmat([
+            [Iii,             None,            None,            None],  # Interior
+            [None,            Ill,             None,            None],  # Left
+            [None,            None,            Ibb,             None],  # Bottom
+            [None,            None,            None,            Iblbl], # Bottom-Left
+            [None,            Irl,             None,            None],  # Right (vinculado à Left)
+            [None,            None,            Itb,             None],  # Top (vinculado à Bottom)
+            [None,            None,            None,            Ibrbl], # Bottom-Right (vinculado à BL)
+            [None,            None,            None,            Itlbl], # Top-Left (vinculado à BL)
+            [None,            None,            None,            Itrbl]  # Top-Right (vinculado à BL)
+        ], format='csc')
 
-        Ztri = csc_matrix((trdof.shape[0], idof.shape[0]), dtype=int64)
-        Ztrl = csc_matrix((trdof.shape[0], ldof.shape[0]), dtype=int64)
-        Ztrb = csc_matrix((trdof.shape[0], bdof.shape[0]), dtype=int64)
-        Itrbl = eye(trdof.shape[0], bldof.shape[0], dtype=int64)
-
-        MAT_R = vstack([ 
-            hstack([Iii, Zil, Zib, Zibl]),
-            hstack([Zli, Ill, Zlb, Zlbl]),
-            hstack([Zbi, Zbl, Ibb, Zbbl]),
-            hstack([Zbli, Zbll, Zblb, Iblbl]),
-            hstack([Zri, Irl, Zrb, Zrbl]),
-            hstack([Zti, Ztl, Itb, Ztbl]),
-            hstack([Zbri, Zbrl, Zbrb, Ibrbl]),
-            hstack([Ztli, Ztll, Ztlb, Itlbl]),
-            hstack([Ztri, Ztrl, Ztrb, Itrbl]),
-        ])
-        
-        # Static Condensation !!!
-        KG_cell_SC = (dot(dot(MAT_R.transpose(), KG_cell), MAT_R)).tocsc()
-        FG_cell_SC = (dot(MAT_R.transpose(), FG_cell)).tocsc()
+        # --- CONDENSAÇÃO ESTÁTICA ---
+        # Usando o operador @ para multiplicação de matrizes (Python 3.5+)
+        # .T é o atalho para transpose()
+        KG_cell_SC = (MAT_R.T @ KG_cell @ MAT_R).tocsc()
+        FG_cell_SC = (MAT_R.T @ FG_cell).tocsc()
 
         U0 = zeros((KG_cell_SC.shape[0], FG_cell_SC.shape[1]), dtype=float64)  # empty((fulldofs, nsteps))
         U_FULL_PC = zeros((KG_cell.shape[0], FG_cell.shape[1]), dtype=float64)
+
+        # fixeddofs = concatenate((bldof, brdof, trdof, tldof), axis=0) #array([0, 1])
+        # reduceddofs = arange(KG_cell_SC.shape[0])
+        # freedof_pc = setdiff1d(reduceddofs, fixeddofs)
+
+        # freedof_pc = arange(2, KG_cell_SC.shape[0])
         for sslv in range(ntensor):
             try:
-                X = spsolve(A=KG_cell_SC[:, freedof_pc][freedof_pc, :], b=FG_cell_SC[freedof_pc, sslv])
+                 U0[freedof_pc, sslv] = spsolve(A=KG_cell_SC[:, freedof_pc][freedof_pc, :], b=FG_cell_SC[freedof_pc, sslv])
             except:
                 raise 'erro'
             
-            U0[freedof_pc, sslv] = X
             U_FULL_PC[:, sslv] = dot(MAT_R.toarray(), U0[:, sslv])
 
-        U_EXP = zeros_like(U_FULL_PC)
-        U_EXP[ix_(full_dofs_cell), :] = U_FULL_PC
+        U = zeros_like(U_FULL_PC)
+        U[ix_(full_dofs_cell), :] = U_FULL_PC
 
         inci = Model.inci
         coord = Model.coord
@@ -250,6 +282,7 @@ class HomogenPlaneInfPeriodic(Solver):
         intgauss = Model.intgauss
 
         CH = zeros((ntensor, ntensor))
+        rhoH = 0.0
         for elm in range(inci.shape[0]):
             nodelist = Model.shape.getNodeList(inci, elm)
             elementcoord = Model.shape.getNodeCoord(coord, nodelist)
@@ -257,25 +290,30 @@ class HomogenPlaneInfPeriodic(Solver):
             Ci = Model.material.getElasticTensor(tabmat, inci, elm)
             pt, wt = gauss_points(type_shape, intgauss)
             loc = Model.shape.getLocKey(nodelist, nodedof)
-            ui = U_EXP[ix_(loc)]
+            ui = U[ix_(loc)]
             CHelm = zeros((ntensor, ntensor))
+            rhoHelm = 0.0
             for ip in range(intgauss):
                 for jp in range(intgauss):
                     detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
                     diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp]]), nodedof)
                     invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp]]), elementcoord, nodedof)
                     B = Model.element.getB(diffN, invJ)
-                    # CHelm += Ci * (eye(ntensor) - dot(B, ui)) * abs(detJ) * wt[ip] * wt[jp]
                     CHelm +=  (Ci - dot(Ci, dot(B, ui))) * t * abs(detJ) * wt[ip] * wt[jp]
+                    if solverset['RHOH']:
+                        R = tabmat[int(inci[elm, 2]) - 1]["RHO"]
+                        rhoHelm += (R) * t * abs(detJ) * wt[ip] * wt[jp]
 
             CH += CHelm
-        
+            rhoH += rhoHelm
+
         Yx = max(coord[:,1])
         Yy = max(coord[:,2])
 
         CH = CH/(Yx * Yy * t)
+        rhoH = rhoH/(Yx * Yy * t)
 
-        solution["U"] = U_EXP
+        solution["U"] = U
         solution["CH"] = CH
-        
+        solution['RHOH'] = rhoH            
         return solution

@@ -58,7 +58,7 @@ event caused by the use of the program.
 
 class HomogenizationPlane(Solver):
     """
-    Homogenization Plane Solver Class <ConcreteClassService>
+    Homogenization Plane Boundary Condition Symmetric Solver Class <ConcreteClassService>
     """
     # @profile
     def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, SYMM=None, MP=None):

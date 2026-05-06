@@ -1,4 +1,4 @@
-from myfempy.io.iogmsh import set_gmsh_geo, get_gmsh_msh
+from myfempy.io.iogmsh import set_gmsh_geo, get_mesh_gmsh, get_reorder_mesh
 
 
 __docformat__ = "google"
@@ -153,7 +153,10 @@ def setMesh(set_mesh):
         else:
             filename = set_mesh["user_path"] + "/" + set_mesh["filename"]
             set_gmsh_geo(filename, set_mesh)
-            get_gmsh_msh(filename, set_mesh)
+            if 'reordermesh' in set_mesh['meshconfig'].keys() and set_mesh['meshconfig']['reordermesh']:
+                get_reorder_mesh(filename, set_mesh)
+            else:
+                get_mesh_gmsh(filename, set_mesh)
         from myfempy.core.mesh.gmsh import MeshGmsh
         return MeshGmsh
     else:

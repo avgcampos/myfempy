@@ -170,6 +170,8 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
     height_cone = 0.9 * scala_view
     color_rgb = (1, 1, 0)
     max_coordX = max(coord[:, 1])
+    max_coordY = max(coord[:, 2])
+    max_coordZ = max(coord[:, 3])
     bc_text = vtk.vtkVectorText()
     if int(bondCond_vet[1]) == 0:  # fixed all dofs
         if coordX_bc == max_coordX:
@@ -195,7 +197,6 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
 
     elif int(bondCond_vet[1]) == 1:  # fixed ux dofs
-        dir_cone = (1, 0, 0)
         if coordX_bc == max_coordX:
             dir_cone = (-1, 0, 0)
             center_cone = (coordX_bc + height_cone / 2, coordY_bc, coordZ_bc)
@@ -219,9 +220,14 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
 
     elif int(bondCond_vet[1]) == 2:  # fixed uy dofs
-        dir_cone = (0, 1, 0)
-        center_cone = (coordX_bc, coordY_bc - height_cone / 2, coordZ_bc)
-        center_cube = (coordX_bc, coordY_bc - 3.5 * height_cone / 2, coordZ_bc)
+        if coordY_bc == max_coordY:
+            dir_cone = (0, -1, 0)
+            center_cone = (coordX_bc, coordY_bc + height_cone / 2, coordZ_bc)
+            center_cube = (coordX_bc, coordY_bc + 3.5 * height_cone / 2, coordZ_bc)
+        else:
+            dir_cone = (0, 1, 0)
+            center_cone = (coordX_bc, coordY_bc - height_cone / 2, coordZ_bc)
+            center_cube = (coordX_bc, coordY_bc - 3.5 * height_cone / 2, coordZ_bc)        
         bc_text.SetText("UY")
         bc_text.Update()
         cube = vtk.vtkCubeSource()
@@ -237,9 +243,14 @@ def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view:
         bc_point_actor_tdof.GetProperty().SetColor(1, 1, 0)  # (R,G,B)
     
     elif int(bondCond_vet[1]) == 3:  # fixed uz dofs
-        dir_cone = (0, 0, 1)
-        center_cone = (coordX_bc, coordY_bc, coordZ_bc - height_cone / 2)
-        center_cube = (coordX_bc, coordY_bc, coordZ_bc - 3.5 * height_cone / 2)
+        if coordZ_bc == max_coordZ:
+            dir_cone = (0, 0, -1)
+            center_cone = (coordX_bc, coordY_bc, coordZ_bc + height_cone / 2)
+            center_cube = (coordX_bc, coordY_bc, coordZ_bc + 3.5 * height_cone / 2)
+        else:
+            dir_cone = (0, 0, 1)
+            center_cone = (coordX_bc, coordY_bc, coordZ_bc - height_cone / 2)
+            center_cube = (coordX_bc, coordY_bc, coordZ_bc - 3.5 * height_cone / 2)
         bc_text.SetText("UZ")
         bc_text.Update()
         cube = vtk.vtkCubeSource()

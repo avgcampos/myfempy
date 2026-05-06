@@ -27,7 +27,7 @@ geo = {
 #      SET NEW MATERIAL <ELASTIC TENSOR FROM FILE: honeycomb.propmat.py>
 # ===============================================================================
 
-import honeycomb_propmat
+import __shakedown.honeycomb_propmat as honeycomb_propmat
 D = honeycomb_propmat.solverdata["solution"]['CH']
 rho_micro = honeycomb_propmat.solverdata["solution"]['RHOH']
 

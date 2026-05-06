@@ -17,17 +17,13 @@ fea = newAnalysis(StaticLinearCyclicSymmPlane)
 mat1 = {
     "NAME": "material_1",
     "VXY": 0.3,
-    "EXX": 2E5,    # MPa
-    "MAT": 'isotropic',
-    "DEF": 'planestress'
+    "EXX": 10E5,    # MPa
     }
 
 mat2 = {
     "NAME": "material_2",
-    "VXYs": 0.3,
-    "EXX": 2E5,    # MPa
-    "MAT": 'isotropic',
-    "DEF": 'planestress'
+    "VXY": 0.3,
+    "EXX": 10E5,    # MPa
     }
 
 geo = {"NAME": "geo1",
@@ -64,10 +60,8 @@ arcs = [[1, 7, 5],  # arco 4
          ]
 
 plane = [[1, 5, 2, 4],
-         [2, 7, 3, 6]]
-
-
-
+         [2, 7, 3, 6]
+         ]
 
 
 # # MODEL SET 1/8 disc
@@ -110,19 +104,20 @@ modeldata = {
                         'edge': [[1, 2, 3], [4, 5, 6, 7]], #'all',
                          "numbernodes": [1*12, 1*8],
             },
+            # 'reordermesh':True,
             }
     },
 
     "ELEMENT": {
         'TYPE': 'structplane',
         'SHAPE': 'quad4',
-        'INTGAUSS': 8,
+        # 'INTGAUSS': 8,
     },
 
     "MATERIAL": {
         "MAT": 'planestress',
         "TYPE": 'isotropic',
-        "PROPMAT": [mat1, mat2],
+        "PROPMAT": [mat1, mat1],
     },
     
     "GEOMETRY": {
@@ -169,7 +164,7 @@ f2 = {
     'DOF': 'fx',
     'DIR': 'line',
     'TAG': 4,
-    'VAL': [10],
+    'VAL': [-10],
     }
 
 f2b = {
@@ -177,7 +172,7 @@ f2b = {
     'DOF': 'pressure',
     'DIR': 'line',
     'TAG': 5,
-    'VAL': [10],
+    'VAL': [-10],
     }
 
 f3b = {
@@ -185,7 +180,7 @@ f3b = {
     'DOF': 'pressure',
     'DIR': 'line',
     'TAG': 7,
-    'VAL': [10],
+    'VAL': [-10],
     }
 
 bc_fixo1 = {
@@ -234,16 +229,16 @@ bc_cs_r = {
 
 physicdata = {
     "PHYSIC": {"DOMAIN": "structural", # 'fluid' 'thermal'; "COUPLING": 'fsi'
-               "LOAD": [f2b, f3b],
+               "LOAD": [f1bx, f1by],
                "BOUNDCOND": [bc_cs_l, bc_cs_r, bc_fixo1, bc_fixo2],
     },
 }
 fea.Physic(physicdata)
 
 # loadaply = fea.getLoadApply()
-# bcaply = fea.getBCApply()
+bcaply = fea.getBCApply()
 # print(loadaply)
-# print(bcaply)
+print(bcaply)
 
 # freedof, fixedof, constdof = fea.getConstrains(bcaply)
 # print('free',freedof)
@@ -276,6 +271,6 @@ postprocset = {"SOLVERDATA": solverdata,
                 "PLOTSET": {'show': True, 'filename': 'solution_quarter_cs', 'savepng': True},
                 "COMPUTER": {'structural': {'displ': True, 'stress': True}},
                 # "TRACKER": {'point': {'x': 0.5*LX, 'y': 0, 'z': 0, 'dof':1}},
-                "OUTPUT": {'log': True, 'get': {'nelem': True, 'nnode': True, 'inci': True, 'coord': True}},
+                "REPORT": {'log': True, 'get': {'nelem': True, 'nnode': True, 'inci': True, 'coord': True}},
             }
 postprocdata = fea.PostProcess(postprocset)

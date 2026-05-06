@@ -249,7 +249,9 @@ modeldata["MATERIAL"] = dict()
 
 # [adv]
 "CLASS": class()          # user new class defined
+      #-----------------------
       # example:
+      #-----------------------
       # from myfempy import PlaneStress
       # ===============================================================================
       #                    SET NEW MATERIAL <ORTHOTROPIC ELASTIC>
@@ -416,7 +418,9 @@ modeldata["MESH"] = dict()
       # ...
       # [node_number_N:int, coord_x_node_N:float, coord_y_node_N:float, coord_z_node_N:float]
       # ]
+      #-----------------------
       # example:
+      #-----------------------
       # >>nodes_coord_array =
       # [
       # [1, 0, 0, 0]
@@ -428,7 +432,9 @@ modeldata["MESH"] = dict()
       # [elem_number_n:int, mat_type:int, geo_type:int, nodes_list_conec_1,...nodes_list_conec_n]
       # ...
       # ]
+      #-----------------------
       # example:
+      #-----------------------
       # >>mesh_incidence_array =
       # [[1, 1, 1, 1, 2, 3, 4]]
 ```
@@ -474,7 +480,9 @@ modeldata["MESH"] = dict()
 #    \
 #     z
 
-# example
+#-----------------------
+# example:
+#-----------------------
 # points = [
 #     [0, 0, 0],
 #     [10, 0, 0],
@@ -491,7 +499,9 @@ modeldata["MESH"] = dict()
 
 # (i)-----{1}-----(j)
 
-# example
+#-----------------------
+# example:
+#-----------------------
 # lines = [
 #   [1, 2],
 #   [2, 3],
@@ -522,7 +532,9 @@ modeldata["MESH"] = dict()
       A0:str(e.g. val.='0')	  	# angle begin [rad]
       A1:str(e.g. val.='Pi/2')  # angle end [rad]
 
+#-----------------------
 # example:
+#-----------------------
 # circle = [[30, [100, 100, 0], ['0', '2*Pi']]
 
 # circles have priority numbering over arcs; pay attention to the plane numbering.
@@ -534,7 +546,9 @@ modeldata["MESH"] = dict()
 # ...
 # ]
 
+#-----------------------
 # example:
+#-----------------------
 # points = [
 #     [0, 0, 0],    # ponto 1
 #     [200, 0, 0],  # ponto 2
@@ -577,7 +591,9 @@ modeldata["MESH"] = dict()
 #  |               |
 # (i)-----{1}-----(j)
 
-# examples:
+#-----------------------
+# example:
+#-----------------------
 # plane = [[1, 2, 3, 4]]              add a new plane with the lines 1, 2, 3, 4
 # plane = [[1, 2, 3, 4], [-5]]        remove the line 5 ('circle') from the main plane with the lines 1, 2, 3, 4
 # plane = [[1, 2, 3, 4], [-5], [5]]   remove the line 5 ('circle') and add a new plane 5 ('circle') from the main plane with the lines 1, 2, 3, 4
@@ -599,10 +615,19 @@ modeldata["MESH"] = dict()
                   TAGS NUMB:list[int()]	      # select all edge or a specific edge
             ]
             'numbernodes':list[int()]	      # select a number of nodes in each edge
+            #-----------------------
             # example:
+            #-----------------------
             # 'meshmap': {'on': True,
             #     'edge': [[1, 2, 3], [4, 5, 6, 7]] or 'all',
             #     "numbernodes": [12, 8],
+      # [ adv ]
+      # Developed a robust Gmsh script that reorders nodes based on spatial coordinates (Z-Y-X)
+      # while preserving all physical groups and entity metadata for optimized FEM assembly.
+      # It is not compatible with 'meshmap'.
+      'reordermesh': bool()			# turn on(true/ false)
+                  True
+                  False
 ```
 
 ```python

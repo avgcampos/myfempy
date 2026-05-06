@@ -1,66 +1,24 @@
 from __future__ import annotations
 
-from numpy import (arange, array, empty, concatenate, unique, dot, float64, in1d, int16, int64,
-                   sort, pi, where, zeros, sqrt, real, linspace, ceil, exp)
+from numpy import (arange, array, zeros_like, concatenate, setdiff1d, dot, float64, in1d, int16, int64,
+                   sort, pi, where, zeros, sum, real, linspace, ceil, exp, ix_, float64)
 
+FLT64 = float64
 from scipy.sparse import csc_matrix, lil_matrix, eye, hstack, vstack
-from scipy.sparse.linalg import eigsh
+from scipy.sparse.linalg import minres, spsolve
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
 from myfempy.core.solver.assemblerfull_parallel import AssemblerFULLPOOL
 from myfempy.core.solver.assemblersymm import AssemblerSYMM
 from myfempy.core.solver.solver import Solver
-from myfempy.core.utilities import setSteps
+from myfempy.core.utilities import setSteps, gauss_points
 
 
-__docformat__ = "google"
-
-__doc__ = """
-
-==========================================================================
-                            __                                
-         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-                    |___/                       |_|     |___/ 
-        myfempy -- MultiphYsics Finite Element Module to PYthon    
-                    COMPUTATIONAL ANALYSIS PROGRAM                   
-        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
-==========================================================================
-This Python file is part of myfempy project.
-
-myfempy is a python package based on finite element method to multiphysics
-analysis. The code is open source and *intended for educational and scientific
-purposes only, not recommended to commercial use. The name myfempy is an acronym
-for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
-with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
-If you use myfempy in your research, the  developers would be grateful if you 
-could cite in your work.
-																		
-The code is written by Antonio Vinicius Garcia Campos.                                  
-																		
-A github repository, with the most up to date version of the code,      
-can be found here: https://github.com/avgcampos/myfempy.                 
-																		
-The code is open source and intended for educational and scientific     
-purposes only. If you use myfempy in your research, the developers      
-would be grateful if you could cite this. The myfempy project is published
-under the GPLv3, see the myfempy LICENSE on
-https://github.com/avgcampos/myfempy/blob/main/LICENSE.
-																		
-Disclaimer:                                                             
-The authors reserve all rights but do not guarantee that the code is    
-free from errors. Furthermore, the authors shall not be liable in any   
-event caused by the use of the program.
-
-"""
-
-
-class PhononicCrystalPlaneBCPeriodic(Solver):
+class HomogenPlaneInfPeriodic(Solver):
     """
-    Phononic Crystal In-Plane Boundary Periodic Solver Class <ConcreteClassService>
+    Homogenization Plane Boundary Periodic Solver Class <ConcreteClassService>
     """
+
     def getMatrixAssembler(
         Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, SYMM=None, MP=None
     ):
@@ -69,16 +27,9 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
             matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
                 Model, inci, coord, tabmat, tabgeo, intgauss,
             )
-            matrix["mass"] = AssemblerSYMM.getMassConsistentGlobalMatrixAssembler(
-                Model, inci, coord, tabmat, tabgeo, intgauss,
-            )
         else:
             if MP:
                 matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(
-                    Model, inci, coord, tabmat, tabgeo, intgauss,
-                    MP=MP,
-                )
-                matrix["mass"] = AssemblerFULLPOOL.getMassConsistentGlobalMatrixAssembler(
                     Model, inci, coord, tabmat, tabgeo, intgauss,
                     MP=MP,
                 )
@@ -86,20 +37,11 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
                 matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
                     Model, inci, coord, tabmat, tabgeo, intgauss,
                 )
-                matrix["mass"] = AssemblerFULL.getMassConsistentGlobalMatrixAssembler(
-                    Model, inci, coord, tabmat, tabgeo, intgauss,
-                )
         return matrix
     
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
-        return empty(
-            (
-                nodedof * nodetot,
-                len(unique(loadaply[:, 3])),
-            )
-        )
-        
+        return AssemblerFULL.getLoadAssembler(loadaply, nodetot, nodedof)        
 
     def getConstrains(constrains, nodetot, nodedof):
         pc_left = where(constrains[:, 1] == 13)
@@ -155,10 +97,26 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
 
         full_dofs = arange(0, nodedof * nodetot, 1, int)
 
-        pc_dofs = concatenate((pc_left_dof, pc_bottom_dof, pc_bottom_left_dof, pc_right_dof, pc_top_dof, pc_bottom_right_dof, pc_top_left_dof, pc_top_right_dof), axis=0)
-        testpc2i = in1d(full_dofs, pc_dofs, assume_unique=True, invert=True)
-        freedof = full_dofs[testpc2i]
+        dofs_bourders = concatenate((pc_left_dof, pc_bottom_dof, pc_bottom_left_dof, pc_right_dof, pc_top_dof, pc_bottom_right_dof, pc_top_left_dof, pc_top_right_dof), axis=0)
+        testpc2i = in1d(full_dofs, dofs_bourders, assume_unique=True, invert=True)
+        
+        # nodes_constrain_XX = constrains[where(constrains[:, 3] == 1)]
+        # # nodes_constrain_YY = constrains[where(constrains[:, 3] == 2)]
+        # nodes_constrain_XY = constrains[where(constrains[:, 3] == 2)]
 
+        # testfixXX2TL = in1d(nodes_constrain_XX[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
+        # nodes_constrain_XX = nodes_constrain_XX[testfixXX2TL,:]
+
+        # testfixXX2BR = in1d(nodes_constrain_XX[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
+        # nodes_constrain_XX = nodes_constrain_XX[testfixXX2BR,:]
+
+        # testfixXY2TL = in1d(nodes_constrain_XY[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
+        # nodes_constrain_XY = nodes_constrain_XY[testfixXY2TL,:]
+
+        # testfixXY2BR = in1d(nodes_constrain_XY[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
+        # nodes_constrain_XY = nodes_constrain_XY[testfixXY2BR,:]
+                
+        freedof = full_dofs[testpc2i]
         constdof = [pc_left_dof, pc_bottom_dof, pc_bottom_left_dof, pc_right_dof, pc_top_dof, pc_bottom_right_dof, pc_top_left_dof, pc_top_right_dof]
         fixedof = []
 
@@ -168,15 +126,15 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
         return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
 
     def runSolve(Model, Physic, assembly, constrainsdof, solverset):
-        fulldofs = Model.modelinfo["fulldofs"]
+        ndofs = Model.modelinfo["fulldofs"]
+        elem_set = Model.element.getElementSet()
+        nodedof = len(elem_set["dofs"]["d"])
+        ntensor = len(elem_set['tensor'])
+        shape_set = Model.shape.getShapeSet()
+        type_shape = shape_set["key"]
 
         solution = dict()
-        modeEnd = setSteps(solverset["STEPSET"])
-        cont_co = solverset["IBZ"]
-
-        mu, tot_steps = PhononicCrystalInPlane.__setIBZ(cont_co)
-
-        # fixeddof = constrainsdof["fixedof"]
+        # nsteps = setSteps(solverset["STEPSET"])
         
         idof = constrainsdof["freedof"]
         ldof = constrainsdof["constdof"][0]
@@ -187,10 +145,14 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
         brdof = constrainsdof["constdof"][5]
         tldof = constrainsdof["constdof"][6]
         trdof = constrainsdof["constdof"][7]
-        
-        Kg_fem = assembly["stiffness"]
-        Mg_fem = assembly["mass"]
 
+        full_dofs_cell = concatenate((idof, ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof), axis=0)
+        fulldof_pc_red = concatenate((idof, ldof, bdof, bldof), axis=0)
+        freedof_pc = where(in1d(fulldof_pc_red, bldof, assume_unique=True) == False)[0]
+
+        Kg_fem = assembly["stiffness"]
+        Fg_fem = assembly["loads"]
+        
         # CONDENSACAO PERIODICA INF
         KG_cell = vstack([
                         hstack([Kg_fem[idof, :][:, idof],   Kg_fem[idof, :][:, ldof],   Kg_fem[idof, :][:, bdof],   Kg_fem[idof, :][:, bldof],  Kg_fem[idof, :][:, rdof],   Kg_fem[idof, :][:, tdof],   Kg_fem[idof, :][:, brdof],  Kg_fem[idof, :][:, tldof],  Kg_fem[idof, :][:, trdof]]),
@@ -204,17 +166,7 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
                         hstack([Kg_fem[trdof, :][:, idof],  Kg_fem[trdof, :][:, ldof],  Kg_fem[trdof, :][:, bdof],  Kg_fem[trdof, :][:, bldof], Kg_fem[trdof, :][:, rdof],  Kg_fem[trdof, :][:, tdof],  Kg_fem[trdof, :][:, brdof], Kg_fem[trdof, :][:, tldof], Kg_fem[trdof, :][:, trdof]]),
                         ])
         
-        MG_cell =vstack([
-                        hstack([Mg_fem[idof, :][:, idof],   Mg_fem[idof, :][:, ldof],   Mg_fem[idof, :][:, bdof],   Mg_fem[idof, :][:, bldof],  Mg_fem[idof, :][:, rdof],   Mg_fem[idof, :][:, tdof],   Mg_fem[idof, :][:, brdof],  Mg_fem[idof, :][:, tldof],  Mg_fem[idof, :][:, trdof]]),
-                        hstack([Mg_fem[ldof, :][:, idof],   Mg_fem[ldof, :][:, ldof],   Mg_fem[ldof, :][:, bdof],   Mg_fem[ldof, :][:, bldof],  Mg_fem[ldof, :][:, rdof],   Mg_fem[ldof, :][:, tdof],   Mg_fem[ldof, :][:, brdof],  Mg_fem[ldof, :][:, tldof],  Mg_fem[ldof, :][:, trdof]]),
-                        hstack([Mg_fem[bdof, :][:, idof],   Mg_fem[bdof, :][:, ldof],   Mg_fem[bdof, :][:, bdof],   Mg_fem[bdof, :][:, bldof],  Mg_fem[bdof, :][:, rdof],   Mg_fem[bdof, :][:, tdof],   Mg_fem[bdof, :][:, brdof],  Mg_fem[bdof, :][:, tldof],  Mg_fem[bdof, :][:, trdof]]),
-                        hstack([Mg_fem[bldof, :][:, idof],  Mg_fem[bldof, :][:, ldof],  Mg_fem[bldof, :][:, bdof],  Mg_fem[bldof, :][:, bldof], Mg_fem[bldof, :][:, rdof],  Mg_fem[bldof, :][:, tdof],  Mg_fem[bldof, :][:, brdof], Mg_fem[bldof, :][:, tldof], Mg_fem[bldof, :][:, trdof]]),
-                        hstack([Mg_fem[rdof, :][:, idof],   Mg_fem[rdof, :][:, ldof],   Mg_fem[rdof, :][:, bdof],   Mg_fem[rdof, :][:, bldof],  Mg_fem[rdof, :][:, rdof],   Mg_fem[rdof, :][:, tdof],   Mg_fem[rdof, :][:, brdof],  Mg_fem[rdof, :][:, tldof],  Mg_fem[rdof, :][:, trdof]]),
-                        hstack([Mg_fem[tdof, :][:, idof],   Mg_fem[tdof, :][:, ldof],   Mg_fem[tdof, :][:, bdof],   Mg_fem[tdof, :][:, bldof],  Mg_fem[tdof, :][:, rdof],   Mg_fem[tdof, :][:, tdof],   Mg_fem[tdof, :][:, brdof],  Mg_fem[tdof, :][:, tldof],  Mg_fem[tdof, :][:, trdof]]),
-                        hstack([Mg_fem[brdof, :][:, idof],  Mg_fem[brdof, :][:, ldof],  Mg_fem[brdof, :][:, bdof],  Mg_fem[brdof, :][:, bldof], Mg_fem[brdof, :][:, rdof],  Mg_fem[brdof, :][:, tdof],  Mg_fem[brdof, :][:, brdof], Mg_fem[brdof, :][:, tldof], Mg_fem[brdof, :][:, trdof]]),
-                        hstack([Mg_fem[tldof, :][:, idof],  Mg_fem[tldof, :][:, ldof],  Mg_fem[tldof, :][:, bdof],  Mg_fem[tldof, :][:, bldof], Mg_fem[tldof, :][:, rdof],  Mg_fem[tldof, :][:, tdof],  Mg_fem[tldof, :][:, brdof], Mg_fem[tldof, :][:, tldof], Mg_fem[tldof, :][:, trdof]]),
-                        hstack([Mg_fem[trdof, :][:, idof],  Mg_fem[trdof, :][:, ldof],  Mg_fem[trdof, :][:, bdof],  Mg_fem[trdof, :][:, bldof], Mg_fem[trdof, :][:, rdof],  Mg_fem[trdof, :][:, tdof],  Mg_fem[trdof, :][:, brdof], Mg_fem[trdof, :][:, tldof], Mg_fem[trdof, :][:, trdof]]),
-                        ])
+        FG_cell = vstack([Fg_fem[idof, :], Fg_fem[ldof, :], Fg_fem[bdof, :], Fg_fem[bldof, :], Fg_fem[rdof, :], Fg_fem[tdof, :], Fg_fem[brdof, :], Fg_fem[tldof, :], Fg_fem[trdof, :]])
 
         Iii = eye(idof.shape[0], idof.shape[0], dtype=int64)
         Zil = csc_matrix((idof.shape[0], ldof.shape[0]), dtype=int64)
@@ -261,73 +213,75 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
         Ztrb = csc_matrix((trdof.shape[0], bdof.shape[0]), dtype=int64)
         Itrbl = eye(trdof.shape[0], bldof.shape[0], dtype=int64)
 
-        U = zeros((fulldofs, mu.shape[0]), dtype=float64)
-        freq_waves = zeros((modeEnd, mu.shape[0]), dtype=float64)
-        # U0 = zeros((fulldofs), dtype=float64)
-        for kmu in range(mu.shape[0]):
+        MAT_R = vstack([ 
+            hstack([Iii, Zil, Zib, Zibl]),
+            hstack([Zli, Ill, Zlb, Zlbl]),
+            hstack([Zbi, Zbl, Ibb, Zbbl]),
+            hstack([Zbli, Zbll, Zblb, Iblbl]),
+            hstack([Zri, Irl, Zrb, Zrbl]),
+            hstack([Zti, Ztl, Itb, Ztbl]),
+            hstack([Zbri, Zbrl, Zbrb, Ibrbl]),
+            hstack([Ztli, Ztll, Ztlb, Itlbl]),
+            hstack([Ztri, Ztrl, Ztrb, Itrbl]),
+        ])
+        
+        # Static Condensation !!!
+        KG_cell_SC = (dot(dot(MAT_R.transpose(), KG_cell), MAT_R)).tocsc()
+        FG_cell_SC = (dot(MAT_R.transpose(), FG_cell)).tocsc()
 
-            lambda_x = exp(mu[kmu, 0])
-            lambda_y = exp(mu[kmu, 1])
-
-            MAT_R = vstack([ 
-                hstack([Iii, Zil, Zib, Zibl]),
-                hstack([Zli, Ill, Zlb, Zlbl]),
-                hstack([Zbi, Zbl, Ibb, Zbbl]),
-                hstack([Zbli, Zbll, Zblb, Iblbl]),
-                hstack([Zri, lambda_x*Irl, Zrb, Zrbl]),
-                hstack([Zti, Ztl, lambda_y*Itb, Ztbl]),
-                hstack([Zbri, Zbrl, Zbrb, lambda_x*Ibrbl]),
-                hstack([Ztli, Ztll, Ztlb, lambda_y*Itlbl]),
-                hstack([Ztri, Ztrl, Ztrb, lambda_x*lambda_y*Itrbl]),
-            ])
-
-            KG_cell_BF = (dot(dot(MAT_R.conjugate().transpose(), KG_cell), MAT_R)).tocsc()
-            MG_cell_BF = (dot(dot(MAT_R.conjugate().transpose(), MG_cell), MAT_R)).tocsc()
-
+        U0 = zeros((KG_cell_SC.shape[0], FG_cell_SC.shape[1]), dtype=float64)  # empty((fulldofs, nsteps))
+        U_FULL_PC = zeros((KG_cell.shape[0], FG_cell.shape[1]), dtype=float64)
+        for sslv in range(ntensor):
             try:
-                omega, __ = eigsh(
-                    A=KG_cell_BF,
-                    M=MG_cell_BF,
-                    k=modeEnd,
-                    sigma=1, 
-                    which="LM",
-                    maxiter=1000,
-                )
+                X = spsolve(A=KG_cell_SC[:, freedof_pc][freedof_pc, :], b=FG_cell_SC[freedof_pc, sslv])
             except:
-                pass
-
+                raise 'erro'
             
-            # U[:, kw] = dot(MAT_R.todense(), V[:, :modeEnd])
-            freq_waves[:, kmu] = sqrt(sort(real(omega)))       # Convertendo valores Reais de Omega
-        
+            U0[freedof_pc, sslv] = X
+            U_FULL_PC[:, sslv] = dot(MAT_R.toarray(), U0[:, sslv])
+
+        U = zeros_like(U_FULL_PC)
+        U[ix_(full_dofs_cell), :] = U_FULL_PC
+
+        inci = Model.inci
+        coord = Model.coord
+        tabmat = Model.tabmat
+        tabgeo = Model.tabgeo
+        intgauss = Model.intgauss
+
+        CH = zeros((ntensor, ntensor))
+        rhoH = 0.0
+        for elm in range(inci.shape[0]):
+            nodelist = Model.shape.getNodeList(inci, elm)
+            elementcoord = Model.shape.getNodeCoord(coord, nodelist)
+            t = tabgeo[int(inci[elm, 3] - 1)]["THICKN"]
+            Ci = Model.material.getElasticTensor(tabmat, inci, elm)
+            pt, wt = gauss_points(type_shape, intgauss)
+            loc = Model.shape.getLocKey(nodelist, nodedof)
+            ui = U[ix_(loc)]
+            CHelm = zeros((ntensor, ntensor))
+            rhoHelm = 0.0
+            for ip in range(intgauss):
+                for jp in range(intgauss):
+                    detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
+                    diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp]]), nodedof)
+                    invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp]]), elementcoord, nodedof)
+                    B = Model.element.getB(diffN, invJ)
+                    CHelm +=  (Ci - dot(Ci, dot(B, ui))) * t * abs(detJ) * wt[ip] * wt[jp]
+                    if solverset['RHOH']:
+                        R = tabmat[int(inci[elm, 2]) - 1]["RHO"]
+                        rhoHelm += (R) * t * abs(detJ) * wt[ip] * wt[jp]
+
+            CH += CHelm
+            rhoH += rhoHelm
+
+        Yx = max(coord[:,1])
+        Yy = max(coord[:,2])
+
+        CH = CH/(Yx * Yy * t)
+        rhoH = rhoH/(Yx * Yy * t)
+
         solution["U"] = U
-        solution["FREQ"] = freq_waves
-        solution["IBZRANGE"] = tot_steps
-        
+        solution["CH"] = CH
+        solution['RHOH'] = rhoH            
         return solution
-    
-    def __setIBZ(cont_co):
-        # Amostragem da IBZ
-        img = 1j
-        mu = array([img*cont_co[0, :].T])
-        tot_steps = zeros(len(cont_co), dtype=int)
-
-        step_size = 0.01*pi  # Defina o tamanho do passo desejado
-
-        for i in range(len(cont_co) - 1):
-            n_steps = int(ceil(sqrt((cont_co[i, 0] - cont_co[i + 1, 0])**2 +
-                                        (cont_co[i, 1] - cont_co[i + 1, 1])**2) / step_size))
-            
-            ed = zeros((2, n_steps))
-            
-            for j in range(2):  # j = 0 -> x; j = 1 -> y
-                step = (cont_co[i + 1, j] - cont_co[i, j]) / n_steps
-                if step == 0:
-                    ed[j, :] = cont_co[i, j]
-                else:
-                    ed[j, :] = linspace(cont_co[i, j], cont_co[i + 1, j], n_steps, endpoint=False)
-            
-            mu = concatenate((mu, img*ed.T), axis=0)
-            tot_steps[i + 1] = tot_steps[i] + n_steps
-        
-        return mu, tot_steps

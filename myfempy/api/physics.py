@@ -164,7 +164,7 @@ class SetPhysics:
                         }
                     )
 
-                else:
+                elif "MESHNODE" in fap.keys():
                     flist.append(
                         {
                             "TYPE": fap["TYPE"],
@@ -176,6 +176,22 @@ class SetPhysics:
                             "LOCZ": 0.0,
                             "TAG": 0,
                             "MESHNODE": fap["MESHNODE"],
+                            "STEP": int(fs + 1),
+                        }
+                    )
+
+                else:
+                    flist.append(
+                        {
+                            "TYPE": fap["TYPE"],
+                            "DOF": fap["DOF"],
+                            "VAL": fap["VAL"][fs],
+                            "DIR": fap["DIR"],
+                            "LOCX": 0.0,
+                            "LOCY": 0.0,
+                            "LOCZ": 0.0,
+                            "TAG": 0,
+                            "MESHNODE": [-1],
                             "STEP": int(fs + 1),
                         }
                     )

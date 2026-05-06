@@ -52,7 +52,7 @@ def criar_malha_com_quadrado(nx, ny, tamanho_central=4):
     
     return elementos_centro
 
-# # # Exemplo: malha 20x20 com quadrado central 4x4
+# # # # Exemplo: malha 20x20 com quadrado central 4x4
 # lista_centro = criar_malha_com_quadrado(10, 10, tamanho_central=4)
 
 # print("Elementos dentro do quadrado central:", lista_centro)

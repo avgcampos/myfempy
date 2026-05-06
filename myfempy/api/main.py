@@ -72,20 +72,21 @@ class newAnalysis:
     Setup the New Analysis to FEA simulation
     """
     def __init__(self, FEASolver: object, path: str = None):
-        """Initialize a Finite Element Analysis object.
+        """Initializes a new Finite Element Analysis (FEA) project environment.
 
-        Arguments:
-            FEASolver -- analysis module to solve the problem
+        Sets up the solution directories, default logging configuration, and binds the
+        numerical solver module to the simulation instance.
+
+        Args:
+            FEASolver: Class or module responsible for solving the physical state equations 
+                (e.g., StaticLinear, SteadyStateLinear).
+            path: Target directory path for exporting simulation logs and output files. 
+                If None is passed, defaults to creating an "out" folder.
 
         Example:
-            ```python
-                from myfempy import newAnalysis
-                from myfempy import SteadyStateLinear
-                FEA = newAnalysis(SteadyStateLinear)
-            ```
-
-        Keyword Arguments:
-            path -- path to output files (default: {None})
+            >>> from myfempy.api.api import newAnalysis
+            >>> from myfempy.core.solver import SteadyStateLinear
+            >>> FEA = newAnalysis(FEASolver=SteadyStateLinear, path="simulation_results")
         """
         try:
             self.solver = FEASolver
@@ -104,72 +105,42 @@ class newAnalysis:
         logging.info(text_init)
 
     def Model(self, modeldata: dict) -> None:
-        """
-        finite element model set
+        """Sets up the mesh, element configuration, materials, and domain geometry.
 
-        Arguments:
-            modeldata -- myfempy data information
+        Parses the unified configuration dictionary to build the mathematical model representation,
+        computes element volumes, and compiles internal metadata arrays (such as coordinates
+        and connectivity).
+
+        Args:
+            modeldata: A structured configuration dictionary containing modeling setup:
+                - 'MESH': Coordinates and element incidence.
+                - 'ELEMENT': Finite element formulation (e.g., 'structplane'), shape, and integration order.
+                - 'MATERIAL': Constitutive model and properties.
+                - 'GEOMETRY': Thickness, cross-section areas, or generic geometric descriptors.
 
         Example:
-            ```python
-
-                mat = {
-                    'NAME': 'material',
-                    'EXX': 1000,
-                    'VXX': 0.3
-                }
-
-                geo = {
-                    'NAME':'geo',
-                    'THICKN': 0.1,
-                }
-
-                nodes = [
-                    [1,     0.00,   0.00,   0.00],
-                    [2,     2.00,   0.00,   0.00],
-                    [3,     2.00,   3.00,   0.00],
-                    [4,     0.00,   2.00,   0.00],
-                    [5,     0.40,   0.40,   0.00],
-                    [6,     1.40,   0.60,   0.00],
-                    [7,     1.50,   2.00,   0.00],
-                    [8,     0.30,   1.60,   0.00],    
-                        ]
-
-                conec = [
-                    [1, 1, 1, 1, 2, 6, 5],
-                    [2, 1, 1, 2, 3, 7, 6],
-                    [3, 1, 1, 3, 4, 8, 7],
-                    [4, 1, 1, 1, 5, 8, 4],
-                    [5, 1, 1, 5, 6, 7, 8],
-                        ]
-
-                modeldata = {
-                    'MESH':{
-                        'TYPE':'manual',
-                        'COORD':nodes,
-                        'INCI':conec
-                    },
-
-                    'ELEMENT':{
-                        'TYPE':'structplane',
-                        'SHAPE':'quad4',
-                        'INTGAUSS':2,
-                    },
-
-                    'MATERIAL':{
-                        'MAT':'planestress',
-                        'TYPE':'isotropic',
-                        'PROPMAT':[mat]
-                    },
-
-                    'GEOMETRY':{
-                        'GEO':'thickness',
-                        'PROPGEO':[geo]
-                    }
-                }
-
-                FEA.Model(modeldata)
-            ```
+            >>> model_config = {
+            ...     'MESH': {
+            ...         'TYPE': 'manual',
+            ...         'COORD': [[1, 0., 0.], [2, 1., 0.], [3, 1., 1.], [4, 0., 1.]],
+            ...         'INCI': [[1, 1, 1, 1, 2, 3, 4]]
+            ...     },
+            ...     'ELEMENT': {
+            ...         'TYPE': 'structplane',
+            ...         'SHAPE': 'quad4',
+            ...         'INTGAUSS': 2
+            ...     },
+            ...     'MATERIAL': {
+            ...         'MAT': 'planestress',
+            ...         'TYPE': 'isotropic',
+            ...         'PROPMAT': [{'NAME': 'Steel', 'EXX': 210e9, 'VXY': 0.3}]
+            ...     },
+            ...     'GEOMETRY': {
+            ...         'GEO': 'thickness',
+            ...         'PROPGEO': [{'NAME': 'Pl_1', 'THICKN': 0.01}]
+            ...     }
+            ... }
+            >>> FEA.Model(model_config)
         """
         clear_console()
         get_logo()
@@ -249,106 +220,29 @@ class newAnalysis:
         )
 
     def Physic(self, physicdata: dict) -> None:
-        """
-        set load and boundary conditions
+        """Configures loads, coupling fields, and boundary constraints.
 
-        Arguments:
-            physicdata -- myfempy data information
+        Initializes force vectors, multiphysics couplings, and kinematic boundary
+        constraints (such as essential Dirichlet conditions) on specified coordinates or nodal lists.
+
+        Args:
+            physicdata: Configuration dictionary specifying boundary conditions and loads.
+                - 'PHYSIC': Holds physical 'DOMAIN' type, 'LOAD' array, and 'BOUNDCOND' array.
+                - 'COUPLING' (optional): Holds interface multi-field configuration.
 
         Example:
-            ```python
-                bcfix = {
-                    'TYPE':'fixed',
-                    'DOF':'full',
-                    'DIR':'node',
-                    'LOC':{'x':0, 'y':0, 'z':0},
-                }
-
-                def displ_patch_test(x,y):
-                    ux = 0.002*x
-                    uy = -0.0006*y
-                    return ux, uy
-
-                bcnh_node1_ux = {
-                    'TYPE':'displ',
-                    'DOF':'ux',
-                    'DIR':'node',
-                    'LOC':{'x':0.0, 'y':0, 'z':0},
-                    'VAL':[displ_patch_test(0.0,0.00)[0]]
-                } 
-
-                bcnh_node1_uy = {
-                    'TYPE':'displ',
-                    'DOF':'uy',
-                    'DIR':'node',
-                    'LOC':{'x':0.0, 'y':0, 'z':0},
-                    'VAL':[displ_patch_test(0.0,0.00)[1]]
-                } 
-
-                bcnh_node2_ux = {
-                    'TYPE':'displ',
-                    'DOF':'ux',
-                    'DIR':'node',
-                    'LOC':{'x':2.0, 'y':0, 'z':0},
-                    'VAL':[displ_patch_test(2.0,0.00)[0]]
-                } 
-
-                bcnh_node2_uy = {
-                    'TYPE':'displ',
-                    'DOF':'uy',
-                    'DIR':'node',
-                    'LOC':{'x':2.0, 'y':0, 'z':0},
-                    'VAL':[displ_patch_test(2.0,0.00)[1]]
-                } 
-
-                bcnh_node3_ux = {
-                    'TYPE':'displ',
-                    'DOF':'ux',
-                    'DIR':'node',
-                    'LOC':{'x':2.0, 'y':3.0,'z':0},
-                    'VAL':[displ_patch_test(2.0,3.0)[0]]
-                } 
-
-                bcnh_node3_uy = {
-                    'TYPE':'displ',
-                    'DOF':'uy',
-                    'DIR':'node',
-                    'LOC':{'x':2.0, 'y':3.0, 'z':0},
-                    'VAL':[displ_patch_test(2.0,3.0)[1]]
-                } 
-
-
-                bcnh_node4_ux = {
-                    'TYPE':'displ',
-                    'DOF':'ux',
-                    'DIR':'node',
-                    'LOC':{'x':0, 'y':2.0,'z':0},
-                    'VAL':[displ_patch_test(0,2.0)[0]]
-                } 
-
-                bcnh_node4_uy = {
-                    'TYPE':'displ',
-                    'DOF':'uy',
-                    'DIR':'node',
-                    'LOC':{'x':0, 'y':2.0, 'z':0},
-                    'VAL':[displ_patch_test(0,2.0)[1]]
-                } 
-
-                physicdata = {
-                    'PHYSIC':{
-                        'DOMAIN':'structural',
-                        'LOAD':[],
-                        'BOUNDCOND':[
-                                    # bcfix,
-                                    bcnh_node1_ux, bcnh_node1_uy,
-                                    bcnh_node2_ux, bcnh_node2_uy,
-                                    bcnh_node3_ux, bcnh_node3_uy,
-                                    bcnh_node4_ux, bcnh_node4_uy,]
-                    }
-                }
-                FEA.Physic(physicdata)
-
-            ```
+            >>> physics_config = {
+            ...     'PHYSIC': {
+            ...         'DOMAIN': 'structural',
+            ...         'LOAD': [
+            ...             {'TYPE': 'force', 'DOF': 'uy', 'DIR': 'node', 'LOC': {'x': 1., 'y': 1.}, 'VAL': [-500.0]}
+            ...         ],
+            ...         'BOUNDCOND': [
+            ...             {'TYPE': 'fixed', 'DOF': 'full', 'DIR': 'node', 'LOC': {'x': 0., 'y': 0.}}
+            ...         ]
+            ...     }
+            ... }
+            >>> FEA.Physic(physics_config)
         """
         print_console("phy")
         # self.model.modelinfo["physic"] = physicdata["PHYSIC"]
@@ -398,14 +292,21 @@ class newAnalysis:
         # self.constrains = FEANewAnalysis.getBCApply(self)
 
     def Assembly(self, Model: object) -> npt.NDArray[np.float64]:
-        """assembly of fe model algebric system
+        """Assembles the element equations into the global algebraic system of equations.
 
-        Arguments:
-            Model -- analysis model object
+        Computes the global linearized matrix structure (e.g., global stiffness matrix) 
+        and updates it incorporating force-term arrays under the current simulation model.
+
+        Args:
+            Model: Active Model instance containing geometry, material, and integration data.
 
         Returns:
-            matrix -- npt.NDArray[np.float64]
-            forcelist --npt.NDArray[np.float64]
+            A tuple containing:
+                - matrix: The assembled global matrix array (typically stiffness/governing behavior).
+                - forcelist: The fully-assembled global force load vector list.
+
+        Example:
+            >>> K_global, F_global = FEA.Assembly(Model=FEA.model)
         """
         try:
             matrix = newAnalysis.getGlobalMatrix(self, Model, self.model.inci, self.model.coord, self.model.tabmat, self.model.tabgeo, self.model.intgauss, self.symm, self.mp)
@@ -427,29 +328,29 @@ class newAnalysis:
         return matrix, forcelist
     # 
     def Solve(self, solverset=None) -> dict:
-        """run the solver set
+        """Executes the finite element equations solver over designated steps.
 
-        Keyword Arguments:
-            solverset -- configuration file for solution (default: {None})
+        Compiles matrix system transformations, processes Dirichlet non-homogeneous values,
+        assembles loads across time/loading steps, and calls the bound numerical analysis core.
 
-        Example:
-            ```python
-                solverset = {
-                    'STEPSET':{
-                        'type':'table',
-                        'start':0,
-                        'end':1,
-                        'step':1
-                    },
-                    'SYMM':False,
-                    'MP':False
-                }
-
-                solverdata = FEA.Solve(solverset)
-            ```
+        Args:
+            solverset: Configuration parameters dictionary for the numeric solver:
+                - 'STEPSET': Steps mapping dictionary (type, start, end, step).
+                - 'SYMM' (bool): Enable symmetric matrix optimizations.
+                - 'MP' (bool/int): Enable multiprocessing CPU core count.
 
         Returns:
-            solverdata
+            A modified 'solverset' dictionary containing simulation status, calculation logs,
+            times elapsed, and the final fields inside 'solverset["solution"]'.
+
+        Example:
+            >>> run_config = {
+            ...     'STEPSET': {'type': 'table', 'start': 0.0, 'end': 1.0, 'step': 1.0},
+            ...     'SYMM': False,
+            ...     'MP': False
+            ... }
+            >>> results = FEA.Solve(run_config)
+            >>> print(results["solution"])
         """
         print_console("solver")
         print(">>> RUNNING SOLVER:")
@@ -520,27 +421,27 @@ class newAnalysis:
         return solverset
 
     def PreviewAnalysis(self, previewdata) -> None:
-        """
-        preview the model+physic set
+        """Renders pre-simulation plots for physical inspection of modeling items.
 
-        Arguments:
-            previewdata -- myfempy data information
+        Draws geometry shapes, elements, nodes, and applied load vectors before 
+        running the solver.
+
+        Args:
+            previewdata: Graphical visualization configuration containing rendering attributes
+                (e.g., 'RENDER' with keys like 'show', 'scale', 'lines', and 'savepng').
 
         Example:
-            ```python
-                previewset = {
-                    'RENDER':{
-                        'filename':'patchtest',
-                        'show':True,
-                        'scale':5,
-                        'savepng':True,
-                        'lines':True
-                    }
-                }
-                fea.PreviewAnalysis(previewset)
-            ```
-
-        """        
+            >>> preview_config = {
+            ...     'RENDER': {
+            ...         'filename': 'structural_preview',
+            ...         'show': True,
+            ...         'scale': 2.5,
+            ...         'savepng': True,
+            ...         'lines': True
+            ...     }
+            ... }
+            >>> FEA.PreviewAnalysis(preview_config)
+        """          
         try:
             preview_plot(self.model, previewdata, str(self.path), self.physic)
             logging.info("TRY RUN PREVIEW PLOT -- SUCCESS")
@@ -549,37 +450,30 @@ class newAnalysis:
             logging.warning("TRY RUN PREVIEW PLOT -- FAULT")
 
     def PostProcess(self, postprocset) -> dict:
-        """
-        prost process the solution
+        """Processes solutions, computes auxiliary fields, and builds output reports.
 
-        Arguments:
-            postprocset -- configuration file
+        Translates primary state parameters into derivative properties (such as strain, 
+        stress tensor, and flux) and creates visualization plots and text records.
 
-        Example:
-            ```python
-                postprocset = {"SOLVERDATA": solverdata,
-                                "COMPUTER": {'structural': {'displ': True, 'stress': True}},
-                                "PLOTSET": {'show': True, 'filename': 'PatchTest', 'savepng': True},
-                                "REPORT": {
-                                    'log': True, 
-                                    'get':{
-                                        'nelem': True,
-                                        'nnode': True,
-                                        'inci': True,
-                                        'coord':True,
-                                        'tabmat':True,
-                                        'tabgeo':True,
-                                        'bc_list':True,
-                                        'lo_list':True,
-                                        'numpy_decimals': int,
-                                        'u_list': True,
-                                    }
-                                }}
-                postprocdata = fea.PostProcess(postprocset)
-            ```
+        Args:
+            postprocset: Directives dictionary defining post-processing metrics:
+                - "SOLVERDATA": Output simulation data containing solutions.
+                - "COMPUTER": Physical fields to evaluate (e.g. displacement, stress).
+                - "PLOTSET" or "PLOT": Map detailing export formats and CSV exports.
+                - "REPORT": Config containing boolean flags for requested output tables.
 
         Returns:
-            postprocdata
+            A post-processed analysis dataset dictionary mapping physical variables, plots, 
+            and log file paths.
+
+        Example:
+            >>> config = {
+            ...     "SOLVERDATA": results,
+            ...     "COMPUTER": {'structural': {'displ': True, 'stress': True}},
+            ...     "PLOTSET": {'show': True, 'filename': 'results_stress', 'savepng': True},
+            ...     "REPORT": {'log': True, 'get': {'nelem': True, 'coord': True}}
+            ... }
+            >>> data = FEA.PostProcess(config)
         """
         print_console("post")
         postprocdata = []
@@ -600,79 +494,111 @@ class newAnalysis:
 
     # GET MODEL
     def getModel(self) -> object:
-        """get object related to the current simulation model
+        """Retrieves the active finite element model container object.
 
         Returns:
-            object
+            The SetModel instance describing mesh, connectivity, and formulations.
+
+        Example:
+            >>> model_obj = FEA.getModel()
         """
         return self.model
 
     def getModelInfo(self) -> dict:
-        """get model info
+        """Retrieves summary attributes and counts of degrees of freedom from the model.
 
         Returns:
-            dict
+            A dictionary containing structural details like elements count ('nelem'),
+            nodes count ('nnode'), and total degrees of freedom ('fulldofs').
+
+        Example:
+            >>> info = FEA.getModelInfo()
+            >>> print(info['nelem'], info['fulldofs'])
         """
         return self.model.modelinfo
 
     def getInci(self) -> npt.NDArray[np.float64]:
-        """get mesh properties table
+        """Retrieves the element incidence and connectivity matrix.
 
         Returns:
-            npt.NDArray[np.float64]
+            An array where each row lists element tags, type identifiers, material IDs,
+            and bounding node indices.
+
+        Example:
+            >>> connectivity = FEA.getInci()
         """
         return self.model.inci
 
     def getCoord(self) -> npt.NDArray[np.float64]:
-        """get mesh grid coordinate
+        """Retrieves the global spatial coordinates table of all mesh nodes.
 
         Returns:
-            npt.NDArray[np.float64]
+            An array of dimensions (N_nodes, 4) mapping node tags to [x, y, z] coordinates.
+
+        Example:
+            >>> nodes_coords = FEA.getCoord()
         """
         return self.model.coord
 
     def getTabmat(self) -> list:
-        """get table of material properties
+        """Retrieves the material properties configuration table.
 
         Returns:
-            list
+            A list of dictionary objects matching active materials.
+
+        Example:
+            >>> materials = FEA.getTabmat()
         """
         return self.model.tabmat
     def getTabgeo(self) -> list:
-        """get table of geometry properties
+        """Retrieves the geometric cross-section/thickness attributes table.
 
         Returns:
-            list
+            A list containing properties for geometric profiles.
+
+        Example:
+            >>> thickness_props = FEA.getTabgeo()
         """
         return self.model.tabgeo
 
     def getIntGauss(self) -> int:
-        """get Gaussian numerical integration number
+        """Retrieves the number of Gauss integration points for numerical integration.
 
         Returns:
-            int
+            The integration order/points parameter.
+
+        Example:
+            >>> order = FEA.getIntGauss()
         """
         return self.model.intgauss
     
     def getRegions(self) -> list:
-        """get regions from gmsh mesh only
+        """Retrieves mesh entity group regions imported from GMSH files.
 
         Returns:
-            list
+            A nested list of elements grouped by geometric entity tag definitions.
+
+        Example:
+            >>> physical_groups = FEA.getRegions()
         """
         return self.model.regions
 
     # MELHORAR ESTES COMANDOS
     def getElementVolume(self, inci:npt.NDArray[np.float64], coord:npt.NDArray[np.float64], tabgeo:list) -> npt.NDArray[np.float64]:
-        """get elements volumes list
+        """Calculates structural volumes (or areas/lengths) for all mesh elements.
 
-        Arguments:
-            inci -- npt.NDArray[np.float64]
-            coord -- npt.NDArray[np.float64]
-            tabgeo -- list
+        Calculates individual volumes/volumes-integrals for 1D, 2D, or 3D element profiles.
+
+        Args:
+            inci: Nodal incidence array of the elements.
+            coord: Nodal spatial coordinate array.
+            tabgeo: Geometry properties collection.
 
         Returns:
-            npt.NDArray[np.float64]
+            A 1D numpy array containing the computed volume/area value for each element.
+
+        Example:
+            >>> volumes = FEA.getElementVolume(FEA.model.inci, FEA.model.coord, FEA.model.tabgeo)
         """
         vol = np.zeros((inci.shape[0]))
         for ee in range(inci.shape[0]):
@@ -684,18 +610,23 @@ class newAnalysis:
     def getElemStifLinearMat(
         self, inci: npt.NDArray[np.float64], coord: npt.NDArray[np.float64], tabmat: list, tabgeo: list, intgauss: int, element_number: int
     ) -> npt.NDArray[np.float64]:
-        """get elementar linear stiffness matrix
+        """Computes the element linear stiffness matrix.
 
-        Arguments:
-            inci -- npt.NDArray[np.float64]
-            coord -- npt.NDArray[np.float64]
-            tabmat -- list
-            tabgeo -- list
-            intgauss -- int
-            element_number -- int
+        Args:
+            inci: Nodal incidence matrix.
+            coord: Global coordinate coordinates.
+            tabmat: Material configuration properties.
+            tabgeo: Geometry properties profile.
+            intgauss: Order count of integration.
+            element_number: Index identifier of the element.
 
         Returns:
-            npt.NDArray[np.float64]
+            A 2D array representing the local stiffness matrix.
+
+        Example:
+            >>> k_local = FEA.getElemStifLinearMat(
+            ...     FEA.getInci(), FEA.getCoord(), FEA.getTabmat(), FEA.getTabgeo(), FEA.getIntGauss(), 0
+            ... )
         """
         return self.model.element.getStifLinearMat(
             self.model, inci, coord, tabmat, tabgeo, intgauss, element_number
@@ -704,18 +635,23 @@ class newAnalysis:
     def getElemMassConsistentMat(
         self, inci: npt.NDArray[np.float64], coord: npt.NDArray[np.float64], tabmat: list, tabgeo: list, intgauss: int, element_number: int
     ) -> npt.NDArray[np.float64]:
-        """get elementar linear mass matrix
+        """Computes the element mass matrix using a consistent formulation.
 
-        Arguments:
-            inci -- npt.NDArray[np.float64]
-            coord -- npt.NDArray[np.float64]
-            tabmat -- list
-            tabgeo -- list
-            intgauss -- int
-            element_number -- int
+        Args:
+            inci: Nodal incidence matrix.
+            coord: Global coordinate coordinates.
+            tabmat: Material properties list.
+            tabgeo: Geometry properties profile.
+            intgauss: Gauss numerical integration order.
+            element_number: Target element list index.
 
         Returns:
-            npt.NDArray[np.float64]
+            A consistent local element mass matrix of shape (Dofs, Dofs).
+
+        Example:
+            >>> m_local = FEA.getElemMassConsistentMat(
+            ...     FEA.getInci(), FEA.getCoord(), FEA.getTabmat(), FEA.getTabgeo(), FEA.getIntGauss(), 0
+            ... )
         """
         return self.model.element.getMassConsistentMat(
             self.model, inci, coord, tabmat, tabgeo, intgauss, element_number
@@ -724,33 +660,43 @@ class newAnalysis:
 
     # GET SOLVER
     def getGlobalMatrix(self, Model, inci:npt.NDArray[np.float64] = None, coord:npt.NDArray[np.float64] = None, tabmat:list = None, tabgeo:list = None, intgauss:int = None, SYMM:bool=None, MP:bool=None) -> npt.NDArray[np.float64]:
-        """get global assembler matrix 
+        """Invokes the solver assembler to construct the global unconstrained system matrices.
 
-        Arguments:
-            Model -- object related to the current simulation model
-
-        Keyword Arguments:
-            inci -- mesh properties table (default: {None})
-            coord -- grid coordinate table (default: {None})
-            tabmat -- table of material properties (default: {None})
-            tabgeo -- table of geometry properties (default: {None})
-            intgauss -- Gaussian numerical integration number (default: {None})
-            SYMM -- symmetric assembler (default: {None})
-            MP -- multi-processing (default: {None})
+        Args:
+            Model: Active SetModel structure containing element/constitutive classes.
+            inci: Optional connectivity matrix. Defaults to None.
+            coord: Optional spatial coordinate array. Defaults to None.
+            tabmat: Optional material lookup profile. Defaults to None.
+            tabgeo: Optional geometry lookup profile. Defaults to None.
+            intgauss: Optional Gaussian integration order. Defaults to None.
+            SYMM: Enable storage/matrix symmetries mapping. Defaults to None.
+            MP: Multiprocessing support option. Defaults to None.
 
         Returns:
-            npt.NDArray[np.float64]
+            The raw assembled structural matrix system (unconstrained global equations).
+
+        Example:
+            >>> K_global = FEA.getGlobalMatrix(FEA.model, SYMM=False, MP=False)
         """
         return self.solver.getMatrixAssembler(Model, inci = inci, coord = coord, tabmat = tabmat, tabgeo = tabgeo, intgauss = intgauss, SYMM=SYMM, MP=MP)
 
     def getConstrains(self, constrains:list) -> npt.NDArray[np.float64]:
-        """get constrains boundary conditions list
+        """Maps boundary condition parameters to explicit indices classifications.
 
-        Arguments:
-            constrains -- _description_
+        Groups DOFs into free degrees of freedom, fixed nodes, and predefined Dirichlet
+        condition values.
+
+        Args:
+            constrains: list of boundary conditions dict values.
 
         Returns:
-            _description_
+            A tuple of three arrays containing index representations of:
+                - freedof: Indices of unrestricted DOFs.
+                - fixedof: Indices of constrained DOFs.
+                - constdof: Prescribed displacement values array.
+
+        Example:
+            >>> free, fixed, vals = FEA.getConstrains(FEA.physic.constrains)
         """
         nodetot = len(self.model.coord)
         return self.solver.getConstrains(
@@ -758,13 +704,16 @@ class newAnalysis:
         )
 
     def getDirichletNH(self, constrains:list) -> npt.NDArray[np.float64]:
-        """get dirichlet non-homogeneous boundary conditions list
+        """Builds Dirichlet non-homogeneous boundary value vectors.
 
-        Arguments:
-            constrains -- _description_
+        Args:
+            constrains: Physical boundary constraints setup configuration list.
 
         Returns:
-            _description_
+            An array vector defining prescribed non-zero values corresponding to restricted DOFs.
+
+        Example:
+            >>> U_dirichlet = FEA.getDirichletNH(FEA.physic.constrains)
         """
         nodetot = len(self.model.coord)
         return self.solver.getDirichletNH(
@@ -772,13 +721,16 @@ class newAnalysis:
         )
 
     def getLoadArray(self, loadaply:list) -> npt.NDArray[np.float64]:
-        """get loads arrays
+        """Assembles local element/nodal actions into the global algebraic force vector.
 
-        Arguments:
-            loadaply -- _description_
+        Args:
+            loadaply: Array of nodal loads defined in the physics manager.
 
         Returns:
-            _description_
+            An assembled global array containing load force definitions.
+
+        Example:
+            >>> F_load = FEA.getLoadArray(FEA.physic.forces)
         """
         nodetot = len(self.model.coord)
         return self.solver.getLoadAssembler(
@@ -787,10 +739,13 @@ class newAnalysis:
 
     # GET PHYSIC
     def getPhysic(self) -> object:
-        """get physic object
+        """Retrieves the physical boundary conditions manager object.
 
         Returns:
-            _description_
+            The SetPhysics instance managing loading definitions and constraints.
+
+        Example:
+            >>> physics_obj = FEA.getPhysic()
         """
         return self.physic
 
@@ -812,62 +767,84 @@ class newAnalysis:
     #     return self.physic.getBoundCondList(self.modelinfo["domain"])
 
     def getLoadApply(self) -> npt.NDArray[np.float64]:
-        """get loads applied array on model
+        """Compiles active load definitions into mathematical vector profiles.
 
         Returns:
-            _description_
+            An array detailing node indices, degrees of freedom indices, and scaling loads.
+
+        Example:
+            >>> active_loads = FEA.getLoadApply()
         """
         return self.physic.getLoadApply(self.physic.physicdata)
 
     def getBCApply(self) -> npt.NDArray[np.float64]:
-        """get boundary conditions applied array on model
+        """Compiles boundary constraint rules into mathematical matrix profiles.
 
         Returns:
-            _description_
+            An array of constraint properties specifying target indices, degree of freedom,
+            and enforcement scales.
+
+        Example:
+            >>> active_constraints = FEA.getBCApply()
         """
         return self.physic.getBoundCondApply(self.physic.physicdata)
     
     def getCouplingInterface(self) -> list:
-        """get coupling interface list
+        """Retrieves interaction forces corresponding to physical domain couplings.
 
         Returns:
-            _description_
+            A list detailing force components on multiphysics interface coupling nodes.
+
+        Example:
+            >>> coupling_forces = FEA.getCouplingInterface()
         """
         return self.physic.getLoadCoup(self.physic.physicdata)
 
     def getUpdateMatrix(self, matrix, addval) -> npt.NDArray[np.float64]:
-        """get updated matrix
+        """Applies algebraic modifications to the global governing system matrix.
 
-        Arguments:
-            matrix -- _description_
-            addval -- _description_
+        Applies corrections for concentrated parameters (such as lumped point masses, elastic foundations,
+        or penalty terms).
+
+        Args:
+            matrix: Assembled unconstrained system matrix array.
+            addval: Additional modifications matrix array or force properties array.
 
         Returns:
-            _description_
+            The corrected global system matrix.
+
+        Example:
+            >>> K_updated = FEA.getUpdateMatrix(K_global, active_loads)
         """
         return self.physic.getUpdateMatrix(matrix, addval)
     
     def getElementFromNodesList(self, nodelist) -> list:
-        """get elements from nodes list
+        """Identifies elements associated with a specific list of nodal identifiers.
 
-        Arguments:
-            nodelist -- _description_
+        Args:
+            nodelist: Nodal tags list.
 
         Returns:
-            _description_
+            A list containing element indices connected to those nodes.
+
+        Example:
+            >>> elements = FEA.getElementFromNodesList([5, 8])
         """
         return self.physic.getElementList(self.model.inci, nodelist)
 
     # OUTHERS
     def getNodesFromRegions(self, set: int, type: str) -> list:
-        """get nodes from regions gmsh mesh only
+        """Retrieves node tags belonging to a GMSH physical group region.
 
-        Arguments:
-            set -- _description_
-            type -- _description_
+        Args:
+            set: Region target integer ID index.
+            type: Physical group geometric entity level type ('point', 'line', 'plane').
 
         Returns:
-            _description_
+            A list containing nodes belonging to the requested domain region group.
+
+        Example:
+            >>> boundary_nodes = FEA.getNodesFromRegions(set=2, type="line")
         """
         if type == "point":
             domain_nodelist = newAnalysis.getRegions(self)[0][1][set - 1][1]
@@ -880,6 +857,7 @@ class newAnalysis:
         return domain_nodelist
     
     def getAbout(self):
+        """Prints program credits, author profile, and package version on terminal."""
         get_about()
 
     # settings FEA ANALYSIS <privates>

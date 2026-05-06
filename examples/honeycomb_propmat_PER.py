@@ -4,14 +4,14 @@ sys.path.append('../myfempy')
 
 import numpy as np
 from myfempy import newAnalysis
-from myfempy import HomogenizationPlane
+from myfempy import HomogenizationPlaneBCPeriodic
 
 from time import time
 
 # ===============================================================================
 #                                   FEA
 # ===============================================================================
-fea = newAnalysis(HomogenizationPlane)
+fea = newAnalysis(HomogenizationPlaneBCPeriodic)
 
 E_solid = 71E3 # #200E3 #0.91
 v = 0.33
@@ -126,10 +126,11 @@ modeldata = {
         'meshconfig': {
             'mesh': 'quad4',   #quad4 tria3
             'sizeelement': 2*esize,
-            'meshmap': {'on': True,
-                        'edge': 'all', #[[1,3], [2,4]], #'all'
-                        # "numbernodes": [20, 10],
-            }
+            # 'meshmap': {'on': True,
+            #             'edge': 'all', #[[1,3], [2,4]], #'all'
+            #             # "numbernodes": [20, 10],
+            # }
+            'reordermesh': True,
             }
     },
 
@@ -158,115 +159,97 @@ fea.Model(modeldata)
 
 # print('tabmat: ', tabmat)
 
-bc_X0_XX = {
-    'TYPE': 'fixed',
-    'DOF': 'ux',
+# sys.exit()
+pc_left = {
+    'TYPE': 'bloch', 
+    'DOF': 'left',
     'DIR': 'edgex',
     'LOC': {'x': 0, 'y': 999, 'z': 0},
-    'STEP': 1
     }
 
-bc_X1_XX = {
-    'TYPE': 'fixed',
-    'DOF': 'ux',
+pc_right = {
+    'TYPE': 'bloch',  
+    'DOF': 'right',
     'DIR': 'edgex',
     'LOC': {'x': Lax, 'y': 999, 'z': 0},
-    'STEP': 1
     }
 
-bc_Y0_XX = {
-    'TYPE': 'fixed',
-    'DOF': 'uy',
+pc_bottom = {
+    'TYPE': 'bloch',  
+    'DOF': 'bottom',
     'DIR': 'edgey',
     'LOC': {'x': 999, 'y': 0, 'z': 0},
-    'STEP': 1
     }
 
-bc_Y1_XX = {
-    'TYPE': 'fixed',
-    'DOF': 'uy',
+pc_top = {
+    'TYPE': 'bloch', 
+    'DOF': 'top',
     'DIR': 'edgey',
     'LOC': {'x': 999, 'y': Lay, 'z': 0},
-    'STEP': 1
     }
 
-bc_X0_YY = bc_X0_XX.copy()
-bc_X0_YY['STEP'] = 2
-
-bc_X1_YY = bc_X1_XX.copy()
-bc_X1_YY['STEP'] = 2
-
-bc_Y0_YY = bc_Y0_XX.copy()
-bc_Y0_YY['STEP'] = 2
-
-bc_Y1_YY = bc_Y1_XX.copy()
-bc_Y1_YY['STEP'] = 2
-
-bc_X0_XY = {
-    'TYPE': 'fixed',
-    'DOF': 'uy',
-    'DIR': 'edgex',
-    'LOC': {'x': 0, 'y': 999, 'z': 0},
-    'STEP': 3
+pc_bottom_left = {
+    'TYPE': 'bloch',  
+    'DOF': 'bottom-left',
+    'DIR': 'node',
+    'LOC': {'x': 0, 'y': 0, 'z': 0},
     }
 
-bc_X1_XY = {
-    'TYPE': 'fixed',
-    'DOF': 'uy',
-    'DIR': 'edgex',
-    'LOC': {'x': Lax, 'y': 999, 'z': 0},
-    'STEP': 3
+pc_bottom_right = {
+    'TYPE': 'bloch',  
+    'DOF': 'bottom-right',
+    'DIR': 'node',
+    'LOC': {'x': Lax, 'y': 0, 'z': 0},
     }
 
-bc_Y0_XY = {
-    'TYPE': 'fixed',
-    'DOF': 'ux',
-    'DIR': 'edgey',
-    'LOC': {'x': 999, 'y': 0, 'z': 0},
-    'STEP': 3
+pc_top_left = {
+    'TYPE': 'bloch',  
+    'DOF': 'top-left',
+    'DIR': 'node',
+    'LOC': {'x': 0, 'y': Lay, 'z': 0},
     }
 
-bc_Y1_XY = {
-    'TYPE': 'fixed',
-    'DOF': 'ux',
-    'DIR': 'edgey',
-    'LOC': {'x': 999, 'y': Lay, 'z': 0},
-    'STEP': 3
+pc_top_right = {
+    'TYPE': 'bloch',  
+    'DOF': 'top-right',
+    'DIR': 'node',
+    'LOC': {'x': Lax, 'y': Lay, 'z': 0},
     }
+
 
 strainzero = {
     'TYPE': 'strainzero',
     'VAL': [[1,0,0], [0,1,0], [0,0,1]],    # mm/s^2 
     'DOF': 'none',
     'DIR':'none',
-    'MESHNODE': 0,
+    # 'MESHNODE': 0,
     }
 
 physicdata = {
     "PHYSIC": {"DOMAIN": "structural", # 'fluid' 'thermal'; "COUPLING": 'fsi'
                "LOAD": [strainzero],
+
                "BOUNDCOND": [
-                    bc_X0_XX, bc_X1_XX, bc_Y0_XX, bc_Y1_XX,
-                    bc_X0_YY, bc_X1_YY, bc_Y0_YY, bc_Y1_YY,
-                    bc_X0_XY, bc_X1_XY, bc_Y0_XY, bc_Y1_XY
+                    pc_left, pc_right, pc_bottom, pc_top, pc_bottom_left, pc_bottom_right, pc_top_left, pc_top_right,
                              ],
+                        
     },
 }
 fea.Physic(physicdata)
 
-# loadaply = fea.getLoadApply()
-# print('forca total [N]', np.sum(loadaply[:,2]))
+
+loadaply = fea.getLoadApply()
+print('forca total [N]', np.sum(loadaply[:,2]))
 
 # sys.exit()
 
-# previewset = {'RENDER': {'filename': 'cell_preview', 'show': True, 'scale': 2, 'savepng': True, 'lines': False,
-#                          'plottags': {'point': True}
-#                          },
-#             #   'LABELS': {'show': True, 'lines': True, 'scale': 1},
-#               }
-# fea.PreviewAnalysis(previewset)
+previewset = {'RENDER': {'filename': 'cell_preview', 'show': True, 'scale': 2, 'savepng': True, 'lines': False,
+                         'plottags': {'line': True}
+                         },
+            #   'LABELS': {'show': True, 'lines': True, 'scale': 1},
+              }
+fea.PreviewAnalysis(previewset)
 
-# sys.exit()
 # #-------------------------------- SOLVER -------------------------------------#
 solverset = {"STEPSET": {'type': 'table',
                         'start': 0,
@@ -286,35 +269,35 @@ postprocset = {"SOLVERDATA": solverdata,
             }
 postprocdata = fea.PostProcess(postprocset)
 
-# CH = solverdata["solution"]['CH']
-# print('Homoge. Elastic Tensor\n', CH)
+CH = solverdata["solution"]['CH']
+print('Homoge. Elastic Tensor\n', CH)
 
-# RH = solverdata["solution"]['RHOH']
-# print('Homoge. Density\n', RH)
+RH = solverdata["solution"]['RHOH']
+print('Homoge. Density\n', RH)
 
-# # Inversão para matriz de flexibilidade
-# S = np.linalg.inv(CH)
+# Inversão para matriz de flexibilidade
+S = np.linalg.inv(CH)
 
-# E_x = 1 / S[0,0]
-# E_y = 1 / S[1,1]
-# nu_xy = -S[0,1] / S[0,0]
-# nu_yx = -S[0,1] / S[1,1]
-# G_xy = 1 / S[2,2]
+E_x = 1 / S[0,0]
+E_y = 1 / S[1,1]
+nu_xy = -S[0,1] / S[0,0]
+nu_yx = -S[0,1] / S[1,1]
+G_xy = 1 / S[2,2]
 
-# print("E_x:", E_x)
-# print("E_y:", E_y)
-# print("v_xy:", nu_xy)
-# print("v_yx:", nu_yx)
-# print("G_xy:", G_xy)
+print("E_x:", E_x)
+print("E_y:", E_y)
+print("v_xy:", nu_xy)
+print("v_yx:", nu_yx)
+print("G_xy:", G_xy)
 
-# # Verificação de isotropia
-# tol = 1e-2
-# if abs(E_x - E_y) < tol and abs(nu_xy - nu_yx) < tol:
-#     print("Material isotrópico")
-# elif abs(nu_xy - nu_yx) < tol:
-#     print("Material ortotrópico")
-# else:
-#     print("Material anisotrópico")
+# Verificação de isotropia
+tol = 1e-2
+if abs(E_x - E_y) < tol and abs(nu_xy - nu_yx) < tol:
+    print("Material isotrópico")
+elif abs(nu_xy - nu_yx) < tol:
+    print("Material ortotrópico")
+else:
+    print("Material anisotrópico")
 
 
 

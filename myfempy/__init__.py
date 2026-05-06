@@ -8,8 +8,8 @@ from .core.solver.dyneigen import DynamicEigenLinear
 from .core.solver.dynharmonicresponse import DynamicHarmonicResponseLinear
 from .core.solver.cyclicsymm import StaticLinearCyclicSymmPlane
 from .core.solver.homogenplanefullcell import HomogenizationPlane
-# from .core.solver.homogenplaneinfperiodic import HomogenPlaneInfPeriodic
-from .core.solver.phonocrystalinplane import PhononicCrystalInPlane
+from .core.solver.homogenplaneinfperiodic import HomogenizationPlaneBCPeriodic
+from .core.solver.phonocrystalinplane import PhononicCrystalPlaneBCPeriodic
 # API CLASS
 from .core.elements.element import Element
 from .core.geometry.geometry import Geometry
@@ -35,9 +35,9 @@ __all__ = [
     "StaticLinearCyclicSymmPlane",
     "DynamicEigenLinear",
     "DynamicHarmonicResponseLinear",
-    "PhononicCrystalInPlane",
     "HomogenizationPlane",
-    # "HomogenPlaneInfPeriodic"
+    "HomogenizationPlaneBCPeriodic"
+    "PhononicCrystalPlaneBCPeriodic",
     "Mesh",
     "Shape",
     "Element",

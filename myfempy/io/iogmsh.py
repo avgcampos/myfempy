@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 import os
 
-# import numpy as np
-from numpy import abs
+import gmsh
+import sys
+import numpy as np
 
 __docformat__ = "google"
 
@@ -90,7 +91,7 @@ def gmsh_key(meshtype: str):
     return l[meshtype]
 
 
-def get_gmsh_msh(filename, meshdata):
+def get_mesh_gmsh(filename, meshdata):
     # os.system("echo MESHING...")
     cmd = (
         "gmsh"
@@ -106,6 +107,130 @@ def get_gmsh_msh(filename, meshdata):
     # os.system("echo GENERATING MESH FROM EXTERNAL GMSH")
     os.system(cmd)
     # os.system("echo MESH IS DONE")
+
+def get_reorder_mesh(filename, meshdata):
+        
+
+    gmsh.initialize()
+    # --- Hide terminal output ---
+    gmsh.option.setNumber("General.Terminal", 0)
+    gmsh.open(filename + ".geo")
+
+    gmsh.model.mesh.generate(abs(int(gmsh_key(meshdata["meshconfig"]["mesh"]))))
+
+    # original_model = gmsh.model.getCurrent()
+
+    # 1. Coletar dados e calcular ordenação por PESO GEOMÉTRICO (Z -> Y -> X)
+    node_tags, coords, _ = gmsh.model.mesh.getNodes()
+    coords = coords.reshape(-1, 3)
+    c_round = np.round(coords, 6)
+
+    # Score: Z (1e12) + Y (1e6) + X (1)
+    sort_scores = c_round[:, 2] * 1e12 + c_round[:, 1] * 1e6 + c_round[:, 0]
+    indices = np.argsort(sort_scores)
+
+    # Mapeamento: ID_Antigo -> ID_Novo
+    old_to_new = {int(node_tags[idx]): i + 1 for i, idx in enumerate(indices)}
+
+    # 2. Coletar estrutura COMPLETA do modelo original
+    physicals = []
+    for dim, p_tag in gmsh.model.getPhysicalGroups():
+        physicals.append((dim, p_tag, gmsh.model.getPhysicalName(dim, p_tag), gmsh.model.getEntitiesForPhysicalGroup(dim, p_tag)))
+
+    entities_data = []
+    node_ownership = {}
+    for dim in range(4):
+        for _, e_tag in gmsh.model.getEntities(dim):
+            e_node_tags, _, _ = gmsh.model.mesh.getNodes(dim, e_tag)
+            for nt in e_node_tags:
+                nt_int = int(nt)
+                if nt_int not in node_ownership:
+                    node_ownership[nt_int] = (dim, e_tag)
+            e_types, e_tags, e_conn = gmsh.model.mesh.getElements(dim, e_tag)
+            entities_data.append((dim, e_tag, e_node_tags, e_types, e_tags, e_conn))
+
+    # 3. CRIAR NOVO MODELO E RECONSTRUIR
+    gmsh.model.add("MalhaReordenada")
+
+    # IMPORTANTE: No MSH2, a ordem dos nós no arquivo segue a ordem das entidades.
+    # Para que a numeração 1, 2, 3... apareça em ordem no arquivo, 
+    # vamos colocar TODOS os nós em uma única entidade discreta de maior dimensão.
+    max_dim = 3 if any(d == 3 for d,_,_,_,_,_ in entities_data) else 2
+    main_entity = gmsh.model.addDiscreteEntity(max_dim, 9999)
+
+    # Adicionamos TODOS os nós de uma vez na entidade 9999, na ordem correta (1, 2, 3...)
+    sorted_tags = [i + 1 for i in range(len(indices))]
+    sorted_coords = []
+    for idx in indices:
+        sorted_coords.extend(coords[idx])
+    gmsh.model.mesh.addNodes(max_dim, 9999, sorted_tags, sorted_coords)
+
+    # Agora adicionamos os elementos em suas entidades originais
+    for dim, e_tag, e_node_tags, e_types, e_tags, e_conn in entities_data:
+        gmsh.model.addDiscreteEntity(dim, e_tag)
+        for i in range(len(e_types)):
+            new_conn = [old_to_new[int(n)] for n in e_conn[i]]
+            gmsh.model.mesh.addElements(dim, e_tag, [e_types[i]], [e_tags[i]], [new_conn])
+
+    # Re-criar Grupos Físicos
+    for dim, p_tag, name, ents in physicals:
+        gmsh.model.addPhysicalGroup(dim, ents, p_tag)
+        if name: gmsh.model.setPhysicalName(dim, p_tag, name)
+
+    # gmsh.option.setNumber("Mesh.MshFileVersion", 2.2)
+    # gmsh.option.setNumber("Mesh.Binary", 0)
+    gmsh.write(filename + ".msh2")
+    gmsh.finalize()
+    print("--- SUCESSO: MALHA REORDENADA E SALVA ---")
+
+# def get_reorder_mesh(filename, meshdata):
+#     gmsh.initialize()
+#     gmsh.open(filename + ".geo")
+
+#     # 1. MUDANÇA: Gera malha 3D
+#     gmsh.model.mesh.generate(abs(int(gmsh_key(meshdata["meshconfig"]["mesh"]))))
+
+#     node_tags, coords, _ = gmsh.model.mesh.getNodes()
+#     coords = coords.reshape(-1, 3)
+#     elem_types, elem_tags, elem_node_tags = gmsh.model.mesh.getElements()
+
+#     coords_rounded = np.round(coords, 6)
+#     # Ordenação léxica já contempla Z, Y e X (Z é o critério primário aqui)
+#     indices = np.lexsort((coords_rounded[:, 0], coords_rounded[:, 1], coords_rounded[:, 2]))
+#     old_to_new = {int(old): i + 1 for i, old in enumerate(node_tags[indices])}
+
+#     # NOVO MODELO
+#     gmsh.model.add("MalhaReordenada")
+
+#     # 2. MUDANÇA: Adicionamos uma entidade para cada dimensão possível (0 a 3)
+#     entities = {
+#         0: gmsh.model.addDiscreteEntity(0, 1),
+#         1: gmsh.model.addDiscreteEntity(1, 1),
+#         2: gmsh.model.addDiscreteEntity(2, 1),
+#         3: gmsh.model.addDiscreteEntity(3, 1)
+#     }
+
+#     # Adicionamos todos os nós na entidade de maior dimensão (3 se for 3D, ou 2 se for 2D)
+#     max_dim = max(entities.keys())
+#     for idx in indices:
+#         new_tag = old_to_new[int(node_tags[idx])]
+#         c = coords[idx]
+#         gmsh.model.mesh.addNodes(max_dim, entities[max_dim], [new_tag], [c[0], c[1], c[2]])
+
+#     # 3. MUDANÇA: O loop agora direciona para a entidade correta (0, 1, 2 ou 3)
+#     for i in range(len(elem_types)):
+#         e_type = elem_types[i]
+#         dim = gmsh.model.mesh.getElementProperties(e_type)[1]
+        
+#         target_tag = entities[dim]
+#         new_connectivity = [old_to_new[int(node)] for node in elem_node_tags[i]]
+#         gmsh.model.mesh.addElements(dim, target_tag, [e_type], [elem_tags[i].astype(int).tolist()], [new_connectivity])
+
+#     # gmsh.option.setNumber("Mesh.MshFileVersion", 2.2)
+#     # gmsh.option.setNumber("Mesh.Binary", 0)
+#     gmsh.write(filename + ".msh2")
+#     gmsh.finalize()
+#     print("\n--- SUCESSO: MALHA SALVA E REORDENADA ---")
 
 
 def set_gmsh_geo(filename, meshdata):
@@ -277,7 +402,7 @@ def set_gmsh_geo(filename, meshdata):
                         "Curve Loop("
                         + str(npl)
                         + ") = {"
-                        + (str(abs(meshdata["planelist"][i][:]).tolist()))[1:-1]
+                        + (str(np.abs(meshdata["planelist"][i][:]).tolist()))[1:-1]
                         + "};\n"
                     )
 
