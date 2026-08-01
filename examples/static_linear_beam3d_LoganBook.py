@@ -1,7 +1,12 @@
+import sys
+# setting path
+sys.path.append('../myfempy')
+
 from myfempy import newAnalysis
 from myfempy import SteadyStateLinearIterative
 
 from time import time
+import numpy as np
 
 fea = newAnalysis(SteadyStateLinearIterative)
 # MODEL SET
@@ -17,13 +22,13 @@ geo = {
     "INERYY": 100,
     "INERZZ": 100,
     "INERXX": 50,
-    # "CG":{
-    #     "y_max":1,
-    #     "y_min":-1,
-    #     "z_max":1,
-    #     "z_min":-1,
-    #     "r_max":1
-    # },
+    "CG":{
+        "y_max":1,
+        "y_min":-1,
+        "z_max":1,
+        "z_min":-1,
+        "r_max":1
+    },
     }
 
 # gmsh config
@@ -46,14 +51,14 @@ modeldata = {
         'pointlist': points,
         'linelist': lines,
         'meshconfig': {
-            'mesh': 'line2',
-            "numbernodes": 2,
+            'mesh': 'line3',
+            "numbernodes": 50,
             }
     },
 
     "ELEMENT": {
         'TYPE': 'structbeam',
-        'SHAPE': 'line2',
+        'SHAPE': 'line3',
         # 'INTGAUSS': 2,
     },
 
@@ -133,21 +138,25 @@ solverset = {"STEPSET": {'type': 'table',  # mode, freq, time ...
             #  'MP':True,
             }
 solverdata = fea.Solve(solverset)
-print(solverdata['solution']['U'])
+
+U = solverdata['solution']['U']
+indices = np.nonzero(U)
+print(U[indices])
 
 postprocset = {"SOLVERDATA": solverdata,
                 "COMPUTER": {'structural': {'displ': True, 'stress': True}},
                 "PLOTSET": {'show': True, 'filename': 'output', 'savepng': True},
                 # "TRACKER": {'point': {'x': 0, 'y': 0, 'z': 0, 'dof':1}},
-                "REPORT": {'log': True, 'get':{
-                        'nelem': True,
-                        'nnode': True,
-                        'inci': True,
-                        'coord':True,
-                        'tabmat':True,
-                        'tabgeo':True,
-                        'boundcond_list':True,
-                        'forces_list':True,
+                "REPORT": {'log': True,
+                        'get':{
+                            'nelem': True,
+                            'nnode': True,
+                            'inci': True,
+                            'coord':True,
+                            'tabmat':True,
+                            'tabgeo':True,
+                            'boundcond_list':True,
+                            'forces_list':True,
                     },
             }}
 postprocdata = fea.PostProcess(postprocset)

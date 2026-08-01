@@ -2,9 +2,6 @@
 __doc__ = """
 Physics Vtk Plot.
 """
-from os import environ
-
-environ["OMP_NUM_THREADS"] = "3"
 import numpy as np
 import vtk
 

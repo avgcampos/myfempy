@@ -289,6 +289,7 @@ class setPostProcess(ABC):
             + postprocset["PLOTSET"]["filename"]
             + "_myfempy_solver-log.txt"
         )
+        postprocset["REPORT"]['timesolver'] = self.timenow
         write2log(self.model, self.physic, postprocset["REPORT"], postporc_result, filename)
 
     def __tovtkplot(self, postprocset, postporc_result):

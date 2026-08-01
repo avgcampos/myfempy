@@ -9,16 +9,6 @@ FLT64 = float64
 from myfempy.core.elements.element import Element
 from myfempy.core.utilities import (gauss_points, get3D_LocalVector, getRotational_Matrix)
 
-_H = array(
-    [
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 1, 0],
-        [0, 0, 0, 1],
-    ],
-    dtype=FLT64,
-)
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -62,47 +52,67 @@ event caused by the use of the program.
 
 """
 
+_ELEMENT_SET = {
+"def": "1D-space 6-node_dofs",
+"key": "beam",
+"id": 16,
+"dofs": {
+"d": {"ux": 1, "uy": 2, "uz": 3, "rx": 4, "ry": 5, "rz": 6},
+"f": {
+    "fx": 1,
+    "fy": 2,
+    "fz": 3,
+    "tx": 4,
+    "ty": 5,
+    "tz": 6,
+    "masspoint": 15,
+    "spring2ground": 16,
+    "damper2ground": 17,
+    "torsion2ground": 18,
+},
+},
+"tensor": [
+"sntxx",
+"snbxymax",
+"snbxymin",
+"snbxzmax",
+"snbxzmin",
+"sstxy",
+],
+"H": array(
+[
+    [1, 0, 0, 0],
+    [0, 1, 0, 0],
+    [0, 0, 1, 0],
+    [0, 0, 0, 1],
+],
+dtype=INT32,
+)
+}
 
 class StructuralBeam(Element):
     """Beam Structural Element Class <ConcreteClassService>"""
 
     def getElementSet():
-        elemset = {
-            "def": "1D-space 6-node_dofs",
-            "key": "beam",
-            "id": 16,
-            "dofs": {
-                "d": {"ux": 1, "uy": 2, "uz": 3, "rx": 4, "ry": 5, "rz": 6},
-                "f": {
-                    "fx": 1,
-                    "fy": 2,
-                    "fz": 3,
-                    "tx": 4,
-                    "ty": 5,
-                    "tz": 6,
-                    "masspoint": 15,
-                    "spring2ground": 16,
-                    "damper2ground": 17,
-                },
-            },
-            "tensor": [
-                "sntxx",
-                "snbxymax",
-                "snbxymin",
-                "snbxzmax",
-                "snbxzmin",
-                "sstxy",
-            ],
-        }
-        return elemset
+        return _ELEMENT_SET
 
     def getB(diffN, invJ):
-        B = H.dot(invJ).dot(diffN)
+        _H = array(
+            [
+                [1, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1],
+            ],
+            dtype=INT32,
+        )
+        B = _H.dot(invJ).dot(diffN)
         return B
 
     # @profile
     def getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number):
         elem_set = StructuralBeam.getElementSet()
+        H = elem_set['H']
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
         nodecon = len(shape_set["nodes"])
@@ -124,15 +134,12 @@ class StructuralBeam(Element):
         IXX = tabgeo[int(inci[element_number, 3] - 1)]["INERXX"]
         C = array([[AREA, IZZ, IYY, IXX]]) * eye(4) * D
         pt, wt = gauss_points(type_shape, intgauss)
+        
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
-        for ip in range(intgauss):
-            detJ = Model.shape.getdetJacobi(array([pt[ip]]), elementcoord_local)
-            diffN = Model.shape.getDiffDiffShapeFuntion(array([pt[ip]]), nodedof,detJ)            
-            invJ = Model.shape.getinvJacobi(array([pt[ip]]), elementcoord_local, nodedof)
-            B = StructuralBeam.getB(diffN, invJ)
-            BCB = B.transpose().dot(C).dot(B)
-            K_elem_mat += BCB * abs(detJ) * wt[ip]            
-        K_elem_mat = R.transpose().dot(K_elem_mat).dot(R) #dot(dot(transpose(R), K_elem_mat), R)
+        K_elem_mat = Model.shape.getStifLinear(pt, wt, intgauss, elementcoord_local, edof, nodedof, H, C)
+        
+        K_elem_mat = R.transpose().dot(K_elem_mat).dot(R)
+
         return K_elem_mat
 
     def getMassConsistentMat(
@@ -155,29 +162,52 @@ class StructuralBeam(Element):
         IXX = tabgeo[int(inci[element_number, 3] - 1)]["INERXX"]
         R = array([[rho * AREA, rho * AREA, rho * AREA, rho * IXX]]) * eye(4)
         pt, wt = gauss_points(type_shape, intgauss)
+        
         M_elem_mat = zeros((edof, edof), dtype=FLT64)
-        for ip in range(intgauss):
-            detJ = Model.shape.getdetJacobi(array([pt[ip]]), elementcoord_local)
-            N = Model.shape.getShapeFunctions(array([pt[ip]]), nodedof, detJ)
-            NRN = array(N).transpose().dot(R).dot(N)
-            M_elem_mat += NRN * abs(detJ) * wt[ip]
+        M_elem_mat = Model.shape.getMassLinear(pt, wt, intgauss, elementcoord_local, edof, nodedof, R)
+
         return M_elem_mat
 
     def getUpdateMatrix(Model, matrix, addval):
         elem_set = Model.element.getElementSet()
-        shape_set = Model.shape.getShapeSet()
-        dofe = len(shape_set["nodes"]) * len(elem_set["dofs"]["d"])
+        nodedof = len(elem_set["dofs"]["d"])
+
+        if int(addval[0, 1]) == 16:
+            matrix_update = array([
+                            [ 1.0,  0.0,  0.0, -1.0,  0.0,  0.0],
+                            [ 0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
+                            [ 0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
+                            [-1.0,  0.0,  0.0,  1.0,  0.0,  0.0],
+                            [ 0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
+                            [ 0.0,  0.0,  0.0,  0.0,  0.0,  0.0]
+                        ])
+
+        if int(addval[0, 1]) == 18:
+            matrix_update = array([
+                            [ 0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
+                            [ 0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
+                            [ 0.0,  0.0,  1.0,  0.0,  0.0, -1.0],
+                            [ 0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
+                            [ 0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
+                            [ 0.0,  0.0, -1.0,  0.0,  0.0,  1.0]
+                        ])
+
+        elif int(addval[0, 1]) == 15:
+            matrix_update = 0.5*array([
+                            [ 1.0,  0.0,  0.0,  0.0,  0.0,  0.0],
+                            [ 0.0,  1.0,  0.0,  0.0,  0.0,  0.0],
+                            [ 0.0,  0.0,  1.0,  0.0,  0.0,  0.0],
+                            [ 0.0,  0.0,  0.0,  1.0,  0.0,  0.0],
+                            [ 0.0,  0.0,  0.0,  0.0,  1.0,  0.0],
+                            [ 0.0,  0.0,  0.0,  0.0,  0.0,  1.0]
+                        ])
+            
         for ii in range(len(addval)):
 
-            A_add = addval[ii, 2] * array([[1, -1], [-1, 1]])
+            A_add = addval[ii, 2] * matrix_update
 
-            loc = array(
-                [
-                    int(dofe * addval[ii, 0] - (dofe)),
-                    int(dofe * addval[ii, 0] - (dofe - 1)),
-                ]
-            )
-
+            loc = Model.shape.getLocKey(array([addval[ii, 0]], dtype=int32), nodedof)[0:nodedof]
+            
             matrix[ix_(loc, loc)] += A_add
         return matrix
 

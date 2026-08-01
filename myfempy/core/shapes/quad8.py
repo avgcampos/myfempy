@@ -6,7 +6,9 @@ from numpy.linalg import norm
 from myfempy.core.shapes.quad8_tasks import (DiffShapeFuntion, Jacobian,
                                              LocKey, NodeCoord, NodeList,
                                              ShapeFunctions, detJacobi,
-                                             invJacobi)
+                                             invJacobi,
+                                             StifLinear, MassLinear,
+                                             compute_B)
 from myfempy.core.shapes.shape import Shape
 
 
@@ -53,20 +55,20 @@ event caused by the use of the program.
 
 """
 
+_SHAPE_SET = {
+    "def": "8-nodes_conec 2-interpol_order",
+    "key": "quad8",
+    "id": 82,
+    "nodes": ["i", "j", "k", "l", "m", "n", "o", "p"],
+    "sidenorm": {"0": [0, -1], "1": [1, 0], "2": [0, 1], "3": [-1, 0]},
+    "nodesconecedge": 3,
+}
 
 class Quad8(Shape):
     """Quadrilateral 8-Node Shape Class <ConcreteClassService>"""
 
     def getShapeSet():
-        shapeset = {
-            "def": "8-nodes_conec 2-interpol_order",
-            "key": "quad8",
-            "id": 82,
-            "nodes": ["i", "j", "k", "l", "m", "n", "o", "p"],
-            "sidenorm": {"0": [0, -1], "1": [1, 0], "2": [0, 1], "3": [-1, 0]},
-            "nodesconecedge": 3,
-        }
-        return shapeset
+        return _SHAPE_SET
 
     def getIsoParaSide(side, r):
         # [r_valor, r_axis]
@@ -141,6 +143,15 @@ class Quad8(Shape):
 
     def getdetJacobi(r_coord, element_coord):
         return detJacobi(r_coord, element_coord)
+    
+    def getB(H, invJ, diffN):
+        return compute_B(H, invJ, diffN)
+    
+    def getStifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t):
+        return StifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t)
+    
+    def getMassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R, t):
+        return MassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R, t)
 
     def getNodeList(inci, element_number):
         return NodeList(inci, element_number)

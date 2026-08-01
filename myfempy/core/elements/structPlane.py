@@ -1,9 +1,5 @@
 from __future__ import annotations
 
-from os import environ
-
-environ["OMP_NUM_THREADS"] = "1"
-
 from numpy import (
     abs,
     array,
@@ -24,8 +20,6 @@ FLT32 = float32
 
 from myfempy.core.elements.element import Element
 from myfempy.core.utilities import gauss_points
-
-_H = array([[1, 0, 0, 0], [0, 0, 0, 1], [0, 1, 1, 0]], dtype=INT32)
 
 __docformat__ = "google"
 
@@ -70,37 +64,33 @@ event caused by the use of the program.
 
 """
 
+_ELEMENT_SET = {
+"def": "2D-space 2-node_dofs",
+"key": "plane",
+"id": 22,
+"dofs": {
+    "d": {"ux": 1, "uy": 2},
+    "f": {
+        "fx": 1,
+        "fy": 2,
+        "masspoint": 15,
+        "spring2ground": 16,
+        "damper2ground": 17,
+    },
+},
+"tensor": ["sxx", "syy", "sxy"],
+"H": array([[1, 0, 0, 0], [0, 0, 0, 1], [0, 1, 1, 0]], dtype=INT32),
+}
 
 class StructuralPlane(Element):
     """Plane Structural Element Class <ConcreteClassService>"""
 
     def getElementSet():
-        elemset = {
-            "def": "2D-space 2-node_dofs",
-            "key": "plane",
-            "id": 22,
-            "dofs": {
-                "d": {"ux": 1, "uy": 2},
-                "f": {
-                    "fx": 1,
-                    "fy": 2,
-                    "masspoint": 15,
-                    "spring2ground": 16,
-                    "damper2ground": 17,
-                },
-            },
-            "tensor": ["sxx", "syy", "sxy"],
-        }
-        return elemset
-
-    # @profile
-    def getB(diffN, invJ):
-        B = _H.dot(invJ).dot(diffN)
-        return B
-
-    # @profile
+        return _ELEMENT_SET
+    
     def getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number):
         elem_set = StructuralPlane.getElementSet()
+        H = elem_set['H']
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
         nodecon = len(shape_set["nodes"])
@@ -111,19 +101,10 @@ class StructuralPlane(Element):
         C = Model.material.getElasticTensor(tabmat, inci, element_number)
         t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
         pt, wt = gauss_points(type_shape, intgauss)
+        
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
-        for ip in range(intgauss):
-            for jp in range(intgauss):
-                detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
-                diffN = Model.shape.getDiffShapeFuntion(
-                    array([pt[ip], pt[jp]]), nodedof
-                )
-                invJ = Model.shape.getinvJacobi(
-                    array([pt[ip], pt[jp]]), elementcoord, nodedof
-                )
-                B = StructuralPlane.getB(diffN, invJ)
-                BCB = B.transpose().dot(C).dot(B)
-                K_elem_mat += BCB * t * abs(detJ) * wt[ip] * wt[jp]
+        K_elem_mat = Model.shape.getStifLinear(pt, wt, intgauss, elementcoord, edof, nodedof, H, C, t)
+                
         return K_elem_mat
 
     def getMassConsistentMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number):
@@ -138,13 +119,10 @@ class StructuralPlane(Element):
         R = tabmat[int(inci[element_number, 2]) - 1]["RHO"]
         t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
         pt, wt = gauss_points(type_shape, intgauss)
+
         M_elem_mat = zeros((edof, edof), dtype=FLT64)
-        for ip in range(intgauss):
-            for jp in range(intgauss):
-                detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
-                N = Model.shape.getShapeFunctions(array([pt[ip], pt[jp]]), nodedof)
-                NRN = N.transpose().dot(R).dot(N)
-                M_elem_mat += NRN * t * abs(detJ) * wt[ip] * wt[jp]
+        M_elem_mat = Model.shape.getMassLinear(pt, wt, intgauss, elementcoord, edof, nodedof, R, t)
+
         return M_elem_mat
 
     def getUpdateMatrix(Model, matrix, addval):
@@ -155,22 +133,14 @@ class StructuralPlane(Element):
             matrix_update = array([[1.0, -1.0], [-1.0, 1.0]])
 
         elif int(addval[0, 1]) == 15:
-            matrix_update = array([[1.0, 0.0], [0.0, 1.0]])
-
-        else:
-            matrix_update = array([[1.0, 1.0], [1.0, 1.0]])
-
+            matrix_update = 0.5*array([[1.0, 0.0], [0.0, 1.0]])
+            
         for ii in range(len(addval)):
 
             A_add = addval[ii, 2] * matrix_update
 
-            loc = array(
-                [
-                    int(nodedof * addval[ii, 0] - (nodedof)),
-                    int(nodedof * addval[ii, 0] - (nodedof - 1)),
-                ]
-            )
-
+            loc = Model.shape.getLocKey(array([addval[ii, 0]], dtype=int32), nodedof)[0:nodedof]
+            
             matrix[ix_(loc, loc)] += A_add
         return matrix
 

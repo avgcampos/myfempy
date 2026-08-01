@@ -6,8 +6,6 @@ from numpy import (array, arange, concatenate, empty, float64, newaxis, pi, sqrt
 from scipy.sparse.linalg import eigsh
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
-from myfempy.core.solver.assemblerfull_parallel import AssemblerFULLPOOL
-from myfempy.core.solver.assemblersymm import AssemblerSYMM
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
 
@@ -60,33 +58,15 @@ class DynamicEigenLinear(Solver):
     """
     Dynamic Eigen (modal problem) Linear Solver Class <ConcreteClassService>
     """
-    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, SYMM=None, MP=None):
+    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None):
         matrix = dict()
-        if SYMM:
-            matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(
-                Model, inci, coord, tabmat, tabgeo, intgauss,
-            )
-            matrix["mass"] = AssemblerSYMM.getMassConsistentGlobalMatrixAssembler(
-                Model, inci, coord, tabmat, tabgeo, intgauss,
-            )
-        else:
-            if MP:
-                matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(
-                    Model, inci, coord, tabmat, tabgeo, intgauss,
-                    MP=MP,
-                )
-                matrix["mass"] = AssemblerFULLPOOL.getMassConsistentGlobalMatrixAssembler(
-                    Model, inci, coord, tabmat, tabgeo, intgauss,
-                    MP=MP,
-                )
-            else:
-                matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(
-                    Model, inci, coord, tabmat, tabgeo, intgauss,
+        matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(
+            Model, Model.element.getStifLinearMat, inci, coord, tabmat, tabgeo, intgauss,
 
-                )
-                matrix["mass"] = AssemblerFULL.getMassConsistentGlobalMatrixAssembler(
-                    Model, inci, coord, tabmat, tabgeo, intgauss,
-                )
+        )
+        matrix["mass"] = AssemblerFULL.getGlobalMatrixAssembler(
+            Model, Model.element.getMassConsistentMat, inci, coord, tabmat, tabgeo, intgauss,
+        )
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):

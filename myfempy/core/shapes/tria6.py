@@ -7,7 +7,9 @@ from myfempy.core.shapes.shape import Shape
 from myfempy.core.shapes.tria6_tasks import (DiffShapeFuntion, Jacobian,
                                              LocKey, NodeCoord, NodeList,
                                              ShapeFunctions, detJacobi,
-                                             invJacobi)
+                                             invJacobi,
+                                             StifLinear, MassLinear,
+                                             compute_B)
 
 
 __docformat__ = "google"
@@ -53,20 +55,20 @@ event caused by the use of the program.
 
 """
 
+_SHAPE_SET = {
+    "def": "6-nodes_conec 2-interpol_order",
+    "key": "tria6",
+    "id": 62,
+    "nodes": ["i", "j", "k", "l", "m", "n"],
+    "sidenorm": {"0": [0, -1], "1": [1, 1], "2": [-1, 0]},
+    "nodesconecedge": 3,
+}
 
 class Tria6(Shape):
     """Triangular 6-Node Shape Class <ConcreteClassService>"""
 
     def getShapeSet():
-        shapeset = {
-            "def": "6-nodes_conec 2-interpol_order",
-            "key": "tria6",
-            "id": 62,
-            "nodes": ["i", "j", "k", "l", "m", "n"],
-            "sidenorm": {"0": [0, -1], "1": [1, 1], "2": [-1, 0]},
-            "nodesconecedge": 3,
-        }
-        return shapeset
+        return _SHAPE_SET
 
     # tria3 sides
     def getIsoParaSide(side, r):
@@ -140,6 +142,16 @@ class Tria6(Shape):
 
     def getdetJacobi(r_coord, element_coord):
         return detJacobi(r_coord, element_coord)
+    
+    def getB(H, invJ, diffN):
+        return compute_B(H, invJ, diffN)
+    
+    def getStifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t):
+        return StifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t)
+    
+    def getMassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R, t):
+        return MassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R, t)
+
 
     def getNodeList(inci, element_number):
         return NodeList(inci, element_number)

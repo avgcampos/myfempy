@@ -7,7 +7,7 @@ class Assembler(ABC):
     """
 
     @abstractmethod
-    def getVectorization():
+    def getGlobalMatrixAssembler():
         pass
 
     @abstractmethod

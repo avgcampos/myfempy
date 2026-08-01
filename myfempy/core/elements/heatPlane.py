@@ -12,8 +12,6 @@ FLT64 = float64
 from myfempy.core.elements.element import Element
 from myfempy.core.utilities import gauss_points
 
-_H = array([[1, 0], [0, 1]], dtype=FLT64)
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -57,30 +55,28 @@ event caused by the use of the program.
 
 """
 
+_ELEMENT_SET = {
+"def": "2D-space 1-node_dofs",
+"key": "plane",
+"id": 21,
+"dofs": {
+    "d": {"t": 1},
+    "f": {"heatflux": 1, "convectionfluid": 2, "heat2fluid": 15},
+},
+"tensor": ["qxx", "qyy"],
+"H": array([[1, 0], [0, 1]], dtype=INT32)
+}
 
 class HeatPlane(Element):
     """Plane Heat Element Class <ConcreteClassService>"""
 
     def getElementSet():
-        elemset = {
-            "def": "2D-space 1-node_dofs",
-            "key": "plane",
-            "id": 21,
-            "dofs": {
-                "d": {"t": 1},
-                "f": {"heatflux": 1, "convection": 15},
-            },
-            "tensor": ["qxx", "qyy"],
-        }
-        return elemset
-
-    def getB(diffN, invJ):
-        B = _H.dot(invJ).dot(diffN)
-        return B
+        return _ELEMENT_SET
 
     # @profile
     def getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number):
         elem_set = HeatPlane.getElementSet()
+        H = elem_set['H']
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
         nodecon = len(shape_set["nodes"])
@@ -91,15 +87,10 @@ class HeatPlane(Element):
         C = Model.material.getElasticTensor(tabmat, inci, element_number)
         t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
         pt, wt = gauss_points(type_shape, intgauss)
+        
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
-        for ip in range(intgauss):
-            for jp in range(intgauss):
-                detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
-                diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp]]), nodedof)
-                invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp]]), elementcoord, nodedof)
-                B = HeatPlane.getB(diffN, invJ)
-                BCB = B.transpose().dot(C).dot(B)
-                K_elem_mat += BCB * t * abs(detJ) * wt[ip] * wt[jp]
+        K_elem_mat = Model.shape.getStifLinear(pt, wt, intgauss, elementcoord, edof, nodedof, H, C, t)
+        
         return K_elem_mat
 
     # def getMassConsistentMat(
@@ -131,35 +122,31 @@ class HeatPlane(Element):
         nodecon = len(shape_set["nodes"])
         type_shape = shape_set["key"]
         edof = nodecon * nodedof
-
+        intgauss = Model.intgauss
         nodelistconv = unique(addval[:, 0])
         elmlist = get_elemen_from_nodelist(Model.inci, nodelistconv)
         for ee in range(len(elmlist)):
-
             nodelist = Model.shape.getNodeList(Model.inci, elmlist[ee] - 1)
             elementcoord = Model.shape.getNodeCoord(Model.coord, nodelist)
             t = Model.tabgeo[int(Model.inci[elmlist[ee] - 1, 3] - 1)]["THICKN"] 
             test = in1d(nodelist, nodelistconv, assume_unique=True)
-
-            # nodes = array(nodelist)[test]
             nodes_conec = where(test == True)[0]
             if len(nodes_conec) < 2:
                 pass
             else:
                 idx_conec = array2string(nodes_conec)
                 get_side = Model.shape.getSideAxis(idx_conec[1:-1])
-                pt, wt = gauss_points(type_shape, Model.intgauss)
+                pt, wt = gauss_points(type_shape, intgauss)
                 loc = Model.shape.getLocKey(nodelist, nodedof)
                 h = addval[0, 2]
                 Kh = zeros((edof, edof))
-                for ip in range(2):
-                    for jp in range(2):
+                for ip in range(intgauss):
+                    for jp in range(intgauss):
                         points = Model.shape.getIsoParaSide(get_side, pt[ip])
                         N = Model.shape.getShapeFunctions(array(points), nodedof)
                         J = Model.shape.getJacobian(array(points), elementcoord)
                         detJ_e = Model.shape.getEdgeLength(J, get_side)
                         Kh += dot(N.transpose(), N) * h * t * abs(detJ_e) * wt[ip] * wt[jp]
-
                 matrix[ix_(loc, loc)] += Kh
         return matrix
 

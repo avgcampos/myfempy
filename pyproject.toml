@@ -20,8 +20,8 @@ authors = [
     {name = "Antonio Vinicius Garcia Campos"},
 ]
 readme = "README.md"
-version = "0.9.4"
-license = {file = "LICENSE.md"}
+version = "0.9.5"
+license = "GPL-3.0-or-later" #{file = "LICENSE.md"}
 requires-python = ">= 3.11"
 dependencies = [
 	"numpy == 1.26.4",
@@ -35,10 +35,9 @@ dependencies = [
 keywords = ["FEM", "FEA", "FSI", "Engineering"]
 
 classifiers = [
-  "Development Status :: Alpha",
+  "Development Status :: Beta",
   "Researchers :: Mechanical Engineers :: Students",
   "Topic :: Software Development :: Build Tools",
-  "License :: OSI Approved :: GPL-3 License",
   "Programming Language :: Python :: 3.8",
 ]
 

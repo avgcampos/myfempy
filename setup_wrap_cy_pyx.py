@@ -80,7 +80,6 @@ class build_ext(_build_ext):
             self.distribution.ext_modules = []
 
         extensions=[
-            Extension("*", sources=["./myfempy/core/solver/assemblersymm_cython.pyx"], **extension_kwargs),
             Extension("*", sources=["./myfempy/core/solver/assemblerfull_cython.pyx"], **extension_kwargs),
             Extension("*", sources=["./myfempy/core/shapes/line2_tasks.pyx"], **extension_kwargs),
             Extension("*", sources=["./myfempy/core/shapes/line3_tasks.pyx"], **extension_kwargs),

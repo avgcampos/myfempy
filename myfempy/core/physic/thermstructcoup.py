@@ -4,7 +4,7 @@ import numpy as np
 from scipy.special import roots_legendre
 
 from myfempy.core.physic.loadstruct import LoadStructural
-from myfempy.core.physic.structural import Structural
+from myfempy.core.physic.physics import Physics
 from myfempy.core.utilities import (gauss_points, get_elemen_from_nodelist,
                                     get_nodes_from_list, poly_area)
 
@@ -53,7 +53,7 @@ event caused by the use of the program.
 """
 
 
-class ThermalStructuralCoupling(Structural):
+class ThermalStructuralCoupling(Physics):
     """Thermal Structural Coupled field analysis <ConcreteClassService>"""
 
     def getLoadApply(Model, coupling):

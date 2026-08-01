@@ -37,7 +37,7 @@ This new version allows the inclusion of modules and code written in C/Cython, a
 
 9. [ADDED] Implementation of higher-order (quadritic) elements
 
-10. [ADDED] Implementation of routines for multicore execution, e.g., Matrix assembly
+10. [] Implementation of routines for multicore execution, e.g., Matrix assembly
 
 11. [ADDED] Implement functionalities of the _myfempy/core_ code in C/Cython
 
@@ -234,10 +234,6 @@ For more details, see the object-oriented code bridge pattern
 |   |   |   assemblerfull.py
 |   |   |   assemblerfull_cython.pyx
 |   |   |   assemblerfull_numpy.py
-|   |   |   assemblerfull_parallel.py
-|   |   |   assemblersymm.py
-|   |   |   assemblersymm_cython.pyx
-|   |   |   assemblersymm_numpy.py
 |   |   |   cyclicsymm.py
 |   |   |   dyneigen.py
 |   |   |   dynharmonicresponse.py

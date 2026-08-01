@@ -339,7 +339,7 @@ def setPoints2NumericalIntegration(type_shape):
             "tria3": 1,
             "tria6": 3,
             "quad4": 2,
-            "quad8": 3,
+            "quad8": 4,
             "tetr4": 4,
             # "tetr10": 5,
             "hexa8": 2,

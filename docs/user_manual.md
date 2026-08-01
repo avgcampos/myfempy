@@ -679,7 +679,7 @@ physicdata["PHYSIC"]["LOAD"] = list[load_set_1:dict(),..., load_set_n:dict()]
 
 ##### keys
 ```python
-"TYPE":str() 		          # type force n def.
+"TYPE":str() 		                  # type force n def.
       # options
       'forcenode'					# force in nodes, concentrated load
       'forceedge'					# force in edge, distributed load
@@ -687,8 +687,8 @@ physicdata["PHYSIC"]["LOAD"] = list[load_set_1:dict(),..., load_set_n:dict()]
       'forcebeam'					# force in beam only opt., distributed load
 
       # [adv]
-      'forcebody'
-      'strainzero'
+      'bodyforce'                         # structural weight, applied in 2D and 3D models                    
+      'strainzero'                        # initial or permanent mechanical strain (deformation), applied in 2D and 3D models      
 
       # heat options
       'heatfluxedge'
@@ -920,10 +920,6 @@ solverset = {"STEPSET":
 'step': int(),
     },
 
-'SYMM': bool(),   # matrix symmetric assembler
-# options
-    True
-    False
 
 # [ adv ]
 'IBZ': np.array(  # Brillouin zone
@@ -1183,8 +1179,7 @@ See the API documentation for a more modern version.
 | SteadyStateLinearIterative    |       | Steady State Linear Iterative Solver Class (Static Linear)              | Model, Assembly: [stiffness, loads], ConstrainsDof: [freedof, constdof] | Assembly: [bcdirnh], Solverset: [nsteps, tol, maxiter] |
 | DynamicEigenLinear            |       | Dynamic Eigen (modal problem) Linear Solver Class                       | Model, Assembly: [stiffness, mass],  ConstrainsDof: [freedof]           | Solverset: [modeEnd:nsteps]                             |    
 | DynamicHarmonicResponseLinear |       | Dynamic Harmonic Response Forced System Steady State Linear Solver Clas | Model, Assembly: [stiffness, mass, loads], ConstrainsDof: [freedof]     | Solverset: [freqStart:start, freqEnd:end,freqStep:nsteps]|
-| [ dev ] TransientLinear       |       |                                                                         |                                                                         |                                                        |
-|                               |       |                                                                         |                                                                         |                                                        |
+| [ dev ] TransientLinear       |       | Dynamic Timing Response Linear Solver Clas                              | Model, Assembly: [stiffness, mass, loads], ConstrainsDof: [freedof]     | Solverset: [freqStart:start, freqEnd:end,freqStep:nsteps]|
 | [ adv ] StaticLinearCyclicSymmPlane|  | Static Linear Cyclic Symmetry Plane Solver Class                        | Model, Physic, Assembly: [stiffness, loads], ConstrainsDof: [freedof, fixedof(leftdof, rightdof, interdof)*] | Solverset: [nsteps]|
 | [ adv ] HomogenizationPlane        |  | Homogenization Plane Solver Class                                       | Model, Assembly: [stiffness, loads], ConstrainsDof: [freedof, fixedof(strain)*]  |                                               |
 | [ adv ] PhononicCrystalInPlane     |  | Phononic Crystal In-Plane Solver Class                                  | Model, Assembly: [stiffness, mass], ConstrainsDof: [freedof, constdof(bloch)*] | Solverset: [nsteps, IBZ*]                        |

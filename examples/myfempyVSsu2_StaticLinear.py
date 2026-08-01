@@ -12,11 +12,11 @@ import numpy as np
 #                                   FEA
 # ===============================================================================
 
-fea = newAnalysis(SteadyStateLinear, 'su2_test')
+fea = newAnalysis(SteadyStateLinear)
 
 mat = {
     "NAME": "material",
-    "VXX": 0.35,
+    "VXY": 0.35,
     "EXX": 5.0E9,
     }
 
@@ -55,8 +55,8 @@ modeldata = {
         'linelist': lines,
         'planelist': plane,
         'meshconfig': {
-            'mesh': 'quad4',
-            'sizeelement': 0.2,
+            'mesh': 'quad8',
+            'sizeelement': 0.1,
             'meshmap': {'on': True,
                         'edge': 'all',
                     #  "numbernodes": 10,
@@ -66,8 +66,8 @@ modeldata = {
 
     "ELEMENT": {
         'TYPE': 'structplane',
-        'SHAPE': 'quad4',
-        'INTGAUSS': 4,
+        'SHAPE': 'quad8',
+        # 'INTGAUSS': 7,
     },
 
     "MATERIAL": {
@@ -119,7 +119,6 @@ solverset = {"STEPSET": {'type': 'table',
                         'start': 0,
                         'end': 1,
                         'step': 1},
-             'SYMM':True,
              }
 solverdata = fea.Solve(solverset)
 

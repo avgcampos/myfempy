@@ -52,11 +52,7 @@ class Element(ABC):
     @abstractmethod
     def getElementSet():
         pass
-
-    @abstractmethod
-    def getB():
-        pass
-
+    
     @abstractmethod
     def getStifLinearMat():
         pass

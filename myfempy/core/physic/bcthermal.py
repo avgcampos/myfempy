@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from myfempy.core.physic.structural import Structural
+from myfempy.core.physic.physics import Physics
 from myfempy.core.utilities import get_nodes_from_list
 
 
@@ -50,7 +50,7 @@ event caused by the use of the program.
 """
 
 
-class BoundCondThermal(Structural):
+class BoundCondThermal(Physics):
     """Structural Load Class <ConcreteClassService>"""
 
     def getBCApply(Model, bclist):
@@ -63,10 +63,6 @@ class BoundCondThermal(Structural):
         elif bclist["TYPE"] == "temperature":
             bcapp = BoundCondThermal.__BCDispl(Model, bclist)
             boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
-
-        # elif bclist['TYPE'] == "csymm":
-        #     bcapp = BoundCondThermal.__BCCS(modelinfo, bclist)
-        #     boncdnodeaply = np.append(boncdnodeaply, bcapp, axis=0)
 
         else:
             pass

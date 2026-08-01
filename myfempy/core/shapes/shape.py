@@ -74,6 +74,10 @@ class Shape(ABC):
         pass
 
     @abstractmethod
+    def getB():
+        pass
+
+    @abstractmethod
     def getNodeList():
         pass
 

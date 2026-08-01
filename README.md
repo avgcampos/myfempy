@@ -55,7 +55,7 @@ environments](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-
 
 ## Dependencies
 
-**Myfempy** can be used in systems based on Linux and Windows, MacOS (has not been tested), and requires Python 3 to running.
+**Myfempy** can be used in systems based on Linux and Windows, MacOS (has not been tested), and requires Python 3 and Cython to running. For Windows users, check the installed compiler; see https://visualstudio.microsoft.com/vs/features/cplusplus/
 
 Installation prerequisites, required to build **myfempy**
 

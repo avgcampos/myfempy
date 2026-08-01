@@ -1,3 +1,7 @@
+import sys
+# setting path
+sys.path.append('../myfempy')
+
 from myfempy import newAnalysis
 from myfempy import SteadyStateLinearIterative, SteadyStateLinear
 from myfempy.io.iocsv import writer2csv
@@ -48,7 +52,7 @@ modeldata = {
         'linelist': lines,
         'planelist': plane,
         'meshconfig': {
-            'mesh': 'quad4',   #quad4
+            'mesh': 'quad8',   #quad4
             'sizeelement': 1,
             'meshmap': {'on': True,
                         'edge': [[2, 4], [1, 3]], #'all'
@@ -59,8 +63,8 @@ modeldata = {
 
     "ELEMENT": {
         'TYPE': 'structplane',
-        'SHAPE': 'quad4',
-        'INTGAUSS': 1,
+        'SHAPE': 'quad8',
+        # 'INTGAUSS': 1,
     },
 
     "MATERIAL": {
@@ -126,12 +130,10 @@ solverset = {"STEPSET": {'type': 'table',  # mode, freq, time ...
                         'start': 0,
                         'end': 1,
                         'step': 1},
-             'SYMM':True,
-            #  'MP':True,
             }
 solverdata = fea.Solve(solverset)
 
-print(np.max(np.abs(solverdata['solution']['U'])))
+print('U FEM', np.max(np.abs(solverdata['solution']['U'])))
 
 postprocset = {"SOLVERDATA": solverdata,
                 "COMPUTER": {'structural': {'displ': True, 'stress': True}},
@@ -157,7 +159,7 @@ def ux(xn):
 # Intervalo de valores de x
 x_vals = np.linspace(0, l, 200)
 ux_vals = ux(x_vals)
-print(np.max(np.abs(ux_vals)))
+print('U Analitico', np.max(np.abs(ux_vals)))
 
 data = [x_vals, ux_vals]
 label = ['x', 'u_x(x)']

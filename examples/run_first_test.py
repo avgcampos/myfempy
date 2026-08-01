@@ -12,6 +12,10 @@ compatibility. See the user guide or _help_ for more information about commands.
 Usage: >>> python run_fist_test.py
 """
 
+import sys
+# setting path
+sys.path.append('../myfempy')
+
 # environ['OMP_NUM_THREADS'] = '1'        #win
 
 # ===============================================================================
@@ -94,7 +98,7 @@ modeldata = {
     "ELEMENT": {
         'TYPE': 'structsolid',
         'SHAPE': 'hexa8',
-        # 'INTGAUSS': 8,
+        # 'INTGAUSS': 2,
     },
 
     "MATERIAL": {
@@ -165,8 +169,6 @@ solverset = {"STEPSET": {'type': 'table',  # mode, freq, time ...
                         'start': 0,
                         'end': 1,
                         'step': 1},
-             'SYMM':False,
-             'MP':False,
             }
 solverdata = fea.Solve(solverset)
 

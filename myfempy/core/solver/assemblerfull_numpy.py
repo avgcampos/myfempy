@@ -58,7 +58,7 @@ def getVectorization(ith, jth, val, loc, matrix, ee, elemdof):
 
     return ith, jth, val
 
-
+# Antiga Versão
 def getLoadAssembler(loadaply, nodetot, nodedof):
     """
     getLoadAssembler Assembler module <ConcreteClassService>
@@ -84,7 +84,7 @@ def getLoadAssembler(loadaply, nodetot, nodedof):
                 if int(forceaply[ii, 1]) == 1:
                     gdlload = int(nodedof * forceaply[ii, 0] - (nodedof))
                     forcevec[gdlload, fstep] += forceaply[ii, 2]
-                else:
+                elif int(forceaply[ii, 1]) == 2:
                     gdlload = int(nodedof * forceaply[ii, 0] - (nodedof))
                     forcevec[gdlload, fstep] += forceaply[ii, 2]
 

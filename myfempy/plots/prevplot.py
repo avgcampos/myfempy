@@ -2,9 +2,6 @@
 __doc__ = """
 Plotter Prev Process
 """
-from os import environ
-
-environ["OMP_NUM_THREADS"] = "3"
 import numpy as np
 import vtk
 
@@ -397,9 +394,11 @@ def __setLoadDof(forcedof):
         "masspoint": 15,
         "spring2ground": 16,
         "damper2ground": 17,
+        "torsion2ground": 17,
         "cg": 18,
         "heatflux": 1,
-        "convection": 15,
+        "convectionfluid": 2,
+        "heat2fluid": 15,
     }
     return fdoftype[forcedof]
 

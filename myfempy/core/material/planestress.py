@@ -66,7 +66,7 @@ class PlaneStress(Material):
         E = tabmat[int(inci[element_number, 2]) - 1]["EXX"]
         # material poisson ratio
         v = tabmat[int(inci[element_number, 2]) - 1][ "VXY"]  
-        
+
         D = np.zeros((3, 3), dtype=FLT64)
         D[0, 0] = E / (1.0 - v * v)
         D[0, 1] = D[0, 0] * v
@@ -77,8 +77,12 @@ class PlaneStress(Material):
 
     def getElementStrain(Model, U, ptg, element_number):
         elem_set = Model.element.getElementSet()
+        H = elem_set['H']
         nodedof = len(elem_set["dofs"]["d"])
-
+        shape_set = Model.shape.getShapeSet()
+        nodecon = len(shape_set["nodes"])
+        edof = nodecon * nodedof
+        
         nodelist = Model.shape.getNodeList(Model.inci, element_number)
 
         loc = Model.shape.getLocKey(nodelist, nodedof)
@@ -89,7 +93,7 @@ class PlaneStress(Material):
         
         invJ = Model.shape.getinvJacobi(np.array([ptg, ptg]), elementcoord, nodedof)
 
-        B = Model.element.getB(diffN, invJ)
+        B = Model.shape.getB(H, invJ, diffN)
 
         epsilon = B.dot(U[loc]) #np.dot(B, U[loc])  # B @ (U[loc])
 

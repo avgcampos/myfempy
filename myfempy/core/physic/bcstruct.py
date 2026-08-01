@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from myfempy.core.physic.structural import Structural
+from myfempy.core.physic.physics import Physics
 from myfempy.core.utilities import get_nodes_from_list
 
 
@@ -50,7 +50,7 @@ event caused by the use of the program.
 """
 
 
-class BoundCondStruct(Structural):
+class BoundCondStruct(Physics):
     """Structural Load Class <ConcreteClassService>"""
 
     def getBCApply(Model, bclist):

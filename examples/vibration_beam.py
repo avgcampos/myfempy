@@ -10,7 +10,7 @@ from myfempy import DynamicEigenLinear
 # ===============================================================================
 fea = newAnalysis(DynamicEigenLinear)
 LX = 10 
-nelx = 10
+nelx = 2
 # MODEL SET
 mat = {
     "NAME": "aco",
@@ -54,7 +54,7 @@ modeldata = {
     "ELEMENT": {
         'TYPE': 'structbeam',
         'SHAPE': 'line2',
-        # 'INTGAUSS': 4,
+        'INTGAUSS': 4,
     },
 
     "MATERIAL": {
@@ -94,9 +94,9 @@ fea.PreviewAnalysis(previewset)
 # #-------------------------------- SOLVER -------------------------------------#
 solverset = {"STEPSET": {'type': 'mode',  # mode, freq, time ...
                         'start': 0,
-                        'end': 30,
+                        'end': 6,
                         'step': 1},
-             'SYMM':True,
+            #  'SYMM':True,
             #  'MP':True,
             }
 solverdata = fea.Solve(solverset)

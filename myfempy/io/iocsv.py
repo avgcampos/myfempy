@@ -48,12 +48,6 @@ event caused by the use of the program.
 """
 
 def write2log(Model, Physic, log_data, solstatus, log_file):
-    
-    if "numpy_decimals" in log_data["get"].keys():
-        np_decimals = log_data["get"]["numpy_decimals"]
-    else:
-        np_decimals = 4
-
     with open(log_file, "w") as file_object:
         file_object.write(
             "===============================================================================\n"
@@ -64,13 +58,21 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
         file_object.write(
             "===============================================================================\n"
         )
+
         if "get" in log_data.keys():
+            if "numpy_decimals" in log_data["get"].keys():
+                np_decimals = log_data["get"]["numpy_decimals"]
+            else:
+                np_decimals = 4
+            
             if "nelem" in log_data["get"].keys():
                 file_object.write("\n")
                 file_object.write("GET NELEM " + str(len(Model.inci)) + "\n")
+            
             if "nnode" in log_data["get"].keys():
                 file_object.write("\n")
                 file_object.write("GET NNODE " + str(len(Model.coord)) + "\n")
+            
             if "inci" in log_data["get"].keys():
                 file_object.write("\n")
                 file_object.write("LIST OF ELEMENTS\n")
@@ -94,6 +96,7 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
                             node_list,
                         )
                     )
+            
             if "coord" in log_data["get"].keys():
                 file_object.write("\n")
                 file_object.write("LIST OF NODES COORDINATE\n")
@@ -212,15 +215,20 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
                         line_dof+=1
                 
             else:
-                file_object.write("\n")
-                file_object.write("log_data['get']: key erro\n")
                 pass
 
         # =============================================================================================================
         if "log" in log_data.keys():
+            
             file_object.write("\n")
             file_object.write(
                 "+---------------------------- S O L V E R   L O G ----------------------------+\n"
+            )
+            file_object.write(
+                "{0:<30} : {1:<10}\n".format(
+                    "ANALYZED ON ",
+                    str(log_data["timesolver"]),
+                )
             )
             file_object.write(
                 "{0:<30} : {1:<10} SEC\n".format(

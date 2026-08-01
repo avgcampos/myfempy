@@ -12,8 +12,6 @@ FLT64 = float64
 from myfempy.core.elements.element import Element
 from myfempy.core.utilities import gauss_points
 
-_H = array([[1, 0, 0], [0, 1, 0], [0, 0, 1]], dtype=FLT64)
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -57,30 +55,28 @@ event caused by the use of the program.
 
 """
 
+_ELEMENT_SET = {
+"def": "3D-space 1-node_dofs",
+"key": "solid",
+"id": 31,
+"dofs": {
+    "d": {"t": 1},
+    "f": {"heatflux": 1, "convectionfluid": 2, "heat2fluid": 15},
+},
+"tensor": ["qxx", "qyy", "qzz"],
+"H": array([[1, 0, 0], [0, 1, 0], [0, 0, 1]], dtype=INT32)
+}
 
 class HeatSolid(Element):
     """Solid Heat Element Class <ConcreteClassService>"""
 
     def getElementSet():
-        elemset = {
-            "def": "3D-space 1-node_dofs",
-            "key": "solid",
-            "id": 31,
-            "dofs": {
-                "d": {"t": 1},
-                "f": {"heatflux": 1, "convection": 15},
-            },
-            "tensor": ["qxx", "qyy", "qzz"],
-        }
-        return elemset
-
-    def getB(diffN, invJ):
-        B = _H.dot(invJ).dot(diffN)
-        return B
+        return _ELEMENT_SET
 
     # @profile
     def getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number):
         elem_set = HeatSolid.getElementSet()
+        H = elem_set['H']
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
         nodecon = len(shape_set["nodes"])
@@ -91,15 +87,8 @@ class HeatSolid(Element):
         C = Model.material.getElasticTensor(tabmat, inci, element_number)
         pt, wt = gauss_points(type_shape, intgauss)
         K_elem_mat = zeros((edof, edof), dtype=FLT64)
-        for ip in range(intgauss):
-            for jp in range(intgauss):
-                for kp in range(intgauss):
-                    detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp], pt[kp]]), elementcoord)
-                    diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp], pt[kp]]), nodedof)
-                    invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp], pt[kp]]), elementcoord, nodedof)
-                    B = HeatSolid.getB(diffN, invJ)
-                    BCB = B.transpose().dot(C).dot(B)
-                    K_elem_mat += BCB * abs(detJ) * wt[ip] * wt[jp] * wt[kp]
+        K_elem_mat = Model.shape.getStifLinear(pt, wt, intgauss, elementcoord, edof, nodedof, H, C)
+
         return K_elem_mat
 
     # def getMassConsistentMat(
@@ -131,6 +120,7 @@ class HeatSolid(Element):
         nodecon = len(shape_set["nodes"])
         type_shape = shape_set["key"]
         edof = nodecon * nodedof
+        intgauss = Model.intgauss
         nodelistconv = unique(addval[:, 0])
         elmlist = get_elemen_from_nodelist(Model.inci, nodelistconv)
         for ee in range(len(elmlist)):
@@ -147,12 +137,13 @@ class HeatSolid(Element):
                 loc = Model.shape.getLocKey(nodelist, nodedof)
                 h = addval[0, 2]
                 Kh = zeros((edof, edof))
-                for ip in range(2):
-                    for jp in range(2):
-                        points = Model.shape.getIsoParaSide(get_side, [pt[ip], pt[jp]])
-                        N = Model.shape.getShapeFunctions(array(points), nodedof)
-                        detJ_a = Model.shape.getAreaLength(get_side, elementcoord)
-                        Kh += dot(N.transpose(), N) * h  * abs(detJ_a) * wt[ip] * wt[jp]
+                for ip in range(intgauss):
+                    for jp in range(intgauss):
+                        for kp in range(intgauss):
+                            points = Model.shape.getIsoParaSide(get_side, [pt[ip], pt[jp], pt[kp]])
+                            N = Model.shape.getShapeFunctions(array(points), nodedof)
+                            detJ_a = Model.shape.getAreaLength(get_side, elementcoord)
+                            Kh += dot(N.transpose(), N) * h  * abs(detJ_a) * wt[ip] * wt[jp] * wt[kp]
                 matrix[ix_(loc, loc)] += Kh
         return matrix
 

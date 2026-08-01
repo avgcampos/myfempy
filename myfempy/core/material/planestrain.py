@@ -77,6 +77,9 @@ class PlaneStrain(Material):
 
     def getElementStrain(Model, U, ptg, element_number):
         elem_set = Model.element.getElementSet()
+
+        H = elem_set['H']
+
         nodedof = len(elem_set["dofs"]["d"])
 
         nodelist = Model.shape.getNodeList(Model.inci, element_number)
@@ -89,7 +92,7 @@ class PlaneStrain(Material):
         
         invJ = Model.shape.getinvJacobi(np.array([ptg, ptg]), elementcoord, nodedof)
         
-        B = Model.element.getB(diffN, invJ)
+        B = Model.shape.getB(H, invJ, diffN)
 
         epsilon = np.dot(B, U[loc])  # B @ (U[loc])
 

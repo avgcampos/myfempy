@@ -6,11 +6,11 @@ from myfempy.core.shapes.line2_tasks import (DiffDiffShapeFuntion,
                                              DiffShapeFuntion, Jacobian,
                                              LocKey, NodeCoord, NodeList,
                                              ShapeFunctions, detJacobi,
-                                             invJacobi)
+                                             invJacobi, StifLinear, MassLinear,
+                                             compute_B)
 from myfempy.core.shapes.shape import Shape
 
 # from myfempy.core.utilities import getRotational_3dVector
-
 
 __docformat__ = "google"
 
@@ -55,19 +55,19 @@ event caused by the use of the program.
 
 """
 
+_SHAPE_SET = {
+    "def": "2-nodes_conec 1-interpol_order",
+    "key": "line2",
+    "id": 21,
+    "nodes": ["i", "j"],
+    "sidenorm": {"0": [0, 1]},
+}
 
 class Line2(Shape):
     """Line 2-Node Shape Class <ConcreteClassService>"""
 
     def getShapeSet():
-        shapeset = {
-            "def": "2-nodes_conec 1-interpol_order",
-            "key": "line2",
-            "id": 21,
-            "nodes": ["i", "j"],
-            "sidenorm": {"0": [0, 1]},
-        }
-        return shapeset
+        return _SHAPE_SET
 
     # quad4 sides
     def getIsoParaSide(side, r):
@@ -78,44 +78,7 @@ class Line2(Shape):
         }
 
         return isops[side]
-
-    def getShapeFunctions(r_coord, nodedof, detJ):
-        shapeN = ShapeFunctions(r_coord, nodedof)
-        shapeN[1,5] = 2 * detJ * shapeN[1,5] #* wt[ip]
-        shapeN[1,11] = 2 * detJ * shapeN[1,11] #* wt[ip]
-        shapeN[2,4] = 2 * detJ * shapeN[2,4] #* wt[ip]
-        shapeN[2,10] = 2 * detJ * shapeN[2,10] #* wt[ip]
-        return shapeN
-
-    def getDiffShapeFuntion(r_coord, nodedof):
-        return DiffShapeFuntion(r_coord, nodedof)
-
-    def getDiffDiffShapeFuntion(r_coord, nodedof, detJ):
-        diffN = DiffDiffShapeFuntion(r_coord, nodedof)
-        diffN[1,5] = 2 * detJ * diffN[1,5] #* wt[ip]
-        diffN[1,11] = 2 * detJ * diffN[1,11] #* wt[ip]
-        diffN[2,4] = 2 * detJ * diffN[2,4] #* wt[ip]
-        diffN[2,10] = 2 * detJ * diffN[2,10] #* wt[ip]
-        return diffN
-
-    def getJacobian(r_coord, element_coord):
-        return Jacobian(r_coord, element_coord)
-
-    def getinvJacobi(r_coord, element_coord, nodedof):
-        return invJacobi(r_coord, element_coord, nodedof)
-
-    def getdetJacobi(r_coord, element_coord):
-        return detJacobi(r_coord, element_coord)
-
-    def getNodeList(inci, element_number):
-        return NodeList(inci, element_number)
-
-    def getNodeCoord(coord, node_list):
-        return NodeCoord(coord, node_list)
-
-    def getLocKey(node_list, nodedof):
-        return LocKey(node_list, nodedof)
-
+    
     def getEdgeLength(J, side):
 
         if side == "0":
@@ -126,6 +89,41 @@ class Line2(Shape):
     def getSideAxis(set_side):
         side = {
             "0 1": "0",
-            # "1 0": "0",
         }
         return side[set_side]
+
+    def getShapeFunctions(r_coord, nodedof, detJ):
+        return ShapeFunctions(r_coord, nodedof, detJ)
+    
+    def getDiffShapeFuntion(r_coord, nodedof):
+        return DiffShapeFuntion(r_coord, nodedof)
+
+    def getDiffDiffShapeFuntion(r_coord, nodedof, detJ):
+        return DiffDiffShapeFuntion(r_coord, nodedof, detJ)
+
+    def getJacobian(r_coord, element_coord):
+        return Jacobian(r_coord, element_coord)
+
+    def getinvJacobi(r_coord, element_coord, nodedof):
+        return invJacobi(r_coord, element_coord, nodedof)
+
+    def getdetJacobi(r_coord, element_coord):
+        return detJacobi(r_coord, element_coord)
+    
+    def getB(H, invJ, diffN):
+        return compute_B(H, invJ, diffN)
+    
+    def getStifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C):
+        return StifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C)
+    
+    def getMassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R):
+        return MassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R)
+
+    def getNodeList(inci, element_number):
+        return NodeList(inci, element_number)
+
+    def getNodeCoord(coord, node_list):
+        return NodeCoord(coord, node_list)
+
+    def getLocKey(node_list, nodedof):
+        return LocKey(node_list, nodedof)

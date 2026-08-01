@@ -5,9 +5,6 @@ from numpy import dot, float64, zeros, array, ix_, where, arange, concatenate, i
 from scipy.sparse.linalg import spsolve
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
-from myfempy.core.solver.assemblerfull_parallel import AssemblerFULLPOOL
-from myfempy.core.solver.assemblersymm import AssemblerSYMM
-# from myfempy.core.alglin import linsolve_spsolve
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps, gauss_points
 
@@ -61,15 +58,9 @@ class HomogenizationPlane(Solver):
     Homogenization Plane Boundary Condition Symmetric Solver Class <ConcreteClassService>
     """
     # @profile
-    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, SYMM=None, MP=None):
+    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None):
         matrix = dict()
-        if SYMM:
-            matrix["stiffness"] = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss)
-        else:
-            if MP:
-                matrix["stiffness"] = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, MP)
-            else:
-                matrix["stiffness"] = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss)
+        matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(Model, Model.element.getStifLinearMat, inci, coord, tabmat, tabgeo, intgauss)
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):

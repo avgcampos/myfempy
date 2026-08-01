@@ -7,7 +7,10 @@ from myfempy.core.shapes.shape import Shape
 from myfempy.core.shapes.hexa8_tasks import (DiffShapeFuntion, Jacobian,
                                              LocKey, NodeCoord, NodeList,
                                              ShapeFunctions, detJacobi,
-                                             invJacobi)
+                                             invJacobi,
+                                             StifLinear, MassLinear,
+                                             compute_B)
+
 from myfempy.core.utilities import poly_area, unit_normal
 
 __docformat__ = "google"
@@ -53,27 +56,27 @@ event caused by the use of the program.
 
 """
 
+_SHAPE_SET = {
+    "def": "8-nodes_conec 1-interpol_order",
+    "key": "hexa8",
+    "id": 81,
+    "nodes": ["i", "j", "k", "l", "m", "n", "o", "p"],
+    "sidenorm": {
+        "0": [0, 0, -1],
+        "1": [-1, 0, 0],
+        "2": [0, 1, 0],
+        "3": [0, -1, 0],
+        "4": [1, 0, 0],
+        "5": [0, 0, 1],
+    },
+    "nodesconecface": 4,
+}
 
 class Hexa8(Shape):
     """Hexaedron 8-Node Shape Class <ConcreteClassService>"""
 
     def getShapeSet():
-        shapeset = {
-            "def": "8-nodes_conec 1-interpol_order",
-            "key": "hexa8",
-            "id": 81,
-            "nodes": ["i", "j", "k", "l", "m", "n", "o", "p"],
-            "sidenorm": {
-                "0": [0, 0, -1],
-                "1": [-1, 0, 0],
-                "2": [0, 1, 0],
-                "3": [0, -1, 0],
-                "4": [1, 0, 0],
-                "5": [0, 0, 1],
-            },
-            "nodesconecface": 4,
-        }
-        return shapeset
+        return _SHAPE_SET
 
     def getIsoParaSide(side, r):
         isops = {
@@ -196,6 +199,15 @@ class Hexa8(Shape):
 
     def getdetJacobi(r_coord, element_coord):
         return detJacobi(r_coord, element_coord)
+
+    def getB(H, invJ, diffN):
+        return compute_B(H, invJ, diffN)
+    
+    def getStifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C):
+        return StifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C)
+    
+    def getMassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R):
+        return MassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R)
 
     def getNodeList(inci, element_number):
         return NodeList(inci, element_number)

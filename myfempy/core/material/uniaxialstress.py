@@ -6,7 +6,6 @@ FLT64 = np.float64
 from myfempy.core.material.material import Material
 from myfempy.core.utilities import get3D_LocalVector, getRotational_Matrix
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -74,6 +73,7 @@ class UniAxialStress(Material):
 
     def getElementStrain(Model, U, ptg, element_number):
         elem_set = Model.element.getElementSet()
+        H = elem_set['H']
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
         type_shape = shape_set["key"]
@@ -97,7 +97,7 @@ class UniAxialStress(Material):
         
         invJ = Model.shape.getinvJacobi(np.array([ptg]), elementcoord_local, nodedof)
         
-        B = Model.element.getB(diffN, invJ)
+        B = Model.shape.getB(H, invJ, diffN)
 
         cg = Model.geometry.getCGCoord(Model.tabgeo, Model.inci, element_number)
 
@@ -166,7 +166,7 @@ class UniAxialStress(Material):
             strs_elm_normal_bendingXZ_max,
             strs_elm_normal_bendingXZ_min,
             strs_elm_shear_torsion_max,
-            0.0,
+            0.00000000000,
         ]
 
         return sigma, stress
@@ -179,7 +179,7 @@ class UniAxialStress(Material):
             "STRESS_NORMAL_BENDINGXZ_MAX",
             "STRESS_NORMAL_BENDINGXZ_MIN",
             "STRESS_SHEAR_TORSION",
-            "null",
+            "NULL",
         ]
         return title
 

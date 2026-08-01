@@ -1,14 +1,10 @@
 from __future__ import annotations
 
-
 from numpy import dot, float64, zeros
 from scipy.sparse.linalg import spsolve
 import scipy.sparse as sp
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
-from myfempy.core.solver.assemblerfull_parallel import AssemblerFULLPOOL
-from myfempy.core.solver.assemblersymm import AssemblerSYMM
-# from myfempy.core.alglin import linsolve_spsolve
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
 
@@ -61,20 +57,11 @@ class SteadyStateLinear(Solver):
     """
     Steady State Linear Solver Class <ConcreteClassService>
     """
-    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, SYMM=None, MP=None):
+    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None):
        
         matrix = dict()
-        
-        if SYMM:
-            assembler = AssemblerSYMM.getLinearStiffnessGlobalMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss)
-        else:
-            if MP:
-                assembler = AssemblerFULLPOOL.getLinearStiffnessGlobalMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss, MP)
-            else:
-                assembler = AssemblerFULL.getLinearStiffnessGlobalMatrixAssembler(Model, inci, coord, tabmat, tabgeo, intgauss)
-        
-        matrix["stiffness"] = assembler #sp.load_npz('sparse_matrix.npz')
-        
+        matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(Model, Model.element.getStifLinearMat, inci, coord, tabmat, tabgeo, intgauss)
+                
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
@@ -102,7 +89,7 @@ class SteadyStateLinear(Solver):
 
         freedof = constrainsdof["freedof"]
         constdof = constrainsdof["constdof"]
-
+        
         for step in range(nsteps):
             forcelist[freedof, step] = forcelist[freedof, step] - dot(
                 stiffness[:, constdof][freedof, :].toarray(), Uc[constdof, step]

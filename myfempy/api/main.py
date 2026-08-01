@@ -3,11 +3,12 @@ from __future__ import annotations
 import logging
 import sys
 from time import time
+from datetime import datetime
 
 import numpy as np
 import numpy.typing as npt
 
-from myfempy.core.utilities import setSteps
+from myfempy.core.utilities import setSteps, gauss_points
 # from myfempy.core.solver import getSolver
 from myfempy.io.controllers import (setElement, setGeometry, setMaterial,
                                     setMesh, setShape, setDomain, setCoupling,
@@ -89,6 +90,9 @@ class newAnalysis:
             >>> FEA = newAnalysis(FEASolver=SteadyStateLinear, path="simulation_results")
         """
         try:
+            now = datetime.now()
+            # Format: Day/Month/Year Hour:Minute:Second
+            self.timenow = now.strftime("%d/%m/%Y %H:%M:%S")
             self.solver = FEASolver
             self.path = newDir(path)
             text_init = "TRY SET NEW ANALYSIS AND SOLVER -- SUCCESS"
@@ -142,7 +146,7 @@ class newAnalysis:
             ... }
             >>> FEA.Model(model_config)
         """
-        clear_console()
+        # clear_console()
         get_logo()
         print_console("mesh")
         try:
@@ -291,6 +295,7 @@ class newAnalysis:
         # self.loadaply = FEANewAnalysis.getLoadApply(self)
         # self.constrains = FEANewAnalysis.getBCApply(self)
 
+    # @profile
     def Assembly(self, Model: object) -> npt.NDArray[np.float64]:
         """Assembles the element equations into the global algebraic system of equations.
 
@@ -309,11 +314,11 @@ class newAnalysis:
             >>> K_global, F_global = FEA.Assembly(Model=FEA.model)
         """
         try:
-            matrix = newAnalysis.getGlobalMatrix(self, Model, self.model.inci, self.model.coord, self.model.tabmat, self.model.tabgeo, self.model.intgauss, self.symm, self.mp)
+            matrix = newAnalysis.getGlobalMatrix(self, Model, self.model.inci, self.model.coord, self.model.tabmat, self.model.tabgeo, self.model.intgauss)
+            loadaply = self.physic.forces
             logging.info("TRY RUN GLOBAL ASSEMBLY -- SUCCESS")
         except:
             logging.warning("TRY RUN GLOBAL ASSEMBLY -- FAULT")
-        loadaply = self.physic.forces
         try:
             matrix = newAnalysis.getUpdateMatrix(self, matrix, loadaply)
             logging.info("TRY RUN UPDATE ASSEMBLY -- SUCCESS")
@@ -326,7 +331,8 @@ class newAnalysis:
             logging.warning("TRY RUN LOAD ASSEMBLY -- FAULT")
         
         return matrix, forcelist
-    # 
+
+    # @profile
     def Solve(self, solverset=None) -> dict:
         """Executes the finite element equations solver over designated steps.
 
@@ -336,8 +342,6 @@ class newAnalysis:
         Args:
             solverset: Configuration parameters dictionary for the numeric solver:
                 - 'STEPSET': Steps mapping dictionary (type, start, end, step).
-                - 'SYMM' (bool): Enable symmetric matrix optimizations.
-                - 'MP' (bool/int): Enable multiprocessing CPU core count.
 
         Returns:
             A modified 'solverset' dictionary containing simulation status, calculation logs,
@@ -346,8 +350,6 @@ class newAnalysis:
         Example:
             >>> run_config = {
             ...     'STEPSET': {'type': 'table', 'start': 0.0, 'end': 1.0, 'step': 1.0},
-            ...     'SYMM': False,
-            ...     'MP': False
             ... }
             >>> results = FEA.Solve(run_config)
             >>> print(results["solution"])
@@ -355,24 +357,9 @@ class newAnalysis:
         print_console("solver")
         print(">>> RUNNING SOLVER:")
         print(self.solver.__doc__)
-        try:
-            solverset["solverstatus"] = dict()
-            self.symm = solverset["SYMM"]
-            if self.symm:
-                solverset["solverstatus"]["typeasmb"] = "SYMMETRIC"
-            else:
-                solverset["solverstatus"]["typeasmb"] = "FULL"
-        except:
-            self.symm = False
-            solverset["solverstatus"]["typeasmb"] = "FULL"
-        try:
-            self.mp = solverset["MP"]
-            solverset["solverstatus"]["ncpu"] = (
-                "PARALLEL_" + str(solverset["MP"]) + "_CORES"
-            )
-        except:
-            self.mp = 0
-            solverset["solverstatus"]["ncpu"] = "SERIAL_" + str(1) + "_CORE"
+        solverset["solverstatus"] = dict()
+        solverset["solverstatus"]["typeasmb"] = "FULL"
+        solverset["solverstatus"]["ncpu"] = "SERIAL_" + str(1) + "_CORE"
         # loading_bar_v1(10,"SOLVER")
         starttime = time()
         assembly, forcelist = newAnalysis.Assembly(self, Model=self.model)
@@ -606,6 +593,14 @@ class newAnalysis:
                 self.model, inci, coord, tabgeo, ee
             )
         return vol
+    
+    def getSumDetJac(self, intgauss, element_number):
+        shape_set = self.model.shape.getShapeSet()
+        type_shape = shape_set["key"]
+        point_gauss, weight_gauss = gauss_points(type_shape, intgauss)
+        nodelist = self.model.shape.getNodeList(self.model.inci, element_number)
+        element_coord = self.model.shape.getNodeCoord(self.model.coord, nodelist)
+        return self.model.shape.getSumDetJacobi(point_gauss, weight_gauss, intgauss, element_coord)
 
     def getElemStifLinearMat(
         self, inci: npt.NDArray[np.float64], coord: npt.NDArray[np.float64], tabmat: list, tabgeo: list, intgauss: int, element_number: int
@@ -659,7 +654,7 @@ class newAnalysis:
     
 
     # GET SOLVER
-    def getGlobalMatrix(self, Model, inci:npt.NDArray[np.float64] = None, coord:npt.NDArray[np.float64] = None, tabmat:list = None, tabgeo:list = None, intgauss:int = None, SYMM:bool=None, MP:bool=None) -> npt.NDArray[np.float64]:
+    def getGlobalMatrix(self, Model, inci:npt.NDArray[np.float64] = None, coord:npt.NDArray[np.float64] = None, tabmat:list = None, tabgeo:list = None, intgauss:int = None) -> npt.NDArray[np.float64]:
         """Invokes the solver assembler to construct the global unconstrained system matrices.
 
         Args:
@@ -678,7 +673,7 @@ class newAnalysis:
         Example:
             >>> K_global = FEA.getGlobalMatrix(FEA.model, SYMM=False, MP=False)
         """
-        return self.solver.getMatrixAssembler(Model, inci = inci, coord = coord, tabmat = tabmat, tabgeo = tabgeo, intgauss = intgauss, SYMM=SYMM, MP=MP)
+        return self.solver.getMatrixAssembler(Model, inci = inci, coord = coord, tabmat = tabmat, tabgeo = tabgeo, intgauss = intgauss)
 
     def getConstrains(self, constrains:list) -> npt.NDArray[np.float64]:
         """Maps boundary condition parameters to explicit indices classifications.

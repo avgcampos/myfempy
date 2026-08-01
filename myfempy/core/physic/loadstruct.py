@@ -3,11 +3,10 @@ from __future__ import annotations
 import numpy as np
 from scipy.special import roots_legendre
 
-from myfempy.core.physic.structural import Structural
+from myfempy.core.physic.physics import Physics
 from myfempy.core.utilities import (gauss_points, get_elemen_from_nodelist,
-                                    get_nodes_from_list, poly_area,
-                                    unit_normal)
-
+                                    get_nodes_from_list, get3D_LocalVector,
+                                    getRotational_Matrix)
 
 __docformat__ = "google"
 
@@ -53,7 +52,7 @@ event caused by the use of the program.
 """
 
 
-class LoadStructural(Structural):
+class LoadStructural(Physics):
     """Structural Load Class <ConcreteClassService>"""
 
     def getLoadApply(Model, forcelist):
@@ -64,14 +63,14 @@ class LoadStructural(Structural):
         elif forcelist["TYPE"] == "forceedge":
             fapp = LoadStructural.ForceEdgeLoadApply(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
-        elif forcelist["TYPE"] == "forcebeam":
-            fapp = LoadStructural.ForceBeamLoadApply(Model, forcelist)
-            forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         elif forcelist["TYPE"] == "forcesurf":
             fapp = LoadStructural.ForceSurfLoadApply(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
-        elif forcelist["TYPE"] == "forcebody":
-            fapp = LoadStructural.ForceBodyLoadApply(Model, forcelist)
+        elif forcelist["TYPE"] == "forcebeam":
+            fapp = LoadStructural.ForceBeamLoadApply(Model, forcelist)
+            forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
+        elif forcelist["TYPE"] == "bodyforce":
+            fapp = LoadStructural.BodyForce(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         elif forcelist["TYPE"] == "strainzero":
             fapp = LoadStructural.ForceStrainZero(Model, forcelist)
@@ -91,25 +90,27 @@ class LoadStructural(Structural):
         tabgeo = Model.tabgeo
         intgauss = Model.intgauss
         for ee in range(inci.shape[0]):
-            force_value_vector, nodelist = LoadStructural.__strain_zero(
-                Model,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
-                ee,
-                strain_zero,
-            )
-            
-            try:
+            if Model.modelinfo['type_shape'] == 'hexa8' or Model.modelinfo['type_shape'] == 'tetr4':
+                force_value_vector, nodelist = LoadStructural.__solid_strain_zero(Model, inci, coord, tabmat, tabgeo, intgauss, ee, strain_zero)
                 fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fy"], Model.modelinfo["dofs"]["f"]["fz"]], len(nodelist),)
                 nodelist = np.repeat(nodelist, 3)
-            except:
+
+            elif  Model.modelinfo['type_shape'] == 'tria3' or Model.modelinfo['type_shape'] == 'tria6' or Model.modelinfo['type_shape'] == 'quad4' or Model.modelinfo['type_shape'] == 'quad8':
+                force_value_vector, nodelist = LoadStructural.__plane_strain_zero(Model, inci, coord, tabmat, tabgeo, intgauss, ee, strain_zero)
                 fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fy"]], len(nodelist),)
                 nodelist = np.repeat(nodelist, 2)
 
+            else:
+                force_value_vector, nodelist = [0], [0]
+
+            # try:
+            #     fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fy"], Model.modelinfo["dofs"]["f"]["fz"]], len(nodelist),)
+            #     nodelist = np.repeat(nodelist, 3)
+            # except:
+            #     fc_type_dof = np.tile([Model.modelinfo["dofs"]["f"]["fx"], Model.modelinfo["dofs"]["f"]["fy"]], len(nodelist),)
+            #     nodelist = np.repeat(nodelist, 2)
             # for doff in range(force_value_vector.shape[1]):          
+            
             for j in range(len(nodelist)):
                 fcdof = np.array(
                     [
@@ -157,7 +158,7 @@ class LoadStructural(Structural):
         forcenodedof = forcenodedof[1::][::]
         return forcenodedof
 
-    def ForceBodyLoadApply(Model, forcelist):
+    def BodyForce(Model, forcelist):
         forcenodedof = np.zeros((1, 4))
         gravity_value = float(forcelist["VAL"])
         inci = Model.inci
@@ -167,17 +168,13 @@ class LoadStructural(Structural):
         intgauss = Model.intgauss
         fc_type_dof = Model.modelinfo["dofs"]["f"][forcelist["DOF"]]
         for ee in range(inci.shape[0]):
-            force_value_vector, nodelist = LoadStructural.__body_force_volumetric(
-                Model,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
-                ee,
-                gravity_value,
-                fc_type_dof,
-            )
+            
+            if Model.modelinfo['type_shape'] == 'hexa8' or Model.modelinfo['type_shape'] == 'tetr4':
+                force_value_vector, nodelist = LoadStructural.__solid_body_force_volumetric(Model, inci, coord, tabmat, tabgeo, intgauss, ee, gravity_value, fc_type_dof)
+            elif  Model.modelinfo['type_shape'] == 'tria3' or Model.modelinfo['type_shape'] == 'tria6' or Model.modelinfo['type_shape'] == 'quad4' or Model.modelinfo['type_shape'] == 'quad8':
+                force_value_vector, nodelist = LoadStructural.__plane_body_force_volumetric(Model, inci, coord, tabmat, tabgeo, intgauss, ee, gravity_value, fc_type_dof)
+            else:
+                force_value_vector, nodelist = [0], [0]
             
             for j in range(len(nodelist)):
                 fcdof = np.array(
@@ -445,9 +442,8 @@ class LoadStructural(Structural):
 
     def getUpdateLoad(self):
         return None
-
-
-    def __strain_zero(
+    
+    def __plane_strain_zero(
         Model,
         inci,
         coord,
@@ -470,21 +466,91 @@ class LoadStructural(Structural):
         pt, wt = gauss_points(type_shape, intgauss)
         len_sigma = len(elem_set["tensor"])
         force_value_vector = np.zeros((edof, 1))
-
-        # strain_zero_vector = 0.5*strain_zero*np.eye(len(elem_set['tensor']))
-
         for ip in range(intgauss):
             for jp in range(intgauss):
-                # for kp in range(intgauss):
                 detJ = Model.shape.getdetJacobi(np.array([pt[ip], pt[jp]]), elementcoord)
                 diffN = Model.shape.getDiffShapeFuntion(np.array([pt[ip], pt[jp]]), nodedof)
                 invJ = Model.shape.getinvJacobi(np.array([pt[ip], pt[jp]]), elementcoord, nodedof)
                 B = Model.element.getB(diffN, invJ)
-                force_value_vector += np.dot(np.dot(B.transpose(), C), strain_zero.reshape(-1, 1)) * abs(detJ) * wt[ip] * wt[jp] #* wt[kp]
+                force_value_vector += np.dot(np.dot(B.transpose(), C), strain_zero.reshape(-1, 1)) * abs(detJ) * wt[ip] * wt[jp]
         force_value_vector = np.reshape(force_value_vector, (edof))
         return force_value_vector, nodelist
 
-    def __body_force_volumetric(
+
+    def __solid_strain_zero(
+        Model,
+        inci,
+        coord,
+        tabmat,
+        tabgeo,
+        intgauss,
+        element_number,
+        strain_zero,
+    ):
+        # internal balance forces
+        elem_set = Model.element.getElementSet()
+        nodedof = len(elem_set["dofs"]["d"])
+        shape_set = Model.shape.getShapeSet()
+        nodecon = len(shape_set["nodes"])
+        type_shape = shape_set["key"]
+        edof = nodecon * nodedof
+        nodelist = Model.shape.getNodeList(inci, element_number)
+        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
+        C = Model.material.getElasticTensor(tabmat, inci, element_number)
+        pt, wt = gauss_points(type_shape, intgauss)
+        len_sigma = len(elem_set["tensor"])
+        force_value_vector = np.zeros((edof, 1))
+        for ip in range(intgauss):
+            for jp in range(intgauss):
+                for kp in range(intgauss):
+                    detJ = Model.shape.getdetJacobi(np.array([pt[ip], pt[jp]]), elementcoord)
+                    diffN = Model.shape.getDiffShapeFuntion(np.array([pt[ip], pt[jp]]), nodedof)
+                    invJ = Model.shape.getinvJacobi(np.array([pt[ip], pt[jp]]), elementcoord, nodedof)
+                    B = Model.element.getB(diffN, invJ)
+                    force_value_vector += np.dot(np.dot(B.transpose(), C), strain_zero.reshape(-1, 1)) * abs(detJ) * wt[ip] * wt[jp] * wt[kp]
+        force_value_vector = np.reshape(force_value_vector, (edof))
+        return force_value_vector, nodelist
+    
+
+    # def __line_body_force_volumetric(
+    #     Model,
+    #     inci,
+    #     coord,
+    #     tabmat,
+    #     tabgeo,
+    #     intgauss,
+    #     element_number,
+    #     gravity_value,
+    #     fc_type_dof,
+    # ):
+    #     # body force line
+    #     elem_set = Model.element.getElementSet()
+    #     nodedof = len(elem_set["dofs"]["d"])
+    #     shape_set = Model.shape.getShapeSet()
+    #     nodecon = len(shape_set["nodes"])
+    #     type_shape = shape_set["key"]
+    #     edof = nodecon * nodedof
+    #     nodelist = Model.shape.getNodeList(inci, element_number)
+    #     elementcoord = Model.shape.getNodeCoord(coord, nodelist)
+    #     R = tabmat[int(inci[element_number, 2]) - 1]["RHO"]
+    #     AREA = tabgeo[int(inci[element_number, 3] - 1)]["AREACS"]
+    #     pt, wt = gauss_points(type_shape, intgauss)
+    #     G = gravity_value
+    #     W = np.zeros((nodedof, 1))
+    #     W[fc_type_dof - 1, 0] = R * G
+    #     force_value_vector = np.zeros((edof, 1))
+    #     idx_conec = np.array2string(idx_conec)
+    #     get_side = Model.shape.getSideAxis(idx_conec[1:-1])
+    #     for ip in range(intgauss):
+    #         points = Model.shape.getIsoParaSide(get_side, pt[ip])
+    #         N = Model.shape.getShapeFunctions(np.array(points), nodedof)
+    #         J = Model.shape.getJacobian(np.array(points), elementcoord)
+    #         detJ_e = Model.shape.getEdgeLength(J, get_side)
+    #         force_value_vector += np.dot(np.array(N).transpose(), W) * AREA * abs(detJ_e) * wt[ip]
+    #     force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
+    #     return force_value_vector, nodelist
+
+    def __plane_body_force_volumetric(
         Model,
         inci,
         coord,
@@ -495,7 +561,43 @@ class LoadStructural(Structural):
         gravity_value,
         fc_type_dof,
     ):
-        # body force
+        # body force plane
+        elem_set = Model.element.getElementSet()
+        nodedof = len(elem_set["dofs"]["d"])
+        shape_set = Model.shape.getShapeSet()
+        nodecon = len(shape_set["nodes"])
+        type_shape = shape_set["key"]
+        edof = nodecon * nodedof
+        nodelist = Model.shape.getNodeList(inci, element_number)
+        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
+        R = tabmat[int(inci[element_number, 2]) - 1]["RHO"]
+        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
+        pt, wt = gauss_points(type_shape, intgauss)
+        G = gravity_value
+        W = np.zeros((nodedof, 1))
+        W[fc_type_dof - 1, 0] = R * G
+        force_value_vector = np.zeros((edof, 1))
+        for ip in range(intgauss):
+            for jp in range(intgauss):
+                detJ = Model.shape.getdetJacobi(np.array([pt[ip], pt[jp]]), elementcoord)
+                N = Model.shape.getShapeFunctions(np.array([pt[ip], pt[jp]]), nodedof)
+                force_value_vector += np.dot(N.transpose(), W) * t * abs(detJ) * wt[ip] * wt[jp]
+        force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
+        return force_value_vector, nodelist
+
+
+    def __solid_body_force_volumetric(
+        Model,
+        inci,
+        coord,
+        tabmat,
+        tabgeo,
+        intgauss,
+        element_number,
+        gravity_value,
+        fc_type_dof,
+    ):
+        # body force solid
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
@@ -517,8 +619,8 @@ class LoadStructural(Structural):
                     N = Model.shape.getShapeFunctions(np.array([pt[ip], pt[jp], pt[kp]]), nodedof)
                     force_value_vector += np.dot(N.transpose(), W) * abs(detJ) * wt[ip] * wt[jp] * wt[kp]
         force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
-        # force_value_vector = np.reshape(force_value_vector, (edof))
         return force_value_vector, nodelist
+
 
     def __line_force_distribuition(
         Model,
@@ -560,7 +662,6 @@ class LoadStructural(Structural):
             elif fc_type == "pressure":  #  -->[+]<--                
                 normal = Model.shape.getNormalEdge(elementcoord, get_side)
                 PN = force_value * normal
-                # T = np.sign(force_value)*(np.abs(np.array(PN).reshape(-1, 1)))
                 T = np.array(PN).reshape(-1, 1)
                 norm = np.abs(np.array(normal))
                 norm[np.abs(norm) < 1e-6] = 0
@@ -703,7 +804,7 @@ class LoadStructural(Structural):
                 norm[1] = dx / L
                 T = -1 * (np.array([norm]).T) * force_value  # (np.array([norm]).T)*T
             else:
-                T = np.array([[0.0], [0.0]])
+                T = np.array([[0.0], [0.0], [0.0], [0.0]])
             idx_conec = np.array2string(idx_conec)
             get_side = Model.shape.getSideAxis(idx_conec[1:-1])
             pt, wt = gauss_points(type_shape, intgauss)

@@ -6,7 +6,9 @@ from numpy.linalg import norm
 from myfempy.core.shapes.quad4_tasks import (DiffShapeFuntion, Jacobian,
                                              LocKey, NodeCoord, NodeList,
                                              ShapeFunctions, detJacobi,
-                                             invJacobi)
+                                             invJacobi,
+                                             StifLinear, MassLinear,
+                                             compute_B)
 from myfempy.core.shapes.shape import Shape
 
 
@@ -53,20 +55,21 @@ event caused by the use of the program.
 
 """
 
+_SHAPE_SET = {
+"def": "4-nodes_conec 1-interpol_order",
+"key": "quad4",
+"id": 41,
+"nodes": ["i", "j", "k", "l"],
+"sidenorm": {"0": [0, -1], "1": [1, 0], "2": [0, 1], "3": [-1, 0]},
+"nodesconecedge": 2,
+}
+
 
 class Quad4(Shape):
     """Quadrilateral 4-Node Shape Class <ConcreteClassService>"""
 
     def getShapeSet():
-        shapeset = {
-            "def": "4-nodes_conec 1-interpol_order",
-            "key": "quad4",
-            "id": 41,
-            "nodes": ["i", "j", "k", "l"],
-            "sidenorm": {"0": [0, -1], "1": [1, 0], "2": [0, 1], "3": [-1, 0]},
-            "nodesconecedge": 2,
-        }
-        return shapeset
+        return _SHAPE_SET
 
     # quad4 sides
     def getIsoParaSide(side, r):
@@ -103,7 +106,6 @@ class Quad4(Shape):
         return side[set_side]
     
     def getNormalEdge(elementcoord, side):
-        
         nodes_conec_dic = {
             '0': [0, 1],
             '1': [1, 2],
@@ -140,6 +142,15 @@ class Quad4(Shape):
 
     def getdetJacobi(r_coord, element_coord):
         return detJacobi(r_coord, element_coord)
+    
+    def getB(H, invJ, diffN):
+        return compute_B(H, invJ, diffN)
+    
+    def getStifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t):
+        return StifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t)
+    
+    def getMassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R, t):
+        return MassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R, t)
 
     def getNodeList(inci, element_number):
         return NodeList(inci, element_number)
