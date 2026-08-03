@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from numpy import zeros, float64, float32, int32, concatenate, meshgrid
 from scipy.sparse import coo_matrix, save_npz
-from joblib import Parallel, delayed
 
 INT32 = int32
 FLT64 = float64
