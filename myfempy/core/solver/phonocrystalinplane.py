@@ -63,10 +63,10 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
         Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None):
         matrix = dict()
         matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(
-            Model, Model.element.getStifLinearMat, inci, coord, tabmat, tabgeo, intgauss,
+            Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss,
         )
         matrix["mass"] = AssemblerFULL.getGlobalMatrixAssembler(
-            Model, Model.element.getMassConsistentMat, inci, coord, tabmat, tabgeo, intgauss,
+            Model, Model.element.getMassConsistentMat, Model.shape.getIntNumM, inci, coord, tabmat, tabgeo, intgauss,
         )
         return matrix
     

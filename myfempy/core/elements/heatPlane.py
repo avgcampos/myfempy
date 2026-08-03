@@ -74,46 +74,14 @@ class HeatPlane(Element):
         return _ELEMENT_SET
 
     # @profile
-    def getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number):
+    def getStifLinearMat(inci, coord, tabmat, tabgeo, elementcoord, C, elemdof, getIntNumK, intgauss, pt, wt, element_number):
         elem_set = HeatPlane.getElementSet()
         H = elem_set['H']
         nodedof = len(elem_set["dofs"]["d"])
-        shape_set = Model.shape.getShapeSet()
-        nodecon = len(shape_set["nodes"])
-        type_shape = shape_set["key"]
-        edof = nodecon * nodedof
-        nodelist = Model.shape.getNodeList(inci, element_number)
-        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        C = Model.material.getElasticTensor(tabmat, inci, element_number)
-        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
-        pt, wt = gauss_points(type_shape, intgauss)
-        
-        K_elem_mat = zeros((edof, edof), dtype=FLT64)
-        K_elem_mat = Model.shape.getStifLinear(pt, wt, intgauss, elementcoord, edof, nodedof, H, C, t)
-        
+        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]        
+        K_elem_mat = zeros((elemdof, elemdof), dtype=FLT64)
+        K_elem_mat = getIntNumK(pt, wt, intgauss, elementcoord, elemdof, nodedof, H, C, t)
         return K_elem_mat
-
-    # def getMassConsistentMat(
-    #     Model, inci, coord, tabmat, tabgeo, intgauss, element_number
-    # ):
-    #     elem_set = HeatPlane.getElementSet()
-    #     nodedof = len(elem_set["dofs"]["d"])
-    #     shape_set = Model.shape.getShapeSet()
-    #     nodecon = len(shape_set["nodes"])
-    #     type_shape = shape_set["key"]
-    #     edof = nodecon * nodedof
-    #     nodelist = Model.shape.getNodeList(inci, element_number)
-    #     elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-    #     R = tabmat[int(inci[element_number, 2]) - 1, 6]  # material density
-    #     t = tabgeo[int(inci[element_number, 3] - 1), 4]
-    #     pt, wt = gauss_points(type_shape, intgauss)
-    #     M_elem_mat = zeros((edof, edof), dtype=FLT64)
-    #     for pp in range(intgauss):
-    #         detJ = Model.shape.getdetJacobi(pt[pp], elementcoord)
-    #         N = Model.shape.getShapeFunctions(pt[pp], nodedof)
-    #         NRN = NTRN(N, R)
-    #         M_elem_mat += NRN * t * abs(detJ) * wt[pp]
-    #     return M_elem_mat
 
     def getUpdateMatrix(Model, matrix, addval):
         elem_set = Model.element.getElementSet()

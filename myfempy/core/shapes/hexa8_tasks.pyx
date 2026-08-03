@@ -41,7 +41,6 @@ cdef inline np.ndarray[FLT64, ndim=2, mode="c"] MATDIFFN(FLT64 r0, FLT64 r1, FLT
     dN[0, 5] = 0.125 * (1.0 - r1) * (1.0 + r2)
     dN[0, 6] = 0.125 * (1.0 + r1) * (1.0 + r2)
     dN[0, 7] = 0.125 * (-1.0 - r1) * (1.0 + r2)
-    
     dN[1, 0] = 0.125 * (-1.0 + r0) * (1.0 - r2)
     dN[1, 1] = 0.125 * (-1.0 - r0) * (1.0 - r2)
     dN[1, 2] = 0.125 * (1.0 + r0) * (1.0 - r2)
@@ -50,7 +49,6 @@ cdef inline np.ndarray[FLT64, ndim=2, mode="c"] MATDIFFN(FLT64 r0, FLT64 r1, FLT
     dN[1, 5] = 0.125 * (-1.0 - r0) * (1.0 + r2)
     dN[1, 6] = 0.125 * (1.0 + r0) * (1.0 + r2)
     dN[1, 7] = 0.125 * (1.0 - r0) * (1.0 + r2)
-    
     dN[2, 0] = 0.125 * (-1.0 + r0) * (1.0 - r1)
     dN[2, 1] = 0.125 * (-1.0 - r0) * (1.0 - r1)
     dN[2, 2] = 0.125 * (-1.0 - r0) * (1.0 + r1)
@@ -70,7 +68,6 @@ cdef inline np.ndarray[FLT64, ndim=2, mode="c"] INV(FLT64 [:, ::1] A):
     cdef FLT64 detA = A[0, 0] * A[1, 1] * A[2, 2] + A[0, 1] * A[1, 2] * A[2, 0] + A[0, 2] * A[1, 0] * A[2, 1] - A[2, 0] * A[1, 1] * A[0, 2] - A[2, 1] * A[1, 2] * A[0, 0] - A[2, 2] * A[1, 0] * A[0, 1]
     cdef FLT64 invDet = 1.0 / detA
     cdef np.ndarray[FLT64, ndim=2, mode="c"] invA = np.zeros((3, 3), dtype=np.float64)
-    
     invA[0, 0] = invDet * (A[1, 1] * A[2, 2] - A[2, 1] * A[1, 2])
     invA[0, 1] = -invDet * (A[0, 1] * A[2, 2] - A[2, 1] * A[0, 2])
     invA[0, 2] = invDet * (A[0, 1] * A[1, 2] - A[1, 1] * A[0, 2])
@@ -90,7 +87,6 @@ cdef inline np.ndarray[FLT64, ndim=2, mode="c"] INV(FLT64 [:, ::1] A):
 cdef inline np.ndarray[FLT64, ndim=2, mode="c"] JACOBIANO(FLT64 r0, FLT64 r1, FLT64 r2, FLT64 [:, ::1] element_coord):  
     cdef np.ndarray[FLT64, ndim=2, mode="c"] diffN = MATDIFFN(r0, r1, r2)
     cdef np.ndarray[FLT64, ndim=2, mode="c"] jac = np.zeros((3, 3), dtype=np.float64)
-
     jac[0, 0] = (
         diffN[0, 0]*element_coord[0, 0] + diffN[0, 1]*element_coord[1, 0] +
         diffN[0, 2]*element_coord[2, 0] + diffN[0, 3]*element_coord[3, 0] +
@@ -202,11 +198,9 @@ def compute_B(INT32 [:, ::1] H, FLT64 [:, ::1] invJ, FLT64 [:, ::1] diffN):
     cdef INT32 h_cols = H.shape[1]
     cdef INT32 invJ_cols = invJ.shape[1]
     cdef INT32 diffN_cols = diffN.shape[1]
-    
     cdef np.ndarray[FLT64, ndim=2, mode="c"] T = np.zeros((h_rows, invJ_cols), dtype=np.float64)
     cdef np.ndarray[FLT64, ndim=2, mode="c"] B = np.zeros((h_rows, diffN_cols), dtype=np.float64)
     cdef Py_ssize_t i, j, k
-    
     for i in range(h_rows):
         for j in range(invJ_cols):
             for k in range(h_cols):

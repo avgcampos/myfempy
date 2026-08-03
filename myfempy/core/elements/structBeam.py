@@ -96,76 +96,42 @@ class StructuralBeam(Element):
     def getElementSet():
         return _ELEMENT_SET
 
-    def getB(diffN, invJ):
-        _H = array(
-            [
-                [1, 0, 0, 0],
-                [0, 1, 0, 0],
-                [0, 0, 1, 0],
-                [0, 0, 0, 1],
-            ],
-            dtype=INT32,
-        )
-        B = _H.dot(invJ).dot(diffN)
-        return B
-
     # @profile
-    def getStifLinearMat(Model, inci, coord, tabmat, tabgeo, intgauss, element_number):
+    def getStifLinearMat(inci, coord, tabmat, tabgeo, elementcoord, D, elemdof, getIntNumK, intgauss, pt, wt, element_number):
         elem_set = StructuralBeam.getElementSet()
         H = elem_set['H']
         nodedof = len(elem_set["dofs"]["d"])
-        shape_set = Model.shape.getShapeSet()
-        nodecon = len(shape_set["nodes"])
-        type_shape = shape_set["key"]
-        edof = nodecon * nodedof
-        nodelist = Model.shape.getNodeList(inci, element_number)
-        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        if type_shape == "line3":
+        if str(inci[element_number, 1])[-2:] == '32': # line3
             elementcoord_local = get3D_LocalVector(elementcoord, 3)
             R = getRotational_Matrix(elementcoord, 6)
         else:  # line2
             elementcoord_local = get3D_LocalVector(array(elementcoord), 2)
             R = getRotational_Matrix(elementcoord, 4)
-        # R = R.transpose()
-        D = Model.material.getElasticTensor(tabmat, inci, element_number)
         AREA = tabgeo[int(inci[element_number, 3] - 1)]["AREACS"]
         IZZ = tabgeo[int(inci[element_number, 3] - 1)]["INERZZ"]
         IYY = tabgeo[int(inci[element_number, 3] - 1)]["INERYY"]
         IXX = tabgeo[int(inci[element_number, 3] - 1)]["INERXX"]
-        C = array([[AREA, IZZ, IYY, IXX]]) * eye(4) * D
-        pt, wt = gauss_points(type_shape, intgauss)
-        
-        K_elem_mat = zeros((edof, edof), dtype=FLT64)
-        K_elem_mat = Model.shape.getStifLinear(pt, wt, intgauss, elementcoord_local, edof, nodedof, H, C)
-        
+        C = array([[AREA, IZZ, IYY, IXX]]) * eye(4) * D        
+        K_elem_mat = zeros((elemdof, elemdof), dtype=FLT64)
+        K_elem_mat = getIntNumK(pt, wt, intgauss, elementcoord_local, elemdof, nodedof, H, C)
         K_elem_mat = R.transpose().dot(K_elem_mat).dot(R)
-
         return K_elem_mat
 
     def getMassConsistentMat(
-        Model, inci, coord, tabmat, tabgeo, intgauss, element_number
+        inci, coord, tabmat, tabgeo, elementcoord, D, elemdof, getIntNumM, intgauss, pt, wt, element_number
     ):
         elem_set = StructuralBeam.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
-        shape_set = Model.shape.getShapeSet()
-        nodecon = len(shape_set["nodes"])
-        type_shape = shape_set["key"]
-        edof = nodecon * nodedof
-        nodelist = Model.shape.getNodeList(inci, element_number)
-        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        if type_shape == "line3":
+        if inci[1, element_number][1:-1] == 32: # line3
             elementcoord_local = get3D_LocalVector(elementcoord, 3)
         else:
             elementcoord_local = get3D_LocalVector(elementcoord, 2)
         rho = tabmat[int(inci[element_number, 2]) - 1]["RHO"]
         AREA = tabgeo[int(inci[element_number, 3] - 1)]["AREACS"] 
         IXX = tabgeo[int(inci[element_number, 3] - 1)]["INERXX"]
-        R = array([[rho * AREA, rho * AREA, rho * AREA, rho * IXX]]) * eye(4)
-        pt, wt = gauss_points(type_shape, intgauss)
-        
-        M_elem_mat = zeros((edof, edof), dtype=FLT64)
-        M_elem_mat = Model.shape.getMassLinear(pt, wt, intgauss, elementcoord_local, edof, nodedof, R)
-
+        R = array([[rho * AREA, rho * AREA, rho * AREA, rho * IXX]]) * eye(4)        
+        M_elem_mat = zeros((elemdof, elemdof), dtype=FLT64)
+        M_elem_mat = getIntNumM(pt, wt, intgauss, elementcoord_local, elemdof, nodedof, R)
         return M_elem_mat
 
     def getUpdateMatrix(Model, matrix, addval):

@@ -299,7 +299,6 @@ def NodeCoord(FLT64 [:, ::1] coord, INT32 [::1] node_list):
 def LocKey(INT32 [::1] node_list, INT32 nodedof):
     cdef np.ndarray[INT32, ndim=1, mode="c"] shape_key = np.zeros(3 * nodedof, dtype=np.int32)
     cdef Py_ssize_t node, dof
-    
     for node in range(3):
         for dof in range(nodedof):
             shape_key[nodedof * node + dof] = nodedof * node_list[node] - (nodedof - dof)

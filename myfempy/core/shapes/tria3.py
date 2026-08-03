@@ -145,10 +145,10 @@ class Tria3(Shape):
     def getB(H, invJ, diffN):
         return compute_B(H, invJ, diffN)
     
-    def getStifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t):
+    def getIntNumK(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t):
         return StifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t)
     
-    def getMassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R, t):
+    def getIntNumM(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R, t):
         return MassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R, t)
 
     def getNodeList(inci, element_number):

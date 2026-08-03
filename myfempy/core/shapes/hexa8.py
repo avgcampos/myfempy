@@ -203,10 +203,10 @@ class Hexa8(Shape):
     def getB(H, invJ, diffN):
         return compute_B(H, invJ, diffN)
     
-    def getStifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C):
+    def getIntNumK(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C):
         return StifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C)
     
-    def getMassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R):
+    def getIntNumM(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R):
         return MassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R)
 
     def getNodeList(inci, element_number):

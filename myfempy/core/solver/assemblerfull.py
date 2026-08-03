@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from numpy import array, float64, float32, int32, zeros, empty, repeat, tile, asarray
+from numpy import zeros, float64, float32, int32, concatenate, meshgrid
 from scipy.sparse import coo_matrix, save_npz
+from joblib import Parallel, delayed
 
 INT32 = int32
 FLT64 = float64
@@ -9,10 +10,9 @@ FLT32 = float32
 
 from myfempy.core.solver.assembler import Assembler
 
-# try:
-from myfempy.core.solver.assemblerfull_cython import getVectorization
-                                                        
-# except:
+from myfempy.core.utilities import gauss_points
+
+from myfempy.core.solver.assemblerfull_cython import getVectorization                                         
 from myfempy.core.solver.assemblerfull_numpy import (getConstrains,
                                                     getDirichletNH,
                                                     getLoadAssembler)
@@ -66,7 +66,7 @@ class AssemblerFULL(Assembler):
     Assembler Full System Class <ConcreteClassService>
     """
 
-    def getGlobalMatrixAssembler(Model, getElemMatrix, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None):
+    def getGlobalMatrixAssembler(Model, getElemMatrix, getIntNum, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None):
         if inci is None:
             inci = Model.inci
         if coord is None:
@@ -81,6 +81,7 @@ class AssemblerFULL(Assembler):
         elem_set = Model.element.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         shape_set = Model.shape.getShapeSet()
+        type_shape = shape_set["key"]
         nodecon = len(shape_set["nodes"])
         elemdof = nodecon * nodedof
         nodetot = coord.shape[0]
@@ -92,15 +93,22 @@ class AssemblerFULL(Assembler):
         
         getNodeList = Model.shape.getNodeList
         getLocKey = Model.shape.getLocKey
+        getElasticTensor = Model.material.getElasticTensor
+        getNodeCoord = Model.shape.getNodeCoord
+
+        pt, wt = gauss_points(type_shape, intgauss)
 
         for ee in range(inci.shape[0]):
-            matrix = getElemMatrix(Model, inci, coord, tabmat, tabgeo, intgauss, ee)
             nodelist = getNodeList(inci, ee)
+            elementcoord = getNodeCoord(coord, nodelist)
+            C = getElasticTensor(tabmat, inci, ee)
+            matrix = getElemMatrix(inci, coord, tabmat, tabgeo, elementcoord, C, elemdof, getIntNum, intgauss, pt, wt, ee)
             loc = getLocKey(nodelist, nodedof)
             ith, jth, val = getVectorization(ith, jth, val, loc, matrix, ee, elemdof)
         
         A_sp_scipy_csr = coo_matrix((val, (ith, jth)), shape=(sdof, sdof), dtype=FLT64).tocsr()
         return A_sp_scipy_csr
+
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
         return getLoadAssembler(loadaply, nodetot, nodedof)

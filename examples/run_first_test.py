@@ -16,13 +16,16 @@ import sys
 # setting path
 sys.path.append('../myfempy')
 
-# environ['OMP_NUM_THREADS'] = '1'        #win
+import os
+os.environ['OMP_NUM_THREADS'] = '1'
+os.environ['MKL_NUM_THREADS'] = '1'
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
 
 # ===============================================================================
 # imports, set SteadyStateLinear as a Solver or SteadyStateLinearIterative, see help
 # ===============================================================================
 from myfempy import newAnalysis
-from myfempy import SteadyStateLinear, SteadyStateLinearIterative
+from myfempy import SteadyStateLinear # ors SteadyStateLinearIterative
 import numpy as np
 
 # ===============================================================================
@@ -37,8 +40,6 @@ mat = {
     "NAME": "aco",
     "VXY": 0.30,
     "EXX": 200E3,       # N/mm^2 --> MPa
-    "GXY": 0.5*200E3,
-    "RHO": 7.85E-06,    # kg/mm^2
     }
 
 # ===============================================================================
@@ -55,7 +56,7 @@ geo = {
 # MODEL SET
 LX = 1200
 LY = 80
-esize = 10
+esize = 6
 points = [
     [0, 0, 0],
     [LX, 0, 0],
@@ -79,13 +80,11 @@ modeldata = {
    "MESH": {
         'TYPE': 'gmsh',
         'filename': 'mesh_gmsh',
-        # "meshimport": 'object_dir',
         'pointlist': points,
         'linelist': lines,
         'planelist': plane,
-        # 'arc': arcs,
         'meshconfig': {
-            'mesh': 'hexa8',   #quad4 tria3
+            'mesh': 'tetr4',  
             'sizeelement': 2*esize,
             'extrude': 40,
             'meshmap': {'on': True,
@@ -97,7 +96,7 @@ modeldata = {
 
     "ELEMENT": {
         'TYPE': 'structsolid',
-        'SHAPE': 'hexa8',
+        'SHAPE': 'tetr4',
         # 'INTGAUSS': 2,
     },
 
@@ -109,7 +108,6 @@ modeldata = {
     
     "GEOMETRY": {
         "GEO": 'solid',
-        # "SECTION": 'rectangle',
         "PROPGEO": [geo],
     },
 }
