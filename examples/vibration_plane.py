@@ -1,3 +1,7 @@
+import sys
+# setting path
+sys.path.append('../myfempy')
+
 from myfempy import newAnalysis
 from myfempy import DynamicEigenLinear
 
@@ -21,7 +25,6 @@ geo = {
 # MODEL SET
 LX = 10
 LY = 5
-
 # nelx = 40
 # nely = 30
 

@@ -155,8 +155,8 @@ class HomogenizationPlaneBCPeriodic(Solver):
         return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
 
     def runSolve(Model, Physic, assembly, constrainsdof, solverset):
-        ndofs = Model.modelinfo["fulldofs"]
         elem_set = Model.element.getElementSet()
+        H = elem_set['H']
         nodedof = len(elem_set["dofs"]["d"])
         ntensor = len(elem_set['tensor'])
         shape_set = Model.shape.getShapeSet()
@@ -284,7 +284,7 @@ class HomogenizationPlaneBCPeriodic(Solver):
                     detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
                     diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp]]), nodedof)
                     invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp]]), elementcoord, nodedof)
-                    B = Model.element.getB(diffN, invJ)
+                    B = Model.shape.getB(H, invJ, diffN)
                     CHelm +=  (Ci - dot(Ci, dot(B, ui))) * t * abs(detJ) * wt[ip] * wt[jp]
                     if solverset['RHOH']:
                         R = tabmat[int(inci[elm, 2]) - 1]["RHO"]
