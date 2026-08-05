@@ -41,14 +41,14 @@ Many Examples are available to download [here](https://github.com/avgcampos/myfe
 
 ### Static Linear Analysis
 
-#### run_first_test.py
+#### 0tutorial.py
 You can use this code to first test required to check myfempy install
 [Relatório de Benchmark (PT-BR PDF)](benchs/estatico1.pdf)
 
 ![Relatório de Benchmark (PT-BR PDF)](gallery/displ_fixed_beam.png)
 
 ```python linenums="1"
---8<-- "examples/run_first_test.py"
+--8<-- "examples/0tutorial.py"
 ```
 
 #### static_linear_beam3d_LoganBook.py

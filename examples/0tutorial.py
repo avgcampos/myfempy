@@ -2,24 +2,24 @@
 ==============================================================================
 MYFEMPY example runscript
 ==============================================================================
-@File    :   run_fist_test.py
+@File    :   0tutorial.py
 @Date    :   2026/02/03
 @Author  :   Antonio V. G. Campos
 @Description : This example can be used as an initial analysis to test the complete
 installation of the myfempy code. A report (PT-BR) is available to verify the program's
 compatibility. See the user guide or _help_ for more information about commands.
 
-Usage: >>> python run_fist_test.py
+Usage: >>> python 0tutorial.py
 """
-
 import sys
 # setting path
 sys.path.append('../myfempy')
 
-import os
-os.environ['OMP_NUM_THREADS'] = '1'
-os.environ['MKL_NUM_THREADS'] = '1'
-os.environ['OPENBLAS_NUM_THREADS'] = '1'
+# optional
+# import os
+# os.environ['OMP_NUM_THREADS'] = '1'
+# os.environ['MKL_NUM_THREADS'] = '1'
+# os.environ['OPENBLAS_NUM_THREADS'] = '1'
 
 # ===============================================================================
 # imports, set SteadyStateLinear as a Solver or SteadyStateLinearIterative, see help
@@ -56,7 +56,7 @@ geo = {
 # MODEL SET
 LX = 1200
 LY = 80
-esize = 6
+esize = 10
 points = [
     [0, 0, 0],
     [LX, 0, 0],
@@ -84,7 +84,7 @@ modeldata = {
         'linelist': lines,
         'planelist': plane,
         'meshconfig': {
-            'mesh': 'tetr4',  
+            'mesh': 'hexa8',  
             'sizeelement': 2*esize,
             'extrude': 40,
             'meshmap': {'on': True,
@@ -96,7 +96,7 @@ modeldata = {
 
     "ELEMENT": {
         'TYPE': 'structsolid',
-        'SHAPE': 'tetr4',
+        'SHAPE': 'hexa8',
         # 'INTGAUSS': 2,
     },
 

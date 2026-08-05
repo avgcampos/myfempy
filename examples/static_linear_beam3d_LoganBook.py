@@ -123,7 +123,8 @@ fea.Physic(physicdata)
 
 previewset = {'RENDER': {'filename': 'preview', 'show': True, 'scale': 15, 'savepng': True, 'lines': True,
                          'plottags': {'point': True},
-                        # 'cs': True,
+                         'numb':False,
+                          'cs': True,
                          },
             #   'LABELS': {'show': True, 'lines': True, 'scale': 1},
               }
