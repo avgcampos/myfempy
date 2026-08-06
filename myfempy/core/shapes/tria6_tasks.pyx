@@ -133,6 +133,27 @@ def detJacobi(FLT64 [::1] point_gauss, FLT64 [:, ::1] element_coord):
 
 @boundscheck(False)
 @wraparound(False)
+def compute_VOL(    
+    FLT64 [::1] pt_gauss_nodes,
+    FLT64 [::1] weight_factor,
+    FLT64 [:, ::1] element_coord,
+    FLT64 t,
+):
+    cdef Py_ssize_t ip, jp
+    cdef FLT64 detJ, VOL
+
+    cdef np.ndarray[FLT64, ndim=1, mode="c"] current_pt = np.zeros(2, dtype=np.float64)
+
+    for ip in range(1):
+        for jp in range(1):
+            current_pt[0] = pt_gauss_nodes[ip]
+            current_pt[1] = pt_gauss_nodes[jp]
+            detJ = detJacobi(current_pt, element_coord)
+            VOL = VOL + t * fabs(detJ) * weight_factor[ip] * weight_factor[jp]
+    return VOL
+
+@boundscheck(False)
+@wraparound(False)
 def compute_B(INT32 [:, ::1] H, FLT64 [:, ::1] invJ, FLT64 [:, ::1] diffN):
     cdef INT32 h_rows = H.shape[0]
     cdef INT32 h_cols = H.shape[1]

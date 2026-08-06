@@ -78,6 +78,18 @@ class Shape(ABC):
         pass
 
     @abstractmethod
+    def getVOL():
+        pass
+
+    @abstractmethod
+    def getIntNumK():
+        pass
+
+    @abstractmethod
+    def getIntNumM():
+        pass
+
+    @abstractmethod
     def getNodeList():
         pass
 

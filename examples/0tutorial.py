@@ -11,9 +11,6 @@ compatibility. See the user guide or _help_ for more information about commands.
 
 Usage: >>> python 0tutorial.py
 """
-import sys
-# setting path
-sys.path.append('../myfempy')
 
 # optional
 # import os

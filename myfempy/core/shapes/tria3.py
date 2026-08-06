@@ -9,7 +9,7 @@ from myfempy.core.shapes.tria3_tasks import (DiffShapeFuntion, Jacobian,
                                              ShapeFunctions, detJacobi,
                                              invJacobi,
                                              StifLinear, MassLinear,
-                                             compute_B)
+                                             compute_B, compute_VOL)
 
 __docformat__ = "google"
 
@@ -144,6 +144,9 @@ class Tria3(Shape):
     
     def getB(H, invJ, diffN):
         return compute_B(H, invJ, diffN)
+
+    def getVOL(point_gauss, weight_gauss, element_coord, t):
+        return compute_VOL(point_gauss, weight_gauss, element_coord, t)
     
     def getIntNumK(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t):
         return StifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t)

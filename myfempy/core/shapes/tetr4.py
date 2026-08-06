@@ -9,7 +9,7 @@ from myfempy.core.shapes.tetr4_tasks import (DiffShapeFuntion, Jacobian,
                                              ShapeFunctions, detJacobi,
                                              invJacobi,
                                              StifLinear, MassLinear,
-                                             compute_B)
+                                             compute_B, compute_VOL)
 
 from myfempy.core.utilities import poly_area, unit_normal
 
@@ -184,6 +184,9 @@ class Tetra4(Shape):
     
     def getB(H, invJ, diffN):
         return compute_B(H, invJ, diffN)
+
+    def getVOL(point_gauss, weight_gauss, element_coord):
+        return compute_VOL(point_gauss, weight_gauss, element_coord)
     
     def getIntNumK(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C):
         return StifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C)

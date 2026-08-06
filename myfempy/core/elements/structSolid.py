@@ -131,24 +131,29 @@ class StructuralSolid(Element):
     def setTitleDeformation():
         return "DISPLACEMENT"
 
-    def getElementVolume(Model, inci, coord, tabgeo, element_number):
-        shape_set = Model.shape.getShapeSet()
-        type_shape = shape_set["key"]
-        nodelist = Model.shape.getNodeList(inci, element_number)
-        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
+    def getElementVolume(inci, tabgeo, getVOL, type_shape, element_coord, element_number):
         pt, wt = gauss_points(type_shape, 1)
-        Vol = 0.0
-        for ip in range(1):
-            for jp in range(1):
-                for kp in range(1):
-                    Vol += (
-                        abs(
-                            Model.shape.getdetJacobi(
-                                array([pt[ip], pt[jp], pt[kp]]), elementcoord
-                            )
-                        )
-                        * wt[ip]
-                        * wt[jp]
-                        * wt[kp]
-                    )
-        return Vol
+        return getVOL(pt, wt, element_coord)
+
+
+    # def getElementVolume(Model, inci, coord, tabgeo, element_number):
+    #     shape_set = Model.shape.getShapeSet()
+    #     type_shape = shape_set["key"]
+    #     nodelist = Model.shape.getNodeList(inci, element_number)
+    #     elementcoord = Model.shape.getNodeCoord(coord, nodelist)
+    #     pt, wt = gauss_points(type_shape, 1)
+    #     Vol = 0.0
+    #     for ip in range(1):
+    #         for jp in range(1):
+    #             for kp in range(1):
+    #                 Vol += (
+    #                     abs(
+    #                         Model.shape.getdetJacobi(
+    #                             array([pt[ip], pt[jp], pt[kp]]), elementcoord
+    #                         )
+    #                     )
+    #                     * wt[ip]
+    #                     * wt[jp]
+    #                     * wt[kp]
+    #                 )
+    #     return Vol

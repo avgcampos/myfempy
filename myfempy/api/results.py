@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-import os
-from abc import ABC, abstractmethod
-
 import numpy as np
 
 from myfempy.core.utilities import (gauss_points, results_average,
@@ -55,7 +52,7 @@ event caused by the use of the program.
 """
 
 
-class setPostProcess(ABC):
+class setPostProcess:
     """PostProcess Class <ClassOrder>"""
 
     def getCompute(self, postprocset):

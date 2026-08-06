@@ -6,6 +6,8 @@ from numpy import (abs, array, array2string, concatenate, dot, float64, in1d,
 from myfempy.core.utilities import (gauss_points, get_elemen_from_nodelist,
                                     get_nodes_from_list)
 
+from myfempy.core.elements.structPlane import StructuralPlane
+
 INT32 = int32
 FLT64 = float64
 
@@ -129,19 +131,5 @@ class HeatPlane(Element):
     def setTitleDeformation():
         return "TEMPERATURE"
 
-    def getElementVolume(Model, inci, coord, tabgeo, element_number):
-        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
-        shape_set = Model.shape.getShapeSet()
-        type_shape = shape_set["key"]
-        nodelist = Model.shape.getNodeList(inci, element_number)
-        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        pt, wt = gauss_points(type_shape, 1)
-        detJ = 0.0
-        for ip in range(1):
-            for jp in range(1):
-                detJ += (
-                    abs(Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord))
-                    * wt[ip]
-                    * wt[jp]
-                )
-        return detJ * t
+    def getElementVolume(inci, tabgeo, getVOL, type_shape, element_coord, element_number):
+        return StructuralPlane.getElementVolume(inci, tabgeo, getVOL, type_shape, element_coord, element_number)

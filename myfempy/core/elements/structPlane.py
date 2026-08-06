@@ -109,7 +109,7 @@ class StructuralPlane(Element):
         return M_elem_mat
 
     def getUpdateMatrix(Model, matrix, addval):
-        elem_set = Model.element.getElementSet()
+        elem_set = StructuralPlane.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         if int(addval[0, 1]) == 16:
             matrix_update = array([[1.0, -1.0], [-1.0, 1.0]])
@@ -133,19 +133,7 @@ class StructuralPlane(Element):
     def setTitleDeformation():
         return "DISPLACEMENT"
 
-    def getElementVolume(Model, inci, coord, tabgeo, element_number):
+    def getElementVolume(inci, tabgeo, getVOL, type_shape, element_coord, element_number):
         t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
-        shape_set = Model.shape.getShapeSet()
-        type_shape = shape_set["key"]
-        nodelist = Model.shape.getNodeList(inci, element_number)
-        elementcoord = Model.shape.getNodeCoord(coord, nodelist)
         pt, wt = gauss_points(type_shape, 1)
-        detJ = 0.0
-        for ip in range(1):
-            for jp in range(1):
-                detJ += (
-                    abs(Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord))
-                    * wt[ip]
-                    * wt[jp]
-                )
-        return detJ * t
+        return getVOL(pt, wt, element_coord, t)
