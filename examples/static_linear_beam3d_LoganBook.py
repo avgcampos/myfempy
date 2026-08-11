@@ -51,14 +51,14 @@ modeldata = {
         'pointlist': points,
         'linelist': lines,
         'meshconfig': {
-            'mesh': 'line3',
+            'mesh': 'line2',
             "numbernodes": 50,
             }
     },
 
     "ELEMENT": {
         'TYPE': 'structbeam',
-        'SHAPE': 'line3',
+        'SHAPE': 'line2',
         # 'INTGAUSS': 2,
     },
 
@@ -124,6 +124,7 @@ fea.Physic(physicdata)
 previewset = {'RENDER': {'filename': 'preview', 'show': True, 'scale': 15, 'savepng': True, 'lines': True,
                          'plottags': {'point': True},
                          'numb':False,
+
                           'cs': True,
                          },
             #   'LABELS': {'show': True, 'lines': True, 'scale': 1},

@@ -267,24 +267,35 @@ class HomogenizationPlaneBCPeriodic(Solver):
         tabgeo = Model.tabgeo
         intgauss = Model.intgauss
 
+
+        getNodeList = Model.shape.getNodeList
+        getNodeCoord = Model.shape.getNodeCoord
+        getElasticTensor = Model.material.getElasticTensor
+        getdetJacobi = Model.shape.getdetJacobi
+        getLocKey =  Model.shape.getLocKey
+        getDiffShapeFuntion = Model.shape.getDiffShapeFuntion
+        getinvJacobi = Model.shape.getinvJacobi
+        getB = Model.shape.getB
+
         CH = zeros((ntensor, ntensor))
         rhoH = 0.0
         for elm in range(inci.shape[0]):
-            nodelist = Model.shape.getNodeList(inci, elm)
-            elementcoord = Model.shape.getNodeCoord(coord, nodelist)
+            nodelist = getNodeList(inci, elm)
+            elementcoord = getNodeCoord(coord, nodelist)
             t = tabgeo[int(inci[elm, 3] - 1)]["THICKN"]
-            Ci = Model.material.getElasticTensor(tabmat, inci, elm)
+            Ci = getElasticTensor(tabmat, inci, elm)
             pt, wt = gauss_points(type_shape, intgauss)
-            loc = Model.shape.getLocKey(nodelist, nodedof)
+            loc = getLocKey(nodelist, nodedof)
             ui = U[ix_(loc)]
             CHelm = zeros((ntensor, ntensor))
+
             rhoHelm = 0.0
             for ip in range(intgauss):
                 for jp in range(intgauss):
-                    detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
-                    diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp]]), nodedof)
-                    invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp]]), elementcoord, nodedof)
-                    B = Model.shape.getB(H, invJ, diffN)
+                    detJ = getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
+                    diffN = getDiffShapeFuntion(array([pt[ip], pt[jp]]), nodedof)
+                    invJ =getinvJacobi(array([pt[ip], pt[jp]]), elementcoord, nodedof)
+                    B = getB(H, invJ, diffN)
                     CHelm +=  (Ci - dot(Ci, dot(B, ui))) * t * abs(detJ) * wt[ip] * wt[jp]
                     if solverset['RHOH']:
                         R = tabmat[int(inci[elm, 2]) - 1]["RHO"]

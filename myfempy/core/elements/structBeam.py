@@ -190,5 +190,5 @@ class StructuralBeam(Element):
     def setTitleDeformation():
         return "DISPLACEMENT"
 
-    def getElementVolume(Model, inci, coord, tabgeo, element_number):
+    def getElementVolume(inci, tabgeo, getVOL, type_shape, element_coord, element_number):
         return 0.0

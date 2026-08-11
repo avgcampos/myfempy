@@ -120,7 +120,6 @@ class Line3(Shape):
     def getIntNumM(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R):
         return MassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R)
 
-
     def getNodeList(inci, element_number):
         return NodeList(inci, element_number)
 
