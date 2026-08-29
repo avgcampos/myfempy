@@ -20,17 +20,15 @@ authors = [
     {name = "Antonio Vinicius Garcia Campos"},
 ]
 readme = "README.md"
-version = "0.9.5"
-license = "GPL-3.0-or-later" #{file = "LICENSE.md"}
+version = "0.10.0"
+license = "GPL-3.0-or-later"
 requires-python = ">= 3.11"
 dependencies = [
-	"numpy == 1.26.4",
-	"scipy == 1.13.1",
-	"cython == 3.0.10",
-	"gmsh == 4.13.1",
-	"vedo == 2024.5.2",
-	"matplotlib == 3.9.0",
-	"art == 6.2",
+	"numpy",
+	"scipy",
+	"cython",
+	"matplotlib",
+	"art",
 ]
 keywords = ["FEM", "FEA", "FSI", "Engineering"]
 
@@ -38,7 +36,7 @@ classifiers = [
   "Development Status :: Beta",
   "Researchers :: Mechanical Engineers :: Students",
   "Topic :: Software Development :: Build Tools",
-  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.11",
 ]
 
 [project.urls]

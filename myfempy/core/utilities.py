@@ -1,8 +1,7 @@
 
-from numpy import (array, asarray, cross, dot, eye, float64, ix_, less, matmul,
-                   mean, ones_like, sqrt, uint32, unique, where, zeros, empty)
-from numpy.linalg import multi_dot
-from scipy.linalg import block_diag, det, inv, kron
+from numpy import (array, asarray, cross, dot, float64, ix_, less,
+                   mean, ones_like, sqrt, uint32, unique, where, zeros)
+from scipy.linalg import block_diag, det
 from scipy.sparse import csc_matrix
 
 # from myfempy.core.util_cy import fast_dot

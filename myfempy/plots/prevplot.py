@@ -3,12 +3,16 @@ __doc__ = """
 Plotter Prev Process
 """
 
+try:
+    import vedo
+    VEDO_AVAILABLE = True
+except ImportError:
+    vedo = None
+    VEDO_AVAILABLE = False
+
 import numpy as np
-import vedo
 
 from myfempy.io.iovtk import convert_to_vtk
-from myfempy.plots.physics import (view_beam_crossSection, view_bondcond_point,
-                                   view_listforce, view_text_point)
 from myfempy.utils.utils import get_version
 
 __docformat__ = "google"
@@ -16,12 +20,6 @@ __docformat__ = "google"
 __doc__ = """
 
 ==========================================================================
-                            __                                
-         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-                    |___/                       |_|     |___/ 
         myfempy -- MultiphYsics Finite Element Module to PYthon    
                     COMPUTATIONAL ANALYSIS PROGRAM                   
         Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
@@ -119,122 +117,124 @@ def preview_plot(Model, previewset, path, Physic=None):
 
     build_preview(previewset, path)
 
-
-def build_preview(previewset: dict, path):
-    """
-    Carrega a malha gerada e monta a cena gráfica utilizando o Vedo.
-    """
-    render = previewset["RENDER"]
-    file_name = f"{path}/{render['filename']}.vtk"
-    
-    mesh = vedo.load(file_name)
-    if not mesh:
-        raise FileNotFoundError(f"Não foi possível carregar o arquivo: {file_name}")
-    
-    mesh.cmap("jet")
-    if render.get("lines", True):
-        mesh.lw(1.0).linecolor("black")
-    else:
-        mesh.lw(0)
-
-    actors = [mesh]
-    scala_view = render["scale"]
-    coord = previewset["coord"]
-
-    # 1. Forças
-    if "forces" in previewset:
-        dof_f = previewset["dofs"]["f"]
-        key_list_fc, val_list_fc = list(dof_f.keys()), list(dof_f.values())
+if VEDO_AVAILABLE:
+    from myfempy.plots.physics import (view_beam_crossSection, view_bondcond_point,
+                                   view_listforce, view_text_point)
+    def build_preview(previewset: dict, path):
+        """
+        Carrega a malha gerada e monta a cena gráfica utilizando o Vedo.
+        """
+        render = previewset["RENDER"]
+        file_name = f"{path}/{render['filename']}.vtk"
         
-        for frcApy_vet in previewset["forces"]:
-            fc_copy = frcApy_vet.copy()
-            fc_copy[1] = __setLoadDof(key_list_fc[val_list_fc.index(fc_copy[1])])
-            cone1, cone2 = view_listforce(coord, fc_copy, scala_view)
-            actors.extend([cone1, cone2])
+        mesh = vedo.load(file_name)
+        if not mesh:
+            raise FileNotFoundError(f"Não foi possível carregar o arquivo: {file_name}")
+        
+        mesh.cmap("jet")
+        if render.get("lines", True):
+            mesh.lw(1.0).linecolor("black")
+        else:
+            mesh.lw(0)
 
-    if "constrains" in previewset.keys():
-        key_list_bc = list(previewset["dofs"]["d"].keys())
-        val_list_bc = list(previewset["dofs"]["d"].values())
+        actors = [mesh]
+        scala_view = render["scale"]
+        coord = previewset["coord"]
 
-        dimbclist = previewset["constrains"].shape[0]
-        for num_bc in range(dimbclist):
-            bondCond_vet = previewset["constrains"][[num_bc]][0]
-            if int(bondCond_vet[1]) == 0:
-                pass
+        # 1. Forças
+        if "forces" in previewset:
+            dof_f = previewset["dofs"]["f"]
+            key_list_fc, val_list_fc = list(dof_f.keys()), list(dof_f.values())
             
-            elif int(bondCond_vet[1]) == 11 or int(bondCond_vet[1]) == 12:
-                bondCond_vet[1] = 4
+            for frcApy_vet in previewset["forces"]:
+                fc_copy = frcApy_vet.copy()
+                fc_copy[1] = __setLoadDof(key_list_fc[val_list_fc.index(fc_copy[1])])
+                cone1, cone2 = view_listforce(coord, fc_copy, scala_view)
+                actors.extend([cone1, cone2])
 
-            elif int(bondCond_vet[1]) == 13 or int(bondCond_vet[1]) == 14:
-                bondCond_vet[1] = 1
+        if "constrains" in previewset.keys():
+            key_list_bc = list(previewset["dofs"]["d"].keys())
+            val_list_bc = list(previewset["dofs"]["d"].values())
 
-            elif int(bondCond_vet[1]) == 15 or int(bondCond_vet[1]) == 16:
-                bondCond_vet[1] = 2
-
-            elif int(bondCond_vet[1]) == 17 or int(bondCond_vet[1]) == 18 or int(bondCond_vet[1]) == 19 or int(bondCond_vet[1]) == 20:
-                bondCond_vet[1] = 0
-
-            else:
-                bondCond_vet[1] = __setBCDof(
-                    key_list_bc[val_list_bc.index(int(bondCond_vet[1]))]
-                )
+            dimbclist = previewset["constrains"].shape[0]
+            for num_bc in range(dimbclist):
+                bondCond_vet = previewset["constrains"][[num_bc]][0]
+                if int(bondCond_vet[1]) == 0:
+                    pass
                 
-            pt_actor, tdof_actor = view_bondcond_point(previewset["coord"], bondCond_vet, scala_view)
-            actors.extend([pt_actor, tdof_actor])
+                elif int(bondCond_vet[1]) == 11 or int(bondCond_vet[1]) == 12:
+                    bondCond_vet[1] = 4
 
-    # 3. Tags de Regiões / Textos
-    if render.get("plottags"):
-        coordMax = np.max(coord[:, 1:4], axis=0)
-        reg_title, reg_items = previewset["regions"]
+                elif int(bondCond_vet[1]) == 13 or int(bondCond_vet[1]) == 14:
+                    bondCond_vet[1] = 1
+
+                elif int(bondCond_vet[1]) == 15 or int(bondCond_vet[1]) == 16:
+                    bondCond_vet[1] = 2
+
+                elif int(bondCond_vet[1]) == 17 or int(bondCond_vet[1]) == 18 or int(bondCond_vet[1]) == 19 or int(bondCond_vet[1]) == 20:
+                    bondCond_vet[1] = 0
+
+                else:
+                    bondCond_vet[1] = __setBCDof(
+                        key_list_bc[val_list_bc.index(int(bondCond_vet[1]))]
+                    )
+                    
+                pt_actor, tdof_actor = view_bondcond_point(previewset["coord"], bondCond_vet, scala_view)
+                actors.extend([pt_actor, tdof_actor])
+
+        # 3. Tags de Regiões / Textos
+        if render.get("plottags"):
+            coordMax = np.max(coord[:, 1:4], axis=0)
+            reg_title, reg_items = previewset["regions"]
+            
+            for reg_item in reg_items:
+                node_indices = reg_item[1] - 1
+                mean_coord = np.mean(coord[node_indices, 1:4], axis=0)
+                txt_actor = view_text_point(mean_coord, coordMax, scala_view, [reg_title, str(reg_item[0])])
+                actors.append(txt_actor)
+
+        # 4. Seções Transversais de Vigas (CS)
+        if render.get("cs", False):
+            inci = previewset["inci"]
+            for num_bcs, (typ_sec, dim_sec) in enumerate(zip(previewset["tabcs"]["typSection"], previewset["tabcs"]["dimSection"])):
+                inci_bcs = inci[inci[:, 3] == num_bcs + 1]
+                for row in inci_bcs:
+                    noi, noj = int(row[4]) - 1, int(row[5]) - 1
+                    coord_bcs = np.concatenate([coord[noi, 1:4], coord[noj, 1:4]])
+                    beam_actor = view_beam_crossSection(dim_sec, int(typ_sec), coord_bcs, scala_view)
+                    actors.append(beam_actor)
+
+        # 5. Numeração de Nós e Elementos (numb)
+        if render.get("numb", True):
+            node_points = coord[:, 1:4]
+            actors.append(vedo.Points(node_points, c="yellow", r=5))
+
+            for idx, pt in enumerate(node_points):
+                node_id_str = str(int(coord[idx, 0])) if coord.shape[1] > 3 else str(idx + 1)
+                actors.append(vedo.Text3D(node_id_str, pos=pt, s=scala_view * 0.6, c="yellow"))
+
+            if "inci" in previewset and previewset["inci"] is not None:
+                for idx, row in enumerate(previewset["inci"]):
+                    nodes_in_elem = [int(row[4]) - 1, int(row[5]) - 1] if len(row) > 5 else []
+                    if nodes_in_elem and all(n < len(coord) for n in nodes_in_elem):
+                        centroid = np.mean(coord[nodes_in_elem, 1:4], axis=0)
+                        actors.append(vedo.Text3D(str(idx + 1), pos=centroid, s=scala_view * 0.8, c="cyan"))
+
+        # 6. Plotter e Renderização Final
+        plt = vedo.Plotter(size=(640, 480), bg='white', bg2='lightblue')
         
-        for reg_item in reg_items:
-            node_indices = reg_item[1] - 1
-            mean_coord = np.mean(coord[node_indices, 1:4], axis=0)
-            txt_actor = view_text_point(mean_coord, coordMax, scala_view, [reg_title, str(reg_item[0])])
-            actors.append(txt_actor)
+        version_str = get_version() if 'get_version' in globals() else ""
+        actors.append(vedo.Text2D(f"MYFEMPY " + get_version() + 
+                                '\n> press "w" to wireframe/surface view \n> press "r" to reset view \n> press "q" to exit and continue'
+                                , pos="top-left", s=1, c="black"))
+        
+        plt.show(actors, axes=4, interactive=False, viewup='y', zoom=1.4)
 
-    # 4. Seções Transversais de Vigas (CS)
-    if render.get("cs", False):
-        inci = previewset["inci"]
-        for num_bcs, (typ_sec, dim_sec) in enumerate(zip(previewset["tabcs"]["typSection"], previewset["tabcs"]["dimSection"])):
-            inci_bcs = inci[inci[:, 3] == num_bcs + 1]
-            for row in inci_bcs:
-                noi, noj = int(row[4]) - 1, int(row[5]) - 1
-                coord_bcs = np.concatenate([coord[noi, 1:4], coord[noj, 1:4]])
-                beam_actor = view_beam_crossSection(dim_sec, int(typ_sec), coord_bcs, scala_view)
-                actors.append(beam_actor)
+        if render.get("savepng", False):
+            plt.screenshot(f"{path}/{render['filename']}.png")
 
-    # 5. Numeração de Nós e Elementos (numb)
-    if render.get("numb", True):
-        node_points = coord[:, 1:4]
-        actors.append(vedo.Points(node_points, c="yellow", r=5))
-
-        for idx, pt in enumerate(node_points):
-            node_id_str = str(int(coord[idx, 0])) if coord.shape[1] > 3 else str(idx + 1)
-            actors.append(vedo.Text3D(node_id_str, pos=pt, s=scala_view * 0.6, c="yellow"))
-
-        if "inci" in previewset and previewset["inci"] is not None:
-            for idx, row in enumerate(previewset["inci"]):
-                nodes_in_elem = [int(row[4]) - 1, int(row[5]) - 1] if len(row) > 5 else []
-                if nodes_in_elem and all(n < len(coord) for n in nodes_in_elem):
-                    centroid = np.mean(coord[nodes_in_elem, 1:4], axis=0)
-                    actors.append(vedo.Text3D(str(idx + 1), pos=centroid, s=scala_view * 0.8, c="cyan"))
-
-    # 6. Plotter e Renderização Final
-    plt = vedo.Plotter(size=(640, 480), bg='white', bg2='lightblue')
-    
-    version_str = get_version() if 'get_version' in globals() else ""
-    actors.append(vedo.Text2D(f"MYFEMPY " + get_version() + 
-                            '\n> press "w" to wireframe/surface view \n> press "r" to reset view \n> press "q" to exit and continue'
-                              , pos="top-left", s=1, c="black"))
-    
-    plt.show(actors, axes=4, interactive=False, viewup='y', zoom=1.4)
-
-    if render.get("savepng", False):
-        plt.screenshot(f"{path}/{render['filename']}.png")
-
-    if render.get("show", True):
-        plt.interactive().close()
+        if render.get("show", True):
+            plt.interactive().close()
 
 
 def __setLoadDof(forcedof):

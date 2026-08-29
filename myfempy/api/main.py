@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import sys
+import sysconfig
 from time import time
 from datetime import datetime
 
@@ -26,19 +27,11 @@ __docformat__ = "google"
 __doc__ = """
 API module for performing finite element analysis with the myfempy package.
 
-------------------------------------------------------------------------
-                                        __                                
-                     _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-                    | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-                    | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-                    |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-                                |___/                       |_|     |___/ 
-
-                    myfempy -- MultiphYsics Finite Element Module to PYthon    
-                                COMPUTATIONAL ANALYSIS PROGRAM                   
-                    Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos
-
-------------------------------------------------------------------------
+==========================================================================
+        myfempy -- MultiphYsics Finite Element Module to PYthon    
+                    COMPUTATIONAL ANALYSIS PROGRAM                   
+        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
+==========================================================================
 
 This Python file is part of myfempy project.
 
@@ -363,10 +356,10 @@ class newAnalysis:
         return solverset
 
     def PreviewAnalysis(self, previewdata: dict) -> None:
-        """Renders pre-simulation plots for physical inspection of modeling items[cite: 1].
+        """Renders pre-simulation plots for physical inspection of modeling items.
 
         Draws geometry shapes, elements, nodes, and applied load vectors before 
-        running the solver[cite: 1].
+        running the solver.
 
         Args:
             previewdata (dict): Graphical visualization configuration containing rendering attributes.
@@ -377,7 +370,13 @@ class newAnalysis:
         Example:
             >>> preview_config = {'RENDER': {'show': True, 'scale': 2.5}}
             >>> FEA.PreviewAnalysis(preview_config)
-        """          
+        """        
+        is_free_threaded = sysconfig.get_config_var('Py_GIL_DISABLED') == 1
+        if sys.version_info >= (3, 14) and is_free_threaded:
+            print("AVISO: O recurso de plotagem (preview_plot) é incompatível com a versão do Python instalada")
+            logging.warning("PREVIEW PLOT SKIPPED -- Incompatible with Python Version")
+            return
+
         try:
             preview_plot(self.model, previewdata, str(self.path), self.physic)
             logging.info("TRY RUN PREVIEW PLOT -- SUCCESS")

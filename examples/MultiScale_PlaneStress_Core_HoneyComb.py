@@ -1,7 +1,3 @@
-import sys
-# setting path
-sys.path.append('../myfempy')
-
 import numpy as np
 
 from myfempy import newAnalysis

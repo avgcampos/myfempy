@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 
-from numpy import dot, float64, zeros, array, ix_, where, arange, concatenate, in1d
+from numpy import dot, float64, zeros, array, ix_, where, arange, isin
 from scipy.sparse.linalg import spsolve
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
 from myfempy.core.solver.solver import Solver
-from myfempy.core.utilities import setSteps, gauss_points
+from myfempy.core.utilities import gauss_points
 
 
 __docformat__ = "google"
@@ -14,12 +14,6 @@ __docformat__ = "google"
 __doc__ = """
 
 ==========================================================================
-                            __                                
-         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-                    |___/                       |_|     |___/ 
         myfempy -- MultiphYsics Finite Element Module to PYthon    
                     COMPUTATIONAL ANALYSIS PROGRAM                   
         Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
@@ -103,9 +97,9 @@ class HomogenizationPlane(Solver):
         fixeddof_case_epsYY = constrainsdof["fixedof"][1]
         fixeddof_case_epsXY = constrainsdof["fixedof"][2]
 
-        freedof_pc_case_epsXX = where(in1d(fulldofs, fixeddof_case_epsXX, assume_unique=True) == False)[0]
-        freedof_pc_case_epsYY = where(in1d(fulldofs, fixeddof_case_epsYY, assume_unique=True) == False)[0]
-        freedof_pc_case_epsXY = where(in1d(fulldofs, fixeddof_case_epsXY, assume_unique=True) == False)[0]
+        freedof_pc_case_epsXX = where(isin(fulldofs, fixeddof_case_epsXX, assume_unique=True) == False)[0]
+        freedof_pc_case_epsYY = where(isin(fulldofs, fixeddof_case_epsYY, assume_unique=True) == False)[0]
+        freedof_pc_case_epsXY = where(isin(fulldofs, fixeddof_case_epsXY, assume_unique=True) == False)[0]
 
         freedof_pc = [freedof_pc_case_epsXX, freedof_pc_case_epsYY, freedof_pc_case_epsXY]
 

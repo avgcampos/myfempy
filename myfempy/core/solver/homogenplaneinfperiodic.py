@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from numpy import (arange, array, zeros_like, concatenate, setdiff1d, dot, float64, in1d, int16, int64,
-                   sort, pi, where, zeros, sum, real, linspace, ceil, exp, ix_, float64)
+from numpy import (arange, array, zeros_like, concatenate, dot, float64, isin,
+                   where, zeros, ix_, float64)
 
 FLT64 = float64
-from scipy.sparse import csc_matrix, lil_matrix, eye, hstack, vstack, bmat
+from scipy.sparse import eye, vstack, bmat
 from scipy.sparse.linalg import minres, spsolve
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
@@ -17,12 +17,6 @@ __docformat__ = "google"
 __doc__ = """
 
 ==========================================================================
-                            __                                
-         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-                    |___/                       |_|     |___/ 
         myfempy -- MultiphYsics Finite Element Module to PYthon    
                     COMPUTATIONAL ANALYSIS PROGRAM                   
         Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
@@ -91,28 +85,28 @@ class HomogenizationPlaneBCPeriodic(Solver):
         pc_top_left_constrain = constrains[pc_top_left[0], :]
         pc_top_right_constrain = constrains[pc_top_right[0], :]
 
-        testl2bl = in1d(pc_left_constrain[:,0], pc_bottom_left_constrain[:,0], assume_unique=True, invert=True)
+        testl2bl = isin(pc_left_constrain[:,0], pc_bottom_left_constrain[:,0], assume_unique=True, invert=True)
         pc_left_constrain = pc_left_constrain[testl2bl,:]
         
-        testl2tl = in1d(pc_left_constrain[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
+        testl2tl = isin(pc_left_constrain[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
         pc_left_constrain = pc_left_constrain[testl2tl,:]
                         
-        testb2bl = in1d(pc_bottom_constrain[:,0], pc_bottom_left_constrain[:,0], assume_unique=True, invert=True)
+        testb2bl = isin(pc_bottom_constrain[:,0], pc_bottom_left_constrain[:,0], assume_unique=True, invert=True)
         pc_bottom_constrain = pc_bottom_constrain[testb2bl,:]
 
-        testb2br = in1d(pc_bottom_constrain[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
+        testb2br = isin(pc_bottom_constrain[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
         pc_bottom_constrain = pc_bottom_constrain[testb2br,:]
         
-        testt2tl = in1d(pc_top_constrain[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
+        testt2tl = isin(pc_top_constrain[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
         pc_top_constrain = pc_top_constrain[testt2tl,:]
         
-        testt2tr = in1d(pc_top_constrain[:,0], pc_top_right_constrain[:,0], assume_unique=True, invert=True)
+        testt2tr = isin(pc_top_constrain[:,0], pc_top_right_constrain[:,0], assume_unique=True, invert=True)
         pc_top_constrain = pc_top_constrain[testt2tr,:]
 
-        testr2tr = in1d(pc_right_constrain[:,0], pc_top_right_constrain[:,0], assume_unique=True, invert=True)
+        testr2tr = isin(pc_right_constrain[:,0], pc_top_right_constrain[:,0], assume_unique=True, invert=True)
         pc_right_constrain = pc_right_constrain[testr2tr,:]
 
-        testr2br = in1d(pc_right_constrain[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
+        testr2br = isin(pc_right_constrain[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
         pc_right_constrain = pc_right_constrain[testr2br,:]
 
         __, pc_left_dof, __ = AssemblerFULL.getConstrains(pc_left_constrain, nodetot, nodedof)
@@ -127,22 +121,22 @@ class HomogenizationPlaneBCPeriodic(Solver):
         full_dofs = arange(0, nodedof * nodetot, 1, int)
 
         dofs_bourders = concatenate((pc_left_dof, pc_bottom_dof, pc_bottom_left_dof, pc_right_dof, pc_top_dof, pc_bottom_right_dof, pc_top_left_dof, pc_top_right_dof), axis=0)
-        testpc2i = in1d(full_dofs, dofs_bourders, assume_unique=True, invert=True)
+        testpc2i = isin(full_dofs, dofs_bourders, assume_unique=True, invert=True)
         
         # nodes_constrain_XX = constrains[where(constrains[:, 3] == 1)]
         # # nodes_constrain_YY = constrains[where(constrains[:, 3] == 2)]
         # nodes_constrain_XY = constrains[where(constrains[:, 3] == 2)]
 
-        # testfixXX2TL = in1d(nodes_constrain_XX[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
+        # testfixXX2TL = isin(nodes_constrain_XX[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
         # nodes_constrain_XX = nodes_constrain_XX[testfixXX2TL,:]
 
-        # testfixXX2BR = in1d(nodes_constrain_XX[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
+        # testfixXX2BR = isin(nodes_constrain_XX[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
         # nodes_constrain_XX = nodes_constrain_XX[testfixXX2BR,:]
 
-        # testfixXY2TL = in1d(nodes_constrain_XY[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
+        # testfixXY2TL = isin(nodes_constrain_XY[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
         # nodes_constrain_XY = nodes_constrain_XY[testfixXY2TL,:]
 
-        # testfixXY2BR = in1d(nodes_constrain_XY[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
+        # testfixXY2BR = isin(nodes_constrain_XY[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
         # nodes_constrain_XY = nodes_constrain_XY[testfixXY2BR,:]
                 
         freedof = full_dofs[testpc2i]
@@ -177,7 +171,7 @@ class HomogenizationPlaneBCPeriodic(Solver):
 
         full_dofs_cell = concatenate((idof, ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof), axis=0)
         fulldof_pc_red = concatenate((idof, ldof, bdof, bldof), axis=0)
-        freedof_pc = where(in1d(fulldof_pc_red, bldof, assume_unique=True) == False)[0]
+        freedof_pc = where(isin(fulldof_pc_red, bldof, assume_unique=True) == False)[0]
 
         Kg_fem = assembly["stiffness"]
         Fg_fem = assembly["loads"]

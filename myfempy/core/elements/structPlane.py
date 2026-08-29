@@ -26,12 +26,6 @@ __docformat__ = "google"
 __doc__ = """
 
 ==========================================================================
-                            __                                
-         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-                    |___/                       |_|     |___/ 
         myfempy -- MultiphYsics Finite Element Module to PYthon    
                     COMPUTATIONAL ANALYSIS PROGRAM                   
         Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
@@ -88,7 +82,6 @@ class StructuralPlane(Element):
     def getElementSet():
         return _ELEMENT_SET
 
-    #@profile
     def getStifLinearMat(inci, coord, tabmat, tabgeo, elementcoord, C, elemdof, getIntNumK, intgauss, pt, wt, element_number):
         elem_set = StructuralPlane.getElementSet()
         H = elem_set['H']

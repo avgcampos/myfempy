@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from numpy import (arange, array, concatenate, dot, float64, in1d, int16,
+from numpy import (arange, array, concatenate, dot, float64, isin, int16,
                    setdiff1d, where, zeros, sqrt)
 
 from scipy.sparse import csc_matrix, lil_matrix, eye, hstack, vstack
@@ -16,12 +16,6 @@ __docformat__ = "google"
 __doc__ = """
 
 ==========================================================================
-                            __                                
-         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-                    |___/                       |_|     |___/ 
         myfempy -- MultiphYsics Finite Element Module to PYthon    
                     COMPUTATIONAL ANALYSIS PROGRAM                   
         Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
@@ -96,8 +90,8 @@ class StaticLinearCyclicSymmPlane(Solver):
             fixed_constrain, nodetot, nodedof
         )
 
-        testl = in1d(freedof, fixed_left_dof, assume_unique=True)
-        testr = in1d(freedof, fixed_right_dof, assume_unique=True)
+        testl = isin(freedof, fixed_left_dof, assume_unique=True)
+        testr = isin(freedof, fixed_right_dof, assume_unique=True)
 
         freedof = freedof[testl == testr]
 
@@ -192,25 +186,25 @@ class StaticLinearCyclicSymmPlane(Solver):
         # fixed_list_full = setdiff1d(fixed_list_con_cs, leftdof)
 
         leftdof_con_cs = where(
-            in1d(fulldof_con_cs, leftdof, assume_unique=True) == True
+            isin(fulldof_con_cs, leftdof, assume_unique=True) == True
         )[0]
 
         interdof_con_cs = where(
-            in1d(fulldof_con_cs, interdof, assume_unique=True) == True
+            isin(fulldof_con_cs, interdof, assume_unique=True) == True
         )[0]
 
         free_list_full = concatenate((interdof, leftdof, rightdof), axis=0)
 
         rightdof_con_cs = where(
-            in1d(free_list_full, rightdof, assume_unique=True) == True
+            isin(free_list_full, rightdof, assume_unique=True) == True
         )[0]
 
         # fixedof_con_cs = where(
-        #     in1d(fulldof_con_cs, fixed_list_con_cs, assume_unique=True) == True
+        #     isin(fulldof_con_cs, fixed_list_con_cs, assume_unique=True) == True
         # )[0]
 
         freedof_con_cs = where(
-            in1d(fulldof_con_cs, fixed_list_con_cs, assume_unique=True) == False
+            isin(fulldof_con_cs, fixed_list_con_cs, assume_unique=True) == False
         )[0]
 
         U0 = zeros((fulldof_con_cs.shape[0]), dtype=float64)  # empty((fulldofs, 1))

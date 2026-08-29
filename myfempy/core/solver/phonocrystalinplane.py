@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from numpy import (arange, array, empty, concatenate, unique, dot, float64, in1d, int16, int64,
+from numpy import (arange, array, empty, concatenate, unique, dot, float64, isin, int64,
                    sort, pi, where, zeros, sqrt, real, linspace, ceil, exp)
 
-from scipy.sparse import csc_matrix, lil_matrix, eye, hstack, vstack
+from scipy.sparse import csc_matrix, eye, hstack, vstack
 from scipy.sparse.linalg import eigsh
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
@@ -16,12 +16,6 @@ __docformat__ = "google"
 __doc__ = """
 
 ==========================================================================
-                            __                                
-         _ __ ___   _   _  / _|  ___  _ __ ___   _ __   _   _ 
-        | '_ ` _ \ | | | || |_  / _ \| '_ ` _ \ | '_ \ | | | |
-        | | | | | || |_| ||  _||  __/| | | | | || |_) || |_| |
-        |_| |_| |_| \__, ||_|   \___||_| |_| |_|| .__/  \__, |
-                    |___/                       |_|     |___/ 
         myfempy -- MultiphYsics Finite Element Module to PYthon    
                     COMPUTATIONAL ANALYSIS PROGRAM                   
         Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
@@ -99,28 +93,28 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
         pc_top_left_constrain = constrains[pc_top_left[0], :]
         pc_top_right_constrain = constrains[pc_top_right[0], :]
 
-        testl2bl = in1d(pc_left_constrain[:,0], pc_bottom_left_constrain[:,0], assume_unique=True, invert=True)
+        testl2bl = isin(pc_left_constrain[:,0], pc_bottom_left_constrain[:,0], assume_unique=True, invert=True)
         pc_left_constrain = pc_left_constrain[testl2bl,:]
         
-        testl2tl = in1d(pc_left_constrain[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
+        testl2tl = isin(pc_left_constrain[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
         pc_left_constrain = pc_left_constrain[testl2tl,:]
                         
-        testb2bl = in1d(pc_bottom_constrain[:,0], pc_bottom_left_constrain[:,0], assume_unique=True, invert=True)
+        testb2bl = isin(pc_bottom_constrain[:,0], pc_bottom_left_constrain[:,0], assume_unique=True, invert=True)
         pc_bottom_constrain = pc_bottom_constrain[testb2bl,:]
 
-        testb2br = in1d(pc_bottom_constrain[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
+        testb2br = isin(pc_bottom_constrain[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
         pc_bottom_constrain = pc_bottom_constrain[testb2br,:]
         
-        testt2tl = in1d(pc_top_constrain[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
+        testt2tl = isin(pc_top_constrain[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
         pc_top_constrain = pc_top_constrain[testt2tl,:]
         
-        testt2tr = in1d(pc_top_constrain[:,0], pc_top_right_constrain[:,0], assume_unique=True, invert=True)
+        testt2tr = isin(pc_top_constrain[:,0], pc_top_right_constrain[:,0], assume_unique=True, invert=True)
         pc_top_constrain = pc_top_constrain[testt2tr,:]
 
-        testr2tr = in1d(pc_right_constrain[:,0], pc_top_right_constrain[:,0], assume_unique=True, invert=True)
+        testr2tr = isin(pc_right_constrain[:,0], pc_top_right_constrain[:,0], assume_unique=True, invert=True)
         pc_right_constrain = pc_right_constrain[testr2tr,:]
 
-        testr2br = in1d(pc_right_constrain[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
+        testr2br = isin(pc_right_constrain[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
         pc_right_constrain = pc_right_constrain[testr2br,:]
 
         __, pc_left_dof, __ = AssemblerFULL.getConstrains(pc_left_constrain, nodetot, nodedof)
@@ -135,7 +129,7 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
         full_dofs = arange(0, nodedof * nodetot, 1, int)
 
         pc_dofs = concatenate((pc_left_dof, pc_bottom_dof, pc_bottom_left_dof, pc_right_dof, pc_top_dof, pc_bottom_right_dof, pc_top_left_dof, pc_top_right_dof), axis=0)
-        testpc2i = in1d(full_dofs, pc_dofs, assume_unique=True, invert=True)
+        testpc2i = isin(full_dofs, pc_dofs, assume_unique=True, invert=True)
         freedof = full_dofs[testpc2i]
 
         constdof = [pc_left_dof, pc_bottom_dof, pc_bottom_left_dof, pc_right_dof, pc_top_dof, pc_bottom_right_dof, pc_top_left_dof, pc_top_right_dof]

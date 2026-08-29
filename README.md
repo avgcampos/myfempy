@@ -4,6 +4,7 @@ The **myfempy** project is under development, updates and code modifications may
 
 ## Welcome to myfempy's project
 
+![myfempy_logo](assets/logo2.png)
 ![myfempy_logo](docs/assets/logo2.png)
 
 Copyright © Antonio Vinicius G. Campos 2022-2026. Processo INPI BR512022001484-0
@@ -24,7 +25,8 @@ Copyright © Antonio Vinicius G. Campos 2022-2026. Processo INPI BR512022001484-
 
 **myfempy** is a python package based on finite element method to multiphysics analysis. The code is open source and *intended for educational and scientific purposes only, not recommended to commercial use*. The name **myfempy** is an acronym for **M**ultiph**Y**sics **F**inite **E**lements **M**odule to **PY**thon. You can help us by contributing with the main project, send us a mensage [Github Discussions](https://github.com/avgcampos/myfempy/discussions/10). **If you use myfempy in your research, the  developers would be grateful if you could cite in your work.**
 
-![myfempy_logo](docs/assets/sim.png)
+![home](assets/sim.png)
+![home](docs/assets/sim.png)
 
 ## Installation
 
@@ -80,6 +82,15 @@ installed on your machine
     writing C extensions for Python as easy as Python itself
 -   [scipy](https://scipy.org/) - Fundamental algorithms for scientific
     computing in Python
+-   [matplotlib](https://matplotlib.org/) - Python plotting package
+    computing in Python
+-   [art](https://pypi.org/project/art/) - ASCII Art Library For Python
+    computing in Python
+
+To generate preview graphs of the model, it is necessary to manually install the vedo and vtk libraries separately.
+
+**Note: vtk is installed via pre-compiled builds, therefore it is not compatible with the free-threaded build versions of CPython (3.14t). Check your operating system to see if this is possible.**
+
 -   [vedo](https://vedo.embl.es/) - A python module for scientific
     analysis and visualization of эd objects
 -   [vtk](https://pypi.org/project/vtk/) - VTK is an
@@ -89,7 +100,7 @@ installed on your machine
 try
 
 ``` bash
->> pip install numpy, cython, scipy, vedo
+>> pip install vedo, vtk
 ```
 
 Others prerequisites
@@ -104,7 +115,7 @@ Others prerequisites
 try
 
 ``` bash
->> pip install --upgrade gmsh
+>> pip install gmsh
 ```
 
 ## Tutorial
