@@ -37,7 +37,7 @@ This new version allows the inclusion of modules and code written in C/Cython, a
 
 9. [ADDED] Implementation of higher-order (quadritic) elements
 
-10. [] Implementation of routines for multicore execution, e.g., Matrix assembly
+10. [ADDED] Implementation of routines for multicore execution, e.g., Matrix assembly
 
 11. [ADDED] Implement functionalities of the _myfempy/core_ code in C/Cython
 
