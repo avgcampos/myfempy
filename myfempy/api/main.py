@@ -28,11 +28,13 @@ __docformat__ = "google"
 __doc__ = """
 API module for performing finite element analysis with the myfempy package.
 
-==========================================================================
-        myfempy -- MultiphYsics Finite Element Module to PYthon    
-                    COMPUTATIONAL ANALYSIS PROGRAM                   
-        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
-==========================================================================
+===============================================================
+
+                myfempy -- MultiphYsics Finite Element Module to PYthon    
+                            COMPUTATIONAL ANALYSIS PROGRAM                   
+                Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos
+
+===============================================================
 
 This Python file is part of myfempy project.
 
