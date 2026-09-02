@@ -42,18 +42,31 @@ To install myfempy manually in your directory, following the steps
 >> python -m pip install --upgrade pip
 
 >> pip install .
-
-or
-
->> python -m pip install --upgrade build
-
->> python -m build
 ```
 
 **Note: is recommend to create a virtual environment previously the
 installation of myfempy and dependencies packs. You can use the
-[virtualenv](https://virtualenv.pypa.io/en/latest/) or [conda
-environments](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)**
+[virtualenv](https://virtualenv.pypa.io/en/latest/) or [Anaconda](https://www.anaconda.com/download)**
+
+``` bash
+>> python -m pip install --user virtualenv
+
+>> python -m virtualenv venv
+
+>> python -m virtualenv -p 3.14t venv
+```
+
+### Python 3.14 & Free-Threaded Support
+
+Starting with version 0.10.0, myfempy introduces full support for Python 3.14, including the new "free-threaded" build (Python 3.14t). All underlying libraries and modules have been optimized to ensure seamless compatibility.
+
+Important Notes for Python 3.14t Users:
+
+- Automatic Parallelization: When running in a free-threaded environment, the code assembler will automatically run in parallel by default. The Cython modules are compiled specifically for this, requiring no manual configuration.
+
+- Preview Module limitation: The model preview module is currently disabled under Python 3.14t due to upstream compatibility issues with vtk.
+
+As with any major update, occasional bugs may occur. We strongly recommend always running the latest version of myfempy within an isolated virtual environment.
 
 ## Dependencies
 

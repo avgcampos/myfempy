@@ -52,15 +52,24 @@ class DynamicEigenLinear(Solver):
     """
     Dynamic Eigen (modal problem) Linear Solver Class <ConcreteClassService>
     """
-    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None):
+    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP = None):
         matrix = dict()
-        matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(
-            Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss,
+        if MP:
+            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
+                        Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss,
 
-        )
-        matrix["mass"] = AssemblerFULL.getGlobalMatrixAssembler(
-            Model, Model.element.getMassConsistentMat, Model.shape.getIntNumM, inci, coord, tabmat, tabgeo, intgauss,
-        )
+                    )
+            matrix["mass"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
+                Model, Model.element.getMassConsistentMat, Model.shape.getIntNumM, inci, coord, tabmat, tabgeo, intgauss,
+            )
+        else:
+            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(
+                Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss,
+
+            )
+            matrix["mass"] = AssemblerFULL.getGlobalMatrixAssembler(
+                Model, Model.element.getMassConsistentMat, Model.shape.getIntNumM, inci, coord, tabmat, tabgeo, intgauss,
+            )
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):

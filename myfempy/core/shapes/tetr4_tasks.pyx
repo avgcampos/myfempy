@@ -14,22 +14,20 @@ ctypedef np.float64_t FLT64
 # ==============================================================================
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
-cdef inline void MATN(FLT64 r0, FLT64 r1, FLT64 r2, FLT64 N[4]) nogil:
+cdef inline void MATN(FLT64 r0, FLT64 r1, FLT64 r2, FLT64 N[4]) noexcept nogil:
     N[0] = 1.0 - r0 - r1 - r2
     N[1] = r0
     N[2] = r1
     N[3] = r2
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
-cdef inline void MATDIFFN(FLT64 r0, FLT64 r1, FLT64 r2, FLT64 dN[3][4]) nogil:
+cdef inline void MATDIFFN(FLT64 r0, FLT64 r1, FLT64 r2, FLT64 dN[3][4]) noexcept nogil:
     dN[0][0] = -1.0
     dN[0][1] = 1.0
     dN[0][2] = 0.0
@@ -44,11 +42,10 @@ cdef inline void MATDIFFN(FLT64 r0, FLT64 r1, FLT64 r2, FLT64 dN[3][4]) nogil:
     dN[2][3] = 1.0
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
-cdef inline void INV(FLT64 A[3][3], FLT64 invA[3][3]) nogil:
+cdef inline void INV(FLT64 A[3][3], FLT64 invA[3][3]) noexcept nogil:
     cdef FLT64 detA = A[0][0] * A[1][1] * A[2][2] + A[0][1] * A[1][2] * A[2][0] + A[0][2] * A[1][0] * A[2][1] - A[2][0] * A[1][1] * A[0][2] - A[2][1] * A[1][2] * A[0][0] - A[2][2] * A[1][0] * A[0][1]
     cdef FLT64 invDet = 1.0 / detA
     invA[0][0] = invDet * (A[1][1] * A[2][2] - A[2][1] * A[1][2])
@@ -63,11 +60,10 @@ cdef inline void INV(FLT64 A[3][3], FLT64 invA[3][3]) nogil:
 
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
-cdef inline void JACOBIANO(FLT64 r0, FLT64 r1, FLT64 r2, FLT64 [:, ::1] element_coord, FLT64 jac[3][3]) nogil:
+cdef inline void JACOBIANO(FLT64 r0, FLT64 r1, FLT64 r2, FLT64 [:, ::1] element_coord, FLT64 jac[3][3]) noexcept nogil:
     cdef FLT64 diffN[3][4]
     MATDIFFN(r0, r1, r2, diffN)
     
@@ -86,11 +82,10 @@ cdef inline void JACOBIANO(FLT64 r0, FLT64 r1, FLT64 r2, FLT64 [:, ::1] element_
 # ==============================================================================
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
-cdef inline void C_detJacobi(FLT64 r0, FLT64 r1, FLT64 r2, FLT64 [:, ::1] element_coord, FLT64 *detJ) nogil:
+cdef inline void C_detJacobi(FLT64 r0, FLT64 r1, FLT64 r2, FLT64 [:, ::1] element_coord, FLT64 *detJ) noexcept nogil:
     cdef FLT64 jac[3][3]
     JACOBIANO(r0, r1, r2, element_coord, jac)
     cdef FLT64 raw_det = jac[0][0] * jac[1][1] * jac[2][2] + jac[0][1] * jac[1][2] * jac[2][0] + jac[0][2] * jac[1][0] * jac[2][1] - jac[2][0] * jac[1][1] * jac[0][2] - jac[2][1] * jac[1][2] * jac[0][0] - jac[2][2] * jac[1][0] * jac[0][1]
@@ -98,11 +93,10 @@ cdef inline void C_detJacobi(FLT64 r0, FLT64 r1, FLT64 r2, FLT64 [:, ::1] elemen
 
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
-cdef inline void C_ShapeFunctions(FLT64 r0, FLT64 r1, FLT64 r2, INT32 nodedof, FLT64[:, ::1] matN) nogil:
+cdef inline void C_ShapeFunctions(FLT64 r0, FLT64 r1, FLT64 r2, INT32 nodedof, FLT64[:, ::1] matN) noexcept nogil:
     cdef FLT64 N[4]
     MATN(r0, r1, r2, N)
     cdef Py_ssize_t block, dof
@@ -113,11 +107,10 @@ cdef inline void C_ShapeFunctions(FLT64 r0, FLT64 r1, FLT64 r2, INT32 nodedof, F
 
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
-cdef inline void C_DiffShapeFunction(FLT64 r0, FLT64 r1, FLT64 r2, INT32 nodedof, FLT64[:, ::1] matdiffN) nogil:
+cdef inline void C_DiffShapeFunction(FLT64 r0, FLT64 r1, FLT64 r2, INT32 nodedof, FLT64[:, ::1] matdiffN) noexcept nogil:
     cdef FLT64 diff_shape_function[3][4]
     MATDIFFN(r0, r1, r2, diff_shape_function)
     cdef Py_ssize_t block, dof
@@ -129,11 +122,10 @@ cdef inline void C_DiffShapeFunction(FLT64 r0, FLT64 r1, FLT64 r2, INT32 nodedof
             matdiffN[nodedof * dof - dof * (nodedof - 3) + 2, block * nodedof + dof] = diff_shape_function[2][block]
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
-cdef inline void C_invJacobi(FLT64 r0, FLT64 r1, FLT64 r2, FLT64[:, ::1] element_coord, INT32 nodedof, FLT64[:, ::1] mat_invJ) nogil:
+cdef inline void C_invJacobi(FLT64 r0, FLT64 r1, FLT64 r2, FLT64[:, ::1] element_coord, INT32 nodedof, FLT64[:, ::1] mat_invJ) noexcept nogil:
     cdef FLT64 jac[3][3], invJ[3][3]
     JACOBIANO(r0, r1, r2, element_coord, jac)
     INV(jac, invJ)
@@ -145,11 +137,10 @@ cdef inline void C_invJacobi(FLT64 r0, FLT64 r1, FLT64 r2, FLT64[:, ::1] element
                 mat_invJ[block * nodedof + dimr, block * nodedof + dimc] = invJ[dimr][dimc]
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
-cdef inline void C_compute_B(INT32[:, ::1] H, FLT64[:, ::1] invJ, FLT64[:, ::1] diffN, FLT64[:, ::1] T, FLT64[:, ::1] B) nogil:
+cdef inline void C_compute_B(INT32[:, ::1] H, FLT64[:, ::1] invJ, FLT64[:, ::1] diffN, FLT64[:, ::1] T, FLT64[:, ::1] B) noexcept nogil:
     cdef INT32 h_rows = H.shape[0]
     cdef INT32 h_cols = H.shape[1]
     cdef INT32 invJ_cols = invJ.shape[1]
@@ -177,7 +168,6 @@ cdef inline void C_compute_B(INT32[:, ::1] H, FLT64[:, ::1] invJ, FLT64[:, ::1] 
 # ==============================================================================
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
@@ -188,7 +178,6 @@ def ShapeFunctions(FLT64 [::1] point_gauss, INT32 nodedof):
 
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
@@ -199,7 +188,6 @@ def DiffShapeFuntion(FLT64 [::1] point_gauss, INT32 nodedof):
     
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
@@ -220,7 +208,6 @@ def Jacobian(FLT64 [::1] point_gauss, FLT64 [:, ::1] element_coord):
     
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
@@ -231,7 +218,6 @@ def invJacobi(FLT64 [::1] point_gauss, FLT64 [:, ::1] element_coord, INT32 noded
 
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
@@ -242,7 +228,6 @@ def detJacobi(FLT64 [::1] point_gauss, FLT64 [:, ::1] element_coord):
 
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
@@ -267,7 +252,6 @@ def compute_VOL(
 
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
@@ -284,7 +268,6 @@ def compute_B(INT32 [:, ::1] H, FLT64 [:, ::1] invJ, FLT64 [:, ::1] diffN):
 
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
@@ -340,7 +323,6 @@ def StifLinear(
 
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
@@ -381,7 +363,6 @@ def MassLinear(
 
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
@@ -395,7 +376,6 @@ def NodeList(INT32 [:, ::1] inci, INT32 element_number):
             
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)
@@ -416,7 +396,6 @@ def NodeCoord(FLT64 [:, ::1] coord, INT32 [::1] node_list):
     return element_coord
     
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False)

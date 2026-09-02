@@ -14,7 +14,6 @@ ctypedef np.float64_t FLT64
 # ==============================================================================
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
@@ -27,11 +26,10 @@ cdef inline void MATN(FLT64 r0, FLT64 r1, FLT64 N[6]) nogil:
     N[5] = 4.0 * r1 * (1.0 - r0 - r1)
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
-cdef inline void MATDIFFN(FLT64 r0, FLT64 r1, FLT64 dN[2][6]) nogil:
+cdef inline void MATDIFFN(FLT64 r0, FLT64 r1, FLT64 dN[2][6]) noexcept nogil:
     dN[0][0] = 4.0 * r0 + 4.0 * r1 - 3.0
     dN[0][1] = 4.0 * r0 - 1.0
     dN[0][2] = 0.0
@@ -46,11 +44,10 @@ cdef inline void MATDIFFN(FLT64 r0, FLT64 r1, FLT64 dN[2][6]) nogil:
     dN[1][5] = -8.0 * r1 - 4.0 * r0 + 4.0
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
-cdef inline void INV(FLT64 A[2][2], FLT64 invA[2][2]) nogil:
+cdef inline void INV(FLT64 A[2][2], FLT64 invA[2][2]) noexcept nogil:
     cdef FLT64 detA = A[0][0] * A[1][1] - A[0][1] * A[1][0]
     cdef FLT64 invDet = 1.0 / detA
     invA[0][0] =  invDet * A[1][1]
@@ -59,11 +56,10 @@ cdef inline void INV(FLT64 A[2][2], FLT64 invA[2][2]) nogil:
     invA[1][1] =  invDet * A[0][0]
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
-cdef inline void JACOBIANO(FLT64 r0, FLT64 r1, FLT64 [:, ::1] element_coord, FLT64 jac[2][2]) nogil:
+cdef inline void JACOBIANO(FLT64 r0, FLT64 r1, FLT64 [:, ::1] element_coord, FLT64 jac[2][2]) noexcept nogil:
     cdef FLT64 diffN[2][6]
     MATDIFFN(r0, r1, diffN)
     jac[0][0] = diffN[0][0]*element_coord[0, 0] + diffN[0][1]*element_coord[1, 0] + diffN[0][2]*element_coord[2, 0] + diffN[0][3]*element_coord[3, 0] + diffN[0][4]*element_coord[4, 0] + diffN[0][5]*element_coord[5, 0]
@@ -76,21 +72,19 @@ cdef inline void JACOBIANO(FLT64 r0, FLT64 r1, FLT64 [:, ::1] element_coord, FLT
 # ==============================================================================
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
-cdef inline void C_detJacobi(FLT64 r0, FLT64 r1, FLT64 [:, ::1] element_coord, FLT64 *detJ) nogil:
+cdef inline void C_detJacobi(FLT64 r0, FLT64 r1, FLT64 [:, ::1] element_coord, FLT64 *detJ) noexcept nogil:
     cdef FLT64 jac[2][2]
     JACOBIANO(r0, r1, element_coord, jac)
     detJ[0] = 0.5 * (jac[0][0] * jac[1][1] - jac[0][1] * jac[1][0])
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
-cdef inline void C_ShapeFunctions(FLT64 r0, FLT64 r1, INT32 nodedof, FLT64[:, ::1] matN) nogil:
+cdef inline void C_ShapeFunctions(FLT64 r0, FLT64 r1, INT32 nodedof, FLT64[:, ::1] matN) noexcept nogil:
     cdef FLT64 N[6]
     MATN(r0, r1, N)
     cdef Py_ssize_t block, dof
@@ -99,11 +93,10 @@ cdef inline void C_ShapeFunctions(FLT64 r0, FLT64 r1, INT32 nodedof, FLT64[:, ::
             matN[dof, block * nodedof + dof] = N[block]
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
-cdef inline void C_DiffShapeFunction(FLT64 r0, FLT64 r1, INT32 nodedof, FLT64[:, ::1] matdiffN) nogil:
+cdef inline void C_DiffShapeFunction(FLT64 r0, FLT64 r1, INT32 nodedof, FLT64[:, ::1] matdiffN) noexcept nogil:
     cdef FLT64 dN[2][6]
     MATDIFFN(r0, r1, dN)
     cdef Py_ssize_t block, dof
@@ -113,11 +106,10 @@ cdef inline void C_DiffShapeFunction(FLT64 r0, FLT64 r1, INT32 nodedof, FLT64[:,
             matdiffN[nodedof * dof - dof * (nodedof - 2) + 1, block * nodedof + dof] = dN[1][block]
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
-cdef inline void C_invJacobi(FLT64 r0, FLT64 r1, FLT64[:, ::1] element_coord, INT32 nodedof, FLT64[:, ::1] mat_invJ) nogil:
+cdef inline void C_invJacobi(FLT64 r0, FLT64 r1, FLT64[:, ::1] element_coord, INT32 nodedof, FLT64[:, ::1] mat_invJ) noexcept nogil:
     cdef FLT64 jac[2][2], invJ[2][2]
     JACOBIANO(r0, r1, element_coord, jac)
     INV(jac, invJ)
@@ -128,11 +120,10 @@ cdef inline void C_invJacobi(FLT64 r0, FLT64 r1, FLT64[:, ::1] element_coord, IN
                 mat_invJ[block * nodedof + dimr, block * nodedof + dimc] = invJ[dimr][dimc]
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
-cdef inline void C_compute_B(INT32[:, ::1] H, FLT64[:, ::1] invJ, FLT64[:, ::1] diffN, FLT64[:, ::1] T, FLT64[:, ::1] B) nogil:
+cdef inline void C_compute_B(INT32[:, ::1] H, FLT64[:, ::1] invJ, FLT64[:, ::1] diffN, FLT64[:, ::1] T, FLT64[:, ::1] B) noexcept nogil:
     cdef INT32 h_rows = H.shape[0]
     cdef INT32 h_cols = H.shape[1]
     cdef INT32 invJ_cols = invJ.shape[1]
@@ -160,33 +151,40 @@ cdef inline void C_compute_B(INT32[:, ::1] H, FLT64[:, ::1] invJ, FLT64[:, ::1] 
 # ==============================================================================
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
-@nonecheck(False) 
+@nonecheck(False)  
 def ShapeFunctions(FLT64 [::1] point_gauss, INT32 nodedof):
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] matN = np.zeros((nodedof, 6 * nodedof), dtype=np.float64)
-    C_ShapeFunctions(point_gauss[0], point_gauss[1], nodedof, matN)
-    return matN
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] matN_arr = np.zeros((nodedof, 6 * nodedof), dtype=np.float64)
+    cdef FLT64[:, ::1] matN = matN_arr
+    
+    with nogil:
+        C_ShapeFunctions(point_gauss[0], point_gauss[1], nodedof, matN)
+        
+    return matN_arr
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
 def DiffShapeFuntion(FLT64 [::1] point_gauss, INT32 nodedof):
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] matdiffN = np.zeros((2 * nodedof, 6 * nodedof), dtype=np.float64)
-    C_DiffShapeFunction(point_gauss[0], point_gauss[1], nodedof, matdiffN)
-    return matdiffN
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] matdiffN_arr = np.zeros((2 * nodedof, 6 * nodedof), dtype=np.float64)
+    cdef FLT64[:, ::1] matdiffN = matdiffN_arr
+    
+    with nogil:
+        C_DiffShapeFunction(point_gauss[0], point_gauss[1], nodedof, matdiffN)
+        
+    return matdiffN_arr
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
 def Jacobian(FLT64 [::1] point_gauss, FLT64 [:, ::1] element_coord):
     cdef FLT64 jac[2][2]
-    JACOBIANO(point_gauss[0], point_gauss[1], element_coord, jac)
+    
+    with nogil:
+        JACOBIANO(point_gauss[0], point_gauss[1], element_coord, jac)
     
     cdef np.ndarray[FLT64, ndim=2, mode="c"] mat_jac = np.zeros((2, 2), dtype=np.float64)
     mat_jac[0, 0] = jac[0][0]
@@ -196,27 +194,31 @@ def Jacobian(FLT64 [::1] point_gauss, FLT64 [:, ::1] element_coord):
     return mat_jac
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
 def invJacobi(FLT64 [::1] point_gauss, FLT64 [:, ::1] element_coord, INT32 nodedof):
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] mat_invJ = np.zeros((2 * nodedof, 2 * nodedof), dtype=np.float64)
-    C_invJacobi(point_gauss[0], point_gauss[1], element_coord, nodedof, mat_invJ)
-    return mat_invJ
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] mat_invJ_arr = np.zeros((2 * nodedof, 2 * nodedof), dtype=np.float64)
+    cdef FLT64[:, ::1] mat_invJ = mat_invJ_arr
+    
+    with nogil:
+        C_invJacobi(point_gauss[0], point_gauss[1], element_coord, nodedof, mat_invJ)
+        
+    return mat_invJ_arr
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
 def detJacobi(FLT64 [::1] point_gauss, FLT64 [:, ::1] element_coord):
     cdef FLT64 detJ_val
-    C_detJacobi(point_gauss[0], point_gauss[1], element_coord, &detJ_val)
+    
+    with nogil:
+        C_detJacobi(point_gauss[0], point_gauss[1], element_coord, &detJ_val)
+        
     return detJ_val
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
@@ -229,14 +231,15 @@ def compute_VOL(
     cdef Py_ssize_t ip, jp
     cdef FLT64 detJ, VOL = 0.0
 
-    for ip in range(1):
-        for jp in range(1):
-            C_detJacobi(pt_gauss_nodes[ip], pt_gauss_nodes[jp], element_coord, &detJ)
-            VOL = VOL + t * fabs(detJ) * weight_factor[ip] * weight_factor[jp]
+    with nogil:
+        for ip in range(1):
+            for jp in range(1):
+                C_detJacobi(pt_gauss_nodes[ip], pt_gauss_nodes[jp], element_coord, &detJ)
+                VOL = VOL + t * fabs(detJ) * weight_factor[ip] * weight_factor[jp]
+                
     return VOL
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
@@ -245,14 +248,20 @@ def compute_B(INT32 [:, ::1] H, FLT64 [:, ::1] invJ, FLT64 [:, ::1] diffN):
     cdef INT32 invJ_cols = invJ.shape[1]
     cdef INT32 diffN_cols = diffN.shape[1]
     
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] T = np.zeros((h_rows, invJ_cols), dtype=np.float64)
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] B = np.zeros((h_rows, diffN_cols), dtype=np.float64)
+    # Alocações (com GIL)
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] T_arr = np.zeros((h_rows, invJ_cols), dtype=np.float64)
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] B_arr = np.zeros((h_rows, diffN_cols), dtype=np.float64)
     
-    C_compute_B(H, invJ, diffN, T, B)
-    return B
+    # Typed Memoryviews para acesso nogil
+    cdef FLT64[:, ::1] T = T_arr
+    cdef FLT64[:, ::1] B = B_arr
+    
+    with nogil:
+        C_compute_B(H, invJ, diffN, T, B)
+        
+    return B_arr
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
@@ -272,41 +281,49 @@ def StifLinear(
     cdef FLT64 detJ, scale, r0, r1
     cdef INT32 c_rows = C.shape[0]
 
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] K_elem_mat = np.zeros((elemdof, elemdof), dtype=np.float64)
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] CB = np.zeros((c_rows, elemdof), dtype=np.float64)
+    # Alocação na memória Python
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] K_elem_mat_arr = np.zeros((elemdof, elemdof), dtype=np.float64)
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] CB_arr = np.zeros((c_rows, elemdof), dtype=np.float64)
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] diffN_arr = np.zeros((2 * nodedof, 6 * nodedof), dtype=np.float64)
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] invJ_arr = np.zeros((2 * nodedof, 2 * nodedof), dtype=np.float64)
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] T_arr = np.zeros((H.shape[0], invJ_arr.shape[1]), dtype=np.float64)
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] B_arr = np.zeros((H.shape[0], diffN_arr.shape[1]), dtype=np.float64)
     
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] diffN = np.zeros((2 * nodedof, 6 * nodedof), dtype=np.float64)
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] invJ = np.zeros((2 * nodedof, 2 * nodedof), dtype=np.float64)
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] T = np.zeros((H.shape[0], invJ.shape[1]), dtype=np.float64)
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] B = np.zeros((H.shape[0], diffN.shape[1]), dtype=np.float64)
+    # Castings para Typed Memoryviews (permite o uso sem GIL)
+    cdef FLT64[:, ::1] K_elem_mat = K_elem_mat_arr
+    cdef FLT64[:, ::1] CB = CB_arr
+    cdef FLT64[:, ::1] diffN = diffN_arr
+    cdef FLT64[:, ::1] invJ = invJ_arr
+    cdef FLT64[:, ::1] T = T_arr
+    cdef FLT64[:, ::1] B = B_arr
 
-    for ip in range(intgauss):
-        for jp in range(intgauss):
-            r0 = pt_gauss_nodes[ip]
-            r1 = pt_gauss_nodes[jp]
-            
-            C_detJacobi(r0, r1, element_coord, &detJ)
-            C_DiffShapeFunction(r0, r1, nodedof, diffN)
-            C_invJacobi(r0, r1, element_coord, nodedof, invJ)
-            C_compute_B(H, invJ, diffN, T, B)
-            
-            scale = t * fabs(detJ) * weight_factor[ip] * weight_factor[jp]
-            
-            for r in range(c_rows):
-                for c in range(elemdof):
-                    CB[r, c] = 0.0
-                    for k in range(c_rows):
-                        CB[r, c] += C[r, k] * B[k, c]
-                        
-            for r in range(elemdof):
-                for c in range(elemdof):
-                    for k in range(c_rows):
-                        K_elem_mat[r, c] += B[k, r] * CB[k, c] * scale
+    with nogil:
+        for ip in range(intgauss):
+            for jp in range(intgauss):
+                r0 = pt_gauss_nodes[ip]
+                r1 = pt_gauss_nodes[jp]
+                
+                C_detJacobi(r0, r1, element_coord, &detJ)
+                C_DiffShapeFunction(r0, r1, nodedof, diffN)
+                C_invJacobi(r0, r1, element_coord, nodedof, invJ)
+                C_compute_B(H, invJ, diffN, T, B)
+                
+                scale = t * fabs(detJ) * weight_factor[ip] * weight_factor[jp]
+                
+                for r in range(c_rows):
+                    for c in range(elemdof):
+                        CB[r, c] = 0.0
+                        for k in range(c_rows):
+                            CB[r, c] += C[r, k] * B[k, c]
+                            
+                for r in range(elemdof):
+                    for c in range(elemdof):
+                        for k in range(c_rows):
+                            K_elem_mat[r, c] += B[k, r] * CB[k, c] * scale
 
-    return K_elem_mat
+    return K_elem_mat_arr
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
@@ -324,71 +341,86 @@ def MassLinear(
     cdef INT32 r, c, k
     cdef FLT64 detJ, scale, r0, r1
     
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] M_elem_mat = np.zeros((elemdof, elemdof), dtype=np.float64)
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] N = np.zeros((nodedof, 6 * nodedof), dtype=np.float64)
+    # Alocação na memória Python
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] M_elem_mat_arr = np.zeros((elemdof, elemdof), dtype=np.float64)
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] N_arr = np.zeros((nodedof, 6 * nodedof), dtype=np.float64)
 
-    for ip in range(intgauss):
-        for jp in range(intgauss):
-            r0 = pt_gauss_nodes[ip]
-            r1 = pt_gauss_nodes[jp]
-            
-            C_detJacobi(r0, r1, element_coord, &detJ)
-            C_ShapeFunctions(r0, r1, nodedof, N)
-            
-            scale = R * t * fabs(detJ) * weight_factor[ip] * weight_factor[jp]
-            
-            for r in range(elemdof):
-                for c in range(elemdof):
-                    for k in range(nodedof):
-                        M_elem_mat[r, c] += N[k, r] * N[k, c] * scale
+    # Castings para Typed Memoryviews
+    cdef FLT64[:, ::1] M_elem_mat = M_elem_mat_arr
+    cdef FLT64[:, ::1] N = N_arr
 
-    return M_elem_mat
+    with nogil:
+        for ip in range(intgauss):
+            for jp in range(intgauss):
+                r0 = pt_gauss_nodes[ip]
+                r1 = pt_gauss_nodes[jp]
+                
+                C_detJacobi(r0, r1, element_coord, &detJ)
+                C_ShapeFunctions(r0, r1, nodedof, N)
+                
+                scale = R * t * fabs(detJ) * weight_factor[ip] * weight_factor[jp]
+                
+                for r in range(elemdof):
+                    for c in range(elemdof):
+                        for k in range(nodedof):
+                            M_elem_mat[r, c] += N[k, r] * N[k, c] * scale
+
+    return M_elem_mat_arr
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
 def NodeList(INT32 [:, ::1] inci, INT32 element_number):
-    cdef np.ndarray[INT32, ndim=1, mode="c"] node_list = np.zeros(6, dtype=np.int32)
-    node_list[0] = inci[element_number, 4]
-    node_list[1] = inci[element_number, 5]
-    node_list[2] = inci[element_number, 6]
-    node_list[3] = inci[element_number, 7]
-    node_list[4] = inci[element_number, 8]
-    node_list[5] = inci[element_number, 9]
-    return node_list
+    cdef np.ndarray[INT32, ndim=1, mode="c"] node_list_arr = np.zeros(6, dtype=np.int32)
+    cdef INT32[::1] node_list = node_list_arr
+    
+    with nogil:
+        node_list[0] = inci[element_number, 4]
+        node_list[1] = inci[element_number, 5]
+        node_list[2] = inci[element_number, 6]
+        node_list[3] = inci[element_number, 7]
+        node_list[4] = inci[element_number, 8]
+        node_list[5] = inci[element_number, 9]
+        
+    return node_list_arr
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
-@nonecheck(False) 
+@nonecheck(False)  
 def NodeCoord(FLT64 [:, ::1] coord, INT32 [::1] node_list):
-    cdef np.ndarray[FLT64, ndim=2, mode="c"] element_coord = np.zeros((6, 2), dtype=np.float64)
-    element_coord[0, 0] = coord[node_list[0] - 1, 1]
-    element_coord[0, 1] = coord[node_list[0] - 1, 2]
-    element_coord[1, 0] = coord[node_list[1] - 1, 1]
-    element_coord[1, 1] = coord[node_list[1] - 1, 2]
-    element_coord[2, 0] = coord[node_list[2] - 1, 1]
-    element_coord[2, 1] = coord[node_list[2] - 1, 2]
-    element_coord[3, 0] = coord[node_list[3] - 1, 1]
-    element_coord[3, 1] = coord[node_list[3] - 1, 2]
-    element_coord[4, 0] = coord[node_list[4] - 1, 1]
-    element_coord[4, 1] = coord[node_list[4] - 1, 2]
-    element_coord[5, 0] = coord[node_list[5] - 1, 1]
-    element_coord[5, 1] = coord[node_list[5] - 1, 2]
-    return element_coord
+    cdef np.ndarray[FLT64, ndim=2, mode="c"] element_coord_arr = np.zeros((6, 2), dtype=np.float64)
+    cdef FLT64[:, ::1] element_coord = element_coord_arr
+    
+    with nogil:
+        element_coord[0, 0] = coord[node_list[0] - 1, 1]
+        element_coord[0, 1] = coord[node_list[0] - 1, 2]
+        element_coord[1, 0] = coord[node_list[1] - 1, 1]
+        element_coord[1, 1] = coord[node_list[1] - 1, 2]
+        element_coord[2, 0] = coord[node_list[2] - 1, 1]
+        element_coord[2, 1] = coord[node_list[2] - 1, 2]
+        element_coord[3, 0] = coord[node_list[3] - 1, 1]
+        element_coord[3, 1] = coord[node_list[3] - 1, 2]
+        element_coord[4, 0] = coord[node_list[4] - 1, 1]
+        element_coord[4, 1] = coord[node_list[4] - 1, 2]
+        element_coord[5, 0] = coord[node_list[5] - 1, 1]
+        element_coord[5, 1] = coord[node_list[5] - 1, 2]
+        
+    return element_coord_arr
 
 @cdivision(True)
-@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)         
 @nonecheck(False) 
 def LocKey(INT32 [::1] node_list, INT32 nodedof):
-    cdef np.ndarray[INT32, ndim=1, mode="c"] shape_key = np.zeros(6 * nodedof, dtype=np.int32)
+    cdef np.ndarray[INT32, ndim=1, mode="c"] shape_key_arr = np.zeros(6 * nodedof, dtype=np.int32)
+    cdef INT32[::1] shape_key = shape_key_arr
     cdef Py_ssize_t node, dof
-    for node in range(6):
-        for dof in range(nodedof):
-            shape_key[nodedof * node + dof] = nodedof * node_list[node] - (nodedof - dof)
-    return shape_key
+    
+    with nogil:
+        for node in range(6):
+            for dof in range(nodedof):
+                shape_key[nodedof * node + dof] = nodedof * node_list[node] - (nodedof - dof)
+                
+    return shape_key_arr

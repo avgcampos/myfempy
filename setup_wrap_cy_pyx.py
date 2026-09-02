@@ -90,4 +90,8 @@ class build_ext(_build_ext):
             Extension("*", sources=["./myfempy/core/shapes/tetr4_tasks.pyx"], **extension_kwargs),
             Extension("*", sources=["./myfempy/core/shapes/hexa8_tasks.pyx"], **extension_kwargs),
         ]
-        self.distribution.ext_modules.extend(cythonize(extensions))
+        self.distribution.ext_modules.extend(cythonize(extensions,
+                                                compiler_directives={
+                                                    "freethreading_compatible": True,  # Declara o módulo compatível com free-threading
+                                                    "language_level": "3",
+                                                },))

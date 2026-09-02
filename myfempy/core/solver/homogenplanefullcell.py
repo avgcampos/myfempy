@@ -52,9 +52,12 @@ class HomogenizationPlane(Solver):
     Homogenization Plane Boundary Condition Symmetric Solver Class <ConcreteClassService>
     """
     # @profile
-    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None):
+    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP = None):
         matrix = dict()
-        matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss)
+        if MP:
+            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss)
+        else:
+            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss)
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):

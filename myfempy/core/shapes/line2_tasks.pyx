@@ -94,8 +94,11 @@ cdef inline np.ndarray[FLT64, ndim=2, mode="c"] JACOBIANO(FLT64 r0, FLT64 [:, ::
 # FUNÇÕES EXPORTADAS (PYTHON / DEF)
 # ==============================================================================
 
+@cdivision(True)
+@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)
+@nonecheck(False)
 def ShapeFunctions(FLT64 [::1] r_coord, INT32 nodedof, FLT64 detJ):
     cdef np.ndarray[FLT64, ndim=2, mode="c"] mat_N = MATN(r_coord[0])
     mat_N[1, 5]  = 2.0 * detJ * mat_N[1, 5]
@@ -104,13 +107,19 @@ def ShapeFunctions(FLT64 [::1] r_coord, INT32 nodedof, FLT64 detJ):
     mat_N[2, 10] = 2.0 * detJ * mat_N[2, 10]
     return mat_N
 
+@cdivision(True)
+@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)
+@nonecheck(False)
 def DiffShapeFuntion(FLT64 [::1] r_coord, INT32 nodedof):
     return MATDIFFN(r_coord[0])
 
+@cdivision(True)
+@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)
+@nonecheck(False)
 def DiffDiffShapeFuntion(FLT64 [::1] r_coord, INT32 nodedof, FLT64 detJ):
     cdef np.ndarray[FLT64, ndim=2, mode="c"] mat_diff_N = MATDIFFDIFFN(r_coord[0])
     mat_diff_N[1, 5]  = 2.0 * detJ * mat_diff_N[1, 5]
@@ -119,13 +128,19 @@ def DiffDiffShapeFuntion(FLT64 [::1] r_coord, INT32 nodedof, FLT64 detJ):
     mat_diff_N[2, 10] = 2.0 * detJ * mat_diff_N[2, 10]
     return mat_diff_N
 
+@cdivision(True)
+@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)
+@nonecheck(False)
 def Jacobian(FLT64 [::1] r_coord, FLT64 [:, ::1] element_coord):  
     return JACOBIANO(r_coord[0], element_coord)
 
+@cdivision(True)
+@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)
+@nonecheck(False)
 def invJacobi(FLT64 [::1] r_coord, FLT64 [:, ::1] element_coord, INT32 nodedof):
     cdef np.ndarray[FLT64, ndim=2, mode="c"] Jac = JACOBIANO(r_coord[0], element_coord)
     cdef FLT64 invJ = INV(Jac)
@@ -136,14 +151,20 @@ def invJacobi(FLT64 [::1] r_coord, FLT64 [:, ::1] element_coord, INT32 nodedof):
     mat_invJ[3, 3] = mat_invJ[0, 0]
     return mat_invJ
 
+@cdivision(True)
+@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)
+@nonecheck(False)
 def detJacobi(FLT64 [::1] r_coord, FLT64 [:, ::1] element_coord):
     cdef np.ndarray[FLT64, ndim=2, mode="c"] Jac = JACOBIANO(r_coord[0], element_coord)
     return Jac[0, 0]
 
+@cdivision(True)
+@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)
+@nonecheck(False)
 def compute_B(INT32 [:, ::1] H, FLT64 [:, ::1] invJ, FLT64 [:, ::1] diffN):
     cdef INT32 h_rows = H.shape[0]
     cdef INT32 h_cols = H.shape[1]
@@ -168,8 +189,11 @@ def compute_B(INT32 [:, ::1] H, FLT64 [:, ::1] invJ, FLT64 [:, ::1] diffN):
                 
     return B
 
+@cdivision(True)
+@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)
+@nonecheck(False)
 def StifLinear(
     FLT64 [::1] pt_gauss_nodes,
     FLT64 [::1] weight_factor,
@@ -211,8 +235,11 @@ def StifLinear(
 
     return K_elem_mat
 
+@cdivision(True)
+@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)
+@nonecheck(False)
 def MassLinear(
     FLT64 [::1] pt_gauss_nodes,
     FLT64 [::1] weight_factor,
@@ -250,16 +277,22 @@ def MassLinear(
 
     return M_elem_mat
 
+@cdivision(True)
+@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)
+@nonecheck(False)
 def NodeList(INT32 [:, ::1] inci, INT32 element_number):
     cdef np.ndarray[INT32, ndim=1, mode="c"] node_list = np.zeros(2, dtype=np.int32)
     node_list[0] = inci[element_number, 4]
     node_list[1] = inci[element_number, 5]
     return node_list
             
+@cdivision(True)
+@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)
+@nonecheck(False)
 def NodeCoord(FLT64 [:, ::1] coord, INT32 [::1] node_list):
     cdef np.ndarray[FLT64, ndim=2, mode="c"] element_coord = np.zeros((6, 1), dtype=np.float64)
     element_coord[0, 0] = coord[node_list[0] - 1, 1]
@@ -269,9 +302,12 @@ def NodeCoord(FLT64 [:, ::1] coord, INT32 [::1] node_list):
     element_coord[4, 0] = coord[node_list[1] - 1, 2]
     element_coord[5, 0] = coord[node_list[1] - 1, 3]
     return element_coord
-
+    
+@cdivision(True)
+@exceptval(check=False)
 @boundscheck(False)
 @wraparound(False)
+@nonecheck(False)
 def LocKey(INT32 [::1] node_list, INT32 nodedof):
     cdef np.ndarray[INT32, ndim=1, mode="c"] shape_key = np.zeros(2 * nodedof, dtype=np.int32)
     cdef Py_ssize_t node, dof

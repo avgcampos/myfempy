@@ -6,7 +6,7 @@ fea = newAnalysis(SteadyStateLinear)
 mat = {
     'NAME': 'material',
     'EXX': 1000,
-    'VXX': 0.3
+    'VXY': 0.3
 }
 
 geo = {

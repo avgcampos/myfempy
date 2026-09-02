@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import sys
+import os
 import sysconfig
 from time import time
 from datetime import datetime
@@ -270,8 +271,13 @@ class newAnalysis:
         Example:
             >>> K_global, F_global = FEA.Assembly(Model=FEA.model)
         """
+        is_free_threaded = sysconfig.get_config_var('Py_GIL_DISABLED') == 1
+        self.MP = 0
+        if sys.version_info >= (3, 14) and is_free_threaded:
+            print("AVISO: Versão do Python instalada é compatível com a opção de multiprocessamento do myfempy.getMatrixAssembler() (NOGIL)")
+            self.MP = os.cpu_count() or 4
         try:
-            matrix = newAnalysis.getGlobalMatrix(self, Model, self.model.inci, self.model.coord, self.model.tabmat, self.model.tabgeo, self.model.intgauss)
+            matrix = newAnalysis.getGlobalMatrix(self, Model, self.model.inci, self.model.coord, self.model.tabmat, self.model.tabgeo, self.model.intgauss, self.MP)
             loadaply = self.physic.forces
             matrix = newAnalysis.getUpdateMatrix(self, matrix, loadaply)
             forcelist = newAnalysis.getLoadArray(self, loadaply)
@@ -305,14 +311,18 @@ class newAnalysis:
         
         solverset["solverstatus"] = {
             "typeasmb": "FULL",
-            "ncpu": "SERIAL_1_CORE"
         }
         
         starttime = time()
         assembly, forcelist = self.Assembly(Model=self.model)
         solverset["solverstatus"]["timeasb"] = abs(time() - starttime)
         solverset["solverstatus"]["memorysize"] = (assembly["stiffness"].todense().nbytes) / 1e6
-        
+        if self.MP == 0:
+            solverset["solverstatus"]["ncpu"] = "SERIAL_1_CORE"
+        else:
+            solverset["solverstatus"]["ncpu"] = (
+                "PARALLEL_" + str(self.MP) + "_CORES"
+            )
         try:
             constrains = self.physic.constrains
             freedof, fixedof, constdof = newAnalysis.getConstrains(self, constrains)
@@ -376,7 +386,6 @@ class newAnalysis:
             print("AVISO: O recurso de plotagem (preview_plot) é incompatível com a versão do Python instalada")
             logging.warning("PREVIEW PLOT SKIPPED -- Incompatible with Python Version")
             return
-
         try:
             preview_plot(self.model, previewdata, str(self.path), self.physic)
             logging.info("TRY RUN PREVIEW PLOT -- SUCCESS")
@@ -592,7 +601,7 @@ class newAnalysis:
             inci, coord, tabmat, tabgeo, elementcoord, C, elemdof, getIntNum, intgauss, point_gauss, weight_gauss, element_number
         )
 
-    def getGlobalMatrix(self, Model: object, inci: npt.NDArray[np.float64] = None, coord: npt.NDArray[np.float64] = None, tabmat: list = None, tabgeo: list = None, intgauss: int = None) -> npt.NDArray[np.float64]:
+    def getGlobalMatrix(self, Model: object, inci: npt.NDArray[np.float64] = None, coord: npt.NDArray[np.float64] = None, tabmat: list = None, tabgeo: list = None, intgauss: int = None, MP: int = None) -> npt.NDArray[np.float64]:
         """Invokes the solver assembler to construct the global unconstrained system matrices[cite: 1].
 
         Args:
@@ -602,14 +611,14 @@ class newAnalysis:
             tabmat (list, optional): Optional material lookup profile. Defaults to None.
             tabgeo (list, optional): Optional geometry lookup profile. Defaults to None.
             intgauss (int, optional): Optional Gaussian integration order. Defaults to None.
-
+            MP (int, optional): Optional MultiProcessing Assembler. Defaults to None.
         Returns:
             npt.NDArray[np.float64]: The raw assembled structural matrix system.
 
         Example:
             >>> K_global = FEA.getGlobalMatrix(FEA.model)
         """
-        return self.solver.getMatrixAssembler(Model, inci=inci, coord=coord, tabmat=tabmat, tabgeo=tabgeo, intgauss=intgauss)
+        return self.solver.getMatrixAssembler(Model, inci=inci, coord=coord, tabmat=tabmat, tabgeo=tabgeo, intgauss=intgauss, MP=MP)
 
     def getConstrains(self, constrains: list) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Maps boundary condition parameters to explicit indices classifications[cite: 1].
