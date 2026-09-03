@@ -25,7 +25,7 @@ from .core.material.solidelastic import SolidElastic
 from .core.material.heatplane import HeatPlane
 from .core.material.heatsolid import HeatSolid
 # VERSION
-from .utils.utils import get_version, get_about
+from .utils.utils import get_version
 __version__ = get_version()
 __author__ = 'Antonio Vinicius Garcia Campos'
 __license__ = "GPLv3"

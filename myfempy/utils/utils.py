@@ -1,11 +1,18 @@
+import importlib.metadata
+import os
+import sys
+from art import tprint
 
-__docformat__ = "google"
+get_about = """
 
-__doc__ = """
+COMPUTATIONAL FINITE ELEMENT ANALYSIS PROGRAM
+
+Copyright © Antonio Vinicius G. Campos 2022-2026. Processo INPI BR512022001484-0   
+        
 This Python file is part of myfempy project.
 
 myfempy is a python package based on finite element method to multiphysics
-analysis. The code is open source and *intended for educational and scientific
+analysis. The code is open source and intended for educational and scientific
 purposes only, not recommended to commercial use. The name myfempy is an acronym
 for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
 with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
@@ -29,18 +36,6 @@ free from errors. Furthermore, the authors shall not be liable in any
 event caused by the use of the program.
 
 """
-
-import importlib.metadata
-import os
-import sys
-from art import tprint
-
-def get_about():
-    try:
-        with open(os.getcwd()+'/myfempy/utils/about.txt', 'r', encoding='utf-8') as file:
-            conteudo = file.read()
-    except FileNotFoundError:
-        print("About file not found")
 
 def get_version():
     try:

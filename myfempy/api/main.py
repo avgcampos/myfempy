@@ -21,11 +21,10 @@ from myfempy.api.model import SetModel
 from myfempy.api.physics import SetPhysics
 from myfempy.api.results import setPostProcess
 from myfempy.utils.utils import (clear_console, get_logo, get_version,
-                                 loading_bar_v1, newDir, print_console)
+                                 loading_bar_v1, newDir, print_console, get_about)
 
 __docformat__ = "google"
-with open(os.getcwd()+'/myfempy/utils/about.txt', 'r', encoding='utf-8') as file:
-    __doc__ = file.read()
+__doc__ = get_about
 
 class newAnalysis:
     """
