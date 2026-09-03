@@ -12,12 +12,6 @@ from myfempy.core.utilities import setSteps
 __docformat__ = "google"
 
 __doc__ = """
-
-==========================================================================
-        myfempy -- MultiphYsics Finite Element Module to PYthon    
-                    COMPUTATIONAL ANALYSIS PROGRAM                   
-        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
-==========================================================================
 This Python file is part of myfempy project.
 
 myfempy is a python package based on finite element method to multiphysics
@@ -51,11 +45,11 @@ class SteadyStateLinear(Solver):
     """
     Steady State Linear Solver Class <ConcreteClassService>
     """
-    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP=None):
+    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP=None, max_workers=None):
        
         matrix = dict()
         if MP:
-            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss, MP)
+            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss, max_workers)
         else:
             matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss)
                 

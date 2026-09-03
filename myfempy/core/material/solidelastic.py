@@ -9,12 +9,6 @@ from myfempy.core.material.material import Material
 __docformat__ = "google"
 
 __doc__ = """
-
-==========================================================================
-        myfempy -- MultiphYsics Finite Element Module to PYthon    
-                    COMPUTATIONAL ANALYSIS PROGRAM                   
-        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
-==========================================================================
 This Python file is part of myfempy project.
 
 myfempy is a python package based on finite element method to multiphysics

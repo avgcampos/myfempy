@@ -2,12 +2,6 @@
 __docformat__ = "google"
 
 __doc__ = """
-
-==========================================================================
-        myfempy -- MultiphYsics Finite Element Module to PYthon    
-                    COMPUTATIONAL ANALYSIS PROGRAM                   
-        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
-==========================================================================
 This Python file is part of myfempy project.
 
 myfempy is a python package based on finite element method to multiphysics
@@ -45,7 +39,6 @@ def get_about():
     try:
         with open(os.getcwd()+'/myfempy/utils/about.txt', 'r', encoding='utf-8') as file:
             conteudo = file.read()
-            print(conteudo)
     except FileNotFoundError:
         print("About file not found")
 

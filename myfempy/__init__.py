@@ -25,19 +25,16 @@ from .core.material.solidelastic import SolidElastic
 from .core.material.heatplane import HeatPlane
 from .core.material.heatsolid import HeatSolid
 # VERSION
-from .utils.utils import get_version
+from .utils.utils import get_version, get_about
 __version__ = get_version()
+__author__ = 'Antonio Vinicius Garcia Campos'
+__license__ = "GPLv3"
+__email__ = "antviniciuscampos@gmail.com"
 
 __docformat__ = "google"
-
 __doc__ = """
-
-==========================================================================
-        myfempy -- MultiphYsics Finite Element Module to PYthon    
-                    COMPUTATIONAL ANALYSIS PROGRAM                   
-        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
-==========================================================================
-This Python file is part of myfempy project.
+myfempy
+=======
 
 myfempy is a python package based on finite element method to multiphysics
 analysis. The code is open source and *intended for educational and scientific
@@ -46,27 +43,25 @@ for MultiphYsics Finite Elements Module to PYthon. You can help us by contributi
 with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
 If you use myfempy in your research, the  developers would be grateful if you 
 could cite in your work.
-																		
-The code is written by Antonio Vinicius Garcia Campos.                                  
-																		
-A github repository, with the most up to date version of the code,      
-can be found here: https://github.com/avgcampos/myfempy.                 
-																		
-The code is open source and intended for educational and scientific     
-purposes only. If you use myfempy in your research, the developers      
-would be grateful if you could cite this. The myfempy project is published
-under the GPLv3, see the myfempy LICENSE on
-https://github.com/avgcampos/myfempy/blob/main/LICENSE.
-																		
-Disclaimer:                                                             
-The authors reserve all rights but do not guarantee that the code is    
-free from errors. Furthermore, the authors shall not be liable in any   
-event caused by the use of the program.
+						
+Web Documentation:
+------------------
+For examples and a description of the API, please visit the online documentation.: https://myfempy.readthedocs.io
+
+Example:
+--------
+from myfempy import newAnalysis, SteadyStateLinear
+FEA = newAnalysis(SteadyStateLinear)
+FEA.Model(modeldata:dict)
+FEA.Physic(physicdata:dict)
+FEA.Solve(solverset:dict)
+FEA.PostProcess(postprocset:dict)
 
 """
 
 __all__ = [
     "__version__",
+    "get_about"
     "newAnalysis",
     "SteadyStateLinear",
     "SteadyStateLinearIterative",

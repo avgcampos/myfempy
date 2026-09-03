@@ -5,12 +5,6 @@ import numpy as np
 __docformat__ = "google"
 
 __doc__ = """
-
-==========================================================================
-        myfempy -- MultiphYsics Finite Element Module to PYthon    
-                    COMPUTATIONAL ANALYSIS PROGRAM                   
-        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
-==========================================================================
 This Python file is part of myfempy project.
 
 myfempy is a python package based on finite element method to multiphysics
@@ -42,8 +36,9 @@ event caused by the use of the program.
 def write2log(Model, Physic, log_data, solstatus, log_file):
     lines = [
         "===============================================================================",
-        "                         M Y F E M P Y   -   R E P O R T                        ",
-        "==============================================================================="
+        "                                 M Y F E M P Y                                 ",
+        "version "+str(solstatus["solverstatus"]["myfempyversion"]),
+        "===============================================================================",
     ]
 
     get_keys = log_data.get("get", {})
@@ -162,8 +157,8 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
         lines.append("{0:<30} : {1:<10} SEC".format("SOLVE FULL TIME SPEND ", str(solstatus["solverstatus"]["timesim"])))
         lines.append("{0:<30} : {1:<10} DOF".format("NUMBER OF EQUATION ", str(Model.modelinfo["fulldofs"])))
         lines.append("{0:<30} : {1:<10} MB".format("STIFFNESS SIZE ", str(solstatus["solverstatus"]["memorysize"])))
-        lines.append("{0:<30} : {1:<10} SET".format("TYPE ASSEMBLER ", str(solstatus["solverstatus"]["typeasmb"])))
-        lines.append("{0:<30} : {1:<10} INT".format("SOLVER CORE ", str(solstatus["solverstatus"]["ncpu"])))
+        lines.append("{0:<30} : {1:<10} ".format("TYPE ASSEMBLER ", str(solstatus["solverstatus"]["typeasmb"])))
+        lines.append("{0:<30} : {1:<10} ".format("SOLVER CORE ", str(solstatus["solverstatus"]["solvercore"])))
 
     with open(log_file, "w") as file_object:
         file_object.write("\n".join(lines) + "\n")

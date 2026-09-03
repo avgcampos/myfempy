@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from concurrent.futures import ThreadPoolExecutor
 from scipy.sparse import coo_matrix
 from numpy import zeros, float64, float32, int32
@@ -18,12 +19,6 @@ from myfempy.core.solver.assemblerfull_numpy import (getConstrains,
 __docformat__ = "google"
 
 __doc__ = """
-
-==========================================================================
-        myfempy -- MultiphYsics Finite Element Module to PYthon    
-                    COMPUTATIONAL ANALYSIS PROGRAM                   
-        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
-==========================================================================
 This Python file is part of myfempy project.
 
 myfempy is a python package based on finite element method to multiphysics
@@ -106,11 +101,10 @@ class AssemblerFULL(Assembler):
 
         # Divisão de blocos entre as threads (Python 3.14t Free-Threading)
         if max_workers is None:
-            max_workers = 4
+            max_workers = os.cpu_count() or 4
+            
         chunk_size = max(1, nelem // (max_workers * 4))
         chunks = [(i, min(i + chunk_size, nelem)) for i in range(0, nelem, chunk_size)]
-
-        print(f"[Paralelismo] {nelem} elementos divididos entre {max_workers} núcleos (~{nelem // max_workers} elem/núcleo em {len(chunks)} blocos de {chunk_size}).")
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = [executor.submit(_process_element_chunk, start, end) for start, end in chunks]

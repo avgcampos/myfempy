@@ -21,48 +21,11 @@ from myfempy.api.model import SetModel
 from myfempy.api.physics import SetPhysics
 from myfempy.api.results import setPostProcess
 from myfempy.utils.utils import (clear_console, get_logo, get_version,
-                                 loading_bar_v1, newDir, print_console, get_about)
+                                 loading_bar_v1, newDir, print_console)
 
 __docformat__ = "google"
-
-__doc__ = """
-API module for performing finite element analysis with the myfempy package.
-
-===============================================================
-
-                myfempy -- MultiphYsics Finite Element Module to PYthon    
-                            COMPUTATIONAL ANALYSIS PROGRAM                   
-                Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos
-
-===============================================================
-
-This Python file is part of myfempy project.
-
-myfempy is a python package based on finite element method to multiphysics
-analysis. The code is open source and intended for educational and scientific
-purposes only, not recommended to commercial use. The name myfempy is an acronym
-for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
-with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
-If you use myfempy in your research, the  developers would be grateful if you 
-could cite in your work.
-																		
-The code is written by Antonio Vinicius Garcia Campos.                                  
-																		
-A github repository, with the most up to date version of the code,      
-can be found here: https://github.com/avgcampos/myfempy.                 
-																		
-The code is open source and intended for educational and scientific     
-purposes only. If you use myfempy in your research, the developers      
-would be grateful if you could cite this. The myfempy project is published
-under the GPLv3, see the myfempy LICENSE on
-https://github.com/avgcampos/myfempy/blob/main/LICENSE.
-																		
-Disclaimer:                                                             
-The authors reserve all rights but do not guarantee that the code is    
-free from errors. Furthermore, the authors shall not be liable in any   
-event caused by the use of the program.
-
-"""                             
+with open(os.getcwd()+'/myfempy/utils/about.txt', 'r', encoding='utf-8') as file:
+    __doc__ = file.read()
 
 class newAnalysis:
     """
@@ -104,7 +67,7 @@ class newAnalysis:
             self.path = newDir("out")
             
         logging.basicConfig(
-            filename=str(self.path) + "/myfempy_api-log.log",
+            filename=str(self.path) + "/api-log.log",
             encoding="utf-8",
             level=logging.DEBUG,
             filemode="w",
@@ -274,10 +237,9 @@ class newAnalysis:
             >>> K_global, F_global = FEA.Assembly(Model=FEA.model)
         """
         is_free_threaded = sysconfig.get_config_var('Py_GIL_DISABLED') == 1
-        self.MP = 0
+        self.MP = False
         if sys.version_info >= (3, 14) and is_free_threaded:
-            print("AVISO: Versão do Python instalada é compatível com a opção de multiprocessamento do myfempy.getMatrixAssembler() (NOGIL)")
-            self.MP = os.cpu_count() or 4
+            self.MP = True
         try:
             matrix = newAnalysis.getGlobalMatrix(self, Model, self.model.inci, self.model.coord, self.model.tabmat, self.model.tabgeo, self.model.intgauss, self.MP)
             loadaply = self.physic.forces
@@ -312,19 +274,22 @@ class newAnalysis:
         print(self.solver.__doc__)
         
         solverset["solverstatus"] = {
-            "typeasmb": "FULL",
+            "solvercore": self.solver.__doc__,
+            "myfempyversion": get_version()
         }
         
         starttime = time()
         assembly, forcelist = self.Assembly(Model=self.model)
         solverset["solverstatus"]["timeasb"] = abs(time() - starttime)
         solverset["solverstatus"]["memorysize"] = (assembly["stiffness"].todense().nbytes) / 1e6
-        if self.MP == 0:
-            solverset["solverstatus"]["ncpu"] = "SERIAL_1_CORE"
-        else:
-            solverset["solverstatus"]["ncpu"] = (
-                "PARALLEL_" + str(self.MP) + "_CORES"
+        if self.MP:
+            solverset["solverstatus"]["typeasmb"] = (
+                "PARALLEL_" + str(os.cpu_count()) + "_CORES"
             )
+        else:
+            solverset["solverstatus"]["typeasmb"] = "SERIAL_1_CORE"
+        
+
         try:
             constrains = self.physic.constrains
             freedof, fixedof, constdof = newAnalysis.getConstrains(self, constrains)
@@ -603,7 +568,7 @@ class newAnalysis:
             inci, coord, tabmat, tabgeo, elementcoord, C, elemdof, getIntNum, intgauss, point_gauss, weight_gauss, element_number
         )
 
-    def getGlobalMatrix(self, Model: object, inci: npt.NDArray[np.float64] = None, coord: npt.NDArray[np.float64] = None, tabmat: list = None, tabgeo: list = None, intgauss: int = None, MP: int = None) -> npt.NDArray[np.float64]:
+    def getGlobalMatrix(self, Model: object, inci: npt.NDArray[np.float64] = None, coord: npt.NDArray[np.float64] = None, tabmat: list = None, tabgeo: list = None, intgauss: int = None, MP: bool = None, max_workers: int = None) -> npt.NDArray[np.float64]:
         """Invokes the solver assembler to construct the global unconstrained system matrices[cite: 1].
 
         Args:
@@ -620,7 +585,7 @@ class newAnalysis:
         Example:
             >>> K_global = FEA.getGlobalMatrix(FEA.model)
         """
-        return self.solver.getMatrixAssembler(Model, inci=inci, coord=coord, tabmat=tabmat, tabgeo=tabgeo, intgauss=intgauss, MP=MP)
+        return self.solver.getMatrixAssembler(Model, inci=inci, coord=coord, tabmat=tabmat, tabgeo=tabgeo, intgauss=intgauss, MP=MP, max_workers = max_workers)
 
     def getConstrains(self, constrains: list) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Maps boundary condition parameters to explicit indices classifications[cite: 1].
@@ -763,14 +728,6 @@ class newAnalysis:
         else:
             domain_nodelist = []
         return domain_nodelist
-    
-    def getAbout(self) -> None:
-        """Prints program credits, author profile, and package version on terminal[cite: 1].
-
-        Returns:
-            None
-        """
-        get_about()
 
     @staticmethod
     def __setMesh(modeldata: dict) -> object:

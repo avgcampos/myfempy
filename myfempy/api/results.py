@@ -11,12 +11,6 @@ from myfempy.io.iovtk import convert_to_vtk
 __docformat__ = "google"
 
 __doc__ = """
-
-==========================================================================
-        myfempy -- MultiphYsics Finite Element Module to PYthon    
-                    COMPUTATIONAL ANALYSIS PROGRAM                   
-        Copyright (C) 2022-2026 Antonio Vinicius Garcia Campos        
-==========================================================================
 This Python file is part of myfempy project.
 
 myfempy is a python package based on finite element method to multiphysics
@@ -278,7 +272,7 @@ class setPostProcess:
             str(self.path)
             + "/"
             + postprocset["PLOTSET"]["filename"]
-            + "_myfempy_solver-log.txt"
+            + "_solver-log.txt"
         )
         postprocset["REPORT"]['timesolver'] = self.timenow
         write2log(self.model, self.physic, postprocset["REPORT"], postporc_result, filename)

@@ -78,7 +78,7 @@ User --> API
 API --> Model
 API --> Physics
 API --> Solve
-API --> Results
+API --> PostProcess
 
 Model --> Element
 Model --> Shape
@@ -90,7 +90,7 @@ Physics --> Loads
 Physics --> BoundCond
 Physics --> Coupling
 
-Results --> PostProcess
+PostProcess --> Results
 
 Solve --> Assembler
 Solve --> Solver
