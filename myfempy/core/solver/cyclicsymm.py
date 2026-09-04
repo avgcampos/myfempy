@@ -48,11 +48,11 @@ class StaticLinearCyclicSymmPlane(Solver):
     Static Linear Cyclic Symmetry Plane Solver Class <ConcreteClassService>
     """
     def getMatrixAssembler(
-        Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP = None):
+        Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP = None, max_workers=None):
         matrix = dict()
         if MP:
             matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
-                        Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss,
+                        Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss, max_workers
                     )
         else:
             matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(

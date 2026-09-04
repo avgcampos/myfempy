@@ -45,14 +45,14 @@ class DynamicHarmonicResponseLinear(Solver):
     """
     Dynamic Harmonic Response Forced System Steady State Linear Solver Class <ConcreteClassService>
     """
-    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP = None):
+    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP = None, max_workers=None):
         matrix = dict()
         if MP:
             matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
-                Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss,
+                Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss, max_workers
             )
             matrix["mass"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
-                Model, Model.element.getMassConsistentMat, Model.shape.getIntNumM, inci, coord, tabmat, tabgeo, intgauss,
+                Model, Model.element.getMassConsistentMat, Model.shape.getIntNumM, inci, coord, tabmat, tabgeo, intgauss, max_workers
             )
         else:
             matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(
