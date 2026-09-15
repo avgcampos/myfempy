@@ -11,13 +11,6 @@ compatibility. See the user guide or _help_ for more information about commands.
 
 Usage: >>> python 0tutorial.py
 """
-
-# optional
-# import os
-# os.environ['OMP_NUM_THREADS'] = '1'
-# os.environ['MKL_NUM_THREADS'] = '1'
-# os.environ['OPENBLAS_NUM_THREADS'] = '1'
-
 # ===============================================================================
 # imports, set SteadyStateLinear as a Solver or SteadyStateLinearIterative, see help
 # ===============================================================================

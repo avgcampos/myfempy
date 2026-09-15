@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -37,6 +36,7 @@ class Material(ABC):
     """
     Material API Class <ClassService>
     """
+
     def __init__(self) -> None:
         pass
 

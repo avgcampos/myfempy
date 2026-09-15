@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-from numpy import sqrt, array, cross
+from numpy import array, cross, sqrt
 from numpy.linalg import norm
 
-from myfempy.core.shapes.shape import Shape
 from myfempy.core.shapes.hexa8_tasks import (DiffShapeFuntion, Jacobian,
-                                             LocKey, NodeCoord, NodeList,
-                                             ShapeFunctions, detJacobi,
-                                             invJacobi,
-                                             StifLinear, MassLinear,
-                                             compute_B, compute_VOL)
-
+                                             LocKey, MassLinear, NodeCoord,
+                                             NodeList, ShapeFunctions,
+                                             StifLinear, compute_B,
+                                             compute_VOL, detJacobi, invJacobi)
+from myfempy.core.shapes.shape import Shape
 from myfempy.core.utilities import poly_area, unit_normal
 
 __docformat__ = "google"
@@ -60,6 +58,7 @@ _SHAPE_SET = {
     "nodesconecface": 4,
 }
 
+
 class Hexa8(Shape):
     """Hexaedron 8-Node Shape Class <ConcreteClassService>"""
 
@@ -68,33 +67,33 @@ class Hexa8(Shape):
 
     def getIsoParaSide(side, r):
         isops = {
-            "0": [r[0], r[1], -1.0],  
-            "1": [-1.0, r[0], r[1]],  
-            "2": [r[0], 1.0, r[1]],   
-            "3": [r[0], -1.0, r[1]], 
-            "4": [1.0, r[0], r[1]],   
-            "5": [r[0], r[1], 1.0],   
+            "0": [r[0], r[1], -1.0],
+            "1": [-1.0, r[0], r[1]],
+            "2": [r[0], 1.0, r[1]],
+            "3": [r[0], -1.0, r[1]],
+            "4": [1.0, r[0], r[1]],
+            "5": [r[0], r[1], 1.0],
         }
         return isops[side]
-    
+
     def getAreaLength(side, elementcoord):
-        
+
         nodes_conec_dic = {
-            '0': [0, 1, 2, 3],
-            '1': [0, 4, 7, 3],
-            '2': [2, 3, 7, 6],
-            '3': [0, 1, 5, 4],
-            '4': [1, 2, 6, 5],
-            '5': [4, 5, 6, 7],
+            "0": [0, 1, 2, 3],
+            "1": [0, 4, 7, 3],
+            "2": [2, 3, 7, 6],
+            "3": [0, 1, 5, 4],
+            "4": [1, 2, 6, 5],
+            "5": [4, 5, 6, 7],
         }
-        
+
         nodes_conec = nodes_conec_dic[side]
-        
+
         no1 = nodes_conec[0]
         no2 = nodes_conec[1]
         no3 = nodes_conec[2]
         no4 = nodes_conec[3]
-        
+
         coord_x_no1 = elementcoord[no1, 0]
         coord_y_no1 = elementcoord[no1, 1]
         coord_z_no1 = elementcoord[no1, 2]
@@ -107,7 +106,7 @@ class Hexa8(Shape):
         coord_x_no4 = elementcoord[no4, 0]
         coord_y_no4 = elementcoord[no4, 1]
         coord_z_no4 = elementcoord[no4, 2]
-        
+
         poly = array(
             [
                 [coord_x_no1, coord_y_no1, coord_z_no1],
@@ -116,27 +115,27 @@ class Hexa8(Shape):
                 [coord_x_no4, coord_y_no4, coord_z_no4],
             ]
         )
-        area_surf = 0.25*poly_area(poly)
+        area_surf = 0.25 * poly_area(poly)
         return area_surf
 
     def getNormalFace(elementcoord, side):
 
         nodes_conec_dic = {
-            '0': [0, 1, 2, 3],
-            '1': [0, 4, 7, 3],
-            '2': [2, 3, 7, 6],
-            '3': [0, 1, 5, 4],
-            '4': [1, 2, 6, 5],
-            '5': [4, 5, 6, 7],
+            "0": [0, 1, 2, 3],
+            "1": [0, 4, 7, 3],
+            "2": [2, 3, 7, 6],
+            "3": [0, 1, 5, 4],
+            "4": [1, 2, 6, 5],
+            "5": [4, 5, 6, 7],
         }
 
         nodes_conec = nodes_conec_dic[side]
-        
+
         no1 = nodes_conec[0]
         no2 = nodes_conec[1]
         no3 = nodes_conec[2]
         no4 = nodes_conec[3]
-        
+
         coord_x_no1 = elementcoord[no1, 0]
         coord_y_no1 = elementcoord[no1, 1]
         coord_z_no1 = elementcoord[no1, 2]
@@ -149,14 +148,15 @@ class Hexa8(Shape):
         coord_x_no4 = elementcoord[no4, 0]
         coord_y_no4 = elementcoord[no4, 1]
         coord_z_no4 = elementcoord[no4, 2]
-        
+
         poly = array(
             [
                 [coord_x_no1, coord_y_no1, coord_z_no1],
                 [coord_x_no2, coord_y_no2, coord_z_no2],
                 [coord_x_no3, coord_y_no3, coord_z_no3],
                 [coord_x_no4, coord_y_no4, coord_z_no4],
-            ])
+            ]
+        )
 
         normal = unit_normal(poly[0], poly[1], poly[2])
         normal = array(normal)
@@ -164,12 +164,12 @@ class Hexa8(Shape):
 
     def getSideAxis(set_side):
         side = {
-            '0 1 2 3': '0',
-            '0 3 4 7': '1',
-            '2 3 6 7': '2',
-            '0 1 4 5': '3',
-            '1 2 5 6': '4',
-            '4 5 6 7': '5',
+            "0 1 2 3": "0",
+            "0 3 4 7": "1",
+            "2 3 6 7": "2",
+            "0 1 4 5": "3",
+            "1 2 5 6": "4",
+            "4 5 6 7": "5",
         }
         return side[set_side]
 
@@ -193,12 +193,20 @@ class Hexa8(Shape):
 
     def getVOL(point_gauss, weight_gauss, element_coord):
         return compute_VOL(point_gauss, weight_gauss, element_coord)
-    
-    def getIntNumK(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C):
-        return StifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C)
-    
-    def getIntNumM(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R):
-        return MassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R)
+
+    def getIntNumK(
+        point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C
+    ):
+        return StifLinear(
+            point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C
+        )
+
+    def getIntNumM(
+        point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R
+    ):
+        return MassLinear(
+            point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R
+        )
 
     def getNodeList(inci, element_number):
         return NodeList(inci, element_number)
@@ -208,4 +216,3 @@ class Hexa8(Shape):
 
     def getLocKey(node_list, nodedof):
         return LocKey(node_list, nodedof)
-

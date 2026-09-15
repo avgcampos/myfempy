@@ -3,8 +3,10 @@
 # distutils: extra_compile_args=-fopenmp
 # distutils: extra_link_args=-fopenmp
 
-from cython cimport boundscheck, wraparound, cdivision, nonecheck
+from cython cimport boundscheck, cdivision, nonecheck, wraparound
+
 import numpy as np
+
 cimport numpy as np
 
 np.import_array()

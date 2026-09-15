@@ -2,7 +2,6 @@ import numpy as np
 
 from myfempy.core.geometry.geometry import Geometry
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -69,7 +68,7 @@ class Rectangle(Geometry):
         z_max = b * 0.5
         z_min = -b * 0.5
         r_max = 0.2887 * b
-                                                                          
+
         cg = {
             "y_max": y_max,
             "y_min": y_min,

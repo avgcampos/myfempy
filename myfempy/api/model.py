@@ -33,6 +33,7 @@ event caused by the use of the program.
 
 """
 
+
 class SetModel:
     """Model Class <ClassOrder>"""
 
@@ -90,7 +91,7 @@ class SetModel:
 
     def getCoord(self, modeldata):
         return SetModel.setCoord(self, modeldata)
-    
+
     # -----------------------------------------------
     # privates methods
     def __elemlist(self, modeldata):
@@ -121,9 +122,9 @@ class SetModel:
         vistos = set()
         new_matlist_propmat = []
         for item in matlist["PROPMAT"]:
-            if item['NAME'] not in vistos:
+            if item["NAME"] not in vistos:
                 new_matlist_propmat.append(item)
-                vistos.add(item['NAME'])
+                vistos.add(item["NAME"])
 
         matlist["PROPMAT"] = new_matlist_propmat
         nmat = len(matlist["PROPMAT"])
@@ -148,7 +149,7 @@ class SetModel:
             "STIF": "STIF",
             "DAMP": "DAMP",
         }
-        tabmat = [{}] * nmat 
+        tabmat = [{}] * nmat
         for mm in range(nmat):
             mat_lib[matlist["PROPMAT"][mm]["NAME"]] = mm + 1
             for pp in range(len(key_mat_list)):
@@ -251,9 +252,15 @@ class SetModel:
                 geoset = self.geometry.GeometrySet()
                 idgeo = geoset["idgeo"]
 
-                y_max, y_min, z_max, z_min, r_max = "NULL", "NULL", "NULL", "NULL", "NULL"
+                y_max, y_min, z_max, z_min, r_max = (
+                    "NULL",
+                    "NULL",
+                    "NULL",
+                    "NULL",
+                    "NULL",
+                )
 
-                if 'CG' in geolist["PROPGEO"][gg].keys():
+                if "CG" in geolist["PROPGEO"][gg].keys():
                     y_max = geolist["PROPGEO"][gg]["CG"]["y_max"]
                     y_min = geolist["PROPGEO"][gg]["CG"]["y_min"]
                     z_max = geolist["PROPGEO"][gg]["CG"]["z_max"]

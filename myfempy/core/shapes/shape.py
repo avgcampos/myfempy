@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -37,6 +36,7 @@ class Shape(ABC):
     """
     Shape API Class <ClassService>
     """
+
     @abstractmethod
     def getShapeSet():
         pass

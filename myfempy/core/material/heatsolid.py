@@ -5,7 +5,6 @@ FLT64 = np.float64
 
 from myfempy.core.material.material import Material
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -61,35 +60,35 @@ class HeatSolid(Material):
     def getElementGradTemp(Model, U, ptg, element_number):
         elem_set = Model.element.getElementSet()
 
-        H = elem_set['H']
+        H = elem_set["H"]
 
-        nodedof = len(elem_set["dofs"]["d"])
+        nodedof = Model.modelinfo["nodedof"]
 
         nodelist = Model.shape.getNodeList(Model.inci, element_number)
 
         loc = Model.shape.getLocKey(nodelist, nodedof)
 
         elementcoord = Model.shape.getNodeCoord(Model.coord, nodelist)
-        
+
         diffN = Model.shape.getDiffShapeFuntion(np.array([ptg, ptg, ptg]), nodedof)
-        
-        invJ = Model.shape.getinvJacobi(np.array([ptg, ptg, ptg]), elementcoord, nodedof)
-        
+
+        invJ = Model.shape.getinvJacobi(
+            np.array([ptg, ptg, ptg]), elementcoord, nodedof
+        )
+
         B = Model.shape.getB(H, invJ, diffN)
 
         N = Model.shape.getShapeFunctions(np.array([ptg, ptg, ptg]), nodedof)
 
-        epsilon = np.dot(B, U[loc])  # B @ (U[loc])
+        epsilon = np.dot(B, U[loc])
 
         epsilon_T = np.dot(N, U[loc])
 
         strn_elm_xx = epsilon[0]
-        
-        strn_elm_yy = epsilon[1]
-        
-        strn_elm_zz = epsilon[2]
 
-        # strn_elm_vm = np.sqrt(epsilon[0]**2 + epsilon[1]**2)
+        strn_elm_yy = epsilon[1]
+
+        strn_elm_zz = epsilon[2]
 
         strain = [epsilon_T[0], strn_elm_xx, strn_elm_yy, strn_elm_zz]
 
@@ -101,14 +100,14 @@ class HeatSolid(Material):
 
     def getElementHeatFlux(Model, epsilon, element_number):
 
-        C = Model.material.getElasticTensor(Model.tabmat, Model.inci,  element_number)
+        C = Model.material.getElasticTensor(Model.tabmat, Model.inci, element_number)
 
         sigma = -1 * np.dot(C, epsilon)
 
         strs_elm_xx = sigma[0]
-        
+
         strs_elm_yy = sigma[1]
-        
+
         strs_elm_zz = sigma[2]
 
         strs_elm_vm = np.sqrt(sigma[0] ** 2 + sigma[1] ** 2 + sigma[2] ** 2)
@@ -120,4 +119,3 @@ class HeatSolid(Material):
     def getTitleHeatFlux():
         title = ["HEATFLUX_MAG", "HEATFLUX_XX", "HEATFLUX_YY", "HEATFLUX_ZZ"]
         return title
-    

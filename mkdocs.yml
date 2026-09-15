@@ -52,13 +52,19 @@ plugins:
                 options:
                     allow_inspection: true
                     docstring_style: google
-    # - with-pdf
-    # - pdf-export
-    # - mermaid2
+    # - to-pdf:
+    #     author: "Seu Nome ou Empresa"
+    #     enabled_if_env: ENABLE_PDF_EXPORT
+    - mermaid2:
+        # Optional: You can specify a mermaid theme variant here 
+        # Options: default, forest, dark, neutral
+        arguments:
+            theme: forest
 extra_javascript:
     - javascripts/mathjax.js
     - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
     - stylesheets/extra.css
+    - https://unpkg.com/mermaid/dist/mermaid.min.js
 markdown_extensions:
     - pymdownx.arithmatex:
         generic: true

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import os
-import gmsh
 import sys
+
+import gmsh
 import numpy as np
 
 __docformat__ = "google"
@@ -34,6 +35,7 @@ free from errors. Furthermore, the authors shall not be liable in any
 event caused by the use of the program.
 
 """
+
 
 def meshid2gmshid(elemid):
     # https://gmsh.info/dev/doc/texinfo/gmsh.pdf
@@ -101,7 +103,12 @@ def get_reorder_mesh(filename, meshdata):
 
     # 2. Coleta estruturada de entidades e grupos físicos
     physicals = [
-        (dim, p_tag, gmsh.model.getPhysicalName(dim, p_tag), gmsh.model.getEntitiesForPhysicalGroup(dim, p_tag))
+        (
+            dim,
+            p_tag,
+            gmsh.model.getPhysicalName(dim, p_tag),
+            gmsh.model.getEntitiesForPhysicalGroup(dim, p_tag),
+        )
         for dim, p_tag in gmsh.model.getPhysicalGroups()
     ]
 
@@ -126,7 +133,9 @@ def get_reorder_mesh(filename, meshdata):
         gmsh.model.addDiscreteEntity(dim, e_tag)
         for i in range(len(e_types)):
             new_conn = [old_to_new[int(n)] for n in e_conn[i]]
-            gmsh.model.mesh.addElements(dim, e_tag, [e_types[i]], [e_tags[i]], [new_conn])
+            gmsh.model.mesh.addElements(
+                dim, e_tag, [e_types[i]], [e_tags[i]], [new_conn]
+            )
 
     for dim, p_tag, name, ents in physicals:
         gmsh.model.addPhysicalGroup(dim, ents, p_tag)
@@ -140,24 +149,28 @@ def get_reorder_mesh(filename, meshdata):
 
 def set_gmsh_geo(filename, meshdata):
     lines = ["// GMSH GEOMETRY FILE FROM MYFEMPY", 'SetFactory("OpenCASCADE");']
-    
+
     has_points = "pointlist" in meshdata.keys()
     if has_points:
         numlinlist = len(meshdata.get("linelist", []))
         line_list = ",".join(str(i + 1) for i in range(numlinlist))
-        
+
         for i, pt in enumerate(meshdata["pointlist"]):
             lines.append(f"Point({i + 1}) = {{{pt[0]}, {pt[1]}, {pt[2]}}};")
 
         if "circle" in meshdata.keys():
             for inl, circ in enumerate(meshdata["circle"]):
                 d, (cx, cy, cz), (arc0, arc1) = circ[0], circ[1], circ[2]
-                lines.append(f"Circle({numlinlist + inl + 1}) = {{{cx}, {cy}, {cz}, {d}, {arc0}, {arc1}}};")
+                lines.append(
+                    f"Circle({numlinlist + inl + 1}) = {{{cx}, {cy}, {cz}, {d}, {arc0}, {arc1}}};"
+                )
 
         if "arc" in meshdata.keys():
             numincl = len(meshdata.get("circle", []))
             for iarc, arc in enumerate(meshdata["arc"]):
-                lines.append(f"Circle({numlinlist + numincl + iarc + 1}) = {{{arc[0]}, {arc[1]}, {arc[2]}}};")
+                lines.append(
+                    f"Circle({numlinlist + numincl + iarc + 1}) = {{{arc[0]}, {arc[1]}, {arc[2]}}};"
+                )
 
         for i, ln in enumerate(meshdata.get("linelist", [])):
             lines.append(f"Line({i + 1}) = {{{ln[0]}, {ln[1]}}};")
@@ -166,20 +179,26 @@ def set_gmsh_geo(filename, meshdata):
 
     if mesh_type in ["line2", "line3"]:
         if "numbernodes" in meshdata["meshconfig"]:
-            lines.append(f"Transfinite Curve {{{line_list}}} = {meshdata['meshconfig']['numbernodes']} Using Progression 1;")
+            lines.append(
+                f"Transfinite Curve {{{line_list}}} = {meshdata['meshconfig']['numbernodes']} Using Progression 1;"
+            )
         elif "sizeelement" in meshdata["meshconfig"]:
             for i, pt in enumerate(meshdata["pointlist"]):
-                lines[i + 2] = f"Point({i + 1}) = {{{pt[0]}, {pt[1]}, {pt[2]}, {meshdata['meshconfig']['sizeelement']}}};"
-        
-        lines.extend([
-            "// MESH CONFIGURATION",
-            "Mesh.CharacteristicLengthExtendFromBoundary = 1;",
-            "Mesh.CharacteristicLengthMin = 0;",
-            "Mesh.CharacteristicLengthFromPoints = 1;",
-            "Mesh.Optimize = 1;",
-            "Mesh.HighOrderOptimize = 0;",
-            "Mesh.Algorithm = 8;"
-        ])
+                lines[i + 2] = (
+                    f"Point({i + 1}) = {{{pt[0]}, {pt[1]}, {pt[2]}, {meshdata['meshconfig']['sizeelement']}}};"
+                )
+
+        lines.extend(
+            [
+                "// MESH CONFIGURATION",
+                "Mesh.CharacteristicLengthExtendFromBoundary = 1;",
+                "Mesh.CharacteristicLengthMin = 0;",
+                "Mesh.CharacteristicLengthFromPoints = 1;",
+                "Mesh.Optimize = 1;",
+                "Mesh.HighOrderOptimize = 0;",
+                "Mesh.Algorithm = 8;",
+            ]
+        )
         if mesh_type == "line2":
             lines.append("Mesh.ElementOrder = 1;")
         else:
@@ -206,100 +225,124 @@ def set_gmsh_geo(filename, meshdata):
             if lplrm:
                 lplrm.insert(0, lplrm[0] - 1)
                 addpl = 1
-                lines.append(f"Plane Surface({addpl}) = {{{str(list(set(lplrm)))[1:-1]}}};")
-            
+                lines.append(
+                    f"Plane Surface({addpl}) = {{{str(list(set(lplrm)))[1:-1]}}};"
+                )
+
             for iap in range(addpl, npladd):
                 lines.append(f"Plane Surface({iap + 1}) = {{{addpl + iap + 1}}};")
 
-            lines.append(f"Characteristic Length {{:}} = {meshdata['meshconfig']['sizeelement']};")
+            lines.append(
+                f"Characteristic Length {{:}} = {meshdata['meshconfig']['sizeelement']};"
+            )
 
-        if "meshmap" in meshdata["meshconfig"] and meshdata["meshconfig"]["meshmap"].get("on"):
-                    lines.append("//FACE MAPPING")
-                    mmap = meshdata["meshconfig"]["meshmap"]
-                    if "numbernodes" in mmap:
-                        if mmap["edge"] == "all":
-                            lines.append(f"Transfinite Curve {{:}} = {mmap['numbernodes']} Using Progression 1;")
-                        else:
-                            for ed, edge_val in enumerate(mmap["edge"]):
-                                # Mantém a formatação original removendo os colchetes das extremidades
-                                edge_str = str(edge_val)[1:-1]
-                                lines.append(f"Transfinite Curve {{{edge_str}}} = {mmap['numbernodes'][ed]} Using Progression 1;")
-                    elif mmap["edge"] == "all":
-                        lines.append("Transfinite Surface {:};")
-                    else:
-                        lines.append("Transfinite Surface {:};")
+        if "meshmap" in meshdata["meshconfig"] and meshdata["meshconfig"][
+            "meshmap"
+        ].get("on"):
+            lines.append("//FACE MAPPING")
+            mmap = meshdata["meshconfig"]["meshmap"]
+            if "numbernodes" in mmap:
+                if mmap["edge"] == "all":
+                    lines.append(
+                        f"Transfinite Curve {{:}} = {mmap['numbernodes']} Using Progression 1;"
+                    )
+                else:
+                    for ed, edge_val in enumerate(mmap["edge"]):
+                        # Mantém a formatação original removendo os colchetes das extremidades
+                        edge_str = str(edge_val)[1:-1]
+                        lines.append(
+                            f"Transfinite Curve {{{edge_str}}} = {mmap['numbernodes'][ed]} Using Progression 1;"
+                        )
+            elif mmap["edge"] == "all":
+                lines.append("Transfinite Surface {:};")
+            else:
+                lines.append("Transfinite Surface {:};")
 
         lines.append(f"// MESH {mesh_type} CONFIGURATION")
         sz = meshdata["meshconfig"]["sizeelement"]
 
         if mesh_type in ["tria3", "tria6"]:
-            lines.extend([
-                "Mesh.CharacteristicLengthExtendFromBoundary = 1;",
-                "Mesh.CharacteristicLengthMin = 0;",
-                f"Mesh.CharacteristicLengthMax = {sz};",
-                "Mesh.CharacteristicLengthFromPoints = 1;",
-                "Mesh.Optimize = 1;",
-                "Mesh.HighOrderOptimize = 0;",
-                "Mesh.Algorithm = 8;"
-            ])
+            lines.extend(
+                [
+                    "Mesh.CharacteristicLengthExtendFromBoundary = 1;",
+                    "Mesh.CharacteristicLengthMin = 0;",
+                    f"Mesh.CharacteristicLengthMax = {sz};",
+                    "Mesh.CharacteristicLengthFromPoints = 1;",
+                    "Mesh.Optimize = 1;",
+                    "Mesh.HighOrderOptimize = 0;",
+                    "Mesh.Algorithm = 8;",
+                ]
+            )
             if mesh_type == "tria3":
                 lines.append("Mesh.ElementOrder = 1;")
             else:
-                lines.extend(["Mesh.SecondOrderIncomplete = 1;", "Mesh.ElementOrder = 2;"])
+                lines.extend(
+                    ["Mesh.SecondOrderIncomplete = 1;", "Mesh.ElementOrder = 2;"]
+                )
 
         elif mesh_type in ["quad4", "quad8"]:
-            lines.extend([
-                "Recombine Surface {:};",
-                "Mesh.RecombinationAlgorithm = 1;",
-                "Mesh.RecombineAll = 1;",
-                "Mesh.SubdivisionAlgorithm = 1;",
-                "Mesh.CharacteristicLengthExtendFromBoundary = 1;",
-                "Mesh.CharacteristicLengthMin = 0;",
-                f"Mesh.CharacteristicLengthMax = {sz};",
-                "Mesh.CharacteristicLengthFromPoints = 1;",
-                "Mesh.Optimize = 1;",
-                "Mesh.HighOrderOptimize = 0;",
-                "Mesh.Algorithm = 8;"
-            ])
+            lines.extend(
+                [
+                    "Recombine Surface {:};",
+                    "Mesh.RecombinationAlgorithm = 1;",
+                    "Mesh.RecombineAll = 1;",
+                    "Mesh.SubdivisionAlgorithm = 1;",
+                    "Mesh.CharacteristicLengthExtendFromBoundary = 1;",
+                    "Mesh.CharacteristicLengthMin = 0;",
+                    f"Mesh.CharacteristicLengthMax = {sz};",
+                    "Mesh.CharacteristicLengthFromPoints = 1;",
+                    "Mesh.Optimize = 1;",
+                    "Mesh.HighOrderOptimize = 0;",
+                    "Mesh.Algorithm = 8;",
+                ]
+            )
             if mesh_type == "quad4":
                 lines.append("Mesh.ElementOrder = 1;")
             else:
-                lines.extend(["Mesh.SecondOrderIncomplete = 1;", "Mesh.ElementOrder = 2;"])
+                lines.extend(
+                    ["Mesh.SecondOrderIncomplete = 1;", "Mesh.ElementOrder = 2;"]
+                )
 
         elif mesh_type == "tetr4":
             if "extrude" in meshdata["meshconfig"]:
                 thck = meshdata["meshconfig"]["extrude"]
                 lines.append(f"Extrude {{0, 0, {float(thck)}}} {{Surface{{:}};}}")
-            lines.extend([
-                "Mesh.Algorithm = 2;",
-                "Mesh.Algorithm3D = 4;",
-                "Mesh.CharacteristicLengthExtendFromBoundary = 1;",
-                "Mesh.CharacteristicLengthMin = 0;",
-                f"Mesh.CharacteristicLengthMax = {sz};",
-                "Mesh.ElementOrder = 1;",
-                "Mesh.Optimize = 1;",
-                "Mesh.HighOrderOptimize = 0;"
-            ])
+            lines.extend(
+                [
+                    "Mesh.Algorithm = 2;",
+                    "Mesh.Algorithm3D = 4;",
+                    "Mesh.CharacteristicLengthExtendFromBoundary = 1;",
+                    "Mesh.CharacteristicLengthMin = 0;",
+                    f"Mesh.CharacteristicLengthMax = {sz};",
+                    "Mesh.ElementOrder = 1;",
+                    "Mesh.Optimize = 1;",
+                    "Mesh.HighOrderOptimize = 0;",
+                ]
+            )
 
         elif mesh_type == "hexa8":
             if "extrude" in meshdata["meshconfig"]:
                 thck = float(meshdata["meshconfig"]["extrude"])
                 layers = int(thck / float(sz))
-                lines.append(f"Extrude {{0, 0, {thck}}} {{Surface{{:}};Layers{{{layers}}};Recombine;}};")
-            lines.extend([
-                "Recombine Surface {:};",
-                "Mesh.Algorithm = 2;",
-                "Mesh.Algorithm3D = 4;",
-                "Mesh.CharacteristicLengthExtendFromBoundary = 1;",
-                "Mesh.CharacteristicLengthMin = 0;",
-                f"Mesh.CharacteristicLengthMax = {sz};",
-                "Mesh.ElementOrder = 1;",
-                "Mesh.Optimize = 1;",
-                "Mesh.HighOrderOptimize = 0;",
-                "Mesh.RecombinationAlgorithm = 0;",
-                "Mesh.SubdivisionAlgorithm = 2;",
-                "Mesh.RecombineAll = 1;"
-            ])
+                lines.append(
+                    f"Extrude {{0, 0, {thck}}} {{Surface{{:}};Layers{{{layers}}};Recombine;}};"
+                )
+            lines.extend(
+                [
+                    "Recombine Surface {:};",
+                    "Mesh.Algorithm = 2;",
+                    "Mesh.Algorithm3D = 4;",
+                    "Mesh.CharacteristicLengthExtendFromBoundary = 1;",
+                    "Mesh.CharacteristicLengthMin = 0;",
+                    f"Mesh.CharacteristicLengthMax = {sz};",
+                    "Mesh.ElementOrder = 1;",
+                    "Mesh.Optimize = 1;",
+                    "Mesh.HighOrderOptimize = 0;",
+                    "Mesh.RecombinationAlgorithm = 0;",
+                    "Mesh.SubdivisionAlgorithm = 2;",
+                    "Mesh.RecombineAll = 1;",
+                ]
+            )
 
     with open(filename + ".geo", "w") as file_object:
         file_object.write("\n".join(lines) + "\n")

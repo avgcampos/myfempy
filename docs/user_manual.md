@@ -28,14 +28,14 @@ This architecture emphasizes modularity, extensibility, and interoperability wit
 
 ```mermaid
 graph LR
-U[User] --> MyfempyAPI
-MyfempyAPI --> A[Gmsh]
-A[Gmsh] --> B[MyfempyCore]
-B --> C[Paraview]
+      U[User] --> MyfempyAPI
+      MyfempyAPI --> A[Gmsh]
+      A[Gmsh] --> B[MyfempyCore]
+      B --> C[Paraview]
 
-style A fill:#006400, stroke:#333, stroke-width:2px
-style B fill:#006400, stroke:#333, stroke-width:2px
-style C fill:#00008B, stroke:#333, stroke-width:2px
+      style A fill:#006400, stroke:#333, stroke-width:2px
+      style B fill:#006400, stroke:#333, stroke-width:2px
+      style C fill:#00008B, stroke:#333, stroke-width:2px
 ```
 
 To ensure organized execution, *myfempy* employs a hierarchical code structure that integrates user requests into a processing pipeline. Input data is validated through controllers in the I/O interface. If commands and data are consistent, they are passed to the solver core, where pre-processing, solution, and post-processing occur. The processed data is then returned through the I/O filters and exported as visualization-ready files (VTK).

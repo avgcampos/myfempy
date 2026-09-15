@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -37,10 +36,11 @@ class Element(ABC):
     """
     Element API Class <ClassService>
     """
+
     @abstractmethod
     def getElementSet():
         pass
-    
+
     @abstractmethod
     def getStifLinearMat():
         pass

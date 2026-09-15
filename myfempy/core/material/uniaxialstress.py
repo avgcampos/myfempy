@@ -42,6 +42,7 @@ class UniAxialStress(Material):
     """
     Uni-Axial Stress Isotropic Material Class <ConcreteClassService>
     """
+
     def getMaterialSet():
         matset = {
             "mat": "uniaxialstress",
@@ -61,10 +62,12 @@ class UniAxialStress(Material):
 
     def getElementStrain(Model, U, ptg, element_number):
         elem_set = Model.element.getElementSet()
-        H = elem_set['H']
-        nodedof = len(elem_set["dofs"]["d"])
-        shape_set = Model.shape.getShapeSet()
-        type_shape = shape_set["key"]
+
+        H = elem_set["H"]
+
+        nodedof = Model.modelinfo["nodedof"]
+
+        type_shape = Model.modelinfo["shape"]
 
         nodelist = Model.shape.getNodeList(Model.inci, element_number)
 
@@ -77,14 +80,14 @@ class UniAxialStress(Material):
             elementcoord_local = get3D_LocalVector(elementcoord, 3)
         else:  # line2
             R = getRotational_Matrix(np.array(elementcoord[0:6]), 4)
-            elementcoord_local = get3D_LocalVector(elementcoord, 2)           
+            elementcoord_local = get3D_LocalVector(elementcoord, 2)
 
         detJ = Model.shape.getdetJacobi(np.array([ptg]), elementcoord_local)
-        
+
         diffN = Model.shape.getDiffDiffShapeFuntion(np.array([ptg]), nodedof, detJ)
-        
+
         invJ = Model.shape.getinvJacobi(np.array([ptg]), elementcoord_local, nodedof)
-        
+
         B = Model.shape.getB(H, invJ, diffN)
 
         cg = Model.geometry.getCGCoord(Model.tabgeo, Model.inci, element_number)
@@ -94,11 +97,11 @@ class UniAxialStress(Material):
         strn_elm_normal_tension = epsilon[0]
 
         strn_elm_normal_bendingXY_max = -1.0 * cg["y_max"] * epsilon[1]
-        
+
         strn_elm_normal_bendingXY_min = -1.0 * cg["y_min"] * epsilon[1]
 
         strn_elm_normal_bendingXZ_max = -1.0 * cg["z_max"] * epsilon[2]
-        
+
         strn_elm_normal_bendingXZ_min = -1.0 * cg["z_min"] * epsilon[2]
 
         strn_elm_shear_torsion_max = cg["r_max"] * epsilon[3]
@@ -129,7 +132,7 @@ class UniAxialStress(Material):
 
     def getElementStress(Model, epsilon, element_number):
 
-        C = Model.material.getElasticTensor(Model.tabmat, Model.inci,  element_number)
+        C = Model.material.getElasticTensor(Model.tabmat, Model.inci, element_number)
 
         sigma = np.dot(C, epsilon)
 
@@ -138,11 +141,11 @@ class UniAxialStress(Material):
         strs_elm_normal_tension = sigma[0]
 
         strs_elm_normal_bendingXY_max = -1.0 * cg["y_max"] * sigma[1]
-        
+
         strs_elm_normal_bendingXY_min = -1.0 * cg["y_min"] * sigma[1]
 
         strs_elm_normal_bendingXZ_max = -1.0 * cg["z_max"] * sigma[2]
-        
+
         strs_elm_normal_bendingXZ_min = -1.0 * cg["z_min"] * sigma[2]
 
         strs_elm_shear_torsion_max = cg["r_max"] * sigma[3]

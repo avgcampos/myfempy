@@ -2,7 +2,6 @@ import numpy as np
 
 from myfempy.core.mesh.mesh import Mesh
 
-
 __docformat__ = "google"
 
 __doc__ = """

@@ -7,7 +7,6 @@ from myfempy.core.utilities import (gauss_points, results_average,
 from myfempy.io.iocsv import write2log, writer2csv
 from myfempy.io.iovtk import convert_to_vtk
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -53,15 +52,13 @@ class setPostProcess:
         postporc_result = dict()
 
         if "structural" in postprocset["COMPUTER"].keys():
-            result_solu = np.zeros(
-                (SOLUTION.shape[1], self.model.coord.shape[0], 3)
-            )
-           
+            result_solu = np.zeros((SOLUTION.shape[1], self.model.coord.shape[0], 3))
+
             for ns in range(SOLUTION.shape[1]):
                 result_solu[ns, :, :], sol_title = setPostProcess.__displ(
                     self, SOLUTION[:, ns]
                 )
-            
+
             if (
                 "displ" in postprocset["COMPUTER"]["structural"].keys()
                 and postprocset["COMPUTER"]["structural"]["displ"] == True
@@ -170,9 +167,7 @@ class setPostProcess:
                 pass
 
         if "thermal" in postprocset["COMPUTER"].keys():
-            result_solu = np.zeros(
-                (SOLUTION.shape[1], self.model.coord.shape[0], 1)
-            )
+            result_solu = np.zeros((SOLUTION.shape[1], self.model.coord.shape[0], 1))
             for st in range(SOLUTION.shape[1]):
                 result_solu[st, :, :], sol_title = setPostProcess.__displ(
                     self, SOLUTION[:, st]
@@ -225,11 +220,9 @@ class setPostProcess:
                 pass
         else:
             pass
-        
+
         # save in vtk file
-        setPostProcess.__tovtkplot(
-            self, postprocset, postporc_result
-        ) 
+        setPostProcess.__tovtkplot(self, postprocset, postporc_result)
 
         return postprocdata
 
@@ -274,8 +267,10 @@ class setPostProcess:
             + postprocset["PLOTSET"]["filename"]
             + "_solver-log.txt"
         )
-        postprocset["REPORT"]['timesolver'] = self.timenow
-        write2log(self.model, self.physic, postprocset["REPORT"], postporc_result, filename)
+        postprocset["REPORT"]["timesolver"] = self.timenow
+        write2log(
+            self.model, self.physic, postprocset["REPORT"], postporc_result, filename
+        )
 
     def __tovtkplot(self, postprocset, postporc_result):
         # path = os.getcwd()
@@ -284,11 +279,14 @@ class setPostProcess:
         plotdata["inci"] = self.model.inci
         plotdata["nodecon"] = self.model.modelinfo["nodecon"]
         plotdata["filename"] = (
-            str(self.path) + "/" + postprocset["PLOTSET"]["filename"] + "_myfempy_postprocess"
+            str(self.path)
+            + "/"
+            + postprocset["PLOTSET"]["filename"]
+            + "_myfempy_postprocess"
         )
         plotdata["coord"] = self.model.coord
         plotdata["material_CELL_DATA_val"] = (
-            (np.array([(self.model.inci[:, 2])])).T
+            (np.array([self.model.inci[:, 2]])).T
         ).astype(int)
         plotdata["material_CELL_DATA_title"] = ["TOPOLOGY"]
 
@@ -391,18 +389,20 @@ class setPostProcess:
 
     def __stress(self, U):
         stress_list = np.zeros(
-            (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1), dtype=float
+            (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1),
+            dtype=float,
         )
 
         strain_list = np.zeros(
-            (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1), dtype=float
+            (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1),
+            dtype=float,
         )
 
         compliance_list = np.zeros((self.model.modelinfo["nelem"], 1), dtype=float)
 
         factor_of_safety = np.zeros((self.model.modelinfo["nelem"], 1), dtype=float)
 
-        pt, wt = gauss_points(self.model.modelinfo["type_shape"], 1)
+        pt, wt = gauss_points(self.model.modelinfo["shape"], 1)
 
         for ee in range(self.model.modelinfo["nelem"]):
 
@@ -438,14 +438,16 @@ class setPostProcess:
 
     def __heatflux(self, U):
         stress_list = np.zeros(
-            (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1), dtype=float
+            (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1),
+            dtype=float,
         )
 
         strain_list = np.zeros(
-            (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1), dtype=float
+            (self.model.modelinfo["nelem"], self.model.modelinfo["tensor"] + 1),
+            dtype=float,
         )
 
-        pt, wt = gauss_points(self.model.modelinfo["type_shape"], 1)
+        pt, wt = gauss_points(self.model.modelinfo["shape"], 1)
 
         for ee in range(self.model.modelinfo["nelem"]):
 
@@ -472,15 +474,19 @@ class setPostProcess:
             node_coordX = float(postprocset["PLOT"]["point"]["x"])
             node_coordY = float(postprocset["PLOT"]["point"]["y"])
             node_coordZ = float(postprocset["PLOT"]["point"]["z"])
-            hist_node = search_nodexyz(node_coordX, node_coordY, node_coordZ, coord, 1e-3)
-            val_Y = postporc_result["SOLUTION"][plotset["step"]]["val"][hist_node[0] - 1, postprocset["PLOT"]["point"]["dof"]]
+            hist_node = search_nodexyz(
+                node_coordX, node_coordY, node_coordZ, coord, 1e-3
+            )
+            val_Y = postporc_result["SOLUTION"][plotset["step"]]["val"][
+                hist_node[0] - 1, postprocset["PLOT"]["point"]["dof"]
+            ]
             val_X = plotset["step"] + 1
             xlabel = "STEP"
             ylabel = "DISPL NODE: " + str(hist_node)
 
         elif "data" in postprocset["PLOT"].keys():
-            val_Y = postprocset["PLOT"]["data"]["y_data"]  
-            val_X = postprocset["PLOT"]["data"]["x_data"]  
+            val_Y = postprocset["PLOT"]["data"]["y_data"]
+            val_X = postprocset["PLOT"]["data"]["x_data"]
             xlabel = postprocset["PLOT"]["data"]["x_label"]
             ylabel = postprocset["PLOT"]["data"]["y_label"]
 
@@ -488,8 +494,14 @@ class setPostProcess:
             node_coordX = float(postprocset["PLOT"]["freq_linear"]["x"])
             node_coordY = float(postprocset["PLOT"]["freq_linear"]["y"])
             node_coordZ = float(postprocset["PLOT"]["freq_linear"]["z"])
-            hist_node = search_nodexyz(node_coordX, node_coordY, node_coordZ, coord, 1e-6)
-            val_Y = abs(postporc_result["SOLUTION"][plotset["step"]]["VAL"][hist_node[0] - 1, postprocset["PLOT"]["freq_linear"]["dof"] - 1])
+            hist_node = search_nodexyz(
+                node_coordX, node_coordY, node_coordZ, coord, 1e-6
+            )
+            val_Y = abs(
+                postporc_result["SOLUTION"][plotset["step"]]["VAL"][
+                    hist_node[0] - 1, postprocset["PLOT"]["freq_linear"]["dof"] - 1
+                ]
+            )
             val_X = postporc_result["SOLUTION"][plotset["step"]]["FREQ"]
             xlabel = "FREQUENCY RESPONSE [Hz]"
             ylabel = "FREQUENCY RESPONSE [dB]"
@@ -498,8 +510,19 @@ class setPostProcess:
             node_coordX = float(postprocset["PLOT"]["freq_logY"]["x"])
             node_coordY = float(postprocset["PLOT"]["freq_logY"]["y"])
             node_coordZ = float(postprocset["PLOT"]["freq_logY"]["z"])
-            hist_node = search_nodexyz(node_coordX, node_coordY, node_coordZ, coord, 1e-6)
-            val_Y = 20 * np.log((abs(postporc_result["SOLUTION"][plotset["step"]]["VAL"][hist_node[0] - 1, postprocset["PLOT"]["freq_logY"]["dof"] - 1])))
+            hist_node = search_nodexyz(
+                node_coordX, node_coordY, node_coordZ, coord, 1e-6
+            )
+            val_Y = 20 * np.log(
+                (
+                    abs(
+                        postporc_result["SOLUTION"][plotset["step"]]["VAL"][
+                            hist_node[0] - 1,
+                            postprocset["PLOT"]["freq_logY"]["dof"] - 1,
+                        ]
+                    )
+                )
+            )
             val_X = postporc_result["SOLUTION"][plotset["step"]]["FREQ"]
             xlabel = "FREQUENCY RESPONSE [Hz]"
             ylabel = "FREQUENCY RESPONSE [dB]"

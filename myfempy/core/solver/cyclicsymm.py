@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-from numpy import (arange, array, concatenate, dot, float64, isin, int16,
-                   setdiff1d, where, zeros, sqrt)
-
-from scipy.sparse import csc_matrix, lil_matrix, eye, hstack, vstack
+from numpy import (arange, array, concatenate, dot, float64, int16, isin,
+                   setdiff1d, sqrt, where, zeros)
+from scipy.sparse import csc_matrix, eye, hstack, lil_matrix, vstack
 from scipy.sparse.linalg import minres, spsolve
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
-
 
 __docformat__ = "google"
 
@@ -47,16 +45,40 @@ class StaticLinearCyclicSymmPlane(Solver):
     """
     Static Linear Cyclic Symmetry Plane Solver Class <ConcreteClassService>
     """
+
     def getMatrixAssembler(
-        Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP = None, max_workers=None):
+        Model,
+        inci=None,
+        coord=None,
+        tabmat=None,
+        tabgeo=None,
+        intgauss=None,
+        MP=None,
+        max_workers=None,
+    ):
         matrix = dict()
         if MP:
             matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
-                        Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss, max_workers
-                    )
+                Model,
+                Model.element.getStifLinearMat,
+                Model.shape.getIntNumK,
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                intgauss,
+                max_workers,
+            )
         else:
             matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(
-                Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss,
+                Model,
+                Model.element.getStifLinearMat,
+                Model.shape.getIntNumK,
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                intgauss,
             )
         return matrix
 
@@ -115,8 +137,12 @@ class StaticLinearCyclicSymmPlane(Solver):
         stiffness = assembly["stiffness"]
         forcelist = assembly["loads"]
 
-        RM_left = StaticLinearCyclicSymmPlane.getRotationMatrix2D(Physic.csleft, Model.coord, leftdof.shape[0])
-        RM_right = StaticLinearCyclicSymmPlane.getRotationMatrix2D(Physic.csright, Model.coord, rightdof.shape[0])
+        RM_left = StaticLinearCyclicSymmPlane.getRotationMatrix2D(
+            Physic.csleft, Model.coord, leftdof.shape[0]
+        )
+        RM_right = StaticLinearCyclicSymmPlane.getRotationMatrix2D(
+            Physic.csright, Model.coord, rightdof.shape[0]
+        )
 
         FG_cell = vstack(
             [forcelist[interdof, :], forcelist[leftdof, :], forcelist[rightdof, :]]
@@ -218,7 +244,7 @@ class StaticLinearCyclicSymmPlane(Solver):
                 U1[freedof_con_cs], info = minres(
                     A=KG_con_cs[:, freedof_con_cs][freedof_con_cs, :],
                     b=FG_con_cs[freedof_con_cs, step].toarray(),
-                    tol=1e-10,
+                    rtol=1e-10,
                     maxiter=1000,
                 )
             except:
@@ -243,7 +269,6 @@ class StaticLinearCyclicSymmPlane(Solver):
         solution["U"] = U
         return solution
 
-    
     # https://en.wikipedia.org/wiki/Rotation_matrix
     def getRotationMatrix2D(node_list, coord, ndof):
         # Initialize RM as a sparse matrix
@@ -301,4 +326,4 @@ class StaticLinearCyclicSymmPlane(Solver):
     #         RM[3 * n + 2, 3 * n + 2] = C_theta * C_phi
 
     #     # Converter para o formato CSR para operações aritméticas e de matriz-vetor mais eficientes
-    #     return RM.tocsr() 
+    #     return RM.tocsr()

@@ -2,7 +2,6 @@ import numpy as np
 
 from myfempy.core.geometry.geometry import Geometry
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -48,8 +47,12 @@ class RectangleTube(Geometry):
         t = dim_sec["t"]
 
         A = b * h - ((b - 2 * t) * (h - 2 * t))
-        Izz = 0.08333333333333 * (b * h**3) - 0.08333333333333 * ((b - 2 * t) * (h - 2 * t) ** 3)
-        Iyy = 0.08333333333333 * (h * b**3) - 0.08333333333333 * ((h - 2 * t) * (b - 2 * t) ** 3)
+        Izz = 0.08333333333333 * (b * h**3) - 0.08333333333333 * (
+            (b - 2 * t) * (h - 2 * t) ** 3
+        )
+        Iyy = 0.08333333333333 * (h * b**3) - 0.08333333333333 * (
+            (h - 2 * t) * (b - 2 * t) ** 3
+        )
         Jxx = Iyy + Izz
 
         sect_prop = {
@@ -71,7 +74,7 @@ class RectangleTube(Geometry):
         y_min = -h * 0.5
         z_max = b * 0.5
         z_min = -b * 0.5
-        r_max = np.sqrt(IZZ/AREA)
+        r_max = np.sqrt(IZZ / AREA)
 
         cg = {
             "y_max": y_max,

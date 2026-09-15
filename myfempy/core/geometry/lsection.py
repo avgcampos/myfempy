@@ -2,7 +2,6 @@ import numpy as np
 
 from myfempy.core.geometry.geometry import Geometry
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -48,9 +47,17 @@ class LSection(Geometry):
         t = dim_sec["t"]
         # d = dim_sec["d"]
 
-        A = (h + b - t)*t
-        Izz = t/3  *(b*t**2 + h**3 - t**3) - ((h + b - t)*t) * (t/(2*((h + b - t)*t)) * (h**2 + b*t -t**2))**2
-        Iyy = t/3 * (h*t**2 + b**3 - t**3) - ((h + b - t)*t) * (t/(2*((h + b - t)*t)) * (b**2 + h*t -t**2))**2
+        A = (h + b - t) * t
+        Izz = (
+            t / 3 * (b * t**2 + h**3 - t**3)
+            - ((h + b - t) * t)
+            * (t / (2 * ((h + b - t) * t)) * (h**2 + b * t - t**2)) ** 2
+        )
+        Iyy = (
+            t / 3 * (h * t**2 + b**3 - t**3)
+            - ((h + b - t) * t)
+            * (t / (2 * ((h + b - t) * t)) * (b**2 + h * t - t**2)) ** 2
+        )
         Jxx = Iyy + Izz
 
         sect_prop = {
@@ -70,12 +77,11 @@ class LSection(Geometry):
         AREA = tabgeo[int(inci[element_number, 3] - 1)]["AREACS"]
         IZZ = tabgeo[int(inci[element_number, 3] - 1)]["INERZZ"]
 
-
-        y_max = h - t/(2*AREA) * (h**2 + b*t -t**2)
-        y_min = -t/(2*AREA) * (h**2 + b*t -t**2)
-        z_max = b - t/(2*AREA) * (b**2 + h*t -t**2)
-        z_min = -t/(2*AREA) * (b**2 + h*t -t**2)
-        r_max = np.sqrt(IZZ/AREA)
+        y_max = h - t / (2 * AREA) * (h**2 + b * t - t**2)
+        y_min = -t / (2 * AREA) * (h**2 + b * t - t**2)
+        z_max = b - t / (2 * AREA) * (b**2 + h * t - t**2)
+        z_min = -t / (2 * AREA) * (b**2 + h * t - t**2)
+        r_max = np.sqrt(IZZ / AREA)
 
         cg = {
             "y_max": y_max,

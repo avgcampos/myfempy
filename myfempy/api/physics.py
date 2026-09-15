@@ -5,7 +5,6 @@ import numpy as np
 from myfempy.core.utilities import (get_elemen_from_nodelist,
                                     get_nodes_from_list)
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -87,9 +86,9 @@ class SetPhysics:
 
     def getLoadCoup(self, physicdata):
         forcenodeaply = np.zeros((1, 4))
-        for nforc in range(len(physicdata['COUPLING']["POST"])):
-            coupling = physicdata['COUPLING']["POST"][nforc]
-            coupling["TYPE"] = physicdata['COUPLING']["TYPE"]
+        for nforc in range(len(physicdata["COUPLING"]["POST"])):
+            coupling = physicdata["COUPLING"]["POST"][nforc]
+            coupling["TYPE"] = physicdata["COUPLING"]["TYPE"]
             coupling["STEP"] = int(nforc + 1)
             fapp = self.loads.getLoadApply(self.model, coupling)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
@@ -203,7 +202,7 @@ class SetPhysics:
                                 "LOCY": bap["LOC"]["y"],
                                 "LOCZ": bap["LOC"]["z"],
                                 "TAG": 0,
-                                "MESHNODE":[-1],
+                                "MESHNODE": [-1],
                                 "VAL": bap["VAL"][bs],
                                 "STEP": int(bs + 1),
                             }
@@ -219,7 +218,7 @@ class SetPhysics:
                                 "LOCY": 0.0,
                                 "LOCZ": 0.0,
                                 "TAG": bap["TAG"],
-                                "MESHNODE":[-1],
+                                "MESHNODE": [-1],
                                 "VAL": bap["VAL"][bs],
                                 "STEP": int(bs + 1),
                             }
@@ -251,7 +250,7 @@ class SetPhysics:
                                 "LOCY": bap["LOC"]["y"],
                                 "LOCZ": bap["LOC"]["z"],
                                 "TAG": 0,
-                                "MESHNODE":[-1],
+                                "MESHNODE": [-1],
                                 "VAL": 0.0,
                                 "STEP": bap["STEP"],
                             }
@@ -266,12 +265,12 @@ class SetPhysics:
                                 "LOCY": bap["LOC"]["y"],
                                 "LOCZ": bap["LOC"]["z"],
                                 "TAG": 0,
-                                "MESHNODE":[-1],
+                                "MESHNODE": [-1],
                                 "VAL": 0.0,
                                 "STEP": 0,
                             }
                         )
-                    
+
                 elif "TAG" in bap.keys():
                     if "STEP" in bap.keys():
                         blist.append(
@@ -283,7 +282,7 @@ class SetPhysics:
                                 "LOCY": 0.0,
                                 "LOCZ": 0.0,
                                 "TAG": bap["TAG"],
-                                "MESHNODE":[-1],
+                                "MESHNODE": [-1],
                                 "VAL": 0.0,
                                 "STEP": bap["STEP"],
                             }
@@ -298,7 +297,7 @@ class SetPhysics:
                                 "LOCY": 0.0,
                                 "LOCZ": 0.0,
                                 "TAG": bap["TAG"],
-                                "MESHNODE":[-1],
+                                "MESHNODE": [-1],
                                 "VAL": 0.0,
                                 "STEP": 0,
                             }
@@ -313,7 +312,7 @@ class SetPhysics:
                             "LOCY": 0.0,
                             "LOCZ": 0.0,
                             "TAG": 0,
-                            "MESHNODE":bap["MESHNODE"],
+                            "MESHNODE": bap["MESHNODE"],
                             "VAL": 0.0,
                             "STEP": 0,
                         }

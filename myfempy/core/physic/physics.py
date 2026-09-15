@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-
 __docformat__ = "google"
 
 __doc__ = """

@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-from numpy import sqrt, array, abs, zeros
+from numpy import abs, array, sqrt, zeros
 from numpy.linalg import norm
 
 from myfempy.core.shapes.quad4_tasks import (DiffShapeFuntion, Jacobian,
-                                             LocKey, NodeCoord, NodeList,
-                                             ShapeFunctions, detJacobi,
-                                             invJacobi,
-                                             StifLinear, MassLinear,
-                                             compute_B, compute_VOL)
+                                             LocKey, MassLinear, NodeCoord,
+                                             NodeList, ShapeFunctions,
+                                             StifLinear, compute_B,
+                                             compute_VOL, detJacobi, invJacobi)
 from myfempy.core.shapes.shape import Shape
-
 
 __docformat__ = "google"
 
@@ -44,12 +42,12 @@ event caused by the use of the program.
 """
 
 _SHAPE_SET = {
-"def": "4-nodes_conec 1-interpol_order",
-"key": "quad4",
-"id": 41,
-"nodes": ["i", "j", "k", "l"],
-"sidenorm": {"0": [0, -1], "1": [1, 0], "2": [0, 1], "3": [-1, 0]},
-"nodesconecedge": 2,
+    "def": "4-nodes_conec 1-interpol_order",
+    "key": "quad4",
+    "id": 41,
+    "nodes": ["i", "j", "k", "l"],
+    "sidenorm": {"0": [0, -1], "1": [1, 0], "2": [0, 1], "3": [-1, 0]},
+    "nodesconecedge": 2,
 }
 
 
@@ -71,7 +69,7 @@ class Quad4(Shape):
         }
 
         return isops[side]
-    
+
     def getEdgeLength(J, side):
         #   J = [dx/dr       dy/dr]
         #       [dx/ds       dy/ds]
@@ -92,20 +90,20 @@ class Quad4(Shape):
             "0 3": "3",
         }
         return side[set_side]
-    
+
     def getNormalEdge(elementcoord, side):
         nodes_conec_dic = {
-            '0': [0, 1],
-            '1': [1, 2],
-            '2': [2, 3],
-            '3': [3, 0],
+            "0": [0, 1],
+            "1": [1, 2],
+            "2": [2, 3],
+            "3": [3, 0],
         }
-        
+
         nodes_conec = nodes_conec_dic[side]
-        
+
         noi = nodes_conec[0]
         noj = nodes_conec[1]
-                
+
         normal = zeros((2))
         dx = elementcoord[noj, 0] - elementcoord[noi, 0]
         dy = elementcoord[noj, 1] - elementcoord[noi, 1]
@@ -113,7 +111,7 @@ class Quad4(Shape):
 
         normal[0] = -dy / L
         normal[1] = dx / L
-        
+
         return normal
 
     def getShapeFunctions(r_coord, nodedof):
@@ -130,18 +128,34 @@ class Quad4(Shape):
 
     def getdetJacobi(r_coord, element_coord):
         return detJacobi(r_coord, element_coord)
-    
+
     def getB(H, invJ, diffN):
         return compute_B(H, invJ, diffN)
 
     def getVOL(point_gauss, weight_gauss, element_coord, t):
         return compute_VOL(point_gauss, weight_gauss, element_coord, t)
-    
-    def getIntNumK(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t):
-        return StifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t)
-    
-    def getIntNumM(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R, t):
-        return MassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R, t)
+
+    def getIntNumK(
+        point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C, t
+    ):
+        return StifLinear(
+            point_gauss,
+            weight_gauss,
+            intgauss,
+            element_coord,
+            elemdof,
+            nodedof,
+            H,
+            C,
+            t,
+        )
+
+    def getIntNumM(
+        point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R, t
+    ):
+        return MassLinear(
+            point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R, t
+        )
 
     def getNodeList(inci, element_number):
         return NodeList(inci, element_number)
@@ -151,5 +165,3 @@ class Quad4(Shape):
 
     def getLocKey(node_list, nodedof):
         return LocKey(node_list, nodedof)
-
-

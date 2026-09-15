@@ -3,10 +3,9 @@ from __future__ import annotations
 from numpy import (abs, array, array2string, concatenate, dot, float64, in1d,
                    int32, ix_, sqrt, unique, where, zeros)
 
+from myfempy.core.elements.structSolid import StructuralSolid
 from myfempy.core.utilities import (gauss_points, get_elemen_from_nodelist,
                                     get_nodes_from_list)
-
-from myfempy.core.elements.structSolid import StructuralSolid
 
 INT32 = int32
 FLT64 = float64
@@ -46,16 +45,17 @@ event caused by the use of the program.
 """
 
 _ELEMENT_SET = {
-"def": "3D-space 1-node_dofs",
-"key": "solid",
-"id": 31,
-"dofs": {
-    "d": {"t": 1},
-    "f": {"heatflux": 1, "convectionfluid": 2, "heat2fluid": 15},
-},
-"tensor": ["qxx", "qyy", "qzz"],
-"H": array([[1, 0, 0], [0, 1, 0], [0, 0, 1]], dtype=INT32)
+    "def": "3D-space 1-node_dofs",
+    "key": "solid",
+    "id": 31,
+    "dofs": {
+        "d": {"t": 1},
+        "f": {"heatflux": 1, "convectionfluid": 2, "heat2fluid": 15},
+    },
+    "tensor": ["qxx", "qyy", "qzz"],
+    "H": array([[1, 0, 0], [0, 1, 0], [0, 0, 1]], dtype=INT32),
 }
+
 
 class HeatSolid(Element):
     """Solid Heat Element Class <ConcreteClassService>"""
@@ -64,21 +64,31 @@ class HeatSolid(Element):
         return _ELEMENT_SET
 
     # @profile
-    def getStifLinearMat(inci, coord, tabmat, tabgeo, elementcoord, C, elemdof, getIntNumK, intgauss, pt, wt, element_number):
+    def getStifLinearMat(
+        inci,
+        coord,
+        tabmat,
+        tabgeo,
+        elementcoord,
+        C,
+        elemdof,
+        getIntNumK,
+        intgauss,
+        pt,
+        wt,
+        element_number,
+    ):
         elem_set = HeatSolid.getElementSet()
-        H = elem_set['H']
+        H = elem_set["H"]
         nodedof = len(elem_set["dofs"]["d"])
         K_elem_mat = zeros((elemdof, elemdof), dtype=FLT64)
         K_elem_mat = getIntNumK(pt, wt, intgauss, elementcoord, elemdof, nodedof, H, C)
         return K_elem_mat
 
     def getUpdateMatrix(Model, matrix, addval):
-        elem_set = Model.element.getElementSet()
-        nodedof = len(elem_set["dofs"]["d"])
-        shape_set = Model.shape.getShapeSet()
-        nodecon = len(shape_set["nodes"])
-        type_shape = shape_set["key"]
-        edof = nodecon * nodedof
+        nodedof = Model.modelinfo["nodedof"]
+        type_shape = Model.modelinfo["shape"]
+        edof = Model.modelinfo["elemdof"]
         intgauss = Model.intgauss
         nodelistconv = unique(addval[:, 0])
         elmlist = get_elemen_from_nodelist(Model.inci, nodelistconv)
@@ -99,10 +109,19 @@ class HeatSolid(Element):
                 for ip in range(intgauss):
                     for jp in range(intgauss):
                         for kp in range(intgauss):
-                            points = Model.shape.getIsoParaSide(get_side, [pt[ip], pt[jp], pt[kp]])
+                            points = Model.shape.getIsoParaSide(
+                                get_side, [pt[ip], pt[jp], pt[kp]]
+                            )
                             N = Model.shape.getShapeFunctions(array(points), nodedof)
                             detJ_a = Model.shape.getAreaLength(get_side, elementcoord)
-                            Kh += dot(N.transpose(), N) * h  * abs(detJ_a) * wt[ip] * wt[jp] * wt[kp]
+                            Kh += (
+                                dot(N.transpose(), N)
+                                * h
+                                * abs(detJ_a)
+                                * wt[ip]
+                                * wt[jp]
+                                * wt[kp]
+                            )
                 matrix[ix_(loc, loc)] += Kh
         return matrix
 
@@ -117,5 +136,9 @@ class HeatSolid(Element):
     def setTitleDeformation():
         return "TEMPERATURE"
 
-    def getElementVolume(inci, tabgeo, getVOL, type_shape, element_coord, element_number):
-        return StructuralSolid.getElementVolume(inci, tabgeo, getVOL, type_shape, element_coord, element_number)
+    def getElementVolume(
+        inci, tabgeo, getVOL, type_shape, element_coord, element_number
+    ):
+        return StructuralSolid.getElementVolume(
+            inci, tabgeo, getVOL, type_shape, element_coord, element_number
+        )

@@ -2,7 +2,6 @@ import numpy as np
 
 from myfempy.core.geometry.geometry import Geometry
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -49,7 +48,20 @@ class TSection(Geometry):
         d = dim_sec["d"]
 
         A = d * b + t * (h - d)
-        Izz = 0.33333333333333 * b * ((h - d) + d)**3 - 0.33333333333333 * (b - t) * (h - d)**3 - (d * b + t * (h - d)) * ((h - d) + d - ((b*d**2 + t*(h-d)*(2*d+(h-d)))/(2*(d*b+t*(h-d)))))**2
+        Izz = (
+            0.33333333333333 * b * ((h - d) + d) ** 3
+            - 0.33333333333333 * (b - t) * (h - d) ** 3
+            - (d * b + t * (h - d))
+            * (
+                (h - d)
+                + d
+                - (
+                    (b * d**2 + t * (h - d) * (2 * d + (h - d)))
+                    / (2 * (d * b + t * (h - d)))
+                )
+            )
+            ** 2
+        )
         Iyy = 0.08333333333333 * (d * b**3) + 0.08333333333333 * ((h - d) * t**3)
         Jxx = Iyy + Izz
 
@@ -70,12 +82,16 @@ class TSection(Geometry):
         AREA = tabgeo[int(inci[element_number, 3] - 1)]["AREACS"]
         IZZ = tabgeo[int(inci[element_number, 3] - 1)]["INERZZ"]
 
-
-        y_max = (b*d**2 + t*(h-d)*(2*d+(h-d)))/(2*(d*b+t*(h-d)))
-        y_min = -(h - (b*d**2 + t*(h-d)*(2*d+(h-d)))/(2*(d*b+t*(h-d))))
+        y_max = (b * d**2 + t * (h - d) * (2 * d + (h - d))) / (
+            2 * (d * b + t * (h - d))
+        )
+        y_min = -(
+            h
+            - (b * d**2 + t * (h - d) * (2 * d + (h - d))) / (2 * (d * b + t * (h - d)))
+        )
         z_max = b * 0.5
         z_min = -b * 0.5
-        r_max = np.sqrt(IZZ/AREA)
+        r_max = np.sqrt(IZZ / AREA)
 
         cg = {
             "y_max": y_max,

@@ -1,6 +1,7 @@
 import importlib.metadata
 import os
 import sys
+
 from art import tprint
 
 get_about = """
@@ -36,6 +37,7 @@ free from errors. Furthermore, the authors shall not be liable in any
 event caused by the use of the program.
 
 """
+
 
 def get_version():
     try:
@@ -83,25 +85,15 @@ def loading_bar_v1(pct, name):
 
 def print_console(sc):
     if sc == "mesh":
-        print(
-            "\r[1 / 5]   G E N E R A T I N G   M O D E L"
-        )
+        print("\r[1 / 5]   G E N E R A T I N G   M O D E L")
     elif sc == "phy":
-        print(
-            "\r[2 / 5]   P H Y S I C S ' S   L O A D I N G"
-        )
+        print("\r[2 / 5]   P H Y S I C S ' S   L O A D I N G")
     elif sc == "solver":
-        print(
-            "\r[3 / 5]   S O L V I N G   E Q U A T I O N S"
-        )
-    elif sc == 'succ':
-        print(
-            "\r[4 / 5]   A N A L Y S I S   S U C C E S S F U L"
-        )
+        print("\r[3 / 5]   S O L V I N G   E Q U A T I O N S")
+    elif sc == "succ":
+        print("\r[4 / 5]   A N A L Y S I S   S U C C E S S F U L")
     elif sc == "post":
-        print(
-            "\r[5 / 5]   P O S T - P R O C E S S   C O M P U T I N G"
-        )
+        print("\r[5 / 5]   P O S T - P R O C E S S   C O M P U T I N G")
     elif sc == "thank":
         # print(
         #     "\r***************                   M Y F E M P Y                   ***************"

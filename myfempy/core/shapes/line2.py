@@ -4,10 +4,10 @@ from numpy import sqrt
 
 from myfempy.core.shapes.line2_tasks import (DiffDiffShapeFuntion,
                                              DiffShapeFuntion, Jacobian,
-                                             LocKey, NodeCoord, NodeList,
-                                             ShapeFunctions, detJacobi,
-                                             invJacobi, StifLinear, MassLinear,
-                                             compute_B)
+                                             LocKey, MassLinear, NodeCoord,
+                                             NodeList, ShapeFunctions,
+                                             StifLinear, compute_B, detJacobi,
+                                             invJacobi)
 from myfempy.core.shapes.shape import Shape
 
 # from myfempy.core.utilities import getRotational_3dVector
@@ -51,6 +51,7 @@ _SHAPE_SET = {
     "sidenorm": {"0": [0, 1]},
 }
 
+
 class Line2(Shape):
     """Line 2-Node Shape Class <ConcreteClassService>"""
 
@@ -66,7 +67,7 @@ class Line2(Shape):
         }
 
         return isops[side]
-    
+
     def getEdgeLength(J, side):
 
         if side == "0":
@@ -82,7 +83,7 @@ class Line2(Shape):
 
     def getShapeFunctions(r_coord, nodedof, detJ):
         return ShapeFunctions(r_coord, nodedof, detJ)
-    
+
     def getDiffShapeFuntion(r_coord, nodedof):
         return DiffShapeFuntion(r_coord, nodedof)
 
@@ -97,15 +98,23 @@ class Line2(Shape):
 
     def getdetJacobi(r_coord, element_coord):
         return detJacobi(r_coord, element_coord)
-    
+
     def getB(H, invJ, diffN):
         return compute_B(H, invJ, diffN)
-    
-    def getIntNumK(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C):
-        return StifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C)
-    
-    def getIntNumM(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R):
-        return MassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R)
+
+    def getIntNumK(
+        point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C
+    ):
+        return StifLinear(
+            point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C
+        )
+
+    def getIntNumM(
+        point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R
+    ):
+        return MassLinear(
+            point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R
+        )
 
     def getNodeList(inci, element_number):
         return NodeList(inci, element_number)

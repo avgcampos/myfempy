@@ -1,33 +1,35 @@
 from __future__ import absolute_import
+
 # API
 from .api.main import newAnalysis
-# SOLVERS
-from .core.solver.steadystatelinear import SteadyStateLinear
-from .core.solver.steadystatelineariterative import SteadyStateLinearIterative
+# API CLASS
+from .core.elements.element import Element
+from .core.geometry.geometry import Geometry
+from .core.material.heatplane import HeatPlane
+from .core.material.heatsolid import HeatSolid
+from .core.material.material import Material
+from .core.material.planestrain import PlaneStrain
+# API CLASS SET MATERIAL
+from .core.material.planestress import PlaneStress
+from .core.material.solidelastic import SolidElastic
+from .core.material.uniaxialstress import UniAxialStress
+from .core.mesh.mesh import Mesh
+from .core.physic.physics import Physics
+from .core.shapes.shape import Shape
+from .core.solver.cyclicsymm import StaticLinearCyclicSymmPlane
 from .core.solver.dyneigen import DynamicEigenLinear
 from .core.solver.dynharmonicresponse import DynamicHarmonicResponseLinear
-from .core.solver.cyclicsymm import StaticLinearCyclicSymmPlane
 from .core.solver.homogenplanefullcell import HomogenizationPlane
 from .core.solver.homogenplaneinfperiodic import HomogenizationPlaneBCPeriodic
 from .core.solver.phonocrystalinplane import PhononicCrystalPlaneBCPeriodic
-# API CLASS
-from .core.elements.element import Element
-from .core.shapes.shape import Shape
-from .core.mesh.mesh import Mesh
-from .core.material.material import Material
-from .core.geometry.geometry import Geometry
-from .core.physic.physics import Physics
-# API CLASS SET MATERIAL
-from .core.material.planestress import PlaneStress
-from .core.material.planestrain import PlaneStrain
-from .core.material.uniaxialstress import UniAxialStress
-from .core.material.solidelastic import SolidElastic
-from .core.material.heatplane import HeatPlane
-from .core.material.heatsolid import HeatSolid
+# SOLVERS
+from .core.solver.steadystatelinear import SteadyStateLinear
+from .core.solver.steadystatelineariterative import SteadyStateLinearIterative
 # VERSION
 from .utils.utils import get_version
+
 __version__ = get_version()
-__author__ = 'Antonio Vinicius Garcia Campos'
+__author__ = "Antonio Vinicius Garcia Campos"
 __license__ = "GPLv3"
 __email__ = "antviniciuscampos@gmail.com"
 
@@ -61,8 +63,7 @@ FEA.PostProcess(postprocset:dict)
 
 __all__ = [
     "__version__",
-    "get_about"
-    "newAnalysis",
+    "get_about" "newAnalysis",
     "SteadyStateLinear",
     "SteadyStateLinearIterative",
     "StaticLinearCyclicSymmPlane",
@@ -82,5 +83,5 @@ __all__ = [
     "UniAxialStress",
     "SolidElastic",
     "HeatPlane",
-    "HeatSolid"
+    "HeatSolid",
 ]

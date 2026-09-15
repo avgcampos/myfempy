@@ -5,6 +5,7 @@ Physics Vtk Plot.
 
 try:
     import vtk
+
     VTK_AVAILABLE = True
 except ImportError:
     vtk = None
@@ -49,10 +50,10 @@ if VTK_AVAILABLE:
         """Versão otimizada para plotagem de forças/momentos."""
         node_idx = int(frcApy_vet[0]) - 1
         coordX_force, coordY_force, coordZ_force = coord[node_idx, 1:4]
-        
+
         val_type = int(frcApy_vet[1])
         val_magnitude = frcApy_vet[2]
-        
+
         if val_magnitude == 0.0 or val_type == 0:
             empty_actor = vtk.vtkActor()
             return empty_actor, empty_actor
@@ -68,28 +69,32 @@ if VTK_AVAILABLE:
             c = [coordX_force, coordY_force, coordZ_force]
             c[val_type - 1] += height_cone / 2
             config = (1.0, tuple(d), tuple(d), tuple(c), tuple(c), (0, 1, 0))
-            
+
         elif 4 <= val_type <= 6:  # tx, ty, tz
             height_cone *= 1.2
             idx = val_type - 4
             d = [0, 0, 0]
             d[idx] = sign_mag
-            c1, c2 = [coordX_force, coordY_force, coordZ_force], [coordX_force, coordY_force, coordZ_force]
+            c1, c2 = [coordX_force, coordY_force, coordZ_force], [
+                coordX_force,
+                coordY_force,
+                coordZ_force,
+            ]
             c1[idx] += height_cone / 2
             c2[idx] += height_cone
             config = (1.2, tuple(d), tuple(d), tuple(c1), tuple(c2), (1, 0, 1))
-            
+
         elif val_type == 15:  # massadd
             height_cone *= 1.2
             c = (coordX_force, coordY_force, coordZ_force)
             config = (1.2, (-1, 0, 0), (1, 0, 0), c, c, (0.4, 0.1, 0.8))
-            
+
         elif val_type == 16:  # spring2gd
             height_cone *= 1.2
             c1 = (coordX_force, coordY_force - height_cone / 2, coordZ_force)
             c2 = (coordX_force, coordY_force - 1.5 * height_cone, coordZ_force)
             config = (1.2, (0, 1, 0), (0, -1, 0), c1, c2, (0, 0.9, 0.8))
-            
+
         elif val_type == 17:  # damper2gd
             height_cone *= 1.2
             c1 = (coordX_force, coordY_force - height_cone / 2, coordZ_force)
@@ -108,10 +113,10 @@ if VTK_AVAILABLE:
             cone.SetRadius(0.15 * h)
             cone.SetCenter(center)
             cone.SetDirection(direction)
-            
+
             mapper = vtk.vtkPolyDataMapper()
             mapper.SetInputConnection(cone.GetOutputPort())
-            
+
             actor = vtk.vtkActor()
             actor.SetMapper(mapper)
             actor.GetProperty().SetLineWidth(0.5)
@@ -124,21 +129,22 @@ if VTK_AVAILABLE:
 
         return fr_point_actor_cone1, fr_point_actor_cone2
 
-
-    def view_bondcond_point(coord: np.ndarray, bondCond_vet: np.ndarray, scala_view: float):
+    def view_bondcond_point(
+        coord: np.ndarray, bondCond_vet: np.ndarray, scala_view: float
+    ):
         """Versão otimizada para condições de contorno."""
         node_idx = int(bondCond_vet[0]) - 1
         coordX_bc, coordY_bc, coordZ_bc = coord[node_idx, 1:4]
         height_cone = 0.9 * scala_view
         color_rgb = (1, 1, 0)
-        
+
         max_coords = np.max(coord[:, 1:4], axis=0)
         bc_type = int(bondCond_vet[1])
-        
+
         bc_text = vtk.vtkVectorText()
         cube = vtk.vtkCubeSource()
         cube.SetLineWidth = 0.5  # Mantido compatibilidade
-        
+
         if bc_type == 0:
             at_max = coordX_bc == max_coords[0]
             dir_cone = (-1, 0, 0) if at_max else (1, 0, 0)
@@ -149,35 +155,47 @@ if VTK_AVAILABLE:
             cube.SetXLength(1.2 * height_cone)
             cube.SetYLength(1.2 * height_cone)
             cube.SetZLength(1.2 * height_cone)
-            
+
         elif bc_type in (1, 5):  # UX ou RY
             at_max = coordX_bc == max_coords[0] if bc_type == 1 else True
             dir_cone = (-1, 0, 0) if at_max else (1, 0, 0)
             offset = 1 if at_max else -1
             center_cone = (coordX_bc + offset * height_cone / 2, coordY_bc, coordZ_bc)
-            center_cube = (coordX_bc + offset * 1.75 * height_cone, coordY_bc, coordZ_bc)
+            center_cube = (
+                coordX_bc + offset * 1.75 * height_cone,
+                coordY_bc,
+                coordZ_bc,
+            )
             bc_text.SetText("UX" if bc_type == 1 else "RY")
             cube.SetXLength(0.5 * height_cone)
             cube.SetYLength(2.5 * height_cone)
             cube.SetZLength(0.5 * height_cone)
-            
+
         elif bc_type in (2, 6):  # UY ou RZ
             at_max = coordY_bc == max_coords[1] if bc_type == 2 else False
             dir_cone = (0, -1, 0) if at_max else (0, 1, 0)
             offset = 1 if at_max else -1
             center_cone = (coordX_bc, coordY_bc + offset * height_cone / 2, coordZ_bc)
-            center_cube = (coordX_bc, coordY_bc + offset * 1.75 * height_cone, coordZ_bc)
+            center_cube = (
+                coordX_bc,
+                coordY_bc + offset * 1.75 * height_cone,
+                coordZ_bc,
+            )
             bc_text.SetText("UY" if bc_type == 2 else "RZ")
             cube.SetXLength(2.5 * height_cone)
             cube.SetYLength(0.5 * height_cone)
             cube.SetZLength(0.5 * height_cone)
-            
+
         elif bc_type in (3, 4):  # UZ ou RX
             at_max = coordZ_bc == max_coords[2] if bc_type == 3 else False
             dir_cone = (0, 0, -1) if at_max else (0, 0, 1)
             offset = 1 if at_max else -1
             center_cone = (coordX_bc, coordY_bc, coordZ_bc + offset * height_cone / 2)
-            center_cube = (coordX_bc, coordY_bc, coordZ_bc + offset * 1.75 * height_cone)
+            center_cube = (
+                coordX_bc,
+                coordY_bc,
+                coordZ_bc + offset * 1.75 * height_cone,
+            )
             bc_text.SetText("UZ" if bc_type == 3 else "RX")
             cube.SetXLength(0.5 * height_cone)
             cube.SetYLength(2.5 * height_cone)
@@ -185,7 +203,7 @@ if VTK_AVAILABLE:
 
         bc_text.Update()
         cube.SetCenter(center_cube)
-        
+
         bcmap = vtk.vtkPolyDataMapper()
         bcmap.SetInputConnection(cube.GetOutputPort())
         bc_point_actor_tdof = vtk.vtkActor()
@@ -200,7 +218,7 @@ if VTK_AVAILABLE:
         cone.SetRadius(0.5 * height_cone)
         cone.SetCenter(center_cone)
         cone.SetDirection(dir_cone)
-        
+
         bccmap = vtk.vtkPolyDataMapper()
         bccmap.SetInputConnection(cone.GetOutputPort())
         bc_point_actor_cone = vtk.vtkActor()
@@ -211,25 +229,25 @@ if VTK_AVAILABLE:
 
         return bc_point_actor_cone, bc_point_actor_tdof
 
-
-    def view_text_point(coord: np.ndarray, coordMax: float, scala_view: float, text: list):
+    def view_text_point(
+        coord: np.ndarray, coordMax: float, scala_view: float, text: list
+    ):
         """Versão limpa para tags de texto de regiões."""
         scala = 0.5 * scala_view
         bc_text = vtk.vtkVectorText()
         bc_text.SetText(f"{text[0]}_{text[1]}")
         bc_text.Update()
-        
+
         bc_text_map = vtk.vtkPolyDataMapper()
         bc_text_map.SetInputConnection(bc_text.GetOutputPort())
-        
+
         bc_text_actor = vtk.vtkActor()
         bc_text_actor.SetMapper(bc_text_map)
         bc_text_actor.SetScale(scala, scala, scala)
         bc_text_actor.SetPosition(tuple(coord))
         bc_text_actor.GetProperty().SetColor(1.0, 0.0, 0.0)
-        
-        return bc_text_actor
 
+        return bc_text_actor
 
     def view_beam_crossSection(dimSection, typSection, coord_bcs, scala_view):
         """_summary_
@@ -242,10 +260,10 @@ if VTK_AVAILABLE:
         Returns:
             _description_
         """
-        b = dimSection[0] #* scala
-        h = dimSection[1] #* scala
-        t = dimSection[2] #* scala
-        d = dimSection[3] #* scala
+        b = dimSection[0]  # * scala
+        h = dimSection[1]  # * scala
+        t = dimSection[2]  # * scala
+        d = dimSection[3]  # * scala
         Lx = np.sqrt(((coord_bcs[3] - coord_bcs[0]) ** 2))
         Ly = np.sqrt(((coord_bcs[4] - coord_bcs[1]) ** 2))
         Lz = np.sqrt(((coord_bcs[5] - coord_bcs[2]) ** 2))
@@ -499,104 +517,106 @@ if VTK_AVAILABLE:
             transform_filter.SetInputData(profile)
             transform_filter.Update()
         elif typSection == 40:  # T Section
-                yc = (b*d**2 + t*(h-d)*(2*d+(h-d)))/(2*(d*b+t*(h-d)))
-                points = vtk.vtkPoints()
-                points.SetNumberOfPoints(8)
-                points.SetPoint(0, t/2, -h + yc, 0)
-                points.SetPoint(1, t/2, yc - d, 0)
-                points.SetPoint(2, b/2, yc - d, 0)
-                points.SetPoint(3, b/2, yc, 0)
-                points.SetPoint(4, -b/2, yc, 0)
-                points.SetPoint(5, -b/2, yc - d, 0)
-                points.SetPoint(6, -t/2, yc - d, 0)
-                points.SetPoint(7, -t/2, -h + yc, 0)
-                lines = vtk.vtkCellArray()
-                lines.InsertNextCell(8)
-                lines.InsertCellPoint(0)
-                lines.InsertCellPoint(1)
-                lines.InsertCellPoint(2)
-                lines.InsertCellPoint(3)
-                lines.InsertCellPoint(4)
-                lines.InsertCellPoint(5)
-                lines.InsertCellPoint(6)
-                lines.InsertCellPoint(7)
-                lines.InsertCellPoint(0)
-                profile = vtk.vtkPolyData()
-                profile.SetPoints(points)
-                profile.SetPolys(lines)
-                transform = vtk.vtkTransform()
-                transform.Translate(translate)
-                transform.RotateWXYZ(ang1, rotate1)
-                transform.RotateWXYZ(ang2, rotate2)
-                transform_filter = vtk.vtkTransformPolyDataFilter()
-                transform_filter.SetTransform(transform)
-                transform_filter.SetInputData(profile)
-                transform_filter.Update()
+            yc = (b * d**2 + t * (h - d) * (2 * d + (h - d))) / (
+                2 * (d * b + t * (h - d))
+            )
+            points = vtk.vtkPoints()
+            points.SetNumberOfPoints(8)
+            points.SetPoint(0, t / 2, -h + yc, 0)
+            points.SetPoint(1, t / 2, yc - d, 0)
+            points.SetPoint(2, b / 2, yc - d, 0)
+            points.SetPoint(3, b / 2, yc, 0)
+            points.SetPoint(4, -b / 2, yc, 0)
+            points.SetPoint(5, -b / 2, yc - d, 0)
+            points.SetPoint(6, -t / 2, yc - d, 0)
+            points.SetPoint(7, -t / 2, -h + yc, 0)
+            lines = vtk.vtkCellArray()
+            lines.InsertNextCell(8)
+            lines.InsertCellPoint(0)
+            lines.InsertCellPoint(1)
+            lines.InsertCellPoint(2)
+            lines.InsertCellPoint(3)
+            lines.InsertCellPoint(4)
+            lines.InsertCellPoint(5)
+            lines.InsertCellPoint(6)
+            lines.InsertCellPoint(7)
+            lines.InsertCellPoint(0)
+            profile = vtk.vtkPolyData()
+            profile.SetPoints(points)
+            profile.SetPolys(lines)
+            transform = vtk.vtkTransform()
+            transform.Translate(translate)
+            transform.RotateWXYZ(ang1, rotate1)
+            transform.RotateWXYZ(ang2, rotate2)
+            transform_filter = vtk.vtkTransformPolyDataFilter()
+            transform_filter.SetTransform(transform)
+            transform_filter.SetInputData(profile)
+            transform_filter.Update()
         elif typSection == 50:  # C Section
-                xc = (1/(t*h + 2*d*(b-t))) * (((h - 2*d)*t**3)/2 + d*b**2)
-                points = vtk.vtkPoints()
-                points.SetNumberOfPoints(8)
-                points.SetPoint(0, b - xc, - h/2, 0)
-                points.SetPoint(1, b - xc, -h/2 + d, 0)
-                points.SetPoint(2, -xc + t, -h/2 + d, 0)
-                points.SetPoint(3, -xc + t, h/2 - d, 0)
-                points.SetPoint(4, b - xc, h/2 - d, 0)
-                points.SetPoint(5, b - xc, h/2, 0)
-                points.SetPoint(6, -xc, h/2, 0)
-                points.SetPoint(7, -xc, -h/2, 0)
-                lines = vtk.vtkCellArray()
-                lines.InsertNextCell(8)
-                lines.InsertCellPoint(0)
-                lines.InsertCellPoint(1)
-                lines.InsertCellPoint(2)
-                lines.InsertCellPoint(3)
-                lines.InsertCellPoint(4)
-                lines.InsertCellPoint(5)
-                lines.InsertCellPoint(6)
-                lines.InsertCellPoint(7)
-                lines.InsertCellPoint(0)
-                profile = vtk.vtkPolyData()
-                profile.SetPoints(points)
-                profile.SetPolys(lines)
-                transform = vtk.vtkTransform()
-                transform.Translate(translate)
-                transform.RotateWXYZ(ang1, rotate1)
-                transform.RotateWXYZ(ang2, rotate2)
-                transform_filter = vtk.vtkTransformPolyDataFilter()
-                transform_filter.SetTransform(transform)
-                transform_filter.SetInputData(profile)
-                transform_filter.Update()
+            xc = (1 / (t * h + 2 * d * (b - t))) * (((h - 2 * d) * t**3) / 2 + d * b**2)
+            points = vtk.vtkPoints()
+            points.SetNumberOfPoints(8)
+            points.SetPoint(0, b - xc, -h / 2, 0)
+            points.SetPoint(1, b - xc, -h / 2 + d, 0)
+            points.SetPoint(2, -xc + t, -h / 2 + d, 0)
+            points.SetPoint(3, -xc + t, h / 2 - d, 0)
+            points.SetPoint(4, b - xc, h / 2 - d, 0)
+            points.SetPoint(5, b - xc, h / 2, 0)
+            points.SetPoint(6, -xc, h / 2, 0)
+            points.SetPoint(7, -xc, -h / 2, 0)
+            lines = vtk.vtkCellArray()
+            lines.InsertNextCell(8)
+            lines.InsertCellPoint(0)
+            lines.InsertCellPoint(1)
+            lines.InsertCellPoint(2)
+            lines.InsertCellPoint(3)
+            lines.InsertCellPoint(4)
+            lines.InsertCellPoint(5)
+            lines.InsertCellPoint(6)
+            lines.InsertCellPoint(7)
+            lines.InsertCellPoint(0)
+            profile = vtk.vtkPolyData()
+            profile.SetPoints(points)
+            profile.SetPolys(lines)
+            transform = vtk.vtkTransform()
+            transform.Translate(translate)
+            transform.RotateWXYZ(ang1, rotate1)
+            transform.RotateWXYZ(ang2, rotate2)
+            transform_filter = vtk.vtkTransformPolyDataFilter()
+            transform_filter.SetTransform(transform)
+            transform_filter.SetInputData(profile)
+            transform_filter.Update()
         elif typSection == 60:  # L Section
-                xc = t/(2*((h + b - t)*t)) * (b**2 + h*t -t**2)
-                yc = t/(2*((h + b - t)*t)) * (h**2 + b*t -t**2)
-                points = vtk.vtkPoints()
-                points.SetNumberOfPoints(6)
-                points.SetPoint(0, b - xc, - yc, 0)
-                points.SetPoint(1, b - xc, -yc + t, 0)
-                points.SetPoint(2, -xc + t, -yc + t, 0)
-                points.SetPoint(3, -xc + t, h - yc, 0)
-                points.SetPoint(4, -xc, h - yc, 0)
-                points.SetPoint(5, -xc, -yc, 0)
-                lines = vtk.vtkCellArray()
-                lines.InsertNextCell(6)
-                lines.InsertCellPoint(0)
-                lines.InsertCellPoint(1)
-                lines.InsertCellPoint(2)
-                lines.InsertCellPoint(3)
-                lines.InsertCellPoint(4)
-                lines.InsertCellPoint(5)
-                lines.InsertCellPoint(0)
-                profile = vtk.vtkPolyData()
-                profile.SetPoints(points)
-                profile.SetPolys(lines)
-                transform = vtk.vtkTransform()
-                transform.Translate(translate)
-                transform.RotateWXYZ(ang1, rotate1)
-                transform.RotateWXYZ(ang2, rotate2)
-                transform_filter = vtk.vtkTransformPolyDataFilter()
-                transform_filter.SetTransform(transform)
-                transform_filter.SetInputData(profile)
-                transform_filter.Update()
+            xc = t / (2 * ((h + b - t) * t)) * (b**2 + h * t - t**2)
+            yc = t / (2 * ((h + b - t) * t)) * (h**2 + b * t - t**2)
+            points = vtk.vtkPoints()
+            points.SetNumberOfPoints(6)
+            points.SetPoint(0, b - xc, -yc, 0)
+            points.SetPoint(1, b - xc, -yc + t, 0)
+            points.SetPoint(2, -xc + t, -yc + t, 0)
+            points.SetPoint(3, -xc + t, h - yc, 0)
+            points.SetPoint(4, -xc, h - yc, 0)
+            points.SetPoint(5, -xc, -yc, 0)
+            lines = vtk.vtkCellArray()
+            lines.InsertNextCell(6)
+            lines.InsertCellPoint(0)
+            lines.InsertCellPoint(1)
+            lines.InsertCellPoint(2)
+            lines.InsertCellPoint(3)
+            lines.InsertCellPoint(4)
+            lines.InsertCellPoint(5)
+            lines.InsertCellPoint(0)
+            profile = vtk.vtkPolyData()
+            profile.SetPoints(points)
+            profile.SetPolys(lines)
+            transform = vtk.vtkTransform()
+            transform.Translate(translate)
+            transform.RotateWXYZ(ang1, rotate1)
+            transform.RotateWXYZ(ang2, rotate2)
+            transform_filter = vtk.vtkTransformPolyDataFilter()
+            transform_filter.SetTransform(transform)
+            transform_filter.SetInputData(profile)
+            transform_filter.Update()
         elif typSection == 2:  # Spring
             p0 = [0.0, 0.0, 0.0]
             p1 = [0.25 * L, 0.0, 0.0]
@@ -642,7 +662,7 @@ if VTK_AVAILABLE:
             transform_filter.SetTransform(transform)
             transform_filter.SetInputConnection(profile.GetOutputPort())
             transform_filter.Update()
-        
+
         beam_extrude = vtk.vtkPolyDataMapper()
         beam_extrude.SetInputConnection(transform_filter.GetOutputPort())
         beam_extrude_actor = vtk.vtkActor()

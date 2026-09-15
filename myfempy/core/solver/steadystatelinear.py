@@ -1,13 +1,12 @@
 from __future__ import annotations
 
+import scipy.sparse as sp
 from numpy import dot, float64, zeros
 from scipy.sparse.linalg import spsolve
-import scipy.sparse as sp
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
-
 
 __docformat__ = "google"
 
@@ -45,14 +44,43 @@ class SteadyStateLinear(Solver):
     """
     Steady State Linear Solver Class <ConcreteClassService>
     """
-    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP=None, max_workers=None):
-       
+
+    def getMatrixAssembler(
+        Model,
+        inci=None,
+        coord=None,
+        tabmat=None,
+        tabgeo=None,
+        intgauss=None,
+        MP=None,
+        max_workers=None,
+    ):
+
         matrix = dict()
         if MP:
-            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss, max_workers)
+            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
+                Model,
+                Model.element.getStifLinearMat,
+                Model.shape.getIntNumK,
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                intgauss,
+                max_workers,
+            )
         else:
-            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss)
-                
+            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(
+                Model,
+                Model.element.getStifLinearMat,
+                Model.shape.getIntNumK,
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                intgauss,
+            )
+
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
@@ -73,14 +101,14 @@ class SteadyStateLinear(Solver):
         stiffness = assembly["stiffness"]
         forcelist = assembly["loads"]
 
-        U0 = zeros((fulldofs), dtype=float64)          
-        U1 = zeros((fulldofs), dtype=float64)           
+        U0 = zeros((fulldofs), dtype=float64)
+        U1 = zeros((fulldofs), dtype=float64)
         U = zeros((fulldofs, nsteps), dtype=float64)
         Uc = assembly["bcdirnh"]
 
         freedof = constrainsdof["freedof"]
         constdof = constrainsdof["constdof"]
-        
+
         for step in range(nsteps):
             forcelist[freedof, step] = forcelist[freedof, step] - dot(
                 stiffness[:, constdof][freedof, :].toarray(), Uc[constdof, step]

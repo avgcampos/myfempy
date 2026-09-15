@@ -9,7 +9,7 @@ The **myfempy** project is under development, updates and code modifications may
 
 Copyright © Antonio Vinicius G. Campos 2022-2026. Processo INPI BR512022001484-0
 
-[![Python](https://img.shields.io/badge/built%20with-Python3.8-green.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/built%20with-Python3.14-green.svg)](https://www.python.org/)
 [![Documentation Status](https://readthedocs.org/projects/myfempy/badge/?version=latest)](https://myfempy.readthedocs.io/en/latest/?badge=latest)
 [![PyPI]()]() [![conda]()]()
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15756128.svg)](https://doi.org/10.5281/zenodo.15756128)
@@ -17,7 +17,6 @@ Copyright © Antonio Vinicius G. Campos 2022-2026. Processo INPI BR512022001484-
 [![Downloads]]()
 [![lics](https://img.shields.io/badge/license-GPL-blue.svg)](https://en.wikipedia.org/wiki/GNU_General_Public_License)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat&logo=appveyor)]([https://github.com/psf/black](https://github.com/psf/black))
-
 
 -----------
 
@@ -56,18 +55,6 @@ installation of myfempy and dependencies packs. You can use the
 >> python -m virtualenv -p 3.14t venv
 ```
 
-### Python 3.14 & Free-Threaded Support
-
-Starting with version 0.10.0, myfempy introduces full support for Python 3.14, including the new "free-threaded" build (Python 3.14t). All underlying libraries and modules have been optimized to ensure seamless compatibility.
-
-Important Notes for Python 3.14t Users:
-
-- Automatic Parallelization: When running in a free-threaded environment, the code assembler will automatically run in parallel by default. The Cython modules are compiled specifically for this, requiring no manual configuration.
-
-- Preview Module limitation: The model preview module is currently disabled under Python 3.14t due to upstream compatibility issues with vtk.
-
-As with any major update, occasional bugs may occur. We strongly recommend always running the latest version of myfempy within an isolated virtual environment.
-
 ## Dependencies
 
 **Myfempy** can be used in systems based on Linux and Windows, MacOS (has not been tested), and requires Python 3 and Cython to running. For Windows users, check the installed compiler; see https://visualstudio.microsoft.com/vs/features/cplusplus/
@@ -76,7 +63,7 @@ Installation prerequisites, required to build **myfempy**
 
 You can use either of two python development environments to run myfempy
 
--   [Python 3.11.x](https://www.python.org/) - *Python is a programming
+-   [Python 3.14.x](https://www.python.org/) - *Python is a programming
     language that lets you work quickly and integrate systems more
     effectively.*
 -   [Anaconda](https://www.anaconda.com/) - *Anaconda offers the easiest
@@ -130,6 +117,18 @@ try
 ``` bash
 >> pip install gmsh
 ```
+
+### Python 3.14 & Free-Threaded Support
+
+Starting with version 0.10.0, myfempy introduces full support for Python 3.14, including the new "free-threaded" build (Python 3.14t). All underlying libraries and modules have been optimized to ensure seamless compatibility.
+
+Important Notes for Python 3.14t Users:
+
+- Automatic Parallelization: When running in a free-threaded environment, the code assembler will automatically run in parallel by default. The Cython modules are compiled specifically for this, requiring no manual configuration.
+
+- Preview Module limitation: The model preview module is currently disabled under Python 3.14t due to upstream compatibility issues with vtk.
+
+As with any major update, occasional bugs may occur. We strongly recommend always running the latest version of myfempy within an isolated virtual environment.
 
 ## Tutorial
 

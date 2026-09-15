@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-
-from numpy import (array, arange, concatenate, empty, float64, newaxis, pi, sqrt,
-                   unique, zeros)
+from numpy import (arange, array, concatenate, empty, float64, newaxis, pi,
+                   sqrt, unique, zeros)
 from scipy.sparse.linalg import eigsh
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
-
 
 __docformat__ = "google"
 
@@ -46,23 +44,61 @@ class DynamicEigenLinear(Solver):
     """
     Dynamic Eigen (modal problem) Linear Solver Class <ConcreteClassService>
     """
-    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP = None, max_workers=None):
+
+    def getMatrixAssembler(
+        Model,
+        inci=None,
+        coord=None,
+        tabmat=None,
+        tabgeo=None,
+        intgauss=None,
+        MP=None,
+        max_workers=None,
+    ):
         matrix = dict()
         if MP:
             matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
-                        Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss, max_workers
-
-                    )
+                Model,
+                Model.element.getStifLinearMat,
+                Model.shape.getIntNumK,
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                intgauss,
+                max_workers,
+            )
             matrix["mass"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
-                Model, Model.element.getMassConsistentMat, Model.shape.getIntNumM, inci, coord, tabmat, tabgeo, intgauss, max_workers
+                Model,
+                Model.element.getMassConsistentMat,
+                Model.shape.getIntNumM,
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                intgauss,
+                max_workers,
             )
         else:
             matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(
-                Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss,
-
+                Model,
+                Model.element.getStifLinearMat,
+                Model.shape.getIntNumK,
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                intgauss,
             )
             matrix["mass"] = AssemblerFULL.getGlobalMatrixAssembler(
-                Model, Model.element.getMassConsistentMat, Model.shape.getIntNumM, inci, coord, tabmat, tabgeo, intgauss,
+                Model,
+                Model.element.getMassConsistentMat,
+                Model.shape.getIntNumM,
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                intgauss,
             )
         return matrix
 

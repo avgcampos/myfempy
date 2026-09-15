@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-
-from numpy import dot, float64, zeros, array, ix_, where, arange, isin
+from numpy import arange, array, dot, float64, isin, ix_, where, zeros
 from scipy.sparse.linalg import spsolve
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import gauss_points
-
 
 __docformat__ = "google"
 
@@ -45,13 +43,42 @@ class HomogenizationPlane(Solver):
     """
     Homogenization Plane Boundary Condition Symmetric Solver Class <ConcreteClassService>
     """
+
     # @profile
-    def getMatrixAssembler(Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP = None, max_workers=None):
+    def getMatrixAssembler(
+        Model,
+        inci=None,
+        coord=None,
+        tabmat=None,
+        tabgeo=None,
+        intgauss=None,
+        MP=None,
+        max_workers=None,
+    ):
         matrix = dict()
         if MP:
-            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss, max_workers)
+            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
+                Model,
+                Model.element.getStifLinearMat,
+                Model.shape.getIntNumK,
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                intgauss,
+                max_workers,
+            )
         else:
-            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss)
+            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(
+                Model,
+                Model.element.getStifLinearMat,
+                Model.shape.getIntNumK,
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                intgauss,
+            )
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
@@ -62,9 +89,15 @@ class HomogenizationPlane(Solver):
         nodes_constrain_YY = constrains[where(constrains[:, 3] == 2)]
         nodes_constrain_XY = constrains[where(constrains[:, 3] == 3)]
 
-        __, dofs_constrain_XX, __ = AssemblerFULL.getConstrains(nodes_constrain_XX, nodetot, nodedof)
-        __, dofs_constrain_YY, __ = AssemblerFULL.getConstrains(nodes_constrain_YY, nodetot, nodedof)
-        __, dofs_constrain_XY, __ = AssemblerFULL.getConstrains(nodes_constrain_XY, nodetot, nodedof)
+        __, dofs_constrain_XX, __ = AssemblerFULL.getConstrains(
+            nodes_constrain_XX, nodetot, nodedof
+        )
+        __, dofs_constrain_YY, __ = AssemblerFULL.getConstrains(
+            nodes_constrain_YY, nodetot, nodedof
+        )
+        __, dofs_constrain_XY, __ = AssemblerFULL.getConstrains(
+            nodes_constrain_XY, nodetot, nodedof
+        )
 
         freedof = []
         fixedof = [dofs_constrain_XX, dofs_constrain_YY, dofs_constrain_XY]
@@ -78,9 +111,9 @@ class HomogenizationPlane(Solver):
     def runSolve(Model, Physic, assembly, constrainsdof, solverset):
         solution = dict()
         elem_set = Model.element.getElementSet()
-        H = elem_set['H']
-        nodedof = len(elem_set["dofs"]["d"])
-        ntensor = len(elem_set['tensor'])
+        H = elem_set["H"]
+        nodedof = Model.modelinfo["nodedof"]
+        ntensor = Model.modelinfo["tensor"]
         shape_set = Model.shape.getShapeSet()
         type_shape = shape_set["key"]
         ndofs = Model.modelinfo["fulldofs"]
@@ -94,20 +127,33 @@ class HomogenizationPlane(Solver):
         fixeddof_case_epsYY = constrainsdof["fixedof"][1]
         fixeddof_case_epsXY = constrainsdof["fixedof"][2]
 
-        freedof_pc_case_epsXX = where(isin(fulldofs, fixeddof_case_epsXX, assume_unique=True) == False)[0]
-        freedof_pc_case_epsYY = where(isin(fulldofs, fixeddof_case_epsYY, assume_unique=True) == False)[0]
-        freedof_pc_case_epsXY = where(isin(fulldofs, fixeddof_case_epsXY, assume_unique=True) == False)[0]
+        freedof_pc_case_epsXX = where(
+            isin(fulldofs, fixeddof_case_epsXX, assume_unique=True) == False
+        )[0]
+        freedof_pc_case_epsYY = where(
+            isin(fulldofs, fixeddof_case_epsYY, assume_unique=True) == False
+        )[0]
+        freedof_pc_case_epsXY = where(
+            isin(fulldofs, fixeddof_case_epsXY, assume_unique=True) == False
+        )[0]
 
-        freedof_pc = [freedof_pc_case_epsXX, freedof_pc_case_epsYY, freedof_pc_case_epsXY]
+        freedof_pc = [
+            freedof_pc_case_epsXX,
+            freedof_pc_case_epsYY,
+            freedof_pc_case_epsXY,
+        ]
 
-        U = zeros((ndofs, ntensor), dtype=float64)    # empty((fulldofs, nsteps))
+        U = zeros((ndofs, ntensor), dtype=float64)  # empty((fulldofs, nsteps))
         for step in range(ntensor):
             try:
-                X = spsolve(stiffness[:, freedof_pc[step]][freedof_pc[step], :], forcelist[freedof_pc[step], step])
+                X = spsolve(
+                    stiffness[:, freedof_pc[step]][freedof_pc[step], :],
+                    forcelist[freedof_pc[step], step],
+                )
             except:
                 pass
             U[freedof_pc[step], step] = X
-        
+
         inci = Model.inci
         coord = Model.coord
         tabmat = Model.tabmat
@@ -128,25 +174,33 @@ class HomogenizationPlane(Solver):
             rhoHelm = 0.0
             for ip in range(intgauss):
                 for jp in range(intgauss):
-                    detJ = Model.shape.getdetJacobi(array([pt[ip], pt[jp]]), elementcoord)
-                    diffN = Model.shape.getDiffShapeFuntion(array([pt[ip], pt[jp]]), nodedof)
-                    invJ = Model.shape.getinvJacobi(array([pt[ip], pt[jp]]), elementcoord, nodedof)
+                    detJ = Model.shape.getdetJacobi(
+                        array([pt[ip], pt[jp]]), elementcoord
+                    )
+                    diffN = Model.shape.getDiffShapeFuntion(
+                        array([pt[ip], pt[jp]]), nodedof
+                    )
+                    invJ = Model.shape.getinvJacobi(
+                        array([pt[ip], pt[jp]]), elementcoord, nodedof
+                    )
                     B = Model.shape.getB(H, invJ, diffN)
-                    CHelm +=  (Ci - dot(Ci, dot(B, ui))) * t * abs(detJ) * wt[ip] * wt[jp]
-                    if solverset['RHOH']:
+                    CHelm += (
+                        (Ci - dot(Ci, dot(B, ui))) * t * abs(detJ) * wt[ip] * wt[jp]
+                    )
+                    if solverset["RHOH"]:
                         R = tabmat[int(inci[elm, 2]) - 1]["RHO"]
                         rhoHelm += (R) * t * abs(detJ) * wt[ip] * wt[jp]
 
             CH += CHelm
             rhoH += rhoHelm
 
-        Yx = max(coord[:,1])
-        Yy = max(coord[:,2])
+        Yx = max(coord[:, 1])
+        Yy = max(coord[:, 2])
 
-        CH = CH/(Yx * Yy * t)
-        rhoH = rhoH/(Yx * Yy * t)
+        CH = CH / (Yx * Yy * t)
+        rhoH = rhoH / (Yx * Yy * t)
 
         solution["U"] = U
         solution["CH"] = CH
-        solution['RHOH'] = rhoH            
+        solution["RHOH"] = rhoH
         return solution

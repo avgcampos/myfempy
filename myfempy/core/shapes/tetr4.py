@@ -1,18 +1,15 @@
 from __future__ import annotations
 
-from numpy import sqrt, array, cross
+from numpy import array, cross, sqrt
 from numpy.linalg import norm
 
 from myfempy.core.shapes.shape import Shape
 from myfempy.core.shapes.tetr4_tasks import (DiffShapeFuntion, Jacobian,
-                                             LocKey, NodeCoord, NodeList,
-                                             ShapeFunctions, detJacobi,
-                                             invJacobi,
-                                             StifLinear, MassLinear,
-                                             compute_B, compute_VOL)
-
+                                             LocKey, MassLinear, NodeCoord,
+                                             NodeList, ShapeFunctions,
+                                             StifLinear, compute_B,
+                                             compute_VOL, detJacobi, invJacobi)
 from myfempy.core.utilities import poly_area, unit_normal
-
 
 __docformat__ = "google"
 
@@ -59,36 +56,37 @@ _SHAPE_SET = {
     "nodesconecface": 3,
 }
 
+
 class Tetra4(Shape):
     """Tetrahedron 4-Node Shape Class <ConcreteClassService>"""
 
     def getShapeSet():
         return _SHAPE_SET
-    
+
     def getIsoParaSide(side, r):
         isops = {
-            "0": [r[0], r[1], 0.0],  
-            "1": [r[0], 0.0, r[1]],  
-            "2": [0.0, r[0], r[1]],  
-            "3": [r[0], 1 - r[0] - r[1], r[1]], 
+            "0": [r[0], r[1], 0.0],
+            "1": [r[0], 0.0, r[1]],
+            "2": [0.0, r[0], r[1]],
+            "3": [r[0], 1 - r[0] - r[1], r[1]],
         }
         return isops[side]
-    
+
     def getAreaLength(side, elementcoord):
-        
+
         nodes_conec_dic = {
-            '0': [0, 1, 2],
-            '1': [0, 3, 1],
-            '2': [0, 2, 3],
-            '3': [3, 2, 1],
+            "0": [0, 1, 2],
+            "1": [0, 3, 1],
+            "2": [0, 2, 3],
+            "3": [3, 2, 1],
         }
-        
+
         nodes_conec = nodes_conec_dic[side]
-                        
+
         no1 = nodes_conec[0]
         no2 = nodes_conec[1]
         no3 = nodes_conec[2]
-        
+
         coord_x_no1 = elementcoord[no1, 0]
         coord_y_no1 = elementcoord[no1, 1]
         coord_z_no1 = elementcoord[no1, 2]
@@ -98,7 +96,7 @@ class Tetra4(Shape):
         coord_x_no3 = elementcoord[no3, 0]
         coord_y_no3 = elementcoord[no3, 1]
         coord_z_no3 = elementcoord[no3, 2]
-        
+
         poly = array(
             [
                 [coord_x_no1, coord_y_no1, coord_z_no1],
@@ -111,28 +109,28 @@ class Tetra4(Shape):
 
     def getSideAxis(set_side):
         side = {
-            '0 1 2': '0',
-            '0 1 3': '1',
-            '0 2 3': '2',
-            '1 2 3': '3',
+            "0 1 2": "0",
+            "0 1 3": "1",
+            "0 2 3": "2",
+            "1 2 3": "3",
         }
         return side[set_side]
 
     def getNormalFace(elementcoord, side):
-        
+
         nodes_conec_dic = {
-            '0': [0, 1, 2],
-            '1': [0, 3, 1],
-            '2': [0, 2, 3],
-            '3': [3, 2, 1],
+            "0": [0, 1, 2],
+            "1": [0, 3, 1],
+            "2": [0, 2, 3],
+            "3": [3, 2, 1],
         }
 
         nodes_conec = nodes_conec_dic[side]
-                        
+
         no1 = nodes_conec[0]
         no2 = nodes_conec[1]
         no3 = nodes_conec[2]
-        
+
         coord_x_no1 = elementcoord[no1, 0]
         coord_y_no1 = elementcoord[no1, 1]
         coord_z_no1 = elementcoord[no1, 2]
@@ -142,7 +140,7 @@ class Tetra4(Shape):
         coord_x_no3 = elementcoord[no3, 0]
         coord_y_no3 = elementcoord[no3, 1]
         coord_z_no3 = elementcoord[no3, 2]
-        
+
         poly = array(
             [
                 [coord_x_no1, coord_y_no1, coord_z_no1],
@@ -169,18 +167,26 @@ class Tetra4(Shape):
 
     def getdetJacobi(r_coord, element_coord):
         return detJacobi(r_coord, element_coord)
-    
+
     def getB(H, invJ, diffN):
         return compute_B(H, invJ, diffN)
 
     def getVOL(point_gauss, weight_gauss, element_coord):
         return compute_VOL(point_gauss, weight_gauss, element_coord)
-    
-    def getIntNumK(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C):
-        return StifLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C)
-    
-    def getIntNumM(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R):
-        return MassLinear(point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R)
+
+    def getIntNumK(
+        point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C
+    ):
+        return StifLinear(
+            point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, H, C
+        )
+
+    def getIntNumM(
+        point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R
+    ):
+        return MassLinear(
+            point_gauss, weight_gauss, intgauss, element_coord, elemdof, nodedof, R
+        )
 
     def getNodeList(inci, element_number):
         return NodeList(inci, element_number)

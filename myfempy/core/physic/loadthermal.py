@@ -7,7 +7,6 @@ from myfempy.core.physic.physics import Physics
 from myfempy.core.utilities import (gauss_points, get_elemen_from_nodelist,
                                     get_nodes_from_list, poly_area)
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -51,7 +50,7 @@ class LoadThermal(Physics):
         if forcelist["TYPE"] == "heatfluxedge":
             fapp = LoadThermal.HeatFluxEdge(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
-        elif forcelist['TYPE'] == "heatfluxsurf":
+        elif forcelist["TYPE"] == "heatfluxsurf":
             fapp = LoadThermal.HeatFluxSurf(Model, forcelist)
             forcenodeaply = np.append(forcenodeaply, fapp, axis=0)
         elif forcelist["TYPE"] == "heatgeneration":
@@ -73,9 +72,7 @@ class LoadThermal(Physics):
             forcelist["TAG"],
             forcelist["MESHNODE"],
         ]
-        node_list_fc, dir_fc = get_nodes_from_list(
-            nodelist, Model.coord,  Model.regions
-        )
+        node_list_fc, dir_fc = get_nodes_from_list(nodelist, Model.coord, Model.regions)
         force_value_vector = np.ones_like(node_list_fc) * float(forcelist["VAL"])
         fc_type_dof = Model.modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(
             node_list_fc
@@ -105,10 +102,42 @@ class LoadThermal(Physics):
         intgauss = Model.intgauss
         fc_type_dof = Model.modelinfo["dofs"]["f"][forcelist["DOF"]]
         for ee in range(inci.shape[0]):
-            if Model.modelinfo['type_shape'] == 'hexa8' or Model.modelinfo['type_shape'] == 'tetr4':
-                force_value_vector, nodelist = LoadThermal.__solid_body_force_volumetric(Model, inci, coord, tabmat, tabgeo, intgauss, ee, heatgen, fc_type_dof)
-            elif  Model.modelinfo['type_shape'] == 'tria3' or Model.modelinfo['type_shape'] == 'tria6' or Model.modelinfo['type_shape'] == 'quad4' or Model.modelinfo['type_shape'] == 'quad8':
-                force_value_vector, nodelist = LoadThermal.__plane_body_force_volumetric(Model, inci, coord, tabmat, tabgeo, intgauss, ee, heatgen, fc_type_dof)
+            if (
+                Model.modelinfo["type_shape"] == "hexa8"
+                or Model.modelinfo["type_shape"] == "tetr4"
+            ):
+                force_value_vector, nodelist = (
+                    LoadThermal.__solid_body_force_volumetric(
+                        Model,
+                        inci,
+                        coord,
+                        tabmat,
+                        tabgeo,
+                        intgauss,
+                        ee,
+                        heatgen,
+                        fc_type_dof,
+                    )
+                )
+            elif (
+                Model.modelinfo["type_shape"] == "tria3"
+                or Model.modelinfo["type_shape"] == "tria6"
+                or Model.modelinfo["type_shape"] == "quad4"
+                or Model.modelinfo["type_shape"] == "quad8"
+            ):
+                force_value_vector, nodelist = (
+                    LoadThermal.__plane_body_force_volumetric(
+                        Model,
+                        inci,
+                        coord,
+                        tabmat,
+                        tabgeo,
+                        intgauss,
+                        ee,
+                        heatgen,
+                        fc_type_dof,
+                    )
+                )
             else:
                 force_value_vector, nodelist = [0], [0]
 
@@ -136,9 +165,7 @@ class LoadThermal(Physics):
             forcelist["TAG"],
             forcelist["MESHNODE"],
         ]  # forcelist[3:]
-        node_list_fc, dir_fc = get_nodes_from_list(
-            nodelist, Model.coord, Model.regions
-        )
+        node_list_fc, dir_fc = get_nodes_from_list(nodelist, Model.coord, Model.regions)
         force_value = float(forcelist["VAL"])
         force_dirc = forcelist["DOF"]
         inci = Model.inci
@@ -166,7 +193,7 @@ class LoadThermal(Physics):
                 force_value,
                 fc_type,
             )
-            
+
             fc_type_dof = Model.modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(
                 nodelist
             )
@@ -195,9 +222,7 @@ class LoadThermal(Physics):
             forcelist["TAG"],
             forcelist["MESHNODE"],
         ]
-        node_list_fc, dir_fc = get_nodes_from_list(
-            nodelist, Model.coord, Model.regions
-        )
+        node_list_fc, dir_fc = get_nodes_from_list(nodelist, Model.coord, Model.regions)
         force_value = float(forcelist["VAL"])
         force_dirc = forcelist["DOF"]
         inci = Model.inci
@@ -224,7 +249,7 @@ class LoadThermal(Physics):
                 force_value,
                 fc_type,
             )
-            
+
             fc_type_dof = Model.modelinfo["dofs"]["f"][forcelist["DOF"]] * np.ones_like(
                 nodelist
             )
@@ -257,7 +282,6 @@ class LoadThermal(Physics):
     def getUpdateLoad(self):
         return None
 
-
     def __plane_body_force_volumetric(
         Model,
         inci,
@@ -269,23 +293,24 @@ class LoadThermal(Physics):
         heat_gen,
         fc_type_dof,
     ):
-        elem_set = Model.element.getElementSet()
-        nodedof = len(elem_set["dofs"]["d"])
-        shape_set = Model.shape.getShapeSet()
-        nodecon = len(shape_set["nodes"])
-        type_shape = shape_set["key"]
-        edof = nodecon * nodedof
+        nodedof = Model.modelinfo["nodedof"]
+        shape = Model.modelinfo["shape"]
+        edof = Model.modelinfo["elemdof"]
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
         t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
-        pt, wt = gauss_points(type_shape, intgauss)
+        pt, wt = gauss_points(shape, intgauss)
         Q = heat_gen
         force_value_vector = np.zeros((edof, 1))
         for ip in range(intgauss):
             for jp in range(intgauss):
-                detJ = Model.shape.getdetJacobi(np.array([pt[ip], pt[jp]]), elementcoord)
+                detJ = Model.shape.getdetJacobi(
+                    np.array([pt[ip], pt[jp]]), elementcoord
+                )
                 N = Model.shape.getShapeFunctions(np.array([pt[ip], pt[jp]]), nodedof)
-                force_value_vector += np.dot(N.transpose(), Q) * t * abs(detJ) * wt[ip] * wt[jp]
+                force_value_vector += (
+                    np.dot(N.transpose(), Q) * t * abs(detJ) * wt[ip] * wt[jp]
+                )
         force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
         return force_value_vector, nodelist
 
@@ -300,23 +325,26 @@ class LoadThermal(Physics):
         heat_gen,
         fc_type_dof,
     ):
-        elem_set = Model.element.getElementSet()
-        nodedof = len(elem_set["dofs"]["d"])
-        shape_set = Model.shape.getShapeSet()
-        nodecon = len(shape_set["nodes"])
-        type_shape = shape_set["key"]
-        edof = nodecon * nodedof
+        nodedof = Model.modelinfo["nodedof"]
+        shape = Model.modelinfo["shape"]
+        edof = Model.modelinfo["elemdof"]
         nodelist = Model.shape.getNodeList(inci, element_number)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        pt, wt = gauss_points(type_shape, intgauss)
+        pt, wt = gauss_points(shape, intgauss)
         Q = heat_gen
         force_value_vector = np.zeros((edof, 1))
         for ip in range(intgauss):
             for jp in range(intgauss):
                 for kp in range(intgauss):
-                    detJ = Model.shape.getdetJacobi(np.array([pt[ip], pt[jp], pt[kp]]), elementcoord)
-                    N = Model.shape.getShapeFunctions(np.array([pt[ip], pt[jp], pt[kp]]), nodedof)
-                    force_value_vector += np.dot(N.transpose(), Q) * abs(detJ) * wt[ip] * wt[jp] * wt[kp]
+                    detJ = Model.shape.getdetJacobi(
+                        np.array([pt[ip], pt[jp], pt[kp]]), elementcoord
+                    )
+                    N = Model.shape.getShapeFunctions(
+                        np.array([pt[ip], pt[jp], pt[kp]]), nodedof
+                    )
+                    force_value_vector += (
+                        np.dot(N.transpose(), Q) * abs(detJ) * wt[ip] * wt[jp] * wt[kp]
+                    )
         force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
         return force_value_vector, nodelist
 
@@ -331,15 +359,12 @@ class LoadThermal(Physics):
         force_value,
         fc_type,
     ):
-        elem_set = Model.element.getElementSet()
-        nodedof = len(elem_set["dofs"]["d"])
-        shape_set = Model.shape.getShapeSet()
-        nodecon = len(shape_set["nodes"])
-        type_shape = shape_set["key"]
-        edof = nodecon * nodedof
+        nodedof = Model.modelinfo["nodedof"]
+        shape = Model.modelinfo["shape"]
+        edof = Model.modelinfo["elemdof"]
         nodelist = Model.shape.getNodeList(inci, element_number - 1)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
-        t = tabgeo[int(inci[element_number - 1, 3] - 1)][ "THICKN"] 
+        t = tabgeo[int(inci[element_number - 1, 3] - 1)]["THICKN"]
         test = np.isin(nodelist, node_list_fc, assume_unique=True)
         nodes = np.array(nodelist)[test]
         idx_conec = np.where(test == True)[0]
@@ -356,14 +381,16 @@ class LoadThermal(Physics):
             else:
                 idx_conec = np.array2string(idx_conec)
                 get_side = Model.shape.getSideAxis(idx_conec[1:-1])
-                pt, wt = gauss_points(type_shape, intgauss)
+                pt, wt = gauss_points(shape, intgauss)
                 force_value_vector = np.zeros((edof, 1))
                 for ip in range(intgauss):
                     points = Model.shape.getIsoParaSide(get_side, pt[ip])
                     N = Model.shape.getShapeFunctions(np.array(points), nodedof)
                     J = Model.shape.getJacobian(np.array(points), elementcoord)
                     detJ_e = Model.shape.getEdgeLength(J, get_side)
-                    force_value_vector += (np.dot(N.transpose(), q) * t * abs(detJ_e) * wt[ip])
+                    force_value_vector += (
+                        np.dot(N.transpose(), q) * t * abs(detJ_e) * wt[ip]
+                    )
                 force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
         return force_value_vector, nodes, norm
 
@@ -378,12 +405,9 @@ class LoadThermal(Physics):
         force_value,
         fc_type,
     ):
-        elem_set = Model.element.getElementSet()
-        nodedof = len(elem_set["dofs"]["d"])
-        shape_set = Model.shape.getShapeSet()
-        nodecon = len(shape_set["nodes"])
-        type_shape = shape_set["key"]
-        edof = nodecon * nodedof
+        nodedof = Model.modelinfo["nodedof"]
+        shape = Model.modelinfo["shape"]
+        edof = Model.modelinfo["elemdof"]
         nodelist = Model.shape.getNodeList(inci, element_number - 1)
         elementcoord = Model.shape.getNodeCoord(coord, nodelist)
         test = np.isin(nodelist, node_list_fc, assume_unique=True)
@@ -402,13 +426,17 @@ class LoadThermal(Physics):
             else:
                 idx_conec = np.array2string(nodes_conec)
                 get_side = Model.shape.getSideAxis(idx_conec[1:-1])
-                pt, wt = gauss_points(type_shape, intgauss)
+                pt, wt = gauss_points(shape, intgauss)
                 force_value_vector = np.zeros((edof, 1))
                 for ip in range(intgauss):
                     for jp in range(intgauss):
-                        points = Model.shape.getIsoParaSide(get_side, [pt[ip], pt[jp]]) # [pt[ip], pt[jp]]
+                        points = Model.shape.getIsoParaSide(
+                            get_side, [pt[ip], pt[jp]]
+                        )  # [pt[ip], pt[jp]]
                         N = Model.shape.getShapeFunctions(np.array(points), nodedof)
                         detJ_a = Model.shape.getAreaLength(get_side, elementcoord)
-                        force_value_vector += (np.dot(N.transpose(), q) * abs(detJ_a) * wt[ip] * wt[jp])
+                        force_value_vector += (
+                            np.dot(N.transpose(), q) * abs(detJ_a) * wt[ip] * wt[jp]
+                        )
                 force_value_vector = force_value_vector[np.nonzero(force_value_vector)]
         return force_value_vector, nodes, norm

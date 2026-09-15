@@ -3,10 +3,9 @@ from __future__ import annotations
 from numpy import (abs, array, array2string, concatenate, dot, float64, in1d,
                    int32, ix_, sqrt, unique, where, zeros)
 
+from myfempy.core.elements.structPlane import StructuralPlane
 from myfempy.core.utilities import (gauss_points, get_elemen_from_nodelist,
                                     get_nodes_from_list)
-
-from myfempy.core.elements.structPlane import StructuralPlane
 
 INT32 = int32
 FLT64 = float64
@@ -46,16 +45,17 @@ event caused by the use of the program.
 """
 
 _ELEMENT_SET = {
-"def": "2D-space 1-node_dofs",
-"key": "plane",
-"id": 21,
-"dofs": {
-    "d": {"t": 1},
-    "f": {"heatflux": 1, "convectionfluid": 2, "heat2fluid": 15},
-},
-"tensor": ["qxx", "qyy"],
-"H": array([[1, 0], [0, 1]], dtype=INT32)
+    "def": "2D-space 1-node_dofs",
+    "key": "plane",
+    "id": 21,
+    "dofs": {
+        "d": {"t": 1},
+        "f": {"heatflux": 1, "convectionfluid": 2, "heat2fluid": 15},
+    },
+    "tensor": ["qxx", "qyy"],
+    "H": array([[1, 0], [0, 1]], dtype=INT32),
 }
+
 
 class HeatPlane(Element):
     """Plane Heat Element Class <ConcreteClassService>"""
@@ -64,29 +64,41 @@ class HeatPlane(Element):
         return _ELEMENT_SET
 
     # @profile
-    def getStifLinearMat(inci, coord, tabmat, tabgeo, elementcoord, C, elemdof, getIntNumK, intgauss, pt, wt, element_number):
+    def getStifLinearMat(
+        inci,
+        coord,
+        tabmat,
+        tabgeo,
+        elementcoord,
+        C,
+        elemdof,
+        getIntNumK,
+        intgauss,
+        pt,
+        wt,
+        element_number,
+    ):
         elem_set = HeatPlane.getElementSet()
-        H = elem_set['H']
+        H = elem_set["H"]
         nodedof = len(elem_set["dofs"]["d"])
-        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]        
+        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
         K_elem_mat = zeros((elemdof, elemdof), dtype=FLT64)
-        K_elem_mat = getIntNumK(pt, wt, intgauss, elementcoord, elemdof, nodedof, H, C, t)
+        K_elem_mat = getIntNumK(
+            pt, wt, intgauss, elementcoord, elemdof, nodedof, H, C, t
+        )
         return K_elem_mat
 
     def getUpdateMatrix(Model, matrix, addval):
-        elem_set = Model.element.getElementSet()
-        nodedof = len(elem_set["dofs"]["d"])
-        shape_set = Model.shape.getShapeSet()
-        nodecon = len(shape_set["nodes"])
-        type_shape = shape_set["key"]
-        edof = nodecon * nodedof
+        nodedof = Model.modelinfo["nodedof"]
+        type_shape = Model.modelinfo["shape"]
+        edof = Model.modelinfo["elemdof"]
         intgauss = Model.intgauss
         nodelistconv = unique(addval[:, 0])
         elmlist = get_elemen_from_nodelist(Model.inci, nodelistconv)
         for ee in range(len(elmlist)):
             nodelist = Model.shape.getNodeList(Model.inci, elmlist[ee] - 1)
             elementcoord = Model.shape.getNodeCoord(Model.coord, nodelist)
-            t = Model.tabgeo[int(Model.inci[elmlist[ee] - 1, 3] - 1)]["THICKN"] 
+            t = Model.tabgeo[int(Model.inci[elmlist[ee] - 1, 3] - 1)]["THICKN"]
             test = in1d(nodelist, nodelistconv, assume_unique=True)
             nodes_conec = where(test == True)[0]
             if len(nodes_conec) < 2:
@@ -104,7 +116,14 @@ class HeatPlane(Element):
                         N = Model.shape.getShapeFunctions(array(points), nodedof)
                         J = Model.shape.getJacobian(array(points), elementcoord)
                         detJ_e = Model.shape.getEdgeLength(J, get_side)
-                        Kh += dot(N.transpose(), N) * h * t * abs(detJ_e) * wt[ip] * wt[jp]
+                        Kh += (
+                            dot(N.transpose(), N)
+                            * h
+                            * t
+                            * abs(detJ_e)
+                            * wt[ip]
+                            * wt[jp]
+                        )
                 matrix[ix_(loc, loc)] += Kh
         return matrix
 
@@ -119,5 +138,9 @@ class HeatPlane(Element):
     def setTitleDeformation():
         return "TEMPERATURE"
 
-    def getElementVolume(inci, tabgeo, getVOL, type_shape, element_coord, element_number):
-        return StructuralPlane.getElementVolume(inci, tabgeo, getVOL, type_shape, element_coord, element_number)
+    def getElementVolume(
+        inci, tabgeo, getVOL, type_shape, element_coord, element_number
+    ):
+        return StructuralPlane.getElementVolume(
+            inci, tabgeo, getVOL, type_shape, element_coord, element_number
+        )

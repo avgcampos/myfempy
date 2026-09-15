@@ -5,7 +5,6 @@ FLT64 = np.float64
 
 from myfempy.core.material.material import Material
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -42,6 +41,7 @@ class PlaneStress(Material):
     """
     Plane Stress Isotropic Material Class <ConcreteClassService>
     """
+
     def getMaterialSet():
         matset = {
             "mat": "planestress",
@@ -53,7 +53,7 @@ class PlaneStress(Material):
         # material elasticity
         E = tabmat[int(inci[element_number, 2]) - 1]["EXX"]
         # material poisson ratio
-        v = tabmat[int(inci[element_number, 2]) - 1][ "VXY"]  
+        v = tabmat[int(inci[element_number, 2]) - 1]["VXY"]
 
         D = np.zeros((3, 3), dtype=FLT64)
         D[0, 0] = E / (1.0 - v * v)
@@ -65,30 +65,29 @@ class PlaneStress(Material):
 
     def getElementStrain(Model, U, ptg, element_number):
         elem_set = Model.element.getElementSet()
-        H = elem_set['H']
-        nodedof = len(elem_set["dofs"]["d"])
-        shape_set = Model.shape.getShapeSet()
-        nodecon = len(shape_set["nodes"])
-        edof = nodecon * nodedof
-        
+
+        H = elem_set["H"]
+
+        nodedof = Model.modelinfo["nodedof"]
+
         nodelist = Model.shape.getNodeList(Model.inci, element_number)
 
         loc = Model.shape.getLocKey(nodelist, nodedof)
 
         elementcoord = Model.shape.getNodeCoord(Model.coord, nodelist)
-        
+
         diffN = Model.shape.getDiffShapeFuntion(np.array([ptg, ptg]), nodedof)
-        
+
         invJ = Model.shape.getinvJacobi(np.array([ptg, ptg]), elementcoord, nodedof)
 
         B = Model.shape.getB(H, invJ, diffN)
 
-        epsilon = B.dot(U[loc]) #np.dot(B, U[loc])  # B @ (U[loc])
+        epsilon = B.dot(U[loc])
 
         strn_elm_xx = epsilon[0]
-        
+
         strn_elm_yy = epsilon[1]
-        
+
         strn_elm_xy = epsilon[2]
 
         # T = np.array([[1.0, -0.5, 0.0],
@@ -114,15 +113,15 @@ class PlaneStress(Material):
 
     def getElementStress(Model, epsilon, element_number):
 
-        #PlaneStress.getElasticTensor(E, v)
-        C = Model.material.getElasticTensor(Model.tabmat, Model.inci,  element_number)
+        # PlaneStress.getElasticTensor(E, v)
+        C = Model.material.getElasticTensor(Model.tabmat, Model.inci, element_number)
 
-        sigma = C.dot(epsilon) #np.dot(C, epsilon)
+        sigma = C.dot(epsilon)  # np.dot(C, epsilon)
 
         strs_elm_xx = sigma[0]
-        
+
         strs_elm_yy = sigma[1]
-        
+
         strs_elm_xy = sigma[2]
 
         strs_elm_vm = np.sqrt(
@@ -156,10 +155,10 @@ class PlaneStress(Material):
         strain = np.zeros((3, strain_vector.shape[0]))
         strain[0, :] = strain_vector
         strain[1, :] = strain_vector
-        return  strain
-    
+        return strain
+
     def getStrainThermal(strain_vector):
         strain = np.zeros((3, strain_vector.shape[0]))
         strain[0, :] = strain_vector
         strain[1, :] = strain_vector
-        return  strain
+        return strain

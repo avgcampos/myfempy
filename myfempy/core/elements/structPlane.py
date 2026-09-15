@@ -1,18 +1,7 @@
 from __future__ import annotations
 
-from numpy import (
-    abs,
-    array,
-    concatenate,
-    dot,
-    matmul,
-    float64,
-    float32,
-    int32,
-    ix_,
-    sqrt,
-    zeros,
-)
+from numpy import (abs, array, concatenate, dot, float32, float64, int32, ix_,
+                   matmul, sqrt, zeros)
 
 INT32 = int32
 FLT64 = float64
@@ -53,22 +42,23 @@ event caused by the use of the program.
 """
 
 _ELEMENT_SET = {
-"def": "2D-space 2-node_dofs",
-"key": "plane",
-"id": 22,
-"dofs": {
-    "d": {"ux": 1, "uy": 2},
-    "f": {
-        "fx": 1,
-        "fy": 2,
-        "masspoint": 15,
-        "spring2ground": 16,
-        "damper2ground": 17,
+    "def": "2D-space 2-node_dofs",
+    "key": "plane",
+    "id": 22,
+    "dofs": {
+        "d": {"ux": 1, "uy": 2},
+        "f": {
+            "fx": 1,
+            "fy": 2,
+            "masspoint": 15,
+            "spring2ground": 16,
+            "damper2ground": 17,
+        },
     },
-},
-"tensor": ["sxx", "syy", "sxy"],
-"H": array([[1, 0, 0, 0], [0, 0, 0, 1], [0, 1, 1, 0]], dtype=INT32),
+    "tensor": ["sxx", "syy", "sxy"],
+    "H": array([[1, 0, 0, 0], [0, 0, 0, 1], [0, 1, 1, 0]], dtype=INT32),
 }
+
 
 class StructuralPlane(Element):
     """Plane Structural Element Class <ConcreteClassService>"""
@@ -76,17 +66,44 @@ class StructuralPlane(Element):
     def getElementSet():
         return _ELEMENT_SET
 
-    def getStifLinearMat(inci, coord, tabmat, tabgeo, elementcoord, C, elemdof, getIntNumK, intgauss, pt, wt, element_number):
+    def getStifLinearMat(
+        inci,
+        coord,
+        tabmat,
+        tabgeo,
+        elementcoord,
+        C,
+        elemdof,
+        getIntNumK,
+        intgauss,
+        pt,
+        wt,
+        element_number,
+    ):
         elem_set = StructuralPlane.getElementSet()
-        H = elem_set['H']
+        H = elem_set["H"]
         nodedof = len(elem_set["dofs"]["d"])
-        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]        
+        t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
         K_elem_mat = zeros((elemdof, elemdof), dtype=FLT64)
-        K_elem_mat = getIntNumK(pt, wt, intgauss, elementcoord, elemdof, nodedof, H, C, t)
+        K_elem_mat = getIntNumK(
+            pt, wt, intgauss, elementcoord, elemdof, nodedof, H, C, t
+        )
         return K_elem_mat
 
-
-    def getMassConsistentMat(inci, coord, tabmat, tabgeo, elementcoord, C, elemdof, getIntNumM, intgauss, pt, wt, element_number):
+    def getMassConsistentMat(
+        inci,
+        coord,
+        tabmat,
+        tabgeo,
+        elementcoord,
+        C,
+        elemdof,
+        getIntNumM,
+        intgauss,
+        pt,
+        wt,
+        element_number,
+    ):
         elem_set = StructuralPlane.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
         R = tabmat[int(inci[element_number, 2]) - 1]["RHO"]
@@ -96,15 +113,16 @@ class StructuralPlane(Element):
         return M_elem_mat
 
     def getUpdateMatrix(Model, matrix, addval):
-        elem_set = StructuralPlane.getElementSet()
-        nodedof = len(elem_set["dofs"]["d"])
+        nodedof = Model.modelinfo["nodedof"]
         if int(addval[0, 1]) == 16:
             matrix_update = array([[1.0, -1.0], [-1.0, 1.0]])
         elif int(addval[0, 1]) == 15:
-            matrix_update = 0.5*array([[1.0, 0.0], [0.0, 1.0]])
+            matrix_update = 0.5 * array([[1.0, 0.0], [0.0, 1.0]])
         for ii in range(len(addval)):
             A_add = addval[ii, 2] * matrix_update
-            loc = Model.shape.getLocKey(array([addval[ii, 0]], dtype=int32), nodedof)[0:nodedof]
+            loc = Model.shape.getLocKey(array([addval[ii, 0]], dtype=int32), nodedof)[
+                0:nodedof
+            ]
             matrix[ix_(loc, loc)] += A_add
         return matrix
 
@@ -120,7 +138,9 @@ class StructuralPlane(Element):
     def setTitleDeformation():
         return "DISPLACEMENT"
 
-    def getElementVolume(inci, tabgeo, getVOL, type_shape, element_coord, element_number):
+    def getElementVolume(
+        inci, tabgeo, getVOL, type_shape, element_coord, element_number
+    ):
         t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
         pt, wt = gauss_points(type_shape, 1)
         return getVOL(pt, wt, element_coord, t)

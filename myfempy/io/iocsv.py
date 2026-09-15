@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import csv
+
 import numpy as np
 
 __docformat__ = "google"
@@ -33,11 +34,12 @@ event caused by the use of the program.
 
 """
 
+
 def write2log(Model, Physic, log_data, solstatus, log_file):
     lines = [
         "===============================================================================",
         "                                 M Y F E M P Y                                 ",
-        "version "+str(solstatus["solverstatus"]["myfempyversion"]),
+        "version " + str(solstatus["solverstatus"]["myfempyversion"]),
         "===============================================================================",
     ]
 
@@ -55,30 +57,38 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
     if "inci" in get_keys:
         lines.append("")
         lines.append("LIST OF ELEMENTS")
-        lines.append("{0:<7}{1:<7}{2:<7}{3:<7}{4:<25}".format("ELEM", "KEY", "MAT", "GEO", "NODES"))
+        lines.append(
+            "{0:<7}{1:<7}{2:<7}{3:<7}{4:<25}".format(
+                "ELEM", "KEY", "MAT", "GEO", "NODES"
+            )
+        )
         for row in range(len(Model.inci)):
             node_list = Model.inci[row][4:].astype(int)
             node_list = node_list[np.nonzero(node_list)].tolist()
             node_str = " ".join(str(x) for x in node_list)
-            lines.append("{0:<7}{1:<7}{2:<7}{3:<7}{4:<25}".format(
-                int(Model.inci[row][0]),
-                int(Model.inci[row][1]),
-                int(Model.inci[row][2]),
-                int(Model.inci[row][3]),
-                node_str
-            ))
+            lines.append(
+                "{0:<7}{1:<7}{2:<7}{3:<7}{4:<25}".format(
+                    int(Model.inci[row][0]),
+                    int(Model.inci[row][1]),
+                    int(Model.inci[row][2]),
+                    int(Model.inci[row][3]),
+                    node_str,
+                )
+            )
 
     if "coord" in get_keys:
         lines.append("")
         lines.append("LIST OF NODES COORDINATE")
         lines.append("{0:<7}{1:<10}{2:<10}{3:<10}".format("NODE", "X", "Y", "Z"))
         for row in range(len(Model.coord)):
-            lines.append("{0:<7}{1:<10}{2:<10}{3:<10}".format(
-                int(Model.coord[row][0]),
-                round(float(Model.coord[row][1]), np_decimals),
-                round(float(Model.coord[row][2]), np_decimals),
-                round(float(Model.coord[row][3]), np_decimals)
-            ))
+            lines.append(
+                "{0:<7}{1:<10}{2:<10}{3:<10}".format(
+                    int(Model.coord[row][0]),
+                    round(float(Model.coord[row][1]), np_decimals),
+                    round(float(Model.coord[row][2]), np_decimals),
+                    round(float(Model.coord[row][3]), np_decimals),
+                )
+            )
 
     if "tabmat" in get_keys:
         lines.append("")
@@ -105,7 +115,9 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
     if "bc_list" in get_keys:
         lines.append("")
         lines.append("LIST OF BOUNDARY CONDITIONS")
-        lines.append("{0:<7}{1:<10}{2:<16}{3:<10}".format("NODE", "DOF", "VALUE", "STEP"))
+        lines.append(
+            "{0:<7}{1:<10}{2:<16}{3:<10}".format("NODE", "DOF", "VALUE", "STEP")
+        )
         model_dict = Model.modelinfo["dofs"]["d"]
         for row in range(len(Physic.constrains)):
             bc_type = Physic.constrains[row][1]
@@ -113,52 +125,90 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
             step_id = int(Physic.constrains[row][3])
             if bc_type == 0:
                 val = round(float(Physic.constrains[row][2]), np_decimals)
-                lines.append("{0:<7}{1:<10}{2:<16}{3:<10}".format(node_id, "full", val, step_id))
+                lines.append(
+                    "{0:<7}{1:<10}{2:<16}{3:<10}".format(node_id, "full", val, step_id)
+                )
             else:
                 bc_dof = next((k for k, v in model_dict.items() if v == bc_type), None)
                 val = Physic.constrains[row][2]
-                lines.append("{0:<7}{1:<10}{2:<16}{3:<10}".format(node_id, bc_dof, val, step_id))
+                lines.append(
+                    "{0:<7}{1:<10}{2:<16}{3:<10}".format(node_id, bc_dof, val, step_id)
+                )
 
     if "lo_list" in get_keys:
         lines.append("")
         lines.append("LIST OF LOADS")
-        lines.append("{0:<7}{1:<20}{2:<16}{3:<10}".format("NODE", "TYPE", "VALUE", "STEP"))
+        lines.append(
+            "{0:<7}{1:<20}{2:<16}{3:<10}".format("NODE", "TYPE", "VALUE", "STEP")
+        )
         model_dict = Model.modelinfo["dofs"]["f"]
         for row in range(len(Physic.forces)):
             fc_type = Physic.forces[row][1]
             fc_dof = next((k for k, v in model_dict.items() if v == fc_type), None)
             val = round(float(Physic.forces[row][2]), np_decimals)
-            lines.append("{0:<7}{1:<20}{2:<16}{3:<10}".format(
-                int(Physic.forces[row][0]),
-                str(fc_dof),
-                val,
-                int(Physic.forces[row][3])
-            ))
+            lines.append(
+                "{0:<7}{1:<20}{2:<16}{3:<10}".format(
+                    int(Physic.forces[row][0]),
+                    str(fc_dof),
+                    val,
+                    int(Physic.forces[row][3]),
+                )
+            )
 
     if "u_list" in get_keys:
         lines.append("")
         lines.append("LIST OF SOLUTIONS")
         model_dict = list(Model.modelinfo["dofs"]["d"].keys())
         dof_header = str(model_dict)[1:-1]
-        for row in range(len(solstatus['SOLUTION'])):
+        for row in range(len(solstatus["SOLUTION"])):
             lines.append("------------------------")
             lines.append("{0:<7}{1:<4}".format("STEP", row + 1))
             lines.append(f"dof, {dof_header}")
-            array_sol = solstatus['SOLUTION'][row][Model.element.setTitleDeformation()][:, :len(model_dict)]
+            array_sol = solstatus["SOLUTION"][row][Model.element.setTitleDeformation()][
+                :, : len(model_dict)
+            ]
             for line_dof, line in enumerate(array_sol):
                 line_str = ", ".join(map(str, line.round(decimals=np_decimals)))
                 lines.append(f"{line_dof}, {line_str}")
 
     if "log" in log_data.keys():
         lines.append("")
-        lines.append("+---------------------------- S O L V E R   L O G ----------------------------+")
-        lines.append("{0:<30} : {1:<10}".format("ANALYZED ON ", str(log_data["timesolver"])))
-        lines.append("{0:<30} : {1:<10} SEC".format("ASSEMBLY FULL TIME SPEND ", str(solstatus["solverstatus"]["timeasb"])))
-        lines.append("{0:<30} : {1:<10} SEC".format("SOLVE FULL TIME SPEND ", str(solstatus["solverstatus"]["timesim"])))
-        lines.append("{0:<30} : {1:<10} DOF".format("NUMBER OF EQUATION ", str(Model.modelinfo["fulldofs"])))
-        lines.append("{0:<30} : {1:<10} MB".format("STIFFNESS SIZE ", str(solstatus["solverstatus"]["memorysize"])))
-        lines.append("{0:<30} : {1:<10} ".format("TYPE ASSEMBLER ", str(solstatus["solverstatus"]["typeasmb"])))
-        lines.append("{0:<30} : {1:<10} ".format("SOLVER CORE ", str(solstatus["solverstatus"]["solvercore"])))
+        lines.append(
+            "+---------------------------- S O L V E R   L O G ----------------------------+"
+        )
+        lines.append(
+            "{0:<30} : {1:<10}".format("ANALYZED ON ", str(log_data["timesolver"]))
+        )
+        lines.append(
+            "{0:<30} : {1:<10} SEC".format(
+                "ASSEMBLY FULL TIME SPEND ", str(solstatus["solverstatus"]["timeasb"])
+            )
+        )
+        lines.append(
+            "{0:<30} : {1:<10} SEC".format(
+                "SOLVE FULL TIME SPEND ", str(solstatus["solverstatus"]["timesim"])
+            )
+        )
+        lines.append(
+            "{0:<30} : {1:<10} DOF".format(
+                "NUMBER OF EQUATION ", str(Model.modelinfo["fulldofs"])
+            )
+        )
+        lines.append(
+            "{0:<30} : {1:<10} MB".format(
+                "STIFFNESS SIZE ", str(solstatus["solverstatus"]["memorysize"])
+            )
+        )
+        lines.append(
+            "{0:<30} : {1:<10} ".format(
+                "TYPE ASSEMBLER ", str(solstatus["solverstatus"]["typeasmb"])
+            )
+        )
+        lines.append(
+            "{0:<30} : {1:<10} ".format(
+                "SOLVER CORE ", str(solstatus["solverstatus"]["solvercore"])
+            )
+        )
 
     with open(log_file, "w") as file_object:
         file_object.write("\n".join(lines) + "\n")

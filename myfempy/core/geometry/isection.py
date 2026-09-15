@@ -2,7 +2,6 @@ import numpy as np
 
 from myfempy.core.geometry.geometry import Geometry
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -49,7 +48,9 @@ class ISection(Geometry):
         d = dim_sec["d"]
 
         A = 2 * b * d + t * (h - 2 * d)
-        Izz = 0.08333333333333 * (b * h**3) - 0.08333333333333 * ((b - t) * (h - 2 * d) ** 3)
+        Izz = 0.08333333333333 * (b * h**3) - 0.08333333333333 * (
+            (b - t) * (h - 2 * d) ** 3
+        )
         Iyy = 0.08333333333333 * ((h - 2 * d) * t**3) + 0.16666666666666 * (d * b**3)
         Jxx = Iyy + Izz
 

@@ -34,22 +34,37 @@ event caused by the use of the program.
 
 # Tabela estática fora da função para acesso mais rápido
 _CELL_TYPE_MAP = {
-    1121: 3, 1132: 21, 1621: 3, 1632: 21,
-    2131: 5, 2162: 22, 2141: 9, 2182: 23,
-    2231: 5, 2262: 22, 2241: 9, 2282: 23,
-    3141: 10, 3341: 10, 33102: 24, 3181: 12,
-    3381: 12, 33202: 25,
+    1121: 3,
+    1132: 21,
+    1621: 3,
+    1632: 21,
+    2131: 5,
+    2162: 22,
+    2141: 9,
+    2182: 23,
+    2231: 5,
+    2262: 22,
+    2241: 9,
+    2282: 23,
+    3141: 10,
+    3341: 10,
+    33102: 24,
+    3181: 12,
+    3381: 12,
+    33202: 25,
 }
+
 
 def meshid2vtkid(elemid):
     """Retorna o ID do VTK baseado no ID da malha."""
     return _CELL_TYPE_MAP.get(int(elemid), 3)
 
+
 def convert_to_vtk(plotdata):
     """Converte dados do myfempy para o formato VTK de forma vetorizada."""
     numnodes = len(plotdata["coord"])
     numelem = len(plotdata["inci"])
-    
+
     # Pré-calcula tamanho da lista de células
     inci_subset = plotdata["inci"][:, 4:]
     cell_size = (plotdata["nodecon"] + 1) * numelem
@@ -61,16 +76,16 @@ def convert_to_vtk(plotdata):
             "vtk output from myfempy solver",
             "ASCII",
             "DATASET UNSTRUCTURED_GRID",
-            f"POINTS {numnodes} double"
+            f"POINTS {numnodes} double",
         ]
         file_object.write("\n".join(header_lines) + "\n")
-        
+
         # Coordenadas de forma vetorizada
         coord_str = "\n".join(
             " ".join(row) for row in plotdata["coord"][:, 1:].astype(str)
         )
         file_object.write(coord_str + "\n\n")
-        
+
         # Células
         file_object.write(f"CELLS {numelem} {cell_size}\n")
         cells_lines = []
@@ -80,12 +95,14 @@ def convert_to_vtk(plotdata):
             list2write = (valid_nodes - 1).astype(int).astype(str)
             cells_lines.append(f"{len(list2write)} " + " ".join(list2write))
         file_object.write("\n".join(cells_lines) + "\n\n")
-        
+
         # Tipos de Células
         file_object.write(f"CELL_TYPES {numelem}\n")
-        types_lines = [str(meshid2vtkid(plotdata["inci"][ii, 1])) for ii in range(numelem)]
+        types_lines = [
+            str(meshid2vtkid(plotdata["inci"][ii, 1])) for ii in range(numelem)
+        ]
         file_object.write("\n".join(types_lines) + "\n\n")
-        
+
         # -----------------------------------------------------
         # POINT DATA
         file_object.write(f"POINT_DATA {numnodes}\n")
@@ -93,7 +110,9 @@ def convert_to_vtk(plotdata):
         if "displ_POINT_DATA_val" in plotdata:
             val = plotdata["displ_POINT_DATA_val"]
             file_object.write("FIELD FieldData 1\n")
-            file_object.write(f"{plotdata['displ_POINT_DATA_title']} 3 {len(val)} float\n")
+            file_object.write(
+                f"{plotdata['displ_POINT_DATA_title']} 3 {len(val)} float\n"
+            )
             disp_str = "\n".join(" ".join(row) for row in val.astype(str))
             file_object.write(disp_str + "\n")
 
@@ -121,11 +140,11 @@ def convert_to_vtk(plotdata):
             file_object.write(temp_str + "\n")
 
         file_object.write("\n")
-        
+
         # -----------------------------------------------------
         # CELL DATA
         file_object.write(f"CELL_DATA {numelem}\n")
-        
+
         if "material_CELL_DATA_val" in plotdata:
             mat_val = plotdata["material_CELL_DATA_val"]
             for jj, title in enumerate(plotdata["material_CELL_DATA_title"]):
@@ -148,25 +167,26 @@ def convert_from_vtk(filename):
         # Pula as 4 primeiras linhas do cabeçalho
         for _ in range(4):
             file_object.readline()
-            
+
         # Lê número de nós
         lineaux = file_object.readline().split()
         nnod = int(lineaux[1])
-        
+
         nodelist = []
         for ii in range(nnod):
             lineaux = file_object.readline().split()
-            nodelist.append([ii + 1, float(lineaux[0]), float(lineaux[1]), float(lineaux[2])])
-            
-        file_object.readline() # Linha em branco
-        
+            nodelist.append(
+                [ii + 1, float(lineaux[0]), float(lineaux[1]), float(lineaux[2])]
+            )
+
+        file_object.readline()  # Linha em branco
+
         # Lê número de elementos
         lineaux = file_object.readline().split()
         nelm = int(lineaux[1])
-        
+
         conec_elm = [
-            [float(x) for x in file_object.readline().split()] 
-            for _ in range(nelm)
+            [float(x) for x in file_object.readline().split()] for _ in range(nelm)
         ]
-        
+
     return conec_elm, nodelist

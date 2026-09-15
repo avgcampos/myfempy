@@ -46,6 +46,7 @@ def getVectorization(ith, jth, val, loc, matrix, ee, elemdof):
 
     return ith, jth, val
 
+
 # Antiga Versão
 def getLoadAssembler(loadaply, nodetot, nodedof):
     """
@@ -286,7 +287,7 @@ def getDirichletNH(constrains, nodetot, nodedof):
         steps = 1
     else:
         pass
-    
+
     Uc = np.zeros((nodedof * nodetot, steps), dtype=np.float64)  # solution constrains
 
     for cstep in range(len(np.unique(constrains[:, 3][constrains[:, 3] != 0]))):

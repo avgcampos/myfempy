@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -40,6 +39,7 @@ class Mesh(ABC):
     """
     Element API Class <ClassService>
     """
+
     @abstractmethod
     def getElementConection():
         pass

@@ -5,7 +5,6 @@ import numpy as np
 from myfempy.core.physic.physics import Physics
 from myfempy.core.utilities import get_nodes_from_list
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -71,9 +70,7 @@ class BoundCondStruct(Physics):
             bclist["TAG"],
             bclist["MESHNODE"],
         ]
-        node_list_bc, dir_fc = get_nodes_from_list(
-            nodelist, Model.coord, Model.regions
-        )
+        node_list_bc, dir_fc = get_nodes_from_list(nodelist, Model.coord, Model.regions)
 
         if bclist["DOF"] == "full":
             bcdof = 0
@@ -98,9 +95,7 @@ class BoundCondStruct(Physics):
             bclist["TAG"],
             bclist["MESHNODE"],
         ]
-        node_list_bc, dir_fc = get_nodes_from_list(
-            nodelist, Model.coord, Model.regions
-        )
+        node_list_bc, dir_fc = get_nodes_from_list(nodelist, Model.coord, Model.regions)
 
         bcdof = Model.modelinfo["dofs"]["d"][bclist["DOF"]]
 
@@ -131,9 +126,7 @@ class BoundCondStruct(Physics):
             bclist["TAG"],
             bclist["MESHNODE"],
         ]
-        node_list_bc, dir_fc = get_nodes_from_list(
-            nodelist, Model.coord, Model.regions
-        )
+        node_list_bc, dir_fc = get_nodes_from_list(nodelist, Model.coord, Model.regions)
 
         if bclist["DOF"] == "left":
             bcdof = 11
@@ -148,7 +141,7 @@ class BoundCondStruct(Physics):
 
         boncdnodeaply = boncdnodeaply[1::][::]
         return boncdnodeaply
-    
+
     def __BCBlochPlane(Model, bclist):
         boncdnodeaply = np.zeros((1, 4))
 
@@ -160,9 +153,7 @@ class BoundCondStruct(Physics):
             bclist["TAG"],
             bclist["MESHNODE"],
         ]
-        node_list_bc, dir_fc = get_nodes_from_list(
-            nodelist, Model.coord, Model.regions
-        )
+        node_list_bc, dir_fc = get_nodes_from_list(nodelist, Model.coord, Model.regions)
 
         if bclist["DOF"] == "left":
             bcdof = 13

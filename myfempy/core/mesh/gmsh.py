@@ -6,7 +6,6 @@ from myfempy.core.mesh.mesh import Mesh
 from myfempy.core.utilities import nodes_from_regions
 from myfempy.io.iogmsh import meshid2gmshid
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -76,7 +75,9 @@ class MeshGmsh(Mesh):
 
     def __setmesh_from_gmsh(set_mesh):
         if "meshimport" in set_mesh.keys():
-            conec, nodes = MeshGmsh.__convert_from_msh2(set_mesh["user_path"] + "/" + set_mesh["meshimport"]['object'])
+            conec, nodes = MeshGmsh.__convert_from_msh2(
+                set_mesh["user_path"] + "/" + set_mesh["meshimport"]["object"]
+            )
         else:
             conec, nodes = MeshGmsh.__convert_from_msh2(
                 set_mesh["user_path"] + "/" + set_mesh["filename"]

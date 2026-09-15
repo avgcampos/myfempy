@@ -2,7 +2,6 @@ import numpy as np
 
 from myfempy.core.geometry.geometry import Geometry
 
-
 __docformat__ = "google"
 
 __doc__ = """
@@ -33,6 +32,7 @@ free from errors. Furthermore, the authors shall not be liable in any
 event caused by the use of the program.
 
 """
+
 
 class Circle(Geometry):
     """Circle ("Solid") Geometry Class <ConcreteClassService>"""
