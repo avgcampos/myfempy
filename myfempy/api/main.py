@@ -597,6 +597,7 @@ class newAnalysis:
         tabgeo: list,
         intgauss: int,
         element_number: int,
+        rho: float = None,
     ) -> npt.NDArray[np.float64]:
         """Computes the element mass consistent formulation matrix.
 
@@ -614,7 +615,6 @@ class newAnalysis:
         Example:
             >>> m_local = FEA.getElemMassConsistentMat(FEA.getInci(), FEA.getCoord(), FEA.getTabmat(), FEA.getTabgeo(), FEA.getIntGauss(), element_number = 0)
         """
-        C = None
         elemdof = self.model.modelinfo["elemdof"]
         nodelist = self.model.shape.getNodeList(self.model.inci, element_number)
         elementcoord = self.model.shape.getNodeCoord(self.model.coord, nodelist)
@@ -627,7 +627,7 @@ class newAnalysis:
             tabmat,
             tabgeo,
             elementcoord,
-            C,
+            rho,
             elemdof,
             getIntNum,
             intgauss,

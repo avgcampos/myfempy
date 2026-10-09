@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from numpy import abs, array, eye, float64, int32, ix_, ones, sqrt, zeros
+from numpy import ndarray, array, eye, float64, int32, ix_, ones, sqrt, zeros
 
 INT32 = int32
 FLT64 = float64
@@ -103,7 +103,7 @@ class StructuralSolid(Element):
         tabmat,
         tabgeo,
         elementcoord,
-        C,
+        R,
         elemdof,
         getIntNumM,
         intgauss,
@@ -113,7 +113,8 @@ class StructuralSolid(Element):
     ):
         elem_set = StructuralSolid.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
-        R = tabmat[int(inci[element_number, 2]) - 1]["RHO"]
+        if R is None or type(R) is ndarray:
+            R = tabmat[int(inci[element_number, 2]) - 1]["RHO"]
         M_elem_mat = zeros((elemdof, elemdof), dtype=FLT64)
         M_elem_mat = getIntNumM(pt, wt, intgauss, elementcoord, elemdof, nodedof, R)
         return M_elem_mat

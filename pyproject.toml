@@ -20,7 +20,7 @@ authors = [
     {name = "Antonio Vinicius Garcia Campos"},
 ]
 readme = "README.md"
-version = "0.10.1"
+version = "0.10.2"
 license = "GPL-3.0-or-later"
 requires-python = ">= 3.11"
 dependencies = [

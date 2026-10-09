@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from numpy import (abs, array, concatenate, dot, float32, float64, int32, ix_,
+from numpy import (abs, array, ndarray, dot, float32, float64, int32, ix_,
                    matmul, sqrt, zeros)
 
 INT32 = int32
@@ -96,7 +96,7 @@ class StructuralPlane(Element):
         tabmat,
         tabgeo,
         elementcoord,
-        C,
+        R,
         elemdof,
         getIntNumM,
         intgauss,
@@ -106,7 +106,8 @@ class StructuralPlane(Element):
     ):
         elem_set = StructuralPlane.getElementSet()
         nodedof = len(elem_set["dofs"]["d"])
-        R = tabmat[int(inci[element_number, 2]) - 1]["RHO"]
+        if R is None or type(R) is ndarray:
+            R = tabmat[int(inci[element_number, 2]) - 1]["RHO"]
         t = tabgeo[int(inci[element_number, 3] - 1)]["THICKN"]
         M_elem_mat = zeros((elemdof, elemdof), dtype=FLT64)
         M_elem_mat = getIntNumM(pt, wt, intgauss, elementcoord, elemdof, nodedof, R, t)
