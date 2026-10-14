@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from numpy import (abs, array, concatenate, dot, eye, float64, int32, ix_,
+from numpy import (ndarray, array, concatenate, dot, eye, float64, int32, ix_,
                    sqrt, transpose, zeros)
 
 INT32 = int32
@@ -128,7 +128,7 @@ class StructuralBeam(Element):
         tabmat,
         tabgeo,
         elementcoord,
-        D,
+        rho,
         elemdof,
         getIntNumM,
         intgauss,
@@ -142,7 +142,8 @@ class StructuralBeam(Element):
             elementcoord_local = get3D_LocalVector(elementcoord, 3)
         else:
             elementcoord_local = get3D_LocalVector(elementcoord, 2)
-        rho = tabmat[int(inci[element_number, 2]) - 1]["RHO"]
+        if rho is None or type(rho) is ndarray:
+            rho = tabmat[int(inci[element_number, 2]) - 1]["RHO"]
         AREA = tabgeo[int(inci[element_number, 3] - 1)]["AREACS"]
         IXX = tabgeo[int(inci[element_number, 3] - 1)]["INERXX"]
         R = array([[rho * AREA, rho * AREA, rho * AREA, rho * IXX]]) * eye(4)

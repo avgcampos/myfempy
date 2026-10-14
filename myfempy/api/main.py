@@ -608,7 +608,7 @@ class newAnalysis:
             tabgeo (list): Geometry properties profile.
             intgauss (int): Gauss numerical integration order.
             element_number (int): Target element list index.
-
+            rho (float): Material density.
         Returns:
             npt.NDArray[np.float64]: A consistent local element mass matrix of shape (Dofs, Dofs).
 

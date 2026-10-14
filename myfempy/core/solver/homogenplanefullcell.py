@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from numpy import arange, array, dot, float64, isin, ix_, where, zeros
+from numpy import arange, array, dot, float64, int64, isin, ix_, where, zeros, asarray, ones, flatnonzero
+from scipy.sparse import issparse
 from scipy.sparse.linalg import spsolve
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL

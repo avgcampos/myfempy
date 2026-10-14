@@ -8,6 +8,8 @@ from myfempy.core.utilities import (gauss_points, get3D_LocalVector,
                                     get_elemen_from_nodelist,
                                     get_nodes_from_list, getRotational_Matrix)
 
+from concurrent.futures import ThreadPoolExecutor
+
 __docformat__ = "google"
 
 __doc__ = """
@@ -960,14 +962,15 @@ class LoadStructural(Physics):
         force_value_vector = np.zeros(edof)
         for ip in range(intgauss):
             wi = wt[ip]
+            pi = pt[ip]
             for jp in range(intgauss):
                 # ponto de Gauss criado uma única vez (antes eram 3 vezes)
-                xi = np.array([pt[ip], pt[jp]])
+                xi = np.array([pi, pt[jp]])
                 detJ = get_detJ(xi, elementcoord)
                 diffN = get_diffN(xi, nodedof)
                 invJ = get_invJ(xi, elementcoord, nodedof)
                 B = get_B(H, invJ, diffN)
-                force_value_vector += (B.T @ Ce0) * (abs(detJ) * wi * wt[jp])
+                force_value_vector += (B.T @ Ce0) * (detJ * wi * wt[jp])
 
         return force_value_vector, nodelist
 
