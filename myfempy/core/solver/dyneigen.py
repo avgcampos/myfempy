@@ -133,9 +133,11 @@ class DynamicEigenLinear(Solver):
                 A=stiffness[:, freedof][freedof, :],
                 M=mass[:, freedof][freedof, :],
                 k=modeEnd,
-                sigma=1,
+                sigma=0,
                 which="LM",
-                maxiter=1000,
+                # ncv=30,
+                # maxiter=100,
+                # mode='normal',
             )
         except:
             pass

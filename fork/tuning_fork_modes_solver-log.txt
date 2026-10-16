@@ -1,0 +1,19 @@
+===============================================================================
+                                 M Y F E M P Y                                 
+version dev
+===============================================================================
+
+GET NELEM 44775
+
+GET NNODE 10496
+
++---------------------------- S O L V E R   L O G ----------------------------+
+ANALYZED ON                    : 16/10/2026 15:50:35
+ASSEMBLY FULL TIME SPEND       : 1.849363088607788 SEC
+SOLVE FULL TIME SPEND          : 0.8488674163818359 SEC
+NUMBER OF EQUATION             : 31488      DOF
+STIFFNESS SIZE                 : 7931.953152 MB
+TYPE ASSEMBLER                 : PARALLEL_16_CORES 
+SOLVER CORE                    : 
+Dynamic Eigen (modal problem) Linear Solver Class <ConcreteClassService>
+ 

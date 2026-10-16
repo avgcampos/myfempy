@@ -329,7 +329,7 @@ class HomogenizationPlaneBCPeriodic(Solver):
             Bsum = 0.0
             vol = 0.0
             for p, w, diffN in gp:
-                f = abs(getdetJacobi(p, elementcoord)) * t * w
+                f = getdetJacobi(p, elementcoord) * t * w
                 B = getB(H, getinvJacobi(p, elementcoord, nodedof), diffN)
                 Bsum = Bsum + B * f
                 vol += f

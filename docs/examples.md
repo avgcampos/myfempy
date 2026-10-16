@@ -129,6 +129,7 @@ Resposta do MYFEMPY
 ```
 
 #### tuning_fork.py
+Este exemplo está desatualizado!
 [Relatório de Benchmark (PT-BR PDF)](benchs/vibracoes3.pdf)
 [Extra file download](https://github.com/avgcampos/myfempy/blob/main/examples/tuning_fork.STEP)
 

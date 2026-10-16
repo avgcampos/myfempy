@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from numpy import (arange, array, ceil, concatenate, dot, empty, exp, float64,
-                   int64, isin, linspace, pi, real, sort, sqrt, unique, where,
-                   zeros)
-from scipy.sparse import csc_matrix, eye, hstack, vstack
+from numpy import (
+    arange, array, asarray, bincount, concatenate, empty, cumsum, exp, float64,
+    int32, int64, nan, ones, outer, real, searchsorted, sort, sqrt, unique,
+    zeros, where, isin, ceil, linspace, pi
+)
+from scipy.sparse import csc_matrix, csr_matrix
 from scipy.sparse.linalg import eigsh
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
@@ -255,370 +257,101 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
     def getDirichletNH(constrains, nodetot, nodedof):
         return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
 
+
+    def _build_T(n, idof, ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof):
+        """R = T0 + lx*Tx + ly*Ty + lx*ly*Txy (constantes, esparsas, indexadas pelos dofs reais)."""
+        idof, ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof = (
+            asarray(a).ravel()
+            for a in (idof, ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof)
+        )
+        ni, nl, nb, nbl = idof.size, ldof.size, bdof.size, bldof.size
+        o_l, o_b, o_bl = ni, ni + nl, ni + nl + nb
+        n_red = o_bl + nbl
+
+        def sel(rows, col0, count):  # equivale a eye(m, n) retangular
+            r = rows[:count]
+            return r, col0 + arange(r.size)
+
+        def mk(parts):
+            r = concatenate([p[0] for p in parts])
+            c = concatenate([p[1] for p in parts])
+            return csr_matrix((ones(r.size), (r, c)), shape=(n, n_red))
+
+        T0 = mk([sel(idof, 0, ni), sel(ldof, o_l, nl), sel(bdof, o_b, nb), sel(bldof, o_bl, nbl)])
+        Tx = mk([sel(rdof, o_l, nl), sel(brdof, o_bl, nbl)])
+        Ty = mk([sel(tdof, o_b, nb), sel(tldof, o_bl, nbl)])
+        Txy = mk([sel(trdof, o_bl, nbl)])
+        return [T0, Tx, Ty, Txy], n_red
+
+
+    def _dyn_mat(K, M, T, n_red):
+        """16 termos constantes Tp^T A Tq para K e M, empilhados sobre um padrao esparso unico."""
+
+        def grid(A):
+            AT = [A @ Tq for Tq in T]
+            return [(T[p].T @ AT[q]).tocsc() for p in range(4) for q in range(4)]
+
+        mats = grid(K) + grid(M)
+        coos = [m.tocoo() for m in mats]
+        keys = [c.col.astype(int64) * n_red + c.row for c in coos]
+        ukeys = unique(concatenate(keys))
+        cols = ukeys // n_red
+        rows = ukeys - cols * n_red
+
+        indptr = zeros(n_red + 1, dtype=int64)
+        cumsum(bincount(cols, minlength=n_red), out=indptr[1:])
+
+        D = zeros((len(mats), ukeys.size))
+        for t, (c, k) in enumerate(zip(coos, keys)):
+            D[t, searchsorted(ukeys, k)] = c.data
+        return D[:16], D[16:], rows.astype(int32), indptr.astype(int32)
+
+    # @profile
     def runSolve(Model, Physic, assembly, constrainsdof, solverset):
         fulldofs = Model.modelinfo["fulldofs"]
 
         solution = dict()
         modeEnd = setSteps(solverset["STEPSET"])
         cont_co = solverset["IBZ"]
-
         mu, tot_steps = PhononicCrystalPlaneBCPeriodic.__setIBZ(cont_co)
-
-        # fixeddof = constrainsdof["fixedof"]
+        mu = asarray(mu)
+        nmu = mu.shape[0]
 
         idof = constrainsdof["freedof"]
-        ldof = constrainsdof["constdof"][0]
-        bdof = constrainsdof["constdof"][1]
-        bldof = constrainsdof["constdof"][2]
-        rdof = constrainsdof["constdof"][3]
-        tdof = constrainsdof["constdof"][4]
-        brdof = constrainsdof["constdof"][5]
-        tldof = constrainsdof["constdof"][6]
-        trdof = constrainsdof["constdof"][7]
+        ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof = constrainsdof["constdof"][:8]
 
-        Kg_fem = assembly["stiffness"]
-        Mg_fem = assembly["mass"]
+        K = assembly["stiffness"].tocsr()
+        M = assembly["mass"].tocsr()
 
-        # CONDENSACAO PERIODICA INF
-        KG_cell = vstack(
-            [
-                hstack(
-                    [
-                        Kg_fem[idof, :][:, idof],
-                        Kg_fem[idof, :][:, ldof],
-                        Kg_fem[idof, :][:, bdof],
-                        Kg_fem[idof, :][:, bldof],
-                        Kg_fem[idof, :][:, rdof],
-                        Kg_fem[idof, :][:, tdof],
-                        Kg_fem[idof, :][:, brdof],
-                        Kg_fem[idof, :][:, tldof],
-                        Kg_fem[idof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Kg_fem[ldof, :][:, idof],
-                        Kg_fem[ldof, :][:, ldof],
-                        Kg_fem[ldof, :][:, bdof],
-                        Kg_fem[ldof, :][:, bldof],
-                        Kg_fem[ldof, :][:, rdof],
-                        Kg_fem[ldof, :][:, tdof],
-                        Kg_fem[ldof, :][:, brdof],
-                        Kg_fem[ldof, :][:, tldof],
-                        Kg_fem[ldof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Kg_fem[bdof, :][:, idof],
-                        Kg_fem[bdof, :][:, ldof],
-                        Kg_fem[bdof, :][:, bdof],
-                        Kg_fem[bdof, :][:, bldof],
-                        Kg_fem[bdof, :][:, rdof],
-                        Kg_fem[bdof, :][:, tdof],
-                        Kg_fem[bdof, :][:, brdof],
-                        Kg_fem[bdof, :][:, tldof],
-                        Kg_fem[bdof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Kg_fem[bldof, :][:, idof],
-                        Kg_fem[bldof, :][:, ldof],
-                        Kg_fem[bldof, :][:, bdof],
-                        Kg_fem[bldof, :][:, bldof],
-                        Kg_fem[bldof, :][:, rdof],
-                        Kg_fem[bldof, :][:, tdof],
-                        Kg_fem[bldof, :][:, brdof],
-                        Kg_fem[bldof, :][:, tldof],
-                        Kg_fem[bldof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Kg_fem[rdof, :][:, idof],
-                        Kg_fem[rdof, :][:, ldof],
-                        Kg_fem[rdof, :][:, bdof],
-                        Kg_fem[rdof, :][:, bldof],
-                        Kg_fem[rdof, :][:, rdof],
-                        Kg_fem[rdof, :][:, tdof],
-                        Kg_fem[rdof, :][:, brdof],
-                        Kg_fem[rdof, :][:, tldof],
-                        Kg_fem[rdof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Kg_fem[tdof, :][:, idof],
-                        Kg_fem[tdof, :][:, ldof],
-                        Kg_fem[tdof, :][:, bdof],
-                        Kg_fem[tdof, :][:, bldof],
-                        Kg_fem[tdof, :][:, rdof],
-                        Kg_fem[tdof, :][:, tdof],
-                        Kg_fem[tdof, :][:, brdof],
-                        Kg_fem[tdof, :][:, tldof],
-                        Kg_fem[tdof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Kg_fem[brdof, :][:, idof],
-                        Kg_fem[brdof, :][:, ldof],
-                        Kg_fem[brdof, :][:, bdof],
-                        Kg_fem[brdof, :][:, bldof],
-                        Kg_fem[brdof, :][:, rdof],
-                        Kg_fem[brdof, :][:, tdof],
-                        Kg_fem[brdof, :][:, brdof],
-                        Kg_fem[brdof, :][:, tldof],
-                        Kg_fem[brdof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Kg_fem[tldof, :][:, idof],
-                        Kg_fem[tldof, :][:, ldof],
-                        Kg_fem[tldof, :][:, bdof],
-                        Kg_fem[tldof, :][:, bldof],
-                        Kg_fem[tldof, :][:, rdof],
-                        Kg_fem[tldof, :][:, tdof],
-                        Kg_fem[tldof, :][:, brdof],
-                        Kg_fem[tldof, :][:, tldof],
-                        Kg_fem[tldof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Kg_fem[trdof, :][:, idof],
-                        Kg_fem[trdof, :][:, ldof],
-                        Kg_fem[trdof, :][:, bdof],
-                        Kg_fem[trdof, :][:, bldof],
-                        Kg_fem[trdof, :][:, rdof],
-                        Kg_fem[trdof, :][:, tdof],
-                        Kg_fem[trdof, :][:, brdof],
-                        Kg_fem[trdof, :][:, tldof],
-                        Kg_fem[trdof, :][:, trdof],
-                    ]
-                ),
-            ]
+        # ---- pre-processamento unico (fora do laco em mu) ----
+        T, n_red = PhononicCrystalPlaneBCPeriodic._build_T(
+            K.shape[0], idof, ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof
         )
+        DK, DM, indices, indptr = PhononicCrystalPlaneBCPeriodic._dyn_mat(K, M, T, n_red)
+        shape = (n_red, n_red)
 
-        MG_cell = vstack(
-            [
-                hstack(
-                    [
-                        Mg_fem[idof, :][:, idof],
-                        Mg_fem[idof, :][:, ldof],
-                        Mg_fem[idof, :][:, bdof],
-                        Mg_fem[idof, :][:, bldof],
-                        Mg_fem[idof, :][:, rdof],
-                        Mg_fem[idof, :][:, tdof],
-                        Mg_fem[idof, :][:, brdof],
-                        Mg_fem[idof, :][:, tldof],
-                        Mg_fem[idof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Mg_fem[ldof, :][:, idof],
-                        Mg_fem[ldof, :][:, ldof],
-                        Mg_fem[ldof, :][:, bdof],
-                        Mg_fem[ldof, :][:, bldof],
-                        Mg_fem[ldof, :][:, rdof],
-                        Mg_fem[ldof, :][:, tdof],
-                        Mg_fem[ldof, :][:, brdof],
-                        Mg_fem[ldof, :][:, tldof],
-                        Mg_fem[ldof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Mg_fem[bdof, :][:, idof],
-                        Mg_fem[bdof, :][:, ldof],
-                        Mg_fem[bdof, :][:, bdof],
-                        Mg_fem[bdof, :][:, bldof],
-                        Mg_fem[bdof, :][:, rdof],
-                        Mg_fem[bdof, :][:, tdof],
-                        Mg_fem[bdof, :][:, brdof],
-                        Mg_fem[bdof, :][:, tldof],
-                        Mg_fem[bdof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Mg_fem[bldof, :][:, idof],
-                        Mg_fem[bldof, :][:, ldof],
-                        Mg_fem[bldof, :][:, bdof],
-                        Mg_fem[bldof, :][:, bldof],
-                        Mg_fem[bldof, :][:, rdof],
-                        Mg_fem[bldof, :][:, tdof],
-                        Mg_fem[bldof, :][:, brdof],
-                        Mg_fem[bldof, :][:, tldof],
-                        Mg_fem[bldof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Mg_fem[rdof, :][:, idof],
-                        Mg_fem[rdof, :][:, ldof],
-                        Mg_fem[rdof, :][:, bdof],
-                        Mg_fem[rdof, :][:, bldof],
-                        Mg_fem[rdof, :][:, rdof],
-                        Mg_fem[rdof, :][:, tdof],
-                        Mg_fem[rdof, :][:, brdof],
-                        Mg_fem[rdof, :][:, tldof],
-                        Mg_fem[rdof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Mg_fem[tdof, :][:, idof],
-                        Mg_fem[tdof, :][:, ldof],
-                        Mg_fem[tdof, :][:, bdof],
-                        Mg_fem[tdof, :][:, bldof],
-                        Mg_fem[tdof, :][:, rdof],
-                        Mg_fem[tdof, :][:, tdof],
-                        Mg_fem[tdof, :][:, brdof],
-                        Mg_fem[tdof, :][:, tldof],
-                        Mg_fem[tdof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Mg_fem[brdof, :][:, idof],
-                        Mg_fem[brdof, :][:, ldof],
-                        Mg_fem[brdof, :][:, bdof],
-                        Mg_fem[brdof, :][:, bldof],
-                        Mg_fem[brdof, :][:, rdof],
-                        Mg_fem[brdof, :][:, tdof],
-                        Mg_fem[brdof, :][:, brdof],
-                        Mg_fem[brdof, :][:, tldof],
-                        Mg_fem[brdof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Mg_fem[tldof, :][:, idof],
-                        Mg_fem[tldof, :][:, ldof],
-                        Mg_fem[tldof, :][:, bdof],
-                        Mg_fem[tldof, :][:, bldof],
-                        Mg_fem[tldof, :][:, rdof],
-                        Mg_fem[tldof, :][:, tdof],
-                        Mg_fem[tldof, :][:, brdof],
-                        Mg_fem[tldof, :][:, tldof],
-                        Mg_fem[tldof, :][:, trdof],
-                    ]
-                ),
-                hstack(
-                    [
-                        Mg_fem[trdof, :][:, idof],
-                        Mg_fem[trdof, :][:, ldof],
-                        Mg_fem[trdof, :][:, bdof],
-                        Mg_fem[trdof, :][:, bldof],
-                        Mg_fem[trdof, :][:, rdof],
-                        Mg_fem[trdof, :][:, tdof],
-                        Mg_fem[trdof, :][:, brdof],
-                        Mg_fem[trdof, :][:, tldof],
-                        Mg_fem[trdof, :][:, trdof],
-                    ]
-                ),
-            ]
-        )
+        # ---- varredura em mu (serial) ----
+        freq_waves = zeros((modeEnd, nmu), dtype=float64)
 
-        Iii = eye(idof.shape[0], idof.shape[0], dtype=int64)
-        Zil = csc_matrix((idof.shape[0], ldof.shape[0]), dtype=int64)
-        Zib = csc_matrix((idof.shape[0], bdof.shape[0]), dtype=int64)
-        Zibl = csc_matrix((idof.shape[0], bldof.shape[0]), dtype=int64)
+        for kmu in range(nmu):
+            lx = exp(mu[kmu, 0])
+            ly = exp(mu[kmu, 1])
 
-        Zli = csc_matrix((ldof.shape[0], idof.shape[0]), dtype=int64)
-        Ill = eye(ldof.shape[0], ldof.shape[0], dtype=int64)
-        Zlb = csc_matrix((ldof.shape[0], bdof.shape[0]), dtype=int64)
-        Zlbl = csc_matrix((ldof.shape[0], bldof.shape[0]), dtype=int64)
+            c = array([1.0, lx, ly, lx * ly])
+            w = outer(c.conj(), c).ravel()  # conj(c_p) * c_q
 
-        Zbi = csc_matrix((bdof.shape[0], idof.shape[0]), dtype=int64)
-        Zbl = csc_matrix((bdof.shape[0], ldof.shape[0]), dtype=int64)
-        Ibb = eye(bdof.shape[0], bdof.shape[0], dtype=int64)
-        Zbbl = csc_matrix((bdof.shape[0], bldof.shape[0]), dtype=int64)
-
-        Zbli = csc_matrix((bldof.shape[0], idof.shape[0]), dtype=int64)
-        Zbll = csc_matrix((bldof.shape[0], ldof.shape[0]), dtype=int64)
-        Zblb = csc_matrix((bldof.shape[0], bdof.shape[0]), dtype=int64)
-        Iblbl = eye(bldof.shape[0], bldof.shape[0], dtype=int64)
-
-        Zri = csc_matrix((rdof.shape[0], idof.shape[0]), dtype=int64)
-        Irl = eye(rdof.shape[0], ldof.shape[0], dtype=int64)
-        Zrb = csc_matrix((rdof.shape[0], bdof.shape[0]), dtype=int64)
-        Zrbl = csc_matrix((rdof.shape[0], bldof.shape[0]), dtype=int64)
-
-        Zti = csc_matrix((tdof.shape[0], idof.shape[0]), dtype=int64)
-        Ztl = csc_matrix((tdof.shape[0], ldof.shape[0]), dtype=int64)
-        Itb = eye(tdof.shape[0], bdof.shape[0], dtype=int64)
-        Ztbl = csc_matrix((tdof.shape[0], bldof.shape[0]), dtype=int64)
-
-        Zbri = csc_matrix((brdof.shape[0], idof.shape[0]), dtype=int64)
-        Zbrl = csc_matrix((brdof.shape[0], ldof.shape[0]), dtype=int64)
-        Zbrb = csc_matrix((brdof.shape[0], bdof.shape[0]), dtype=int64)
-        Ibrbl = eye(brdof.shape[0], bldof.shape[0], dtype=int64)
-
-        Ztli = csc_matrix((tldof.shape[0], idof.shape[0]), dtype=int64)
-        Ztll = csc_matrix((tldof.shape[0], ldof.shape[0]), dtype=int64)
-        Ztlb = csc_matrix((tldof.shape[0], bdof.shape[0]), dtype=int64)
-        Itlbl = eye(tldof.shape[0], bldof.shape[0], dtype=int64)
-
-        Ztri = csc_matrix((trdof.shape[0], idof.shape[0]), dtype=int64)
-        Ztrl = csc_matrix((trdof.shape[0], ldof.shape[0]), dtype=int64)
-        Ztrb = csc_matrix((trdof.shape[0], bdof.shape[0]), dtype=int64)
-        Itrbl = eye(trdof.shape[0], bldof.shape[0], dtype=int64)
-
-        U = zeros((fulldofs, mu.shape[0]), dtype=float64)
-        freq_waves = zeros((modeEnd, mu.shape[0]), dtype=float64)
-        # U0 = zeros((fulldofs), dtype=float64)
-        for kmu in range(mu.shape[0]):
-
-            lambda_x = exp(mu[kmu, 0])
-            lambda_y = exp(mu[kmu, 1])
-
-            MAT_R = vstack(
-                [
-                    hstack([Iii, Zil, Zib, Zibl]),
-                    hstack([Zli, Ill, Zlb, Zlbl]),
-                    hstack([Zbi, Zbl, Ibb, Zbbl]),
-                    hstack([Zbli, Zbll, Zblb, Iblbl]),
-                    hstack([Zri, lambda_x * Irl, Zrb, Zrbl]),
-                    hstack([Zti, Ztl, lambda_y * Itb, Ztbl]),
-                    hstack([Zbri, Zbrl, Zbrb, lambda_x * Ibrbl]),
-                    hstack([Ztli, Ztll, Ztlb, lambda_y * Itlbl]),
-                    hstack([Ztri, Ztrl, Ztrb, lambda_x * lambda_y * Itrbl]),
-                ]
-            )
-
-            KG_cell_BF = (
-                dot(dot(MAT_R.conjugate().transpose(), KG_cell), MAT_R)
-            ).tocsc()
-            MG_cell_BF = (
-                dot(dot(MAT_R.conjugate().transpose(), MG_cell), MAT_R)
-            ).tocsc()
+            K_BF = csc_matrix((w @ DK, indices, indptr), shape=shape)
+            M_BF = csc_matrix((w @ DM, indices, indptr), shape=shape)
 
             try:
-                omega, __ = eigsh(
-                    A=KG_cell_BF,
-                    M=MG_cell_BF,
-                    k=modeEnd,
-                    sigma=1,
-                    which="LM",
-                    maxiter=1000,
-                )
-            except:
-                pass
+                omega = eigsh(K_BF, M=M_BF, k=modeEnd, sigma=0, which="LM", return_eigenvectors=False)
+                freq_waves[:, kmu] = sqrt(sort(real(omega)))
+            except Exception:
+                freq_waves[:, kmu] = nan
 
-            # U[:, kw] = dot(MAT_R.todense(), V[:, :modeEnd])
-            freq_waves[:, kmu] = sqrt(
-                sort(real(omega))
-            )  # Convertendo valores Reais de Omega
-
-        solution["U"] = U
+        solution["U"] = zeros((fulldofs, nmu), dtype=float64)  # mantido por compatibilidade
         solution["FREQ"] = freq_waves
         solution["IBZRANGE"] = tot_steps
-
         return solution
 
     def __setIBZ(cont_co):
@@ -655,3 +388,370 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
             tot_steps[i + 1] = tot_steps[i] + n_steps
 
         return mu, tot_steps
+
+
+    # def runSolve(Model, Physic, assembly, constrainsdof, solverset):
+    #     fulldofs = Model.modelinfo["fulldofs"]
+
+    #     solution = dict()
+    #     modeEnd = setSteps(solverset["STEPSET"])
+    #     cont_co = solverset["IBZ"]
+
+    #     mu, tot_steps = PhononicCrystalPlaneBCPeriodic.__setIBZ(cont_co)
+
+    #     # fixeddof = constrainsdof["fixedof"]
+
+    #     idof = constrainsdof["freedof"]
+    #     ldof = constrainsdof["constdof"][0]
+    #     bdof = constrainsdof["constdof"][1]
+    #     bldof = constrainsdof["constdof"][2]
+    #     rdof = constrainsdof["constdof"][3]
+    #     tdof = constrainsdof["constdof"][4]
+    #     brdof = constrainsdof["constdof"][5]
+    #     tldof = constrainsdof["constdof"][6]
+    #     trdof = constrainsdof["constdof"][7]
+
+    #     Kg_fem = assembly["stiffness"]
+    #     Mg_fem = assembly["mass"]
+
+    #     # CONDENSACAO PERIODICA INF
+    #     KG_cell = vstack(
+    #         [
+    #             hstack(
+    #                 [
+    #                     Kg_fem[idof, :][:, idof],
+    #                     Kg_fem[idof, :][:, ldof],
+    #                     Kg_fem[idof, :][:, bdof],
+    #                     Kg_fem[idof, :][:, bldof],
+    #                     Kg_fem[idof, :][:, rdof],
+    #                     Kg_fem[idof, :][:, tdof],
+    #                     Kg_fem[idof, :][:, brdof],
+    #                     Kg_fem[idof, :][:, tldof],
+    #                     Kg_fem[idof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Kg_fem[ldof, :][:, idof],
+    #                     Kg_fem[ldof, :][:, ldof],
+    #                     Kg_fem[ldof, :][:, bdof],
+    #                     Kg_fem[ldof, :][:, bldof],
+    #                     Kg_fem[ldof, :][:, rdof],
+    #                     Kg_fem[ldof, :][:, tdof],
+    #                     Kg_fem[ldof, :][:, brdof],
+    #                     Kg_fem[ldof, :][:, tldof],
+    #                     Kg_fem[ldof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Kg_fem[bdof, :][:, idof],
+    #                     Kg_fem[bdof, :][:, ldof],
+    #                     Kg_fem[bdof, :][:, bdof],
+    #                     Kg_fem[bdof, :][:, bldof],
+    #                     Kg_fem[bdof, :][:, rdof],
+    #                     Kg_fem[bdof, :][:, tdof],
+    #                     Kg_fem[bdof, :][:, brdof],
+    #                     Kg_fem[bdof, :][:, tldof],
+    #                     Kg_fem[bdof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Kg_fem[bldof, :][:, idof],
+    #                     Kg_fem[bldof, :][:, ldof],
+    #                     Kg_fem[bldof, :][:, bdof],
+    #                     Kg_fem[bldof, :][:, bldof],
+    #                     Kg_fem[bldof, :][:, rdof],
+    #                     Kg_fem[bldof, :][:, tdof],
+    #                     Kg_fem[bldof, :][:, brdof],
+    #                     Kg_fem[bldof, :][:, tldof],
+    #                     Kg_fem[bldof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Kg_fem[rdof, :][:, idof],
+    #                     Kg_fem[rdof, :][:, ldof],
+    #                     Kg_fem[rdof, :][:, bdof],
+    #                     Kg_fem[rdof, :][:, bldof],
+    #                     Kg_fem[rdof, :][:, rdof],
+    #                     Kg_fem[rdof, :][:, tdof],
+    #                     Kg_fem[rdof, :][:, brdof],
+    #                     Kg_fem[rdof, :][:, tldof],
+    #                     Kg_fem[rdof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Kg_fem[tdof, :][:, idof],
+    #                     Kg_fem[tdof, :][:, ldof],
+    #                     Kg_fem[tdof, :][:, bdof],
+    #                     Kg_fem[tdof, :][:, bldof],
+    #                     Kg_fem[tdof, :][:, rdof],
+    #                     Kg_fem[tdof, :][:, tdof],
+    #                     Kg_fem[tdof, :][:, brdof],
+    #                     Kg_fem[tdof, :][:, tldof],
+    #                     Kg_fem[tdof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Kg_fem[brdof, :][:, idof],
+    #                     Kg_fem[brdof, :][:, ldof],
+    #                     Kg_fem[brdof, :][:, bdof],
+    #                     Kg_fem[brdof, :][:, bldof],
+    #                     Kg_fem[brdof, :][:, rdof],
+    #                     Kg_fem[brdof, :][:, tdof],
+    #                     Kg_fem[brdof, :][:, brdof],
+    #                     Kg_fem[brdof, :][:, tldof],
+    #                     Kg_fem[brdof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Kg_fem[tldof, :][:, idof],
+    #                     Kg_fem[tldof, :][:, ldof],
+    #                     Kg_fem[tldof, :][:, bdof],
+    #                     Kg_fem[tldof, :][:, bldof],
+    #                     Kg_fem[tldof, :][:, rdof],
+    #                     Kg_fem[tldof, :][:, tdof],
+    #                     Kg_fem[tldof, :][:, brdof],
+    #                     Kg_fem[tldof, :][:, tldof],
+    #                     Kg_fem[tldof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Kg_fem[trdof, :][:, idof],
+    #                     Kg_fem[trdof, :][:, ldof],
+    #                     Kg_fem[trdof, :][:, bdof],
+    #                     Kg_fem[trdof, :][:, bldof],
+    #                     Kg_fem[trdof, :][:, rdof],
+    #                     Kg_fem[trdof, :][:, tdof],
+    #                     Kg_fem[trdof, :][:, brdof],
+    #                     Kg_fem[trdof, :][:, tldof],
+    #                     Kg_fem[trdof, :][:, trdof],
+    #                 ]
+    #             ),
+    #         ]
+    #     )
+
+    #     MG_cell = vstack(
+    #         [
+    #             hstack(
+    #                 [
+    #                     Mg_fem[idof, :][:, idof],
+    #                     Mg_fem[idof, :][:, ldof],
+    #                     Mg_fem[idof, :][:, bdof],
+    #                     Mg_fem[idof, :][:, bldof],
+    #                     Mg_fem[idof, :][:, rdof],
+    #                     Mg_fem[idof, :][:, tdof],
+    #                     Mg_fem[idof, :][:, brdof],
+    #                     Mg_fem[idof, :][:, tldof],
+    #                     Mg_fem[idof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Mg_fem[ldof, :][:, idof],
+    #                     Mg_fem[ldof, :][:, ldof],
+    #                     Mg_fem[ldof, :][:, bdof],
+    #                     Mg_fem[ldof, :][:, bldof],
+    #                     Mg_fem[ldof, :][:, rdof],
+    #                     Mg_fem[ldof, :][:, tdof],
+    #                     Mg_fem[ldof, :][:, brdof],
+    #                     Mg_fem[ldof, :][:, tldof],
+    #                     Mg_fem[ldof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Mg_fem[bdof, :][:, idof],
+    #                     Mg_fem[bdof, :][:, ldof],
+    #                     Mg_fem[bdof, :][:, bdof],
+    #                     Mg_fem[bdof, :][:, bldof],
+    #                     Mg_fem[bdof, :][:, rdof],
+    #                     Mg_fem[bdof, :][:, tdof],
+    #                     Mg_fem[bdof, :][:, brdof],
+    #                     Mg_fem[bdof, :][:, tldof],
+    #                     Mg_fem[bdof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Mg_fem[bldof, :][:, idof],
+    #                     Mg_fem[bldof, :][:, ldof],
+    #                     Mg_fem[bldof, :][:, bdof],
+    #                     Mg_fem[bldof, :][:, bldof],
+    #                     Mg_fem[bldof, :][:, rdof],
+    #                     Mg_fem[bldof, :][:, tdof],
+    #                     Mg_fem[bldof, :][:, brdof],
+    #                     Mg_fem[bldof, :][:, tldof],
+    #                     Mg_fem[bldof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Mg_fem[rdof, :][:, idof],
+    #                     Mg_fem[rdof, :][:, ldof],
+    #                     Mg_fem[rdof, :][:, bdof],
+    #                     Mg_fem[rdof, :][:, bldof],
+    #                     Mg_fem[rdof, :][:, rdof],
+    #                     Mg_fem[rdof, :][:, tdof],
+    #                     Mg_fem[rdof, :][:, brdof],
+    #                     Mg_fem[rdof, :][:, tldof],
+    #                     Mg_fem[rdof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Mg_fem[tdof, :][:, idof],
+    #                     Mg_fem[tdof, :][:, ldof],
+    #                     Mg_fem[tdof, :][:, bdof],
+    #                     Mg_fem[tdof, :][:, bldof],
+    #                     Mg_fem[tdof, :][:, rdof],
+    #                     Mg_fem[tdof, :][:, tdof],
+    #                     Mg_fem[tdof, :][:, brdof],
+    #                     Mg_fem[tdof, :][:, tldof],
+    #                     Mg_fem[tdof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Mg_fem[brdof, :][:, idof],
+    #                     Mg_fem[brdof, :][:, ldof],
+    #                     Mg_fem[brdof, :][:, bdof],
+    #                     Mg_fem[brdof, :][:, bldof],
+    #                     Mg_fem[brdof, :][:, rdof],
+    #                     Mg_fem[brdof, :][:, tdof],
+    #                     Mg_fem[brdof, :][:, brdof],
+    #                     Mg_fem[brdof, :][:, tldof],
+    #                     Mg_fem[brdof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Mg_fem[tldof, :][:, idof],
+    #                     Mg_fem[tldof, :][:, ldof],
+    #                     Mg_fem[tldof, :][:, bdof],
+    #                     Mg_fem[tldof, :][:, bldof],
+    #                     Mg_fem[tldof, :][:, rdof],
+    #                     Mg_fem[tldof, :][:, tdof],
+    #                     Mg_fem[tldof, :][:, brdof],
+    #                     Mg_fem[tldof, :][:, tldof],
+    #                     Mg_fem[tldof, :][:, trdof],
+    #                 ]
+    #             ),
+    #             hstack(
+    #                 [
+    #                     Mg_fem[trdof, :][:, idof],
+    #                     Mg_fem[trdof, :][:, ldof],
+    #                     Mg_fem[trdof, :][:, bdof],
+    #                     Mg_fem[trdof, :][:, bldof],
+    #                     Mg_fem[trdof, :][:, rdof],
+    #                     Mg_fem[trdof, :][:, tdof],
+    #                     Mg_fem[trdof, :][:, brdof],
+    #                     Mg_fem[trdof, :][:, tldof],
+    #                     Mg_fem[trdof, :][:, trdof],
+    #                 ]
+    #             ),
+    #         ]
+    #     )
+
+    #     Iii = eye(idof.shape[0], idof.shape[0], dtype=int64)
+    #     Zil = csc_matrix((idof.shape[0], ldof.shape[0]), dtype=int64)
+    #     Zib = csc_matrix((idof.shape[0], bdof.shape[0]), dtype=int64)
+    #     Zibl = csc_matrix((idof.shape[0], bldof.shape[0]), dtype=int64)
+
+    #     Zli = csc_matrix((ldof.shape[0], idof.shape[0]), dtype=int64)
+    #     Ill = eye(ldof.shape[0], ldof.shape[0], dtype=int64)
+    #     Zlb = csc_matrix((ldof.shape[0], bdof.shape[0]), dtype=int64)
+    #     Zlbl = csc_matrix((ldof.shape[0], bldof.shape[0]), dtype=int64)
+
+    #     Zbi = csc_matrix((bdof.shape[0], idof.shape[0]), dtype=int64)
+    #     Zbl = csc_matrix((bdof.shape[0], ldof.shape[0]), dtype=int64)
+    #     Ibb = eye(bdof.shape[0], bdof.shape[0], dtype=int64)
+    #     Zbbl = csc_matrix((bdof.shape[0], bldof.shape[0]), dtype=int64)
+
+    #     Zbli = csc_matrix((bldof.shape[0], idof.shape[0]), dtype=int64)
+    #     Zbll = csc_matrix((bldof.shape[0], ldof.shape[0]), dtype=int64)
+    #     Zblb = csc_matrix((bldof.shape[0], bdof.shape[0]), dtype=int64)
+    #     Iblbl = eye(bldof.shape[0], bldof.shape[0], dtype=int64)
+
+    #     Zri = csc_matrix((rdof.shape[0], idof.shape[0]), dtype=int64)
+    #     Irl = eye(rdof.shape[0], ldof.shape[0], dtype=int64)
+    #     Zrb = csc_matrix((rdof.shape[0], bdof.shape[0]), dtype=int64)
+    #     Zrbl = csc_matrix((rdof.shape[0], bldof.shape[0]), dtype=int64)
+
+    #     Zti = csc_matrix((tdof.shape[0], idof.shape[0]), dtype=int64)
+    #     Ztl = csc_matrix((tdof.shape[0], ldof.shape[0]), dtype=int64)
+    #     Itb = eye(tdof.shape[0], bdof.shape[0], dtype=int64)
+    #     Ztbl = csc_matrix((tdof.shape[0], bldof.shape[0]), dtype=int64)
+
+    #     Zbri = csc_matrix((brdof.shape[0], idof.shape[0]), dtype=int64)
+    #     Zbrl = csc_matrix((brdof.shape[0], ldof.shape[0]), dtype=int64)
+    #     Zbrb = csc_matrix((brdof.shape[0], bdof.shape[0]), dtype=int64)
+    #     Ibrbl = eye(brdof.shape[0], bldof.shape[0], dtype=int64)
+
+    #     Ztli = csc_matrix((tldof.shape[0], idof.shape[0]), dtype=int64)
+    #     Ztll = csc_matrix((tldof.shape[0], ldof.shape[0]), dtype=int64)
+    #     Ztlb = csc_matrix((tldof.shape[0], bdof.shape[0]), dtype=int64)
+    #     Itlbl = eye(tldof.shape[0], bldof.shape[0], dtype=int64)
+
+    #     Ztri = csc_matrix((trdof.shape[0], idof.shape[0]), dtype=int64)
+    #     Ztrl = csc_matrix((trdof.shape[0], ldof.shape[0]), dtype=int64)
+    #     Ztrb = csc_matrix((trdof.shape[0], bdof.shape[0]), dtype=int64)
+    #     Itrbl = eye(trdof.shape[0], bldof.shape[0], dtype=int64)
+
+    #     U = zeros((fulldofs, mu.shape[0]), dtype=float64)
+    #     freq_waves = zeros((modeEnd, mu.shape[0]), dtype=float64)
+    #     # U0 = zeros((fulldofs), dtype=float64)
+    #     for kmu in range(mu.shape[0]):
+
+    #         lambda_x = exp(mu[kmu, 0])
+    #         lambda_y = exp(mu[kmu, 1])
+
+    #         MAT_R = vstack(
+    #             [
+    #                 hstack([Iii, Zil, Zib, Zibl]),
+    #                 hstack([Zli, Ill, Zlb, Zlbl]),
+    #                 hstack([Zbi, Zbl, Ibb, Zbbl]),
+    #                 hstack([Zbli, Zbll, Zblb, Iblbl]),
+    #                 hstack([Zri, lambda_x * Irl, Zrb, Zrbl]),
+    #                 hstack([Zti, Ztl, lambda_y * Itb, Ztbl]),
+    #                 hstack([Zbri, Zbrl, Zbrb, lambda_x * Ibrbl]),
+    #                 hstack([Ztli, Ztll, Ztlb, lambda_y * Itlbl]),
+    #                 hstack([Ztri, Ztrl, Ztrb, lambda_x * lambda_y * Itrbl]),
+    #             ]
+    #         )
+
+    #         KG_cell_BF = (
+    #             dot(dot(MAT_R.conjugate().transpose(), KG_cell), MAT_R)
+    #         ).tocsc()
+    #         MG_cell_BF = (
+    #             dot(dot(MAT_R.conjugate().transpose(), MG_cell), MAT_R)
+    #         ).tocsc()
+
+    #         try:
+    #             omega, __ = eigsh(
+    #                 A=KG_cell_BF,
+    #                 M=MG_cell_BF,
+    #                 k=modeEnd,
+    #                 sigma=1,
+    #                 which="LM",
+    #                 maxiter=1000,
+    #             )
+    #         except:
+    #             pass
+
+    #         # U[:, kw] = dot(MAT_R.todense(), V[:, :modeEnd])
+    #         freq_waves[:, kmu] = sqrt(
+    #             sort(real(omega))
+    #         )  # Convertendo valores Reais de Omega
+
+    #     solution["U"] = U
+    #     solution["FREQ"] = freq_waves
+    #     solution["IBZRANGE"] = tot_steps
+
+    #     return solution

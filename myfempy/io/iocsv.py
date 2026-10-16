@@ -42,136 +42,137 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
         "version " + str(solstatus["solverstatus"]["myfempyversion"]),
         "===============================================================================",
     ]
+    
 
-    get_keys = log_data.get("get", {})
-    np_decimals = get_keys.get("numpy_decimals", 4)
+    if "get" in log_data.keys():
+        get_keys = log_data.get("get", {})
+        np_decimals = get_keys.get("numpy_decimals", 4)
+        if get_keys.get("nelem"):
+            lines.append("")
+            lines.append(f"GET NELEM {len(Model.inci)}")
 
-    if "nelem" in get_keys:
-        lines.append("")
-        lines.append(f"GET NELEM {len(Model.inci)}")
+        if get_keys.get("nnode"):
+            lines.append("")
+            lines.append(f"GET NNODE {len(Model.coord)}")
 
-    if "nnode" in get_keys:
-        lines.append("")
-        lines.append(f"GET NNODE {len(Model.coord)}")
-
-    if "inci" in get_keys:
-        lines.append("")
-        lines.append("LIST OF ELEMENTS")
-        lines.append(
-            "{0:<7}{1:<7}{2:<7}{3:<7}{4:<25}".format(
-                "ELEM", "KEY", "MAT", "GEO", "NODES"
-            )
-        )
-        for row in range(len(Model.inci)):
-            node_list = Model.inci[row][4:].astype(int)
-            node_list = node_list[np.nonzero(node_list)].tolist()
-            node_str = " ".join(str(x) for x in node_list)
+        if get_keys.get("inci"):
+            lines.append("")
+            lines.append("LIST OF ELEMENTS")
             lines.append(
                 "{0:<7}{1:<7}{2:<7}{3:<7}{4:<25}".format(
-                    int(Model.inci[row][0]),
-                    int(Model.inci[row][1]),
-                    int(Model.inci[row][2]),
-                    int(Model.inci[row][3]),
-                    node_str,
+                    "ELEM", "KEY", "MAT", "GEO", "NODES"
                 )
             )
-
-    if "coord" in get_keys:
-        lines.append("")
-        lines.append("LIST OF NODES COORDINATE")
-        lines.append("{0:<7}{1:<10}{2:<10}{3:<10}".format("NODE", "X", "Y", "Z"))
-        for row in range(len(Model.coord)):
-            lines.append(
-                "{0:<7}{1:<10}{2:<10}{3:<10}".format(
-                    int(Model.coord[row][0]),
-                    round(float(Model.coord[row][1]), np_decimals),
-                    round(float(Model.coord[row][2]), np_decimals),
-                    round(float(Model.coord[row][3]), np_decimals),
-                )
-            )
-
-    if "tabmat" in get_keys:
-        lines.append("")
-        lines.append("LIST OF MATERIAL PROPERTY")
-        for row in range(len(Model.tabmat)):
-            lines.append("------------------------")
-            lines.append("{0:<12}{1:<3}".format("MATERIAL", row + 1))
-            lines.append("{0:<10}{1:<10}".format("PROPMAT", "VALUE"))
-            for key, value_propmat in Model.tabmat[row].items():
-                if value_propmat != "NULL":
-                    lines.append("{0:<10}{1:<10}".format(key, value_propmat))
-
-    if "tabgeo" in get_keys:
-        lines.append("")
-        lines.append("LIST OF GEOMETRY PROPERTY")
-        for row in range(len(Model.tabgeo)):
-            lines.append("------------------------")
-            lines.append("{0:<12}{1:<3}".format("GEOMETRY", row + 1))
-            lines.append("{0:<10}{1:<10}".format("PROPGEO", "VALUE"))
-            for key, value_propmat in Model.tabgeo[row].items():
-                if value_propmat != "NULL":
-                    lines.append("{0:<10}{1:<10}".format(key, value_propmat))
-
-    if "bc_list" in get_keys:
-        lines.append("")
-        lines.append("LIST OF BOUNDARY CONDITIONS")
-        lines.append(
-            "{0:<7}{1:<10}{2:<16}{3:<10}".format("NODE", "DOF", "VALUE", "STEP")
-        )
-        model_dict = Model.modelinfo["dofs"]["d"]
-        for row in range(len(Physic.constrains)):
-            bc_type = Physic.constrains[row][1]
-            node_id = int(Physic.constrains[row][0])
-            step_id = int(Physic.constrains[row][3])
-            if bc_type == 0:
-                val = round(float(Physic.constrains[row][2]), np_decimals)
+            for row in range(len(Model.inci)):
+                node_list = Model.inci[row][4:].astype(int)
+                node_list = node_list[np.nonzero(node_list)].tolist()
+                node_str = " ".join(str(x) for x in node_list)
                 lines.append(
-                    "{0:<7}{1:<10}{2:<16}{3:<10}".format(node_id, "full", val, step_id)
+                    "{0:<7}{1:<7}{2:<7}{3:<7}{4:<25}".format(
+                        int(Model.inci[row][0]),
+                        int(Model.inci[row][1]),
+                        int(Model.inci[row][2]),
+                        int(Model.inci[row][3]),
+                        node_str,
+                    )
                 )
-            else:
-                bc_dof = next((k for k, v in model_dict.items() if v == bc_type), None)
-                val = Physic.constrains[row][2]
+
+        if get_keys.get("coord"):
+            lines.append("")
+            lines.append("LIST OF NODES COORDINATE")
+            lines.append("{0:<7}{1:<10}{2:<10}{3:<10}".format("NODE", "X", "Y", "Z"))
+            for row in range(len(Model.coord)):
                 lines.append(
-                    "{0:<7}{1:<10}{2:<16}{3:<10}".format(node_id, bc_dof, val, step_id)
+                    "{0:<7}{1:<10}{2:<10}{3:<10}".format(
+                        int(Model.coord[row][0]),
+                        round(float(Model.coord[row][1]), np_decimals),
+                        round(float(Model.coord[row][2]), np_decimals),
+                        round(float(Model.coord[row][3]), np_decimals),
+                    )
                 )
 
-    if "lo_list" in get_keys:
-        lines.append("")
-        lines.append("LIST OF LOADS")
-        lines.append(
-            "{0:<7}{1:<20}{2:<16}{3:<10}".format("NODE", "TYPE", "VALUE", "STEP")
-        )
-        model_dict = Model.modelinfo["dofs"]["f"]
-        for row in range(len(Physic.forces)):
-            fc_type = Physic.forces[row][1]
-            fc_dof = next((k for k, v in model_dict.items() if v == fc_type), None)
-            val = round(float(Physic.forces[row][2]), np_decimals)
+        if get_keys.get("tabmat"):
+            lines.append("")
+            lines.append("LIST OF MATERIAL PROPERTY")
+            for row in range(len(Model.tabmat)):
+                lines.append("------------------------")
+                lines.append("{0:<12}{1:<3}".format("MATERIAL", row + 1))
+                lines.append("{0:<10}{1:<10}".format("PROPMAT", "VALUE"))
+                for key, value_propmat in Model.tabmat[row].items():
+                    if value_propmat != "NULL":
+                        lines.append("{0:<10}{1:<10}".format(key, value_propmat))
+
+        if get_keys.get("tabgeo"):
+            lines.append("")
+            lines.append("LIST OF GEOMETRY PROPERTY")
+            for row in range(len(Model.tabgeo)):
+                lines.append("------------------------")
+                lines.append("{0:<12}{1:<3}".format("GEOMETRY", row + 1))
+                lines.append("{0:<10}{1:<10}".format("PROPGEO", "VALUE"))
+                for key, value_propmat in Model.tabgeo[row].items():
+                    if value_propmat != "NULL":
+                        lines.append("{0:<10}{1:<10}".format(key, value_propmat))
+
+        if get_keys.get("bc_list"):
+            lines.append("")
+            lines.append("LIST OF BOUNDARY CONDITIONS")
             lines.append(
-                "{0:<7}{1:<20}{2:<16}{3:<10}".format(
-                    int(Physic.forces[row][0]),
-                    str(fc_dof),
-                    val,
-                    int(Physic.forces[row][3]),
-                )
+                "{0:<7}{1:<10}{2:<16}{3:<10}".format("NODE", "DOF", "VALUE", "STEP")
             )
+            model_dict = Model.modelinfo["dofs"]["d"]
+            for row in range(len(Physic.constrains)):
+                bc_type = Physic.constrains[row][1]
+                node_id = int(Physic.constrains[row][0])
+                step_id = int(Physic.constrains[row][3])
+                if bc_type == 0:
+                    val = round(float(Physic.constrains[row][2]), np_decimals)
+                    lines.append(
+                        "{0:<7}{1:<10}{2:<16}{3:<10}".format(node_id, "full", val, step_id)
+                    )
+                else:
+                    bc_dof = next((k for k, v in model_dict.items() if v == bc_type), None)
+                    val = Physic.constrains[row][2]
+                    lines.append(
+                        "{0:<7}{1:<10}{2:<16}{3:<10}".format(node_id, bc_dof, val, step_id)
+                    )
 
-    if "u_list" in get_keys:
-        lines.append("")
-        lines.append("LIST OF SOLUTIONS")
-        model_dict = list(Model.modelinfo["dofs"]["d"].keys())
-        dof_header = str(model_dict)[1:-1]
-        for row in range(len(solstatus["SOLUTION"])):
-            lines.append("------------------------")
-            lines.append("{0:<7}{1:<4}".format("STEP", row + 1))
-            lines.append(f"dof, {dof_header}")
-            array_sol = solstatus["SOLUTION"][row][Model.element.setTitleDeformation()][
-                :, : len(model_dict)
-            ]
-            for line_dof, line in enumerate(array_sol):
-                line_str = ", ".join(map(str, line.round(decimals=np_decimals)))
-                lines.append(f"{line_dof}, {line_str}")
+        if get_keys.get("lo_list"):
+            lines.append("")
+            lines.append("LIST OF LOADS")
+            lines.append(
+                "{0:<7}{1:<20}{2:<16}{3:<10}".format("NODE", "TYPE", "VALUE", "STEP")
+            )
+            model_dict = Model.modelinfo["dofs"]["f"]
+            for row in range(len(Physic.forces)):
+                fc_type = Physic.forces[row][1]
+                fc_dof = next((k for k, v in model_dict.items() if v == fc_type), None)
+                val = round(float(Physic.forces[row][2]), np_decimals)
+                lines.append(
+                    "{0:<7}{1:<20}{2:<16}{3:<10}".format(
+                        int(Physic.forces[row][0]),
+                        str(fc_dof),
+                        val,
+                        int(Physic.forces[row][3]),
+                    )
+                )
 
-    if "log" in log_data.keys():
+        if get_keys.get("u_list"):
+            lines.append("")
+            lines.append("LIST OF SOLUTIONS")
+            model_dict = list(Model.modelinfo["dofs"]["d"].keys())
+            dof_header = str(model_dict)[1:-1]
+            for row in range(len(solstatus["SOLUTION"])):
+                lines.append("------------------------")
+                lines.append("{0:<7}{1:<4}".format("STEP", row + 1))
+                lines.append(f"dof, {dof_header}")
+                array_sol = solstatus["SOLUTION"][row][Model.element.setTitleDeformation()][
+                    :, : len(model_dict)
+                ]
+                for line_dof, line in enumerate(array_sol):
+                    line_str = ", ".join(map(str, line.round(decimals=np_decimals)))
+                    lines.append(f"{line_dof}, {line_str}")
+
+    if log_data.get("log"):
         lines.append("")
         lines.append(
             "+---------------------------- S O L V E R   L O G ----------------------------+"

@@ -3,7 +3,7 @@ from __future__ import annotations
 from numpy import (arange, array, concatenate, dot, float64, int16, isin,
                    setdiff1d, sqrt, where, zeros)
 from scipy.sparse import csc_matrix, eye, hstack, lil_matrix, vstack
-from scipy.sparse.linalg import minres, spsolve
+from scipy.sparse.linalg import minres
 
 from myfempy.core.solver.assemblerfull import AssemblerFULL
 from myfempy.core.solver.solver import Solver

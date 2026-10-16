@@ -26,7 +26,6 @@ from myfempy.utils.utils import (clear_console, get_about, get_logo,
 __docformat__ = "google"
 __doc__ = get_about
 
-
 class newAnalysis:
     """
     Setup the New Analysis to FEA simulation
@@ -656,12 +655,15 @@ class newAnalysis:
             tabmat (list, optional): Optional material lookup profile. Defaults to None.
             tabgeo (list, optional): Optional geometry lookup profile. Defaults to None.
             intgauss (int, optional): Optional Gaussian integration order. Defaults to None.
-            MP (int, optional): Optional MultiProcessing Assembler. Defaults to None.
+            MP (bool:[True, False], optional): Optional multiProcessing assembler. Defaults to None.
+            max_workers (int, optional): Number of core multiProcessing assembler. Defaults to None.
         Returns:
             npt.NDArray[np.float64]: The raw assembled structural matrix system.
 
         Example:
             >>> K_global = FEA.getGlobalMatrix(FEA.model)
+            <-- with python 3.14t -->
+            >>> K_global = FEA.getGlobalMatrix(FEA.model, MP=True, max_workers=4)
         """
         return self.solver.getMatrixAssembler(
             Model,

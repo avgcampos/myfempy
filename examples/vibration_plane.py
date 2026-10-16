@@ -1,3 +1,7 @@
+import sys
+# setting path
+sys.path.append('../myfempy')
+
 from myfempy import newAnalysis
 from myfempy import DynamicEigenLinear
 
