@@ -8,8 +8,6 @@ from myfempy.core.utilities import (gauss_points, get3D_LocalVector,
                                     get_elemen_from_nodelist,
                                     get_nodes_from_list, getRotational_Matrix)
 
-from concurrent.futures import ThreadPoolExecutor
-
 __docformat__ = "google"
 
 __doc__ = """

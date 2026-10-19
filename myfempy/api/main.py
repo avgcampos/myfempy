@@ -317,7 +317,7 @@ class newAnalysis:
             )
         else:
             solverset["solverstatus"]["typeasmb"] = "SERIAL_1_CORE"
-
+        solverset["NCPU"] = self.NCPU
         nodetot = self.model.modelinfo["nnode"]
         try:
             constrains = self.physic.constrains
@@ -411,10 +411,13 @@ class newAnalysis:
             >>> data = FEA.PostProcess(config)
         """
         print_console("post")
-        postprocdata = []
+        postprocdata = dict()
+        postprocdata["solverstatus"] = postprocset["SOLVERDATA"]["solverstatus"]
         try:
             if "COMPUTER" in postprocset:
-                postprocdata = setPostProcess.getCompute(self, postprocset)
+                postprocdata["computer"] = []
+                computer_file = setPostProcess.getCompute(self, postprocset)
+                postprocdata["computer"].append(computer_file)
             if "PLOT" in postprocset:
                 setPostProcess.getPlotCSV(self, postprocset, postprocdata)
             if "REPORT" in postprocset:
@@ -675,6 +678,8 @@ class newAnalysis:
             MP=MP,
             max_workers=max_workers,
         )
+
+    def 
 
     def getConstrains(
         self, constrains: list

@@ -139,13 +139,11 @@ The Service class is responsible for executing commands. It contains both getter
 
 Finally, the Service class itself serves as an abstraction. The actual implementations are delegated to the Concrete Service class, which performs the computations and delivers the required results. This completes the class arrangement employed in the project’s development.
 
-
 ![myfempy_class_design](assets/myfempy_class_design.png)
 
 As an example, let's look at a user request:
 
 The client request is to calculate the stiffness matrix of a QUAD4 element. The process begins with the Order class, which receives the instruction: return the stiffness matrix of the element. This is executed through the method element.stiff(QUAD4.data) and passed via its API to the Service class. The Service class defines the abstract method get_stiff(), which does not contain any knowledge of the QUAD4 element’s data. Instead, the actual computation is performed by a concrete implementation of the Service class, which provides the method get_stiff_QUAD4(User.data). This method carries out the necessary calculations and produces the stiffness matrix as requested by the user. In summary, the Order class is responsible for initiating and guiding internal requests (via Features()), while delegating execution to the Service class interface. The concrete Service class then implements the specific methods (get_methods()) required to fulfill the client’s request.
-
 
 For an overview, view the files during the project drafting phase.
 

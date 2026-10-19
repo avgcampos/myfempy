@@ -46,7 +46,6 @@ class setPostProcess:
         # print_console("post")
         postprocdata = dict()
         postprocdata["SOLUTION"] = []
-        postprocdata["solverstatus"] = postprocset["SOLVERDATA"]["solverstatus"]
         SOLUTION = postprocset["SOLVERDATA"]["solution"]["U"]
 
         postporc_result = dict()

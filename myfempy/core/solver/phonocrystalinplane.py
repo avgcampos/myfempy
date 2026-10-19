@@ -1,16 +1,18 @@
 from __future__ import annotations
 
-from numpy import (
-    arange, array, asarray, bincount, concatenate, empty, cumsum, exp, float64,
-    int32, int64, nan, ones, outer, real, searchsorted, sort, sqrt, unique,
-    zeros, where, isin, ceil, linspace, pi
-)
-from scipy.sparse import csc_matrix, csr_matrix
-from scipy.sparse.linalg import eigsh
+from numpy import (arange, array, empty, concatenate, unique, dot, float64, isin, int64,
+                   sort, pi, where, zeros, sqrt, real, linspace, ceil, exp)
 
-from myfempy.core.solver.assemblerfull import AssemblerFULL
+from scipy.sparse import coo_matrix, csc_matrix, eye, hstack, vstack
+from scipy.sparse.linalg import LinearOperator, eigsh, splu, ArpackError
+
+from myfempy.core.solver.assemblerSR import AssemblerSR
+from myfempy.core.solver.assemblerMP import AssemblerMP
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
+
+from concurrent.futures import ThreadPoolExecutor
+from os import cpu_count
 
 __docformat__ = "google"
 
@@ -48,63 +50,25 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
     """
     Phononic Crystal In-Plane Boundary Periodic Solver Class <ConcreteClassService>
     """
-
     def getMatrixAssembler(
-        Model,
-        inci=None,
-        coord=None,
-        tabmat=None,
-        tabgeo=None,
-        intgauss=None,
-        MP=None,
-        max_workers=None,
-    ):
+        Model, inci = None, coord = None, tabmat = None, tabgeo = None, intgauss = None, MP = None, max_workers=None):
         matrix = dict()
         if MP:
-            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
-                Model,
-                Model.element.getStifLinearMat,
-                Model.shape.getIntNumK,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
-                max_workers,
+            matrix["stiffness"] = AssemblerMP.getGlobalMatrixAssembler(
+                Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss, max_workers
             )
-            matrix["mass"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
-                Model,
-                Model.element.getMassConsistentMat,
-                Model.shape.getIntNumM,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
-                max_workers,
+            matrix["mass"] = AssemblerMP.getGlobalMatrixAssembler(
+                Model, Model.element.getMassConsistentMat, Model.shape.getIntNumM, inci, coord, tabmat, tabgeo, intgauss, max_workers
             )
         else:
-            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(
-                Model,
-                Model.element.getStifLinearMat,
-                Model.shape.getIntNumK,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
+            matrix["stiffness"] = AssemblerSR.getGlobalMatrixAssembler(
+                Model, Model.element.getStifLinearMat, Model.shape.getIntNumK, inci, coord, tabmat, tabgeo, intgauss,
             )
-            matrix["mass"] = AssemblerFULL.getGlobalMatrixAssembler(
-                Model,
-                Model.element.getMassConsistentMat,
-                Model.shape.getIntNumM,
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                intgauss,
+            matrix["mass"] = AssemblerSR.getGlobalMatrixAssembler(
+                Model, Model.element.getMassConsistentMat, Model.shape.getIntNumM, inci, coord, tabmat, tabgeo, intgauss,
             )
         return matrix
+    
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
         return empty(
@@ -113,6 +77,7 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
                 len(unique(loadaply[:, 3])),
             )
         )
+        
 
     def getConstrains(constrains, nodetot, nodedof):
         pc_left = where(constrains[:, 1] == 13)
@@ -133,625 +98,166 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
         pc_top_left_constrain = constrains[pc_top_left[0], :]
         pc_top_right_constrain = constrains[pc_top_right[0], :]
 
-        testl2bl = isin(
-            pc_left_constrain[:, 0],
-            pc_bottom_left_constrain[:, 0],
-            assume_unique=True,
-            invert=True,
-        )
-        pc_left_constrain = pc_left_constrain[testl2bl, :]
+        testl2bl = isin(pc_left_constrain[:,0], pc_bottom_left_constrain[:,0], assume_unique=True, invert=True)
+        pc_left_constrain = pc_left_constrain[testl2bl,:]
+        
+        testl2tl = isin(pc_left_constrain[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
+        pc_left_constrain = pc_left_constrain[testl2tl,:]
+                        
+        testb2bl = isin(pc_bottom_constrain[:,0], pc_bottom_left_constrain[:,0], assume_unique=True, invert=True)
+        pc_bottom_constrain = pc_bottom_constrain[testb2bl,:]
 
-        testl2tl = isin(
-            pc_left_constrain[:, 0],
-            pc_top_left_constrain[:, 0],
-            assume_unique=True,
-            invert=True,
-        )
-        pc_left_constrain = pc_left_constrain[testl2tl, :]
+        testb2br = isin(pc_bottom_constrain[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
+        pc_bottom_constrain = pc_bottom_constrain[testb2br,:]
+        
+        testt2tl = isin(pc_top_constrain[:,0], pc_top_left_constrain[:,0], assume_unique=True, invert=True)
+        pc_top_constrain = pc_top_constrain[testt2tl,:]
+        
+        testt2tr = isin(pc_top_constrain[:,0], pc_top_right_constrain[:,0], assume_unique=True, invert=True)
+        pc_top_constrain = pc_top_constrain[testt2tr,:]
 
-        testb2bl = isin(
-            pc_bottom_constrain[:, 0],
-            pc_bottom_left_constrain[:, 0],
-            assume_unique=True,
-            invert=True,
-        )
-        pc_bottom_constrain = pc_bottom_constrain[testb2bl, :]
+        testr2tr = isin(pc_right_constrain[:,0], pc_top_right_constrain[:,0], assume_unique=True, invert=True)
+        pc_right_constrain = pc_right_constrain[testr2tr,:]
 
-        testb2br = isin(
-            pc_bottom_constrain[:, 0],
-            pc_bottom_right_constrain[:, 0],
-            assume_unique=True,
-            invert=True,
-        )
-        pc_bottom_constrain = pc_bottom_constrain[testb2br, :]
+        testr2br = isin(pc_right_constrain[:,0], pc_bottom_right_constrain[:,0], assume_unique=True, invert=True)
+        pc_right_constrain = pc_right_constrain[testr2br,:]
 
-        testt2tl = isin(
-            pc_top_constrain[:, 0],
-            pc_top_left_constrain[:, 0],
-            assume_unique=True,
-            invert=True,
-        )
-        pc_top_constrain = pc_top_constrain[testt2tl, :]
-
-        testt2tr = isin(
-            pc_top_constrain[:, 0],
-            pc_top_right_constrain[:, 0],
-            assume_unique=True,
-            invert=True,
-        )
-        pc_top_constrain = pc_top_constrain[testt2tr, :]
-
-        testr2tr = isin(
-            pc_right_constrain[:, 0],
-            pc_top_right_constrain[:, 0],
-            assume_unique=True,
-            invert=True,
-        )
-        pc_right_constrain = pc_right_constrain[testr2tr, :]
-
-        testr2br = isin(
-            pc_right_constrain[:, 0],
-            pc_bottom_right_constrain[:, 0],
-            assume_unique=True,
-            invert=True,
-        )
-        pc_right_constrain = pc_right_constrain[testr2br, :]
-
-        __, pc_left_dof, __ = AssemblerFULL.getConstrains(
-            pc_left_constrain, nodetot, nodedof
-        )
-        __, pc_right_dof, __ = AssemblerFULL.getConstrains(
-            pc_right_constrain, nodetot, nodedof
-        )
-        __, pc_bottom_dof, __ = AssemblerFULL.getConstrains(
-            pc_bottom_constrain, nodetot, nodedof
-        )
-        __, pc_top_dof, __ = AssemblerFULL.getConstrains(
-            pc_top_constrain, nodetot, nodedof
-        )
-        __, pc_bottom_left_dof, __ = AssemblerFULL.getConstrains(
-            pc_bottom_left_constrain, nodetot, nodedof
-        )
-        __, pc_bottom_right_dof, __ = AssemblerFULL.getConstrains(
-            pc_bottom_right_constrain, nodetot, nodedof
-        )
-        __, pc_top_left_dof, __ = AssemblerFULL.getConstrains(
-            pc_top_left_constrain, nodetot, nodedof
-        )
-        __, pc_top_right_dof, __ = AssemblerFULL.getConstrains(
-            pc_top_right_constrain, nodetot, nodedof
-        )
+        __, pc_left_dof, __ = AssemblerSR.getConstrains(pc_left_constrain, nodetot, nodedof)
+        __, pc_right_dof, __ = AssemblerSR.getConstrains(pc_right_constrain, nodetot, nodedof)
+        __, pc_bottom_dof, __ = AssemblerSR.getConstrains(pc_bottom_constrain, nodetot, nodedof)
+        __, pc_top_dof, __ = AssemblerSR.getConstrains(pc_top_constrain, nodetot, nodedof)
+        __, pc_bottom_left_dof, __ = AssemblerSR.getConstrains(pc_bottom_left_constrain, nodetot, nodedof)
+        __, pc_bottom_right_dof, __ = AssemblerSR.getConstrains(pc_bottom_right_constrain, nodetot, nodedof)
+        __, pc_top_left_dof, __ = AssemblerSR.getConstrains(pc_top_left_constrain, nodetot, nodedof)
+        __, pc_top_right_dof, __ = AssemblerSR.getConstrains(pc_top_right_constrain, nodetot, nodedof)
 
         full_dofs = arange(0, nodedof * nodetot, 1, int)
 
-        pc_dofs = concatenate(
-            (
-                pc_left_dof,
-                pc_bottom_dof,
-                pc_bottom_left_dof,
-                pc_right_dof,
-                pc_top_dof,
-                pc_bottom_right_dof,
-                pc_top_left_dof,
-                pc_top_right_dof,
-            ),
-            axis=0,
-        )
+        pc_dofs = concatenate((pc_left_dof, pc_bottom_dof, pc_bottom_left_dof, pc_right_dof, pc_top_dof, pc_bottom_right_dof, pc_top_left_dof, pc_top_right_dof), axis=0)
         testpc2i = isin(full_dofs, pc_dofs, assume_unique=True, invert=True)
         freedof = full_dofs[testpc2i]
 
-        constdof = [
-            pc_left_dof,
-            pc_bottom_dof,
-            pc_bottom_left_dof,
-            pc_right_dof,
-            pc_top_dof,
-            pc_bottom_right_dof,
-            pc_top_left_dof,
-            pc_top_right_dof,
-        ]
+        constdof = [pc_left_dof, pc_bottom_dof, pc_bottom_left_dof, pc_right_dof, pc_top_dof, pc_bottom_right_dof, pc_top_left_dof, pc_top_right_dof]
         fixedof = []
 
         return freedof, fixedof, constdof
 
     def getDirichletNH(constrains, nodetot, nodedof):
-        return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
+        return AssemblerSR.getDirichletNH(constrains, nodetot, nodedof)
 
 
-    def _build_T(n, idof, ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof):
-        """R = T0 + lx*Tx + ly*Ty + lx*ly*Txy (constantes, esparsas, indexadas pelos dofs reais)."""
-        idof, ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof = (
-            asarray(a).ravel()
-            for a in (idof, ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof)
-        )
-        ni, nl, nb, nbl = idof.size, ldof.size, bdof.size, bldof.size
-        o_l, o_b, o_bl = ni, ni + nl, ni + nl + nb
-        n_red = o_bl + nbl
-
-        def sel(rows, col0, count):  # equivale a eye(m, n) retangular
-            r = rows[:count]
-            return r, col0 + arange(r.size)
-
-        def mk(parts):
-            r = concatenate([p[0] for p in parts])
-            c = concatenate([p[1] for p in parts])
-            return csr_matrix((ones(r.size), (r, c)), shape=(n, n_red))
-
-        T0 = mk([sel(idof, 0, ni), sel(ldof, o_l, nl), sel(bdof, o_b, nb), sel(bldof, o_bl, nbl)])
-        Tx = mk([sel(rdof, o_l, nl), sel(brdof, o_bl, nbl)])
-        Ty = mk([sel(tdof, o_b, nb), sel(tldof, o_bl, nbl)])
-        Txy = mk([sel(trdof, o_bl, nbl)])
-        return [T0, Tx, Ty, Txy], n_red
-
-
-    def _dyn_mat(K, M, T, n_red):
-        """16 termos constantes Tp^T A Tq para K e M, empilhados sobre um padrao esparso unico."""
-
-        def grid(A):
-            AT = [A @ Tq for Tq in T]
-            return [(T[p].T @ AT[q]).tocsc() for p in range(4) for q in range(4)]
-
-        mats = grid(K) + grid(M)
-        coos = [m.tocoo() for m in mats]
-        keys = [c.col.astype(int64) * n_red + c.row for c in coos]
-        ukeys = unique(concatenate(keys))
-        cols = ukeys // n_red
-        rows = ukeys - cols * n_red
-
-        indptr = zeros(n_red + 1, dtype=int64)
-        cumsum(bincount(cols, minlength=n_red), out=indptr[1:])
-
-        D = zeros((len(mats), ukeys.size))
-        for t, (c, k) in enumerate(zip(coos, keys)):
-            D[t, searchsorted(ukeys, k)] = c.data
-        return D[:16], D[16:], rows.astype(int32), indptr.astype(int32)
-
-    # @profile
     def runSolve(Model, Physic, assembly, constrainsdof, solverset):
         fulldofs = Model.modelinfo["fulldofs"]
-
-        solution = dict()
         modeEnd = setSteps(solverset["STEPSET"])
-        cont_co = solverset["IBZ"]
-        mu, tot_steps = PhononicCrystalPlaneBCPeriodic.__setIBZ(cont_co)
-        mu = asarray(mu)
-        nmu = mu.shape[0]
+        mu, tot_steps = PhononicCrystalPlaneBCPeriodic.__setIBZ(solverset["IBZ"])
 
-        idof = constrainsdof["freedof"]
-        ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof = constrainsdof["constdof"][:8]
+        # Grupos de DOFs: internos, esquerda, base, base-esq, direita, topo, base-dir, topo-esq, topo-dir
+        grupos = [constrainsdof["freedof"], *constrainsdof["constdof"][:8]]
+        ordem = concatenate(grupos)
 
-        K = assembly["stiffness"].tocsr()
-        M = assembly["mass"].tocsr()
+        KG_cell = assembly["stiffness"][ordem][:, ordem]
+        MG_cell = assembly["mass"][ordem][:, ordem]
 
-        # ---- pre-processamento unico (fora do laco em mu) ----
-        T, n_red = PhononicCrystalPlaneBCPeriodic._build_T(
-            K.shape[0], idof, ldof, bdof, bldof, rdof, tdof, brdof, tldof, trdof
-        )
-        DK, DM, indices, indptr = PhononicCrystalPlaneBCPeriodic._dyn_mat(K, M, T, n_red)
-        shape = (n_red, n_red)
+        R0, A, B, C = PhononicCrystalPlaneBCPeriodic.__setDenseMat([g.shape[0] for g in grupos])
 
-        # ---- varredura em mu (serial) ----
-        freq_waves = zeros((modeEnd, nmu), dtype=float64)
+        n_mu = mu.shape[0]
 
-        for kmu in range(nmu):
-            lx = exp(mu[kmu, 0])
-            ly = exp(mu[kmu, 1])
+        # Parâmetros opcionais do solver
+        sigma = 0.0
+        n_workers = solverset["NCPU"]
+        def resolver_ponto(kmu):
+            """Frequências de um ponto da IBZ (seguro para threads: só lê dados compartilhados)."""
+            lambda_x = exp(mu[kmu, 0])
+            lambda_y = exp(mu[kmu, 1])
 
-            c = array([1.0, lx, ly, lx * ly])
-            w = outer(c.conj(), c).ravel()  # conj(c_p) * c_q
+            MAT_R = R0 + lambda_x * A + lambda_y * B + lambda_x * lambda_y * C
+            MAT_R_H = MAT_R.conjugate().transpose()
 
-            K_BF = csc_matrix((w @ DK, indices, indptr), shape=shape)
-            M_BF = csc_matrix((w @ DM, indices, indptr), shape=shape)
+            KG_cell_BF = (MAT_R_H.dot(KG_cell.dot(MAT_R))).tocsc()
+            MG_cell_BF = (MAT_R_H.dot(MG_cell.dot(MAT_R))).tocsc()
+            del MAT_R, MAT_R_H                                   # libera memória antes da fatoração
 
             try:
-                omega = eigsh(K_BF, M=M_BF, k=modeEnd, sigma=0, which="LM", return_eigenvectors=False)
-                freq_waves[:, kmu] = sqrt(sort(real(omega)))
-            except Exception:
-                freq_waves[:, kmu] = nan
+                # Fatoração LU de (K - sigma*M) com ordenação para estrutura simétrica
+                lu = splu(
+                    (KG_cell_BF - sigma * MG_cell_BF).tocsc(),
+                    permc_spec="MMD_AT_PLUS_A",
+                    diag_pivot_thresh=0.0,                       # pivô na diagonal (K Hermitiana)
+                    options={"SymmetricMode": True},
+                )
+                OPinv = LinearOperator(KG_cell_BF.shape, matvec=lu.solve,
+                                       dtype=KG_cell_BF.dtype)
 
-        solution["U"] = zeros((fulldofs, nmu), dtype=float64)  # mantido por compatibilidade
+                avec = eigsh(A=KG_cell_BF, M=MG_cell_BF, k=modeEnd, sigma=sigma,
+                             which="LM", OPinv=OPinv, return_eigenvectors=False)
+            except (ArpackError, RuntimeError):
+                return 0.0
+
+            return sqrt(sort(real(avec)))
+
+        freq_waves = zeros((modeEnd, n_mu), dtype=float64)
+
+        with ThreadPoolExecutor(max_workers=n_workers) as pool:
+            for kmu, freq in enumerate(pool.map(resolver_ponto, range(n_mu))):
+                freq_waves[:, kmu] = freq
+
+        solution = {"U": zeros((fulldofs, n_mu), dtype=float64)}
         solution["FREQ"] = freq_waves
         solution["IBZRANGE"] = tot_steps
         return solution
 
+    def __setAssembleBlocks(shape, blocks):
+        """Monta uma matriz esparsa CSC posicionando blocos (linha0, coluna0, matriz)."""
+        coos = [(r0, c0, coo_matrix(m)) for r0, c0, m in blocks]
+        rows = concatenate([m.row + r0 for r0, _, m in coos])
+        cols = concatenate([m.col + c0 for _, c0, m in coos])
+        data = concatenate([m.data for _, _, m in coos])
+        return coo_matrix((data, (rows, cols)), shape=shape).tocsc()
+
+
+    def __setDenseMat(sizes):
+        """
+        Pré-calcula as matrizes esparsas tais que, para cada ponto da IBZ:
+            MAT_R = R0 + lambda_x*A + lambda_y*B + lambda_x*lambda_y*C
+        Ordem dos graus de liberdade: i, l, b, bl, r, t, br, tl, tr
+        """
+        ni, nl, nb, nbl, nr, nt, nbr, ntl, ntr = sizes
+        off = [0]
+        for n in sizes:
+            off.append(off[-1] + n)
+
+        shape = (off[-1], ni + nl + nb + nbl)
+
+        R0 = PhononicCrystalPlaneBCPeriodic.__setAssembleBlocks(shape, [(off[k], off[k], eye(sizes[k])) for k in range(4)])
+        A = PhononicCrystalPlaneBCPeriodic.__setAssembleBlocks(shape, [(off[4], off[1], eye(nr, nl)),     # r  <- l   (lambda_x)
+                                (off[6], off[3], eye(nbr, nbl))])  # br <- bl  (lambda_x)
+        B = PhononicCrystalPlaneBCPeriodic.__setAssembleBlocks(shape, [(off[5], off[2], eye(nt, nb)),     # t  <- b   (lambda_y)
+                                (off[7], off[3], eye(ntl, nbl))])  # tl <- bl  (lambda_y)
+        C = PhononicCrystalPlaneBCPeriodic.__setAssembleBlocks(shape, [(off[8], off[3], eye(ntr, nbl))])  # tr <- bl  (lambda_x*lambda_y)
+        return R0, A, B, C
+    
     def __setIBZ(cont_co):
         # Amostragem da IBZ
         img = 1j
-        mu = array([img * cont_co[0, :].T])
+        mu = array([img*cont_co[0, :].T])
         tot_steps = zeros(len(cont_co), dtype=int)
 
-        step_size = 0.01 * pi  # Defina o tamanho do passo desejado
+        step_size = 0.01*pi  # Defina o tamanho do passo desejado
 
         for i in range(len(cont_co) - 1):
-            n_steps = int(
-                ceil(
-                    sqrt(
-                        (cont_co[i, 0] - cont_co[i + 1, 0]) ** 2
-                        + (cont_co[i, 1] - cont_co[i + 1, 1]) ** 2
-                    )
-                    / step_size
-                )
-            )
-
+            n_steps = int(ceil(sqrt((cont_co[i, 0] - cont_co[i + 1, 0])**2 +
+                                        (cont_co[i, 1] - cont_co[i + 1, 1])**2) / step_size))
+            
             ed = zeros((2, n_steps))
-
+            
             for j in range(2):  # j = 0 -> x; j = 1 -> y
                 step = (cont_co[i + 1, j] - cont_co[i, j]) / n_steps
                 if step == 0:
                     ed[j, :] = cont_co[i, j]
                 else:
-                    ed[j, :] = linspace(
-                        cont_co[i, j], cont_co[i + 1, j], n_steps, endpoint=False
-                    )
-
-            mu = concatenate((mu, img * ed.T), axis=0)
+                    ed[j, :] = linspace(cont_co[i, j], cont_co[i + 1, j], n_steps, endpoint=False)
+            
+            mu = concatenate((mu, img*ed.T), axis=0)
             tot_steps[i + 1] = tot_steps[i] + n_steps
-
+        
         return mu, tot_steps
-
-
-    # def runSolve(Model, Physic, assembly, constrainsdof, solverset):
-    #     fulldofs = Model.modelinfo["fulldofs"]
-
-    #     solution = dict()
-    #     modeEnd = setSteps(solverset["STEPSET"])
-    #     cont_co = solverset["IBZ"]
-
-    #     mu, tot_steps = PhononicCrystalPlaneBCPeriodic.__setIBZ(cont_co)
-
-    #     # fixeddof = constrainsdof["fixedof"]
-
-    #     idof = constrainsdof["freedof"]
-    #     ldof = constrainsdof["constdof"][0]
-    #     bdof = constrainsdof["constdof"][1]
-    #     bldof = constrainsdof["constdof"][2]
-    #     rdof = constrainsdof["constdof"][3]
-    #     tdof = constrainsdof["constdof"][4]
-    #     brdof = constrainsdof["constdof"][5]
-    #     tldof = constrainsdof["constdof"][6]
-    #     trdof = constrainsdof["constdof"][7]
-
-    #     Kg_fem = assembly["stiffness"]
-    #     Mg_fem = assembly["mass"]
-
-    #     # CONDENSACAO PERIODICA INF
-    #     KG_cell = vstack(
-    #         [
-    #             hstack(
-    #                 [
-    #                     Kg_fem[idof, :][:, idof],
-    #                     Kg_fem[idof, :][:, ldof],
-    #                     Kg_fem[idof, :][:, bdof],
-    #                     Kg_fem[idof, :][:, bldof],
-    #                     Kg_fem[idof, :][:, rdof],
-    #                     Kg_fem[idof, :][:, tdof],
-    #                     Kg_fem[idof, :][:, brdof],
-    #                     Kg_fem[idof, :][:, tldof],
-    #                     Kg_fem[idof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Kg_fem[ldof, :][:, idof],
-    #                     Kg_fem[ldof, :][:, ldof],
-    #                     Kg_fem[ldof, :][:, bdof],
-    #                     Kg_fem[ldof, :][:, bldof],
-    #                     Kg_fem[ldof, :][:, rdof],
-    #                     Kg_fem[ldof, :][:, tdof],
-    #                     Kg_fem[ldof, :][:, brdof],
-    #                     Kg_fem[ldof, :][:, tldof],
-    #                     Kg_fem[ldof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Kg_fem[bdof, :][:, idof],
-    #                     Kg_fem[bdof, :][:, ldof],
-    #                     Kg_fem[bdof, :][:, bdof],
-    #                     Kg_fem[bdof, :][:, bldof],
-    #                     Kg_fem[bdof, :][:, rdof],
-    #                     Kg_fem[bdof, :][:, tdof],
-    #                     Kg_fem[bdof, :][:, brdof],
-    #                     Kg_fem[bdof, :][:, tldof],
-    #                     Kg_fem[bdof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Kg_fem[bldof, :][:, idof],
-    #                     Kg_fem[bldof, :][:, ldof],
-    #                     Kg_fem[bldof, :][:, bdof],
-    #                     Kg_fem[bldof, :][:, bldof],
-    #                     Kg_fem[bldof, :][:, rdof],
-    #                     Kg_fem[bldof, :][:, tdof],
-    #                     Kg_fem[bldof, :][:, brdof],
-    #                     Kg_fem[bldof, :][:, tldof],
-    #                     Kg_fem[bldof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Kg_fem[rdof, :][:, idof],
-    #                     Kg_fem[rdof, :][:, ldof],
-    #                     Kg_fem[rdof, :][:, bdof],
-    #                     Kg_fem[rdof, :][:, bldof],
-    #                     Kg_fem[rdof, :][:, rdof],
-    #                     Kg_fem[rdof, :][:, tdof],
-    #                     Kg_fem[rdof, :][:, brdof],
-    #                     Kg_fem[rdof, :][:, tldof],
-    #                     Kg_fem[rdof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Kg_fem[tdof, :][:, idof],
-    #                     Kg_fem[tdof, :][:, ldof],
-    #                     Kg_fem[tdof, :][:, bdof],
-    #                     Kg_fem[tdof, :][:, bldof],
-    #                     Kg_fem[tdof, :][:, rdof],
-    #                     Kg_fem[tdof, :][:, tdof],
-    #                     Kg_fem[tdof, :][:, brdof],
-    #                     Kg_fem[tdof, :][:, tldof],
-    #                     Kg_fem[tdof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Kg_fem[brdof, :][:, idof],
-    #                     Kg_fem[brdof, :][:, ldof],
-    #                     Kg_fem[brdof, :][:, bdof],
-    #                     Kg_fem[brdof, :][:, bldof],
-    #                     Kg_fem[brdof, :][:, rdof],
-    #                     Kg_fem[brdof, :][:, tdof],
-    #                     Kg_fem[brdof, :][:, brdof],
-    #                     Kg_fem[brdof, :][:, tldof],
-    #                     Kg_fem[brdof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Kg_fem[tldof, :][:, idof],
-    #                     Kg_fem[tldof, :][:, ldof],
-    #                     Kg_fem[tldof, :][:, bdof],
-    #                     Kg_fem[tldof, :][:, bldof],
-    #                     Kg_fem[tldof, :][:, rdof],
-    #                     Kg_fem[tldof, :][:, tdof],
-    #                     Kg_fem[tldof, :][:, brdof],
-    #                     Kg_fem[tldof, :][:, tldof],
-    #                     Kg_fem[tldof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Kg_fem[trdof, :][:, idof],
-    #                     Kg_fem[trdof, :][:, ldof],
-    #                     Kg_fem[trdof, :][:, bdof],
-    #                     Kg_fem[trdof, :][:, bldof],
-    #                     Kg_fem[trdof, :][:, rdof],
-    #                     Kg_fem[trdof, :][:, tdof],
-    #                     Kg_fem[trdof, :][:, brdof],
-    #                     Kg_fem[trdof, :][:, tldof],
-    #                     Kg_fem[trdof, :][:, trdof],
-    #                 ]
-    #             ),
-    #         ]
-    #     )
-
-    #     MG_cell = vstack(
-    #         [
-    #             hstack(
-    #                 [
-    #                     Mg_fem[idof, :][:, idof],
-    #                     Mg_fem[idof, :][:, ldof],
-    #                     Mg_fem[idof, :][:, bdof],
-    #                     Mg_fem[idof, :][:, bldof],
-    #                     Mg_fem[idof, :][:, rdof],
-    #                     Mg_fem[idof, :][:, tdof],
-    #                     Mg_fem[idof, :][:, brdof],
-    #                     Mg_fem[idof, :][:, tldof],
-    #                     Mg_fem[idof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Mg_fem[ldof, :][:, idof],
-    #                     Mg_fem[ldof, :][:, ldof],
-    #                     Mg_fem[ldof, :][:, bdof],
-    #                     Mg_fem[ldof, :][:, bldof],
-    #                     Mg_fem[ldof, :][:, rdof],
-    #                     Mg_fem[ldof, :][:, tdof],
-    #                     Mg_fem[ldof, :][:, brdof],
-    #                     Mg_fem[ldof, :][:, tldof],
-    #                     Mg_fem[ldof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Mg_fem[bdof, :][:, idof],
-    #                     Mg_fem[bdof, :][:, ldof],
-    #                     Mg_fem[bdof, :][:, bdof],
-    #                     Mg_fem[bdof, :][:, bldof],
-    #                     Mg_fem[bdof, :][:, rdof],
-    #                     Mg_fem[bdof, :][:, tdof],
-    #                     Mg_fem[bdof, :][:, brdof],
-    #                     Mg_fem[bdof, :][:, tldof],
-    #                     Mg_fem[bdof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Mg_fem[bldof, :][:, idof],
-    #                     Mg_fem[bldof, :][:, ldof],
-    #                     Mg_fem[bldof, :][:, bdof],
-    #                     Mg_fem[bldof, :][:, bldof],
-    #                     Mg_fem[bldof, :][:, rdof],
-    #                     Mg_fem[bldof, :][:, tdof],
-    #                     Mg_fem[bldof, :][:, brdof],
-    #                     Mg_fem[bldof, :][:, tldof],
-    #                     Mg_fem[bldof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Mg_fem[rdof, :][:, idof],
-    #                     Mg_fem[rdof, :][:, ldof],
-    #                     Mg_fem[rdof, :][:, bdof],
-    #                     Mg_fem[rdof, :][:, bldof],
-    #                     Mg_fem[rdof, :][:, rdof],
-    #                     Mg_fem[rdof, :][:, tdof],
-    #                     Mg_fem[rdof, :][:, brdof],
-    #                     Mg_fem[rdof, :][:, tldof],
-    #                     Mg_fem[rdof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Mg_fem[tdof, :][:, idof],
-    #                     Mg_fem[tdof, :][:, ldof],
-    #                     Mg_fem[tdof, :][:, bdof],
-    #                     Mg_fem[tdof, :][:, bldof],
-    #                     Mg_fem[tdof, :][:, rdof],
-    #                     Mg_fem[tdof, :][:, tdof],
-    #                     Mg_fem[tdof, :][:, brdof],
-    #                     Mg_fem[tdof, :][:, tldof],
-    #                     Mg_fem[tdof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Mg_fem[brdof, :][:, idof],
-    #                     Mg_fem[brdof, :][:, ldof],
-    #                     Mg_fem[brdof, :][:, bdof],
-    #                     Mg_fem[brdof, :][:, bldof],
-    #                     Mg_fem[brdof, :][:, rdof],
-    #                     Mg_fem[brdof, :][:, tdof],
-    #                     Mg_fem[brdof, :][:, brdof],
-    #                     Mg_fem[brdof, :][:, tldof],
-    #                     Mg_fem[brdof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Mg_fem[tldof, :][:, idof],
-    #                     Mg_fem[tldof, :][:, ldof],
-    #                     Mg_fem[tldof, :][:, bdof],
-    #                     Mg_fem[tldof, :][:, bldof],
-    #                     Mg_fem[tldof, :][:, rdof],
-    #                     Mg_fem[tldof, :][:, tdof],
-    #                     Mg_fem[tldof, :][:, brdof],
-    #                     Mg_fem[tldof, :][:, tldof],
-    #                     Mg_fem[tldof, :][:, trdof],
-    #                 ]
-    #             ),
-    #             hstack(
-    #                 [
-    #                     Mg_fem[trdof, :][:, idof],
-    #                     Mg_fem[trdof, :][:, ldof],
-    #                     Mg_fem[trdof, :][:, bdof],
-    #                     Mg_fem[trdof, :][:, bldof],
-    #                     Mg_fem[trdof, :][:, rdof],
-    #                     Mg_fem[trdof, :][:, tdof],
-    #                     Mg_fem[trdof, :][:, brdof],
-    #                     Mg_fem[trdof, :][:, tldof],
-    #                     Mg_fem[trdof, :][:, trdof],
-    #                 ]
-    #             ),
-    #         ]
-    #     )
-
-    #     Iii = eye(idof.shape[0], idof.shape[0], dtype=int64)
-    #     Zil = csc_matrix((idof.shape[0], ldof.shape[0]), dtype=int64)
-    #     Zib = csc_matrix((idof.shape[0], bdof.shape[0]), dtype=int64)
-    #     Zibl = csc_matrix((idof.shape[0], bldof.shape[0]), dtype=int64)
-
-    #     Zli = csc_matrix((ldof.shape[0], idof.shape[0]), dtype=int64)
-    #     Ill = eye(ldof.shape[0], ldof.shape[0], dtype=int64)
-    #     Zlb = csc_matrix((ldof.shape[0], bdof.shape[0]), dtype=int64)
-    #     Zlbl = csc_matrix((ldof.shape[0], bldof.shape[0]), dtype=int64)
-
-    #     Zbi = csc_matrix((bdof.shape[0], idof.shape[0]), dtype=int64)
-    #     Zbl = csc_matrix((bdof.shape[0], ldof.shape[0]), dtype=int64)
-    #     Ibb = eye(bdof.shape[0], bdof.shape[0], dtype=int64)
-    #     Zbbl = csc_matrix((bdof.shape[0], bldof.shape[0]), dtype=int64)
-
-    #     Zbli = csc_matrix((bldof.shape[0], idof.shape[0]), dtype=int64)
-    #     Zbll = csc_matrix((bldof.shape[0], ldof.shape[0]), dtype=int64)
-    #     Zblb = csc_matrix((bldof.shape[0], bdof.shape[0]), dtype=int64)
-    #     Iblbl = eye(bldof.shape[0], bldof.shape[0], dtype=int64)
-
-    #     Zri = csc_matrix((rdof.shape[0], idof.shape[0]), dtype=int64)
-    #     Irl = eye(rdof.shape[0], ldof.shape[0], dtype=int64)
-    #     Zrb = csc_matrix((rdof.shape[0], bdof.shape[0]), dtype=int64)
-    #     Zrbl = csc_matrix((rdof.shape[0], bldof.shape[0]), dtype=int64)
-
-    #     Zti = csc_matrix((tdof.shape[0], idof.shape[0]), dtype=int64)
-    #     Ztl = csc_matrix((tdof.shape[0], ldof.shape[0]), dtype=int64)
-    #     Itb = eye(tdof.shape[0], bdof.shape[0], dtype=int64)
-    #     Ztbl = csc_matrix((tdof.shape[0], bldof.shape[0]), dtype=int64)
-
-    #     Zbri = csc_matrix((brdof.shape[0], idof.shape[0]), dtype=int64)
-    #     Zbrl = csc_matrix((brdof.shape[0], ldof.shape[0]), dtype=int64)
-    #     Zbrb = csc_matrix((brdof.shape[0], bdof.shape[0]), dtype=int64)
-    #     Ibrbl = eye(brdof.shape[0], bldof.shape[0], dtype=int64)
-
-    #     Ztli = csc_matrix((tldof.shape[0], idof.shape[0]), dtype=int64)
-    #     Ztll = csc_matrix((tldof.shape[0], ldof.shape[0]), dtype=int64)
-    #     Ztlb = csc_matrix((tldof.shape[0], bdof.shape[0]), dtype=int64)
-    #     Itlbl = eye(tldof.shape[0], bldof.shape[0], dtype=int64)
-
-    #     Ztri = csc_matrix((trdof.shape[0], idof.shape[0]), dtype=int64)
-    #     Ztrl = csc_matrix((trdof.shape[0], ldof.shape[0]), dtype=int64)
-    #     Ztrb = csc_matrix((trdof.shape[0], bdof.shape[0]), dtype=int64)
-    #     Itrbl = eye(trdof.shape[0], bldof.shape[0], dtype=int64)
-
-    #     U = zeros((fulldofs, mu.shape[0]), dtype=float64)
-    #     freq_waves = zeros((modeEnd, mu.shape[0]), dtype=float64)
-    #     # U0 = zeros((fulldofs), dtype=float64)
-    #     for kmu in range(mu.shape[0]):
-
-    #         lambda_x = exp(mu[kmu, 0])
-    #         lambda_y = exp(mu[kmu, 1])
-
-    #         MAT_R = vstack(
-    #             [
-    #                 hstack([Iii, Zil, Zib, Zibl]),
-    #                 hstack([Zli, Ill, Zlb, Zlbl]),
-    #                 hstack([Zbi, Zbl, Ibb, Zbbl]),
-    #                 hstack([Zbli, Zbll, Zblb, Iblbl]),
-    #                 hstack([Zri, lambda_x * Irl, Zrb, Zrbl]),
-    #                 hstack([Zti, Ztl, lambda_y * Itb, Ztbl]),
-    #                 hstack([Zbri, Zbrl, Zbrb, lambda_x * Ibrbl]),
-    #                 hstack([Ztli, Ztll, Ztlb, lambda_y * Itlbl]),
-    #                 hstack([Ztri, Ztrl, Ztrb, lambda_x * lambda_y * Itrbl]),
-    #             ]
-    #         )
-
-    #         KG_cell_BF = (
-    #             dot(dot(MAT_R.conjugate().transpose(), KG_cell), MAT_R)
-    #         ).tocsc()
-    #         MG_cell_BF = (
-    #             dot(dot(MAT_R.conjugate().transpose(), MG_cell), MAT_R)
-    #         ).tocsc()
-
-    #         try:
-    #             omega, __ = eigsh(
-    #                 A=KG_cell_BF,
-    #                 M=MG_cell_BF,
-    #                 k=modeEnd,
-    #                 sigma=1,
-    #                 which="LM",
-    #                 maxiter=1000,
-    #             )
-    #         except:
-    #             pass
-
-    #         # U[:, kw] = dot(MAT_R.todense(), V[:, :modeEnd])
-    #         freq_waves[:, kmu] = sqrt(
-    #             sort(real(omega))
-    #         )  # Convertendo valores Reais de Omega
-
-    #     solution["U"] = U
-    #     solution["FREQ"] = freq_waves
-    #     solution["IBZRANGE"] = tot_steps
-
-    #     return solution

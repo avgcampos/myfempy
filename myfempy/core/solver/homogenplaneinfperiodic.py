@@ -7,7 +7,8 @@ INT64 = int64
 from scipy.sparse import bmat, eye, vstack, coo_matrix, issparse
 from scipy.sparse.linalg import spsolve, splu
 
-from myfempy.core.solver.assemblerfull import AssemblerFULL
+from myfempy.core.solver.assemblerSR import AssemblerSR
+from myfempy.core.solver.assemblerMP import AssemblerMP
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import gauss_points, setSteps
 
@@ -60,7 +61,7 @@ class HomogenizationPlaneBCPeriodic(Solver):
     ):
         matrix = dict()
         if MP:
-            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
+            matrix["stiffness"] = AssemblerMP.getGlobalMatrixAssembler(
                 Model,
                 Model.element.getStifLinearMat,
                 Model.shape.getIntNumK,
@@ -72,7 +73,7 @@ class HomogenizationPlaneBCPeriodic(Solver):
                 max_workers,
             )
         else:
-            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(
+            matrix["stiffness"] = AssemblerSR.getGlobalMatrixAssembler(
                 Model,
                 Model.element.getStifLinearMat,
                 Model.shape.getIntNumK,
@@ -85,7 +86,7 @@ class HomogenizationPlaneBCPeriodic(Solver):
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
-        return AssemblerFULL.getLoadAssembler(loadaply, nodetot, nodedof)
+        return AssemblerSR.getLoadAssembler(loadaply, nodetot, nodedof)
 
     def getConstrains(constrains, nodetot, nodedof):
         pc_left = where(constrains[:, 1] == 13)
@@ -170,28 +171,28 @@ class HomogenizationPlaneBCPeriodic(Solver):
         )
         pc_right_constrain = pc_right_constrain[testr2br, :]
 
-        __, pc_left_dof, __ = AssemblerFULL.getConstrains(
+        __, pc_left_dof, __ = AssemblerSR.getConstrains(
             pc_left_constrain, nodetot, nodedof
         )
-        __, pc_right_dof, __ = AssemblerFULL.getConstrains(
+        __, pc_right_dof, __ = AssemblerSR.getConstrains(
             pc_right_constrain, nodetot, nodedof
         )
-        __, pc_bottom_dof, __ = AssemblerFULL.getConstrains(
+        __, pc_bottom_dof, __ = AssemblerSR.getConstrains(
             pc_bottom_constrain, nodetot, nodedof
         )
-        __, pc_top_dof, __ = AssemblerFULL.getConstrains(
+        __, pc_top_dof, __ = AssemblerSR.getConstrains(
             pc_top_constrain, nodetot, nodedof
         )
-        __, pc_bottom_left_dof, __ = AssemblerFULL.getConstrains(
+        __, pc_bottom_left_dof, __ = AssemblerSR.getConstrains(
             pc_bottom_left_constrain, nodetot, nodedof
         )
-        __, pc_bottom_right_dof, __ = AssemblerFULL.getConstrains(
+        __, pc_bottom_right_dof, __ = AssemblerSR.getConstrains(
             pc_bottom_right_constrain, nodetot, nodedof
         )
-        __, pc_top_left_dof, __ = AssemblerFULL.getConstrains(
+        __, pc_top_left_dof, __ = AssemblerSR.getConstrains(
             pc_top_left_constrain, nodetot, nodedof
         )
-        __, pc_top_right_dof, __ = AssemblerFULL.getConstrains(
+        __, pc_top_right_dof, __ = AssemblerSR.getConstrains(
             pc_top_right_constrain, nodetot, nodedof
         )
 
@@ -228,7 +229,7 @@ class HomogenizationPlaneBCPeriodic(Solver):
         return freedof, fixedof, constdof
 
     def getDirichletNH(constrains, nodetot, nodedof):
-        return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
+        return AssemblerSR.getDirichletNH(constrains, nodetot, nodedof)
 
     def runSolve(Model, Physic, assembly, constrainsdof, solverset):
         elem_set = Model.element.getElementSet()

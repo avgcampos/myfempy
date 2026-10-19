@@ -1,0 +1,95 @@
+from __future__ import annotations
+
+from concurrent.futures import ThreadPoolExecutor
+
+from numpy import float32, float64, int32, zeros
+from scipy.sparse import coo_matrix
+
+INT32 = int32
+FLT64 = float64
+FLT32 = float32
+
+from myfempy.core.solver.assembler import Assembler
+from myfempy.core.solver.utils_cython import getVectorization
+from myfempy.core.utilities import gauss_points
+
+__docformat__ = "google"
+
+__doc__ = """
+This Python file is part of myfempy project.
+
+myfempy is a python package based on finite element method to multiphysics
+analysis. The code is open source and *intended for educational and scientific
+purposes only, not recommended to commercial use. The name myfempy is an acronym
+for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
+with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
+If you use myfempy in your research, the  developers would be grateful if you 
+could cite in your work.
+																		
+The code is written by Antonio Vinicius Garcia Campos.                                  
+																		
+A github repository, with the most up to date version of the code,      
+can be found here: https://github.com/avgcampos/myfempy.                 
+																		
+The code is open source and intended for educational and scientific     
+purposes only. If you use myfempy in your research, the developers      
+would be grateful if you could cite this. The myfempy project is published
+under the GPLv3, see the myfempy LICENSE on
+https://github.com/avgcampos/myfempy/blob/main/LICENSE.
+																		
+Disclaimer:                                                             
+The authors reserve all rights but do not guarantee that the code is    
+free from errors. Furthermore, the authors shall not be liable in any   
+event caused by the use of the program.
+
+"""
+
+
+class AssemblerRM(Assembler):
+    """
+    Assembler Regular Mesh System Class <ConcreteClassService>
+    Requires Python 3.14t or compatible.
+    """
+
+    def getGlobalMatrixAssembler(
+        Model,
+        matrixElem,
+        inci,
+        max_workers,
+    ):
+        nodedof = Model.modelinfo["nodedof"]
+        elemdof = Model.modelinfo["elemdof"]
+        sdof = Model.modelinfo["fulldofs"]
+
+        nelem = inci.shape[0]
+        entries_per_elem = elemdof * elemdof
+        total_entries = nelem * entries_per_elem
+
+        # Pré-alocação dos vetores Globais em C-contiguous memory
+        ith = zeros(total_entries, dtype=INT32)
+        jth = zeros(total_entries, dtype=INT32)
+        val = zeros(total_entries, dtype=FLT64)
+
+        getNodeList = Model.shape.getNodeList
+        getLocKey = Model.shape.getLocKey
+        def _process_element_chunk(start_elem: int, end_elem: int):
+            for ee in range(start_elem, end_elem):
+                nodelist = getNodeList(inci, ee)
+                loc = getLocKey(nodelist, nodedof)
+                getVectorization(ith, jth, val, loc, matrixElem, ee, elemdof)
+
+        # Divisão de blocos entre as threads (Python 3.14t Free-Threading)
+        chunk_size = max(1, nelem // (max_workers * 4))
+        chunks = [(i, min(i + chunk_size, nelem)) for i in range(0, nelem, chunk_size)]
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [
+                executor.submit(_process_element_chunk, start, end)
+                for start, end in chunks
+            ]
+            for future in futures:
+                future.result()
+        # Construção da matriz esparsa final
+        A_sp_scipy_csr = coo_matrix(
+            (val, (ith, jth)), shape=(sdof, sdof), dtype=FLT64
+        ).tocsr()
+        return A_sp_scipy_csr

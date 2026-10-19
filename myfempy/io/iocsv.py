@@ -161,11 +161,11 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
             lines.append("LIST OF SOLUTIONS")
             model_dict = list(Model.modelinfo["dofs"]["d"].keys())
             dof_header = str(model_dict)[1:-1]
-            for row in range(len(solstatus["SOLUTION"])):
+            for row in range(len(solstatus['computer']["SOLUTION"])):
                 lines.append("------------------------")
                 lines.append("{0:<7}{1:<4}".format("STEP", row + 1))
                 lines.append(f"dof, {dof_header}")
-                array_sol = solstatus["SOLUTION"][row][Model.element.setTitleDeformation()][
+                array_sol = solstatus['computer']["SOLUTION"][row][Model.element.setTitleDeformation()][
                     :, : len(model_dict)
                 ]
                 for line_dof, line in enumerate(array_sol):

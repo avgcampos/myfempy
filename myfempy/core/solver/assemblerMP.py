@@ -10,10 +10,7 @@ FLT64 = float64
 FLT32 = float32
 
 from myfempy.core.solver.assembler import Assembler
-from myfempy.core.solver.assemblerfull_cython import getVectorization
-from myfempy.core.solver.assemblerfull_numpy import (getConstrains,
-                                                     getDirichletNH,
-                                                     getLoadAssembler)
+from myfempy.core.solver.utils_cython import getVectorization
 from myfempy.core.utilities import gauss_points
 
 __docformat__ = "google"
@@ -48,12 +45,13 @@ event caused by the use of the program.
 """
 
 
-class AssemblerFULL(Assembler):
+class AssemblerMP(Assembler):
     """
-    Assembler Full System Class <ConcreteClassService>
+    Assembler MultiProcessing System Class <ConcreteClassService>
+    Requires Python 3.14t or compatible.
     """
 
-    def getGlobalMatrixAssemblerMP(
+    def getGlobalMatrixAssembler(
         Model,
         getElemMatrix,
         getIntNum,
@@ -133,77 +131,3 @@ class AssemblerFULL(Assembler):
             (val, (ith, jth)), shape=(sdof, sdof), dtype=FLT64
         ).tocsr()
         return A_sp_scipy_csr
-
-    def getGlobalMatrixAssembler(
-        Model,
-        getElemMatrix,
-        getIntNum,
-        inci=None,
-        coord=None,
-        tabmat=None,
-        tabgeo=None,
-        intgauss=None,
-    ):
-        if inci is None:
-            inci = Model.inci
-        if coord is None:
-            coord = Model.coord
-        if tabmat is None:
-            tabmat = Model.tabmat
-        if tabgeo is None:
-            tabgeo = Model.tabgeo
-        if intgauss is None:
-            intgauss = Model.intgauss
-
-        nodedof = Model.modelinfo["nodedof"]
-        type_shape = Model.modelinfo["shape"]
-        elemdof = Model.modelinfo["elemdof"]
-        sdof = Model.modelinfo["fulldofs"]
-
-        ith = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
-        jth = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
-        val = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=FLT64)
-
-        getNodeList = Model.shape.getNodeList
-        getLocKey = Model.shape.getLocKey
-        getElasticTensor = Model.material.getElasticTensor
-        getNodeCoord = Model.shape.getNodeCoord
-
-        pt, wt = gauss_points(type_shape, intgauss)
-
-        for ee in range(inci.shape[0]):
-            nodelist = getNodeList(inci, ee)
-            elementcoord = getNodeCoord(coord, nodelist)
-            C = getElasticTensor(tabmat, inci, ee)
-            matrix = getElemMatrix(
-                inci,
-                coord,
-                tabmat,
-                tabgeo,
-                elementcoord,
-                C,
-                elemdof,
-                getIntNum,
-                intgauss,
-                pt,
-                wt,
-                ee,
-            )
-            loc = getLocKey(nodelist, nodedof)
-            ith, jth, val = getVectorization(ith, jth, val, loc, matrix, ee, elemdof)
-
-        A_sp_scipy_csr = coo_matrix(
-            (val, (ith, jth)), shape=(sdof, sdof), dtype=FLT64
-        ).tocsr()
-        return A_sp_scipy_csr
-
-    def getLoadAssembler(loadaply, nodetot, nodedof):
-        return getLoadAssembler(loadaply, nodetot, nodedof)
-
-    # Dirichlet Homogeneous https://en.wikipedia.org/wiki/Dirichlet_boundary_condition
-    def getConstrains(constrains, nodetot, nodedof):
-        return getConstrains(constrains, nodetot, nodedof)
-
-    # Dirichlet Non-Homogeneous
-    def getDirichletNH(constrains, nodetot, nodedof):
-        return getDirichletNH(constrains, nodetot, nodedof)

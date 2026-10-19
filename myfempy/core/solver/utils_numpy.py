@@ -1,37 +1,5 @@
-# import cython
 import numpy as np
-from scipy import sparse
-
-__docformat__ = "google"
-
-__doc__ = """
-This Python file is part of myfempy project.
-
-myfempy is a python package based on finite element method to multiphysics
-analysis. The code is open source and *intended for educational and scientific
-purposes only, not recommended to commercial use. The name myfempy is an acronym
-for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
-with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
-If you use myfempy in your research, the  developers would be grateful if you 
-could cite in your work.
-																		
-The code is written by Antonio Vinicius Garcia Campos.                                  
-																		
-A github repository, with the most up to date version of the code,      
-can be found here: https://github.com/avgcampos/myfempy.                 
-																		
-The code is open source and intended for educational and scientific     
-purposes only. If you use myfempy in your research, the developers      
-would be grateful if you could cite this. The myfempy project is published
-under the GPLv3, see the myfempy LICENSE on
-https://github.com/avgcampos/myfempy/blob/main/LICENSE.
-																		
-Disclaimer:                                                             
-The authors reserve all rights but do not guarantee that the code is    
-free from errors. Furthermore, the authors shall not be liable in any   
-event caused by the use of the program.
-
-"""
+import scipy as sp
 
 
 def getVectorization(ith, jth, val, loc, matrix, ee, elemdof):
@@ -43,11 +11,9 @@ def getVectorization(ith, jth, val, loc, matrix, ee, elemdof):
         np.tile(loc.reshape(1, elemdof).T, (1, elemdof))
     ).flatten("F")
     val[(elemdof * elemdof) * ee : (elemdof * elemdof) * (ee + 1)] = matrix.flatten("F")
-
     return ith, jth, val
 
 
-# Antiga Versão
 def getLoadAssembler(loadaply, nodetot, nodedof):
     """
     getLoadAssembler Assembler module <ConcreteClassService>
@@ -140,7 +106,6 @@ def getConstrains(constrains, nodetot, nodedof):
     Returns:
         _description_
     """
-
     ntbc = len(constrains)
     fixedof = np.zeros((nodedof * nodetot, 1), dtype=int)
     constdof = np.zeros((nodedof * nodetot, 1), dtype=int)
@@ -353,3 +318,63 @@ def getDirichletNH(constrains, nodetot, nodedof):
         else:
             pass
     return Uc
+
+
+# https://en.wikipedia.org/wiki/Rotation_matrix
+def getRotationMatrix(node_list, coord, ndof):
+    # Initialize RM as a sparse matrix
+    RM = sp.sparse.lil_matrix((ndof, ndof))
+    for n in range(node_list.shape[0]):
+        nol = int(node_list[n] - 1)
+        RonX = coord[nol, 1]  # - Og[0]
+        RonY = coord[nol, 2]  # - Og[1]
+        Ron = np.sqrt(RonX**2 + RonY**2)
+        S_the = RonY / Ron
+        C_the = RonX / Ron
+        # Assign values to the sparse matrix
+        RM[2 * n, 2 * n] = C_the
+        RM[2 * n, 2 * n + 1] = -S_the
+        RM[2 * n + 1, 2 * n] = S_the
+        RM[2 * n + 1, 2 * n + 1] = C_the
+
+    # Convert to CSR format for more efficient arithmetic and matrix-vector operations
+    return RM.tocsr()
+
+# def getRotationMatrix3D(node_list, coord, ndof):
+#     """
+#     https://en.wikipedia.org/wiki/Rotation_matrix
+
+#     Arguments:
+#         node_list -- _description_
+#         coord -- _description_
+#         ndof -- _description_
+
+#     Returns:
+#         RM
+#     """
+#     # Inicialize a RM como uma matriz esparsa
+#     RM = lil_matrix((ndof, ndof))
+#     for n in range(node_list.shape[0]):
+#         nol = int(node_list[n] - 1)
+#         RonX = coord[nol, 1]
+#         RonY = coord[nol, 2]
+#         RonZ = coord[nol, 3]
+#         Ron = np.sqrt(RonX**2 + RonY**2 + RonZ**2)
+#         S_phi = RonY / Ron
+#         C_phi = RonX / Ron
+#         S_theta = RonZ / Ron
+#         C_theta = np.sqrt(RonX**2 + RonY**2) / Ron
+
+#         # Atribuir valores à matriz esparsa
+#         RM[3 * n, 3 * n] = C_theta
+#         RM[3 * n, 3 * n + 1] = -S_phi * S_theta
+#         RM[3 * n, 3 * n + 2] = C_phi * S_theta
+#         RM[3 * n + 1, 3 * n] = S_phi
+#         RM[3 * n + 1, 3 * n + 1] = C_phi * C_theta
+#         RM[3 * n + 1, 3 * n + 2] = -S_theta
+#         RM[3 * n + 2, 3 * n] = -S_theta
+#         RM[3 * n + 2, 3 * n + 1] = C_theta
+#         RM[3 * n + 2, 3 * n + 2] = C_theta * C_phi
+
+#     # Converter para o formato CSR para operações aritméticas e de matriz-vetor mais eficientes
+#     return RM.tocsr()

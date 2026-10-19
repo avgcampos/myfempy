@@ -3,7 +3,8 @@ from __future__ import annotations
 from numpy import dot, float64, zeros
 from scipy.sparse.linalg import minres
 
-from myfempy.core.solver.assemblerfull import AssemblerFULL
+from myfempy.core.solver.assemblerSR import AssemblerSR
+from myfempy.core.solver.assemblerMP import AssemblerMP
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import setSteps
 
@@ -57,7 +58,7 @@ class SteadyStateLinearIterative(Solver):
 
         matrix = dict()
         if MP:
-            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
+            matrix["stiffness"] = AssemblerMP.getGlobalMatrixAssembler(
                 Model,
                 Model.element.getStifLinearMat,
                 Model.shape.getIntNumK,
@@ -69,7 +70,7 @@ class SteadyStateLinearIterative(Solver):
                 max_workers,
             )
         else:
-            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(
+            matrix["stiffness"] = AssemblerSR.getGlobalMatrixAssembler(
                 Model,
                 Model.element.getStifLinearMat,
                 Model.shape.getIntNumK,
@@ -82,13 +83,13 @@ class SteadyStateLinearIterative(Solver):
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
-        return AssemblerFULL.getLoadAssembler(loadaply, nodetot, nodedof)
+        return AssemblerSR.getLoadAssembler(loadaply, nodetot, nodedof)
 
     def getConstrains(constrains, nodetot, nodedof):
-        return AssemblerFULL.getConstrains(constrains, nodetot, nodedof)
+        return AssemblerSR.getConstrains(constrains, nodetot, nodedof)
 
     def getDirichletNH(constrains, nodetot, nodedof):
-        return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
+        return AssemblerSR.getDirichletNH(constrains, nodetot, nodedof)
 
     def runSolve(Model, Physic, assembly, constrainsdof, solverset):
         fulldofs = Model.modelinfo["fulldofs"]

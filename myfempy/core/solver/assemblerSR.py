@@ -1,0 +1,129 @@
+from __future__ import annotations
+
+from concurrent.futures import ThreadPoolExecutor
+
+from numpy import float32, float64, int32, zeros
+from scipy.sparse import coo_matrix
+
+INT32 = int32
+FLT64 = float64
+FLT32 = float32
+
+from myfempy.core.solver.assembler import Assembler
+from myfempy.core.solver.utils_numpy import getConstrains, getDirichletNH, getLoadAssembler, getRotationMatrix
+from myfempy.core.solver.utils_cython import getVectorization
+from myfempy.core.utilities import gauss_points
+
+__docformat__ = "google"
+
+__doc__ = """
+This Python file is part of myfempy project.
+
+myfempy is a python package based on finite element method to multiphysics
+analysis. The code is open source and *intended for educational and scientific
+purposes only, not recommended to commercial use. The name myfempy is an acronym
+for MultiphYsics Finite Elements Module to PYthon. You can help us by contributing
+with the main project, send us a mensage on https://github.com/avgcampos/myfempy/discussions/10
+If you use myfempy in your research, the  developers would be grateful if you 
+could cite in your work.
+																		
+The code is written by Antonio Vinicius Garcia Campos.                                  
+																		
+A github repository, with the most up to date version of the code,      
+can be found here: https://github.com/avgcampos/myfempy.                 
+																		
+The code is open source and intended for educational and scientific     
+purposes only. If you use myfempy in your research, the developers      
+would be grateful if you could cite this. The myfempy project is published
+under the GPLv3, see the myfempy LICENSE on
+https://github.com/avgcampos/myfempy/blob/main/LICENSE.
+																		
+Disclaimer:                                                             
+The authors reserve all rights but do not guarantee that the code is    
+free from errors. Furthermore, the authors shall not be liable in any   
+event caused by the use of the program.
+
+"""
+
+
+class AssemblerSR(Assembler):
+    """
+    Assembler Serial System Class <ConcreteClassService>
+    """
+
+    def getGlobalMatrixAssembler(
+        Model,
+        getElemMatrix,
+        getIntNum,
+        inci=None,
+        coord=None,
+        tabmat=None,
+        tabgeo=None,
+        intgauss=None,
+    ):
+        if inci is None:
+            inci = Model.inci
+        if coord is None:
+            coord = Model.coord
+        if tabmat is None:
+            tabmat = Model.tabmat
+        if tabgeo is None:
+            tabgeo = Model.tabgeo
+        if intgauss is None:
+            intgauss = Model.intgauss
+
+        nodedof = Model.modelinfo["nodedof"]
+        type_shape = Model.modelinfo["shape"]
+        elemdof = Model.modelinfo["elemdof"]
+        sdof = Model.modelinfo["fulldofs"]
+
+        ith = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
+        jth = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=INT32)
+        val = zeros((inci.shape[0] * (elemdof * elemdof)), dtype=FLT64)
+
+        getNodeList = Model.shape.getNodeList
+        getLocKey = Model.shape.getLocKey
+        getElasticTensor = Model.material.getElasticTensor
+        getNodeCoord = Model.shape.getNodeCoord
+
+        pt, wt = gauss_points(type_shape, intgauss)
+
+        for ee in range(inci.shape[0]):
+            nodelist = getNodeList(inci, ee)
+            elementcoord = getNodeCoord(coord, nodelist)
+            C = getElasticTensor(tabmat, inci, ee)
+            matrix = getElemMatrix(
+                inci,
+                coord,
+                tabmat,
+                tabgeo,
+                elementcoord,
+                C,
+                elemdof,
+                getIntNum,
+                intgauss,
+                pt,
+                wt,
+                ee,
+            )
+            loc = getLocKey(nodelist, nodedof)
+            ith, jth, val = getVectorization(ith, jth, val, loc, matrix, ee, elemdof)
+
+        A_sp_scipy_csr = coo_matrix(
+            (val, (ith, jth)), shape=(sdof, sdof), dtype=FLT64
+        ).tocsr()
+        return A_sp_scipy_csr
+
+    def getLoadAssembler(loadaply, nodetot, nodedof):
+        return getLoadAssembler(loadaply, nodetot, nodedof)
+
+    # Dirichlet Homogeneous https://en.wikipedia.org/wiki/Dirichlet_boundary_condition
+    def getConstrains(constrains, nodetot, nodedof):
+        return getConstrains(constrains, nodetot, nodedof)
+
+    # Dirichlet Non-Homogeneous
+    def getDirichletNH(constrains, nodetot, nodedof):
+        return getDirichletNH(constrains, nodetot, nodedof)
+
+    def getRotationMatrix(node_list, coord, ndof):
+        return getRotationMatrix(node_list, coord, ndof)

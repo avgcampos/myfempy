@@ -4,7 +4,8 @@ from numpy import arange, array, dot, float64, int64, isin, ix_, where, zeros, a
 from scipy.sparse import issparse
 from scipy.sparse.linalg import spsolve
 
-from myfempy.core.solver.assemblerfull import AssemblerFULL
+from myfempy.core.solver.assemblerSR import AssemblerSR
+from myfempy.core.solver.assemblerMP import AssemblerMP
 from myfempy.core.solver.solver import Solver
 from myfempy.core.utilities import gauss_points
 
@@ -58,7 +59,7 @@ class HomogenizationPlane(Solver):
     ):
         matrix = dict()
         if MP:
-            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssemblerMP(
+            matrix["stiffness"] = AssemblerMP.getGlobalMatrixAssembler(
                 Model,
                 Model.element.getStifLinearMat,
                 Model.shape.getIntNumK,
@@ -70,7 +71,7 @@ class HomogenizationPlane(Solver):
                 max_workers,
             )
         else:
-            matrix["stiffness"] = AssemblerFULL.getGlobalMatrixAssembler(
+            matrix["stiffness"] = AssemblerSR.getGlobalMatrixAssembler(
                 Model,
                 Model.element.getStifLinearMat,
                 Model.shape.getIntNumK,
@@ -83,20 +84,20 @@ class HomogenizationPlane(Solver):
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
-        return AssemblerFULL.getLoadAssembler(loadaply, nodetot, nodedof)
+        return AssemblerSR.getLoadAssembler(loadaply, nodetot, nodedof)
 
     def getConstrains(constrains, nodetot, nodedof):
         nodes_constrain_XX = constrains[where(constrains[:, 3] == 1)]
         nodes_constrain_YY = constrains[where(constrains[:, 3] == 2)]
         nodes_constrain_XY = constrains[where(constrains[:, 3] == 3)]
 
-        __, dofs_constrain_XX, __ = AssemblerFULL.getConstrains(
+        __, dofs_constrain_XX, __ = AssemblerSR.getConstrains(
             nodes_constrain_XX, nodetot, nodedof
         )
-        __, dofs_constrain_YY, __ = AssemblerFULL.getConstrains(
+        __, dofs_constrain_YY, __ = AssemblerSR.getConstrains(
             nodes_constrain_YY, nodetot, nodedof
         )
-        __, dofs_constrain_XY, __ = AssemblerFULL.getConstrains(
+        __, dofs_constrain_XY, __ = AssemblerSR.getConstrains(
             nodes_constrain_XY, nodetot, nodedof
         )
 
@@ -107,7 +108,7 @@ class HomogenizationPlane(Solver):
         return freedof, fixedof, constdof
 
     def getDirichletNH(constrains, nodetot, nodedof):
-        return AssemblerFULL.getDirichletNH(constrains, nodetot, nodedof)
+        return AssemblerSR.getDirichletNH(constrains, nodetot, nodedof)
 
     def runSolve(Model, Physic, assembly, constrainsdof, solverset):
         solution = dict()
