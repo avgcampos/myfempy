@@ -66,7 +66,6 @@ version_variables = [
 ]
 branch = "main"
 upload_to_vcs_release = true
-build_command = "pip install build && python -m build"
 
 # Adicione estas linhas para forçar a geração do changelog
 changelog_file = "CHANGELOG.md"
