@@ -58,19 +58,3 @@ find = {}
 
 [tool.setuptools.cmdclass]
 build_ext = "setup_wrap_cy_pyx.build_ext"
-
-
-[tool.semantic_release]
-version_variables = [
-    "myfempy/__init__.py:__version__"
-]
-branch = "main"
-upload_to_vcs_release = true
-
-# Adicione estas linhas para forçar a geração do changelog
-changelog_file = "CHANGELOG.md"
-
-[tool.semantic_release.changelog]
-template_dir = "templates"
-changelog_file = "CHANGELOG.md"
-exclude_commit_patterns = []
