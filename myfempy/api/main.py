@@ -679,7 +679,7 @@ class newAnalysis:
             max_workers=max_workers,
         )
 
-    def 
+    # def 
 
     def getConstrains(
         self, constrains: list
