@@ -61,10 +61,17 @@ build_ext = "setup_wrap_cy_pyx.build_ext"
 
 
 [tool.semantic_release]
-# version_variables = [
-#     # Se você quiser que a versão do app seja atualizada automaticamente dentro de um arquivo Python (ex: src/seu_programa/__init__.py)
-#     "src/seu_programa/__init__.py:__version__"
-# ]
+version_variables = [
+    "myfempy/__init__.py:__version__"
+]
 branch = "main"
 upload_to_vcs_release = true
-build_command = "pip install build && python -m build" # Opcional: para compilar o pacote se for distribuí-lo
+build_command = "pip install build && python -m build"
+
+# Adicione estas linhas para forçar a geração do changelog
+changelog_file = "CHANGELOG.md"
+
+[tool.semantic_release.changelog]
+template_dir = "templates"
+changelog_file = "CHANGELOG.md"
+exclude_commit_patterns = []
