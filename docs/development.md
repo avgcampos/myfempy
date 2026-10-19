@@ -41,6 +41,7 @@ This new version allows the inclusion of modules and code written in C/Cython, a
 
 11. [ADDED] Implement functionalities of the _myfempy/core_ code in C/Cython
 
+12. [ADDED] Project system CI automation: docs, apidoc, changelog
 
 Implement the following analysis solutions:
 
