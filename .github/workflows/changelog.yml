@@ -14,7 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # Força o checkout na branch main em vez do estado 'detached HEAD' da release
           ref: main
           fetch-depth: 0
 
@@ -27,12 +26,10 @@ jobs:
         run: |
           pip install git-changelog
 
-      - name: Generate full CHANGELOG.md for Read the Docs
+      - name: Ensure docs directory exists & Generate Changelog
         run: |
+          mkdir -p docs
           git-changelog --style conventional -o docs/changelog.md
-
-      - name: Generate Release Notes for GitHub
-        run: |
           git-changelog --style conventional -o release_notes.md
 
       - name: Update GitHub Release Page
