@@ -1,0 +1,52 @@
+name: Update Changelog from GitHub Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  update-changelog-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Create docs directory if not exists
+        run: mkdir -p docs
+
+      - name: Append or Create changelog.md from Release body
+        run: |
+          # Pega o corpo (texto) da release atual e o nome da tag
+          TAG="${{ github.event.release.tag_name }}"
+          NAME="${{ github.event.release.name }}"
+          BODY="${{ github.event.release.body }}"
+
+          # Cria um arquivo temporário com a nova release formatada
+          TEMP_FILE="new_entry.md"
+          echo "# $NAME ($TAG)" > "$TEMP_FILE"
+          echo "" >> "$TEMP_FILE"
+          echo "$BODY" >> "$TEMP_FILE"
+          echo "" >> "$TEMP_FILE"
+          echo "---" >> "$TEMP_FILE"
+          echo "" >> "$TEMP_FILE"
+
+          # Se o changelog.md já existir, junta o novo no topo (mantendo o histórico)
+          if [ -f "docs/changelog.md" ]; then
+            cat "$TEMP_FILE" docs/changelog.md > docs/changelog_temp.md
+            mv docs/changelog_temp.md docs/changelog.md
+          else
+            mv "$TEMP_FILE" docs/changelog.md
+          fi
+
+      - name: Commit and Push CHANGELOG.md to repo
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: update changelog.md for release ${{ github.event.release.tag_name }} [skip ci]"
+          file_pattern: docs/changelog.md
+          branch: main
