@@ -1,4 +1,4 @@
-name: Generate Release Changelog
+name: Generate Release Changelog & Docs
 
 on:
   release:
@@ -8,13 +8,13 @@ permissions:
   contents: write
 
 jobs:
-  update-release-notes:
+  update-changelog-and-docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Necessário para ler o histórico de commits
+          fetch-depth: 0 # Necessário para ler todo o histórico de commits
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -25,12 +25,24 @@ jobs:
         run: |
           pip install git-changelog
 
-      - name: Generate Changelog and Update Release
+      - name: Generate full CHANGELOG.md for Read the Docs
+        run: |
+          # Gera/atualiza o arquivo de changelog completo para a documentação
+          git-changelog --style conventional -o docs/changelog.md
+
+      - name: Generate Release Notes for GitHub
+        run: |
+          # Gera apenas as notas da última versão para a release do GitHub
+          git-changelog --style conventional -o release_notes.md
+
+      - name: Update GitHub Release Page
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Gera o texto do changelog baseado nos commits desde a última tag
-          git-changelog --style conventional -o release_notes.md
-
-          # Atualiza a descrição da release recém-publicada com o changelog gerado
           gh release edit ${{ github.event.release.tag_name }} --notes-file release_notes.md
+
+      - name: Commit and Push CHANGELOG.md to repo
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: update changelog for version ${{ github.event.release.tag_name }} [skip ci]"
+          file_pattern: docs/changelog.md
