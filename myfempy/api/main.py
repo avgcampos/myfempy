@@ -14,7 +14,7 @@ from myfempy.api.model import SetModel
 from myfempy.api.physics import SetPhysics
 from myfempy.api.results import setPostProcess
 from myfempy.core.utilities import gauss_points, setSteps
-# from myfempy.core.solver import getSolver
+from myfempy.core.solver.assemblerRM import AssemblerRM
 from myfempy.io.controllers import (setCoupling, setDomain, setElement,
                                     setGeometry, setMaterial, setMesh,
                                     setPoints2NumericalIntegration, setShape)
@@ -679,7 +679,18 @@ class newAnalysis:
             max_workers=max_workers,
         )
 
-    # def 
+    def getAssemblerMatrixRegularMesh(self, matrixElem:  npt.NDArray[np.float64], inci:  npt.NDArray[np.float64], max_workers: int) -> npt.NDArray[np.float64]:
+        """test dev
+
+        Args:
+            matrixElem (npt.NDArray[np.float64]): _description_
+            inci (npt.NDArray[np.float64]): _description_
+            max_workers (int): _description_
+
+        Returns:
+            npt.NDArray[np.float64]: _description_
+        """
+        return AssemblerRM.getGlobalMatrixAssembler(self.model, matrixElem, inci, max_workers)
 
     def getConstrains(
         self, constrains: list
