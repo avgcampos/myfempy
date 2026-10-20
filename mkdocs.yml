@@ -8,7 +8,7 @@ nav:
     - Gallery: gallery.md
     - FEM Theory [under construction]: theory.md
     - API Documentation: api/index.html
-    - Changelog: changelog.md   # Aponta para o arquivo gerado pelo git-changelog
+
 theme:
     # name: readthedocs
     name: material
