@@ -58,18 +58,3 @@ find = {}
 
 [tool.setuptools.cmdclass]
 build_ext = "setup_wrap_cy_pyx.build_ext"
-
-# Changelog
-[tool.semantic_release]
-branch = "main"
-upload_to_pypi = false
-
-version_toml = [
-    "pyproject.toml:project.version"
-]
-
-[tool.semantic_release.changelog]
-changelog_file = "CHANGELOG.md"
-
-[tool.semantic_release.git]
-commit_message = "chore(release): {version} [skip ci]"
