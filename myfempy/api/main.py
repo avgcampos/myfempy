@@ -680,15 +680,15 @@ class newAnalysis:
         )
 
     def getAssemblerMatrixRegularMesh(self, matrixElem:  npt.NDArray[np.float64], inci:  npt.NDArray[np.float64], max_workers: int) -> npt.NDArray[np.float64]:
-        """test dev
+        """Return the assembled matrix of regular mesh, all elements are the same.
 
         Args:
-            matrixElem (npt.NDArray[np.float64]): _description_
-            inci (npt.NDArray[np.float64]): _description_
-            max_workers (int): _description_
+            matrixElem (npt.NDArray[np.float64]): A 2D array representing the local matrix.
+            inci (npt.NDArray[np.float64], optional): Optional connectivity matrix. Defaults to None.
+            max_workers (int, optional): Number of core multiProcessing assembler. Defaults to None.
 
         Returns:
-            npt.NDArray[np.float64]: _description_
+            npt.NDArray[np.float64]: The raw assembled structural matrix system.
         """
         return AssemblerRM.getGlobalMatrixAssembler(self.model, matrixElem, inci, max_workers)
 
