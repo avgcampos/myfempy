@@ -1,0 +1,36 @@
+name: Generate Release Changelog
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  update-release-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Necessário para ler o histórico de commits
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install git-changelog
+        run: |
+          pip install git-changelog
+
+      - name: Generate Changelog and Update Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Gera o texto do changelog baseado nos commits desde a última tag
+          git-changelog --style conventional -o release_notes.md
+
+          # Atualiza a descrição da release recém-publicada com o changelog gerado
+          gh release edit ${{ github.event.release.tag_name }} --notes-file release_notes.md
