@@ -21,15 +21,15 @@ COMPUTATIONAL FINITE ELEMENT ANALYSIS PROGRAM
 
 Copyright © Antonio Vinicius G. Campos 2022-2026. Processo INPI BR512022001484-0   
  
-myfempy is a python package based on finite element method to multiphysics analysis. The code intended for educational and scientific purposes only, not recommended to commercial use. The code is written by Antonio Vinicius Garcia Campos. The name myfempy is an acronym for MultiphYsics Finite Elements Module to PYthon. The code is open source, if you use myfempy in your research, the developers would be grateful if you could cite this. 
+**myfempy** is a python package based on finite element method to multiphysics analysis. The code intended for educational and scientific purposes only, not recommended to commercial use. The code is written by Antonio Vinicius Garcia Campos. The name **myfempy** is an acronym for MultiphYsics Finite Elements Module to PYthon. The code is open source, if you use **myfempy** in your research, the developers would be grateful if you could cite this. 
 
 A github repository, with the most up to date version of the code,      
 can be found on [https://github.com/avgcampos/myfempy](https://github.com/avgcampos/myfempy).
 
 You can help us by contributing with the main project, send us a mensage on
-[https://github.com/avgcampos/myfempy/discussions/10](https://github.com/avgcampos/myfempy/discussions/10).
+[https://github.com/avgcampos/myfempy/discussions](https://github.com/avgcampos/myfempy/discussions/10).
 
-The myfempy project is published under the GPLv3, see the myfempy LICENSE on
+The **myfempy** project is published under the GPLv3, see the LICENSE on
 [https://github.com/avgcampos/myfempy/blob/main/LICENSE](https://github.com/avgcampos/myfempy/blob/main/LICENSE).
 																		
 Disclaimer:                                                             
@@ -42,7 +42,7 @@ event caused by the use of the program.
 
 ## Installation
 
-To install myfempy manually in your directory, following the steps
+To install **myfempy** manually in your directory, following the steps
 
 1.  Clone/ Download the main code latest version from
     [github/myfempy/main](https://github.com/avgcampos/myfempy)
@@ -57,7 +57,7 @@ To install myfempy manually in your directory, following the steps
 ```
 
 **Note: is recommend to create a virtual environment previously the
-installation of myfempy and dependencies packs. You can use the
+installation of **myfempy** and dependencies packs. You can use the
 [virtualenv](https://virtualenv.pypa.io/en/latest/) or [Anaconda](https://www.anaconda.com/download)**
 
 ``` bash
@@ -74,7 +74,7 @@ installation of myfempy and dependencies packs. You can use the
 
 Installation prerequisites, required to build **myfempy**
 
-You can use either of two python development environments to run myfempy
+You can use either of two python development environments to run **myfempy**
 
 -   [Python 3.14.x](https://www.python.org/) - *Python is a programming
     language that lets you work quickly and integrate systems more
@@ -85,8 +85,8 @@ You can use either of two python development environments to run myfempy
 
 Basic python packages required for using **myfempy**
 
-The following python packages are required to run myfempy. Before to
-install myfempy, install this packages. Check if they are already
+The following python packages are required to run **myfempy**. Before to
+install **myfempy**, install this packages. Check if they are already
 installed on your machine
 
 -   [numpy](https://numpy.org/) - The fundamental package for scientific
@@ -120,7 +120,7 @@ Others prerequisites
 
 -   [gmsh/External Generator Mesh](https://gmsh.info/) - Gmsh is an open
     source 3D finite element mesh generator with a built-in CAD engine
-    and post-processor. *Notes: 1 - Gmsh is NOT part of myfempy
+    and post-processor. *Notes: 1 - Gmsh is NOT part of **myfempy**
     projects; 2 - Is Needed install Gmsh manually*
 
 -   [gmsh API python](https://pypi.org/project/gmsh/)
@@ -133,7 +133,7 @@ try
 
 ### Python 3.14 & Free-Threaded Support
 
-Starting with version 0.10.0, myfempy introduces full support for Python 3.14, including the new "free-threaded" build (Python 3.14t). All underlying libraries and modules have been optimized to ensure seamless compatibility.
+Starting with version 0.10.0, **myfempy** introduces full support for Python 3.14, including the new "free-threaded" build (Python 3.14t). All underlying libraries and modules have been optimized to ensure seamless compatibility.
 
 Important Notes for Python 3.14t Users:
 
@@ -141,7 +141,7 @@ Important Notes for Python 3.14t Users:
 
 - Preview Module limitation: The model preview module is currently disabled under Python 3.14t due to upstream compatibility issues with vtk.
 
-As with any major update, occasional bugs may occur. We strongly recommend always running the latest version of myfempy within an isolated virtual environment.
+As with any major update, occasional bugs may occur. We strongly recommend always running the latest version of **myfempy** within an isolated virtual environment.
 
 ## Tutorial
 
@@ -153,7 +153,7 @@ Many **Examples** are available
 
 ## Documentation
 
-The myfempy is documented using the [Mkdocs](https://www.mkdocs.org/) under **docs** folder. The myfempy's web
+The **myfempy** is documented using the [Mkdocs](https://www.mkdocs.org/) under **docs** folder. The **myfempy**'s web
 documents can be found [here](https://myfempy.readthedocs.io/en/latest/).
 
 ## Releases/ Versions
