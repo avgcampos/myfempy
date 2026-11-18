@@ -37,7 +37,7 @@ jobs:
         run: |
           TAG="${{ github.event.release.tag_name }}"
           
-          # Descobre a tag anterior para formar o range correto (ex: v0.10.4..v0.10.5)
+          # Descobre a tag anterior para formar o range correto
           PREV_TAG=$(git describe --tags --abbrev=0 "$TAG^" 2>/dev/null || echo "")
           
           if [ -z "$PREV_TAG" ]; then
@@ -46,15 +46,15 @@ jobs:
             RANGE="$PREV_TAG..$TAG"
           fi
           
-          # 1. Gera o changelog isolado da versão atual usando o range
-          git-changelog --style conventional -r "$RANGE" -o release_notes.md
+          # 1. Gera o changelog isolado usando --revisions=
+          git-changelog --style conventional --revisions="$RANGE" -o release_notes.md
           
           # 2. Atualiza a página da Release no GitHub com as notas limpas
           gh release edit "$TAG" --notes-file release_notes.md
 
       - name: Append to full docs/changelog.md
         run: |
-          # 3. Reconstrói o histórico completo para o Read the Docs
+          # 3. Reconstrói o histórico completo para o Read the Docs (sem restrição de range)
           git-changelog --style conventional -o docs/changelog.md
 
       - name: Create Pull Request with updated changelog
