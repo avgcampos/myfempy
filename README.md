@@ -4,12 +4,11 @@
 ![myfempy_logo](docs/assets/logo2.png)
 
 [![Python](https://img.shields.io/badge/built%20with-Python3.14-green.svg)](https://www.python.org/)
+[![lics](https://img.shields.io/badge/license-GPL-blue.svg)](https://en.wikipedia.org/wiki/GNU_General_Public_License)
 [![PyPI]()]()
 [![conda]()]()
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15756128.svg)](https://doi.org/10.5281/zenodo.15756128)
 [![Downloads]]()
-[![lics](https://img.shields.io/badge/license-GPL-blue.svg)](https://en.wikipedia.org/wiki/GNU_General_Public_License)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat&logo=appveyor)]([https://github.com/psf/black](https://github.com/psf/black))
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15756128.svg)](https://doi.org/10.5281/zenodo.15756128)
 
 ### Project Under Development
 
