@@ -30,17 +30,17 @@ jobs:
       - name: Create docs directory if not exists
         run: mkdir -p docs
 
-      - name: Generate Changelog for Current Version Only
+      - name: Generate Changelog for Current Version Only & Update GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${{ github.event.release.tag_name }}"
           
-          # 1. Gera o changelog isolado da versão atual para colocar na Release do GitHub
+          # 1. Gera o changelog isolado da versão atual
           git-changelog --style conventional -r "$TAG" -o release_notes.md
           
-          # 2. Atualiza a página da Release no GitHub com as notas limpas da versão
+          # 2. Atualiza a página da Release no GitHub com as notas limpas
           gh release edit "$TAG" --notes-file release_notes.md
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Append to full docs/changelog.md
         run: |
