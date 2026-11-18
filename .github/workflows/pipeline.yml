@@ -6,45 +6,36 @@ on:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
-#----------------------------------------------
-# check-out repo and set-up python
-#----------------------------------------------
+
 jobs:
   Analysis:
     runs-on: ubuntu-latest
 
     steps:
-      #----------------------------------------------
-      # install your root project, if required
-      #----------------------------------------------
       - name: Copy files to repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0  # Desabilitar clone raso para o SonarCloud analisar o histórico corretamente
       
       - name: Install python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
       
       - name: Install myfempy dependencies and package
         run: |
           python -m pip install --upgrade pip
           pip install .
-      #----------------------------------------------
-      # run lint and test suite
-      #----------------------------------------------
+
       # - name: Run lint
       #   run: make lint
 
       # - name: Run tests
       #   run: make test
       
-      #----------------------------------------------
-      # SonarCloud Coverage
-      #----------------------------------------------      
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@de2e56b42aa84d0b1c5b622644ac17e505c9a049
+        uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # Generate a token on Sonarcloud.io, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
