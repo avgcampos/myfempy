@@ -1,4 +1,4 @@
-name: Generate Release Changelog & Docs
+name: Generate Dynamic Release Changelog
 
 on:
   release:
@@ -6,9 +6,10 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
-  update-changelog-and-docs:
+  update-changelog:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -26,21 +27,33 @@ jobs:
         run: |
           pip install git-changelog
 
-      - name: Ensure docs directory exists & Generate Changelog
+      - name: Create docs directory if not exists
+        run: mkdir -p docs
+
+      - name: Generate Changelog for Current Version Only
         run: |
-          mkdir -p docs
+          TAG="${{ github.event.release.tag_name }}"
+          
+          # 1. Gera o changelog isolado da versão atual para colocar na Release do GitHub
+          git-changelog --style conventional -r "$TAG" -o release_notes.md
+          
+          # 2. Atualiza a página da Release no GitHub com as notas limpas da versão
+          gh release edit "$TAG" --notes-file release_notes.md
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Append to full docs/changelog.md
+        run: |
+          # 3. Reconstrói o histórico completo para o Read the Docs
           git-changelog --style conventional -o docs/changelog.md
-          git-changelog --style conventional -o release_notes.md
 
-      - name: Update GitHub Release Page
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release edit ${{ github.event.release.tag_name }} --notes-file release_notes.md
-
-      - name: Commit and Push CHANGELOG.md to repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Create Pull Request with updated changelog
+        uses: peter-evans/create-pull-request@v7
         with:
-          commit_message: "docs: update changelog for version ${{ github.event.release.tag_name }} [skip ci]"
-          file_pattern: docs/changelog.md
-          branch: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs: update changelog for release ${{ github.event.release.tag_name }}"
+          branch: update-changelog-${{ github.event.release.tag_name }}
+          title: "docs: update changelog for release ${{ github.event.release.tag_name }}"
+          body: "Atualização automática do arquivo `docs/changelog.md` para a versão ${{ github.event.release.tag_name }}."
+          base: main
+          signoff: true
