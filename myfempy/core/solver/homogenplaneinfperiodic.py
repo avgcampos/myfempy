@@ -291,7 +291,10 @@ class HomogenizationPlaneBCPeriodic(Solver):
         # --- SOLUÇÃO: uma fatoração LU, todos os ntensor RHS de uma vez ---
         Kff = KG_SC[freedof_pc][:, freedof_pc].tocsc()
         U0 = zeros((nred, FG_SC.shape[1]), dtype=float64)
-        U0[freedof_pc, :] = splu(Kff).solve(ascontiguousarray(FG_SC[freedof_pc, :]))
+        try:
+            U0[freedof_pc, :] = splu(Kff).solve(ascontiguousarray(FG_SC[freedof_pc, :]))
+        except:
+            raise RuntimeError(f"solver não convergiu no passo")
 
         U_FULL_PC = MAT_R @ U0                        # esparso x denso, sem toarray()
         U = zeros_like_U = zeros(U_FULL_PC.shape, dtype=float64)

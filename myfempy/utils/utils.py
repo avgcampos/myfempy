@@ -95,9 +95,6 @@ def print_console(sc):
     elif sc == "post":
         print("\r[5 / 5]   P O S T - P R O C E S S   C O M P U T I N G")
     elif sc == "thank":
-        # print(
-        #     "\r***************                   M Y F E M P Y                   ***************"
-        # )
         print(
             "\r***************        T H A N K   Y O U   F O R   U S E !        ***************"
         )

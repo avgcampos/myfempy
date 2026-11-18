@@ -39,7 +39,6 @@ event caused by the use of the program.
 
 def plot(x: np.ndarray, y: np.ndarray, xlabel: str, ylabel: str, fignumb: int):
     """plot function"""
-
     plt.ion()
     plt.gcf().set_size_inches(10, 8)
     plt.plot(x, y, "-sm")
@@ -51,8 +50,7 @@ def plot(x: np.ndarray, y: np.ndarray, xlabel: str, ylabel: str, fignumb: int):
 
 
 def tracker_plot(postprocset: dict, plotset: dict, coord: np.ndarray, nodedof):
-    """trancker plot function"""
-
+    """tracker plot function"""
     if "displ" in postprocset["TRACKER"]["data"].keys():
         if "point" in postprocset["TRACKER"]["data"]["displ"].keys():
             node_coordX = float(postprocset["TRACKER"]["data"]["displ"]["point"]["x"])
@@ -97,7 +95,6 @@ def forces_plot(
     nbeam: np.ndarray,
 ):
     """plot internal forces of beam structures"""
-
     plt.gcf().set_size_inches(16, 8)
     plt.subplots_adjust(hspace=0.5)
     cont = 1

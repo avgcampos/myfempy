@@ -117,6 +117,8 @@ class StructuralPlane(Element):
         nodedof = Model.modelinfo["nodedof"]
         if int(addval[0, 1]) == 16:
             matrix_update = array([[1.0, -1.0], [-1.0, 1.0]])
+        elif int(addval[0, 1]) == 17:
+            matrix_update = array([[1.0, -1.0], [-1.0, 1.0]])
         elif int(addval[0, 1]) == 15:
             matrix_update = 0.5 * array([[1.0, 0.0], [0.0, 1.0]])
         for ii in range(len(addval)):

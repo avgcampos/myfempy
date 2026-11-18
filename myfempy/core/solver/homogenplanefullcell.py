@@ -153,7 +153,7 @@ class HomogenizationPlane(Solver):
                     forcelist[freedof_pc[step], step],
                 )
             except:
-                pass
+                raise RuntimeError(f"minres não convergiu no passo {step}")
             U[freedof_pc[step], step] = X
 
         inci = Model.inci

@@ -1,13 +1,7 @@
-# Under Development
-
-The **myfempy** project is under development, updates and code modifications may occur in future versions without prior notice from the developers.
-
-## Welcome to myfempy's project
+# Welcome to myfempy's project
 
 ![myfempy_logo](assets/logo2.png)
 ![myfempy_logo](docs/assets/logo2.png)
-
-Copyright © Antonio Vinicius G. Campos 2022-2026. Processo INPI BR512022001484-0
 
 [![Python](https://img.shields.io/badge/built%20with-Python3.14-green.svg)](https://www.python.org/)
 [![Documentation Status](https://readthedocs.org/projects/myfempy/badge/?version=latest)](https://myfempy.readthedocs.io/en/latest/?badge=latest)
@@ -18,11 +12,30 @@ Copyright © Antonio Vinicius G. Campos 2022-2026. Processo INPI BR512022001484-
 [![lics](https://img.shields.io/badge/license-GPL-blue.svg)](https://en.wikipedia.org/wiki/GNU_General_Public_License)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat&logo=appveyor)]([https://github.com/psf/black](https://github.com/psf/black))
 
------------
+### Project Under Development
+
+The **myfempy** project is under development, updates and code modifications may occur in future versions without prior notice from the developers.
 
 ## About
+COMPUTATIONAL FINITE ELEMENT ANALYSIS PROGRAM
 
-**myfempy** is a python package based on finite element method to multiphysics analysis. The code is open source and *intended for educational and scientific purposes only, not recommended to commercial use*. The name **myfempy** is an acronym for **M**ultiph**Y**sics **F**inite **E**lements **M**odule to **PY**thon. You can help us by contributing with the main project, send us a mensage [Github Discussions](https://github.com/avgcampos/myfempy/discussions/10). **If you use myfempy in your research, the  developers would be grateful if you could cite in your work.**
+Copyright © Antonio Vinicius G. Campos 2022-2026. Processo INPI BR512022001484-0   
+ 
+myfempy is a python package based on finite element method to multiphysics analysis. The code intended for educational and scientific purposes only, not recommended to commercial use. The code is written by Antonio Vinicius Garcia Campos. The name myfempy is an acronym for MultiphYsics Finite Elements Module to PYthon. The code is open source, if you use myfempy in your research, the developers would be grateful if you could cite this. 
+
+A github repository, with the most up to date version of the code,      
+can be found on [https://github.com/avgcampos/myfempy](https://github.com/avgcampos/myfempy).
+
+You can help us by contributing with the main project, send us a mensage on
+[https://github.com/avgcampos/myfempy/discussions/10](https://github.com/avgcampos/myfempy/discussions/10).
+
+The myfempy project is published under the GPLv3, see the myfempy LICENSE on
+[https://github.com/avgcampos/myfempy/blob/main/LICENSE](https://github.com/avgcampos/myfempy/blob/main/LICENSE).
+																		
+Disclaimer:                                                             
+The authors reserve all rights but do not guarantee that the code is 
+free from errors. Furthermore, the authors shall not be liable in any   
+event caused by the use of the program.
 
 ![home](assets/sim.png)
 ![home](docs/assets/sim.png)
@@ -32,7 +45,7 @@ Copyright © Antonio Vinicius G. Campos 2022-2026. Processo INPI BR512022001484-
 To install myfempy manually in your directory, following the steps
 
 1.  Clone/ Download the main code latest version from
-    [github/myfempy/main](https://github.com/easycae-3d/myfempy/)
+    [github/myfempy/main](https://github.com/avgcampos/myfempy)
 2.  Unzip the pack in your preferred location
 3.  In the **myfempy** folder, open a terminal and enter with the
     command:
@@ -136,7 +149,7 @@ An **User's Guide** is available
 [here](https://myfempy.readthedocs.io/en/latest/user_manual/).
 
 Many **Examples** are available
-[here](https://github.com/avgcampos/myfempy/tree/main/examples).
+[here](https://myfempy.readthedocs.io/en/latest/examples/).
 
 ## Documentation
 

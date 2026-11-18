@@ -96,6 +96,16 @@ class SteadyStateLinearIterative(Solver):
 
         solution = dict()
         nsteps = setSteps(solverset["STEPSET"])
+        
+        try:
+            stol = solverset["STOL"]
+        except:
+            stol = 1E-30
+
+        try:
+            mite = solverset["MAXITE"]
+        except:
+            mite = 1000
 
         stiffness = assembly["stiffness"]
         forcelist = assembly["loads"]
@@ -116,11 +126,11 @@ class SteadyStateLinearIterative(Solver):
                 U1[freedof], info = minres(
                     A=stiffness[:, freedof][freedof, :],
                     b=forcelist[freedof, step],
-                    rtol=1e-10,
-                    maxiter=1000,
+                    rtol=stol,
+                    maxiter=mite,
                 )
             except:
-                raise info
+                raise RuntimeError(f"minres não convergiu no passo {step} (info={info})")
             U1[constdof] = Uc[constdof, step]
             U1[:] += U0[:]
             U[:, step] = U1

@@ -1,5 +1,0 @@
-include myfempy/*
-include examples/*
-include test/*
-
-include *.md *.txt LICENSE

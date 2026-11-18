@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from numpy import (arange, array, concatenate, empty, float64, newaxis, pi,
-                   sqrt, unique, zeros)
+from numpy import (arange, array, concatenate, zeros, float64, newaxis, pi,
+                   sqrt, unique, zeros, maximum)
 from scipy.sparse.linalg import eigsh
 
 from myfempy.core.solver.assemblerSR import AssemblerSR
@@ -104,7 +104,7 @@ class DynamicEigenLinear(Solver):
         return matrix
 
     def getLoadAssembler(loadaply, nodetot, nodedof):
-        return empty(
+        return zeros(
             (
                 nodedof * nodetot,
                 len(unique(loadaply[:, 3])),
@@ -115,7 +115,7 @@ class DynamicEigenLinear(Solver):
         return AssemblerSR.getConstrains(constrains, nodetot, nodedof)
 
     def getDirichletNH(constrains, nodetot, nodedof):
-        return empty(
+        return zeros(
             (nodedof * nodetot, len(unique(constrains[:, 3][constrains[:, 3] != 0]))),
             dtype=float64,
         )
@@ -123,10 +123,9 @@ class DynamicEigenLinear(Solver):
     def runSolve(Model, Physic, assembly, constrainsdof, solverset):
         fulldofs = Model.modelinfo["fulldofs"]
         solution = dict()
-        modeEnd = setSteps(solverset["STEPSET"])
+        modeEnd = solverset["STEPSET"]["modeEnd"]
         stiffness = assembly["stiffness"]
         mass = assembly["mass"]
-        # forcelist = assembly["loads"]
         U = zeros((fulldofs, modeEnd), dtype=float64)
         freedof = constrainsdof["freedof"]
         try:
@@ -134,15 +133,13 @@ class DynamicEigenLinear(Solver):
                 A=stiffness[:, freedof][freedof, :],
                 M=mass[:, freedof][freedof, :],
                 k=modeEnd,
-                sigma=0,
+                sigma=1E-16,
                 which="LM",
-                # ncv=30,
-                # maxiter=100,
-                # mode='normal',
             )
         except:
             pass
         Wlist = arange(0, modeEnd + 1)
+        W = maximum(W, 1E-16)
         Wrad = sqrt(W)
         Whz = Wrad / (2 * pi)
         w_range = concatenate(

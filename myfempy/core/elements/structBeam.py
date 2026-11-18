@@ -86,7 +86,6 @@ class StructuralBeam(Element):
     def getElementSet():
         return _ELEMENT_SET
 
-    # @profile
     def getStifLinearMat(
         inci,
         coord,
@@ -168,7 +167,19 @@ class StructuralBeam(Element):
                 ]
             )
 
-        if int(addval[0, 1]) == 18:
+        elif int(addval[0, 1]) == 17:
+            matrix_update = array(
+                [
+                    [1.0, 0.0, 0.0, -1.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                    [-1.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                ]
+            )
+
+        elif int(addval[0, 1]) == 18:
             matrix_update = array(
                 [
                     [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],

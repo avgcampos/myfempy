@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from numpy import (arange, array, empty, concatenate, unique, dot, float64, isin, int64,
-                   sort, pi, where, zeros, sqrt, real, linspace, ceil, exp)
+                   sort, pi, where, zeros, sqrt, real, linspace, ceil, exp, maximum)
 
 from scipy.sparse import coo_matrix, csc_matrix, eye, hstack, vstack
 from scipy.sparse.linalg import LinearOperator, eigsh, splu, ArpackError
@@ -148,8 +148,13 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
 
     def runSolve(Model, Physic, assembly, constrainsdof, solverset):
         fulldofs = Model.modelinfo["fulldofs"]
-        modeEnd = setSteps(solverset["STEPSET"])
-        mu, tot_steps = PhononicCrystalPlaneBCPeriodic.__setIBZ(solverset["IBZ"])
+        modeEnd = solverset["STEPSET"]["modeEnd"]
+        # Defina o tamanho do passo desejado
+        try:
+            ssize = solverset["STEPSET"]["step"]
+        except:
+            ssize = 0.1
+        mu, tot_steps = PhononicCrystalPlaneBCPeriodic.__setIBZ(solverset["IBZRANGE"], ssize*pi)
 
         # Grupos de DOFs: internos, esquerda, base, base-esq, direita, topo, base-dir, topo-esq, topo-dir
         grupos = [constrainsdof["freedof"], *constrainsdof["constdof"][:8]]
@@ -192,16 +197,16 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
                              which="LM", OPinv=OPinv, return_eigenvectors=False)
             except (ArpackError, RuntimeError):
                 return 0.0
-
+            avec = maximum(avec, 1E-9)
             return sqrt(sort(real(avec)))
 
-        freq_waves = zeros((modeEnd, n_mu), dtype=float64)
-
+        freq_waves = zeros((n_mu, modeEnd), dtype=float64)
         with ThreadPoolExecutor(max_workers=n_workers) as pool:
             for kmu, freq in enumerate(pool.map(resolver_ponto, range(n_mu))):
-                freq_waves[:, kmu] = freq
+                freq_waves[kmu, :] = freq
 
-        solution = {"U": zeros((fulldofs, n_mu), dtype=float64)}
+        solution = dict()
+        solution["U"] = zeros((fulldofs, n_mu), dtype=float64)
         solution["FREQ"] = freq_waves
         solution["IBZRANGE"] = tot_steps
         return solution
@@ -236,13 +241,11 @@ class PhononicCrystalPlaneBCPeriodic(Solver):
         C = PhononicCrystalPlaneBCPeriodic.__setAssembleBlocks(shape, [(off[8], off[3], eye(ntr, nbl))])  # tr <- bl  (lambda_x*lambda_y)
         return R0, A, B, C
     
-    def __setIBZ(cont_co):
+    def __setIBZ(cont_co, step_size):
         # Amostragem da IBZ
         img = 1j
         mu = array([img*cont_co[0, :].T])
         tot_steps = zeros(len(cont_co), dtype=int)
-
-        step_size = 0.01*pi  # Defina o tamanho do passo desejado
 
         for i in range(len(cont_co) - 1):
             n_steps = int(ceil(sqrt((cont_co[i, 0] - cont_co[i + 1, 0])**2 +

@@ -5,7 +5,6 @@ Physics Vtk Plot.
 
 try:
     import vtk
-
     VTK_AVAILABLE = True
 except ImportError:
     vtk = None
@@ -45,7 +44,6 @@ event caused by the use of the program.
 """
 
 if VTK_AVAILABLE:
-    # versao nova
     def view_listforce(coord: np.ndarray, frcApy_vet: np.ndarray, scala_view: float):
         """Versão otimizada para plotagem de forças/momentos."""
         node_idx = int(frcApy_vet[0]) - 1
@@ -60,6 +58,83 @@ if VTK_AVAILABLE:
 
         height_cone = scala_view
         sign_mag = np.sign(val_magnitude)
+        p_node = np.array([coordX_force, coordY_force, coordZ_force], dtype=float)
+
+        # ------------------------------------------------------------------
+        # Helpers: cubo (massa) e mola helicoidal
+        # ------------------------------------------------------------------
+        def _create_mass_cube(center, side, color, opacity=0.6):
+            cube = vtk.vtkCubeSource()
+            cube.SetXLength(side)
+            cube.SetYLength(side)
+            cube.SetZLength(side)
+            cube.SetCenter(float(center[0]), float(center[1]), float(center[2]))
+
+            mapper = vtk.vtkPolyDataMapper()
+            mapper.SetInputConnection(cube.GetOutputPort())
+
+            actor = vtk.vtkActor()
+            actor.SetMapper(mapper)
+            actor.GetProperty().SetColor(color)
+            actor.GetProperty().SetOpacity(opacity)
+            return actor
+
+        def _create_helix_spring(p_start, p_end, radius, n_coils, wire_radius,
+                                color, opacity=0.6):
+            axis = p_end - p_start
+            Ls = np.linalg.norm(axis)
+            ex = axis / Ls
+
+            # base ortonormal local (ex ao longo da mola)
+            aux = (np.array([0.0, 0.0, 1.0]) if abs(ex[2]) < 0.9
+                else np.array([1.0, 0.0, 0.0]))
+            ey = np.cross(aux, ex)
+            ey /= np.linalg.norm(ey)
+            ez = np.cross(ex, ey)
+
+            # geometria local: reta -> hélice -> reta
+            n_pts_coil = 16
+            leg = 0.1 * Ls
+            s = np.linspace(0.0, 1.0, n_coils * n_pts_coil + 1)
+            theta = 2.0 * np.pi * n_coils * s
+            X = np.concatenate(([0.0], leg + s * (Ls - 2.0 * leg), [Ls]))
+            Y = np.concatenate(([0.0], radius * np.cos(theta), [0.0]))
+            Z = np.concatenate(([0.0], radius * np.sin(theta), [0.0]))
+
+            # local -> global
+            pts_glob = (p_start + np.outer(X, ex) + np.outer(Y, ey)
+                        + np.outer(Z, ez))
+
+            points = vtk.vtkPoints()
+            points.SetNumberOfPoints(len(X))
+            for i, p in enumerate(pts_glob):
+                points.SetPoint(i, p[0], p[1], p[2])
+
+            lines = vtk.vtkCellArray()
+            lines.InsertNextCell(len(X))
+            for i in range(len(X)):
+                lines.InsertCellPoint(i)
+
+            poly = vtk.vtkPolyData()
+            poly.SetPoints(points)
+            poly.SetLines(lines)
+
+            # espessura do arame
+            tube = vtk.vtkTubeFilter()
+            tube.SetInputData(poly)
+            tube.SetRadius(wire_radius)
+            tube.SetNumberOfSides(8)
+            tube.CappingOn()
+            tube.Update()
+
+            mapper = vtk.vtkPolyDataMapper()
+            mapper.SetInputConnection(tube.GetOutputPort())
+
+            actor = vtk.vtkActor()
+            actor.SetMapper(mapper)
+            actor.GetProperty().SetColor(color)
+            actor.GetProperty().SetOpacity(opacity)
+            return actor
 
         # Configurações padrão por tipo de força/momento
         # Formato: (h_mult, dir1, dir2, center1, center2, color)
@@ -84,22 +159,54 @@ if VTK_AVAILABLE:
             c2[idx] += height_cone
             config = (1.2, tuple(d), tuple(d), tuple(c1), tuple(c2), (1, 0, 1))
 
-        elif val_type == 15:  # massadd
-            height_cone *= 1.2
-            c = (coordX_force, coordY_force, coordZ_force)
-            config = (1.2, (-1, 0, 0), (1, 0, 0), c, c, (0.4, 0.1, 0.8))
+        elif val_type == 15:  # massadd -> cubo centrado no nó
+            side = 0.6 * height_cone
+            cube_actor = _create_mass_cube(p_node, side, (0, 1, 0))
+            return cube_actor, vtk.vtkActor()
 
-        elif val_type == 16:  # spring2gd
-            height_cone *= 1.2
-            c1 = (coordX_force, coordY_force - height_cone / 2, coordZ_force)
-            c2 = (coordX_force, coordY_force - 1.5 * height_cone, coordZ_force)
-            config = (1.2, (0, 1, 0), (0, -1, 0), c1, c2, (0, 0.9, 0.8))
+        elif val_type == 16:  # spring2gd -> mola helicoidal + bloco na extremidade fixa
+            hc = 1.2 * height_cone
+            spring_len = 2.0 * hc
+            p_end = p_node - np.array([0.0, spring_len, 0.0])
+
+            spring_actor = _create_helix_spring(
+                p_start=p_node,
+                p_end=p_end,
+                radius=0.25 * hc,
+                n_coils=8,
+                wire_radius=0.02 * spring_len,
+                color=(1, 1, 0),
+            )
+
+            # bloco pequeno (apoio fixo), com a face superior encostada na ponta da mola
+            side_fix = 1.2 * hc
+            center_fix = p_end - np.array([0.0, side_fix / 2.0, 0.0])
+            fixed_actor = _create_mass_cube(
+                center_fix, side_fix, (1, 1, 0), opacity=0.6
+            )
+            return spring_actor, fixed_actor
 
         elif val_type == 17:  # damper2gd
-            height_cone *= 1.2
-            c1 = (coordX_force, coordY_force - height_cone / 2, coordZ_force)
-            c2 = (coordX_force, coordY_force - 1.5 * height_cone, coordZ_force)
-            config = (1.2, (0, 1, 0), (0, -1, 0), c1, c2, (0.9, 0.6, 0.2))
+            hc = 1.2 * height_cone
+            spring_len = 2.0 * hc
+            p_end = p_node - np.array([0.0, spring_len, 0.0])
+
+            spring_actor = _create_helix_spring(
+                p_start=p_node,
+                p_end=p_end,
+                radius=0.25 * hc,
+                n_coils=8,
+                wire_radius=0.02 * spring_len,
+                color=(1, 0, 0),
+            )
+
+            # bloco pequeno (apoio fixo), com a face superior encostada na ponta da mola
+            side_fix = 1.2 * hc
+            center_fix = p_end - np.array([0.0, side_fix / 2.0, 0.0])
+            fixed_actor = _create_mass_cube(
+                center_fix, side_fix, (1, 0, 0), opacity=0.6
+            )
+            return spring_actor, fixed_actor
         else:
             empty_actor = vtk.vtkActor()
             return empty_actor, empty_actor
@@ -246,7 +353,6 @@ if VTK_AVAILABLE:
         bc_text_actor.SetScale(scala, scala, scala)
         bc_text_actor.SetPosition(tuple(coord))
         bc_text_actor.GetProperty().SetColor(1.0, 0.0, 0.0)
-
         return bc_text_actor
 
     def view_beam_crossSection(dimSection, typSection, coord_bcs, scala_view):
@@ -260,10 +366,10 @@ if VTK_AVAILABLE:
         Returns:
             _description_
         """
-        b = dimSection[0]  # * scala
-        h = dimSection[1]  # * scala
-        t = dimSection[2]  # * scala
-        d = dimSection[3]  # * scala
+        b = 1.0 if dimSection[0] in (None, 'NULL') else float(dimSection[0])
+        h = 1.0 if dimSection[1] in (None, 'NULL') else float(dimSection[1])
+        t = 1.0 if dimSection[2] in (None, 'NULL') else float(dimSection[2])
+        d = 1.0 if dimSection[3] in (None, 'NULL') else float(dimSection[3])
         Lx = np.sqrt(((coord_bcs[3] - coord_bcs[0]) ** 2))
         Ly = np.sqrt(((coord_bcs[4] - coord_bcs[1]) ** 2))
         Lz = np.sqrt(((coord_bcs[5] - coord_bcs[2]) ** 2))
@@ -353,11 +459,11 @@ if VTK_AVAILABLE:
             l = (coord_bcs[3] - coord_bcs[0]) / L
             m = (coord_bcs[1] - coord_bcs[4]) / L
             n = (coord_bcs[5] - coord_bcs[2]) / L
-            d = np.sqrt(l**2 + m**2)
+            dxy = np.sqrt(l**2 + m**2)
             ang1 = 0
             rotate1 = (0, 0, 0)
             ang2 = (np.arctan(m / n)) * (180 / np.pi)
-            rotate2 = (d, 0, 0)
+            rotate2 = (dxy, 0, 0)
             ang3 = 0
             rotate3 = (0, 0, 0)
             translate = (
@@ -617,38 +723,109 @@ if VTK_AVAILABLE:
             transform_filter.SetTransform(transform)
             transform_filter.SetInputData(profile)
             transform_filter.Update()
-        elif typSection == 2:  # Spring
-            p0 = [0.0, 0.0, 0.0]
-            p1 = [0.25 * L, 0.0, 0.0]
-            p2 = [0.5 * L, 0.25 * L, 0.0]
-            p3 = [0.5 * L, -0.25 * L, 0.0]
-            p4 = [0.75 * L, 0.0, 0.0]
-            p5 = [L, 0.0, 0.0]
+        elif typSection == 0:  # Spring Linear (helicoidal)
+            # --- eixo do elemento (nó 1 -> nó 2) ---
+            p1 = np.array(coord_bcs[0:3], dtype=float)
+            p2 = np.array(coord_bcs[3:6], dtype=float)
+            ex = (p2 - p1) / L
+
+            # --- base ortonormal local (ex ao longo do elemento) ---
+            aux = np.array([0.0, 0.0, 1.0]) if abs(ex[2]) < 0.9 else np.array([1.0, 0.0, 0.0])
+            ey = np.cross(aux, ex)
+            ey /= np.linalg.norm(ey)
+            ez = np.cross(ex, ey)
+
+            # --- parâmetros da mola ---
+            # d -> diâmetro médio da hélice | t -> número de espiras
+            R = 0.5 * float(dimSection[3]) if dimSection[3] not in (None, 'NULL') else 0.1 * L
+            n_coils = int(float(dimSection[2])) if dimSection[2] not in (None, 'NULL') else 8
+            n_pts_coil = 8          # pontos por espira (suavidade)
+            leg = 0.1 * L            # trecho reto em cada extremidade (liga aos nós)
+
+            # --- geometria local: reta -> hélice -> reta ---
+            n_helix = n_coils * n_pts_coil + 1
+            s = np.linspace(0.0, 1.0, n_helix)
+            theta = 2.0 * np.pi * n_coils * s
+            xh = leg + s * (L - 2.0 * leg)
+            yh = R * np.cos(theta)
+            zh = R * np.sin(theta)
+
+            X = np.concatenate(([0.0], xh, [L]))
+            Y = np.concatenate(([0.0], yh, [0.0]))
+            Z = np.concatenate(([0.0], zh, [0.0]))
+
+            # --- local -> global ---
+            pts_glob = p1 + np.outer(X, ex) + np.outer(Y, ey) + np.outer(Z, ez)
+
             points = vtk.vtkPoints()
-            points.InsertNextPoint(p0)
-            points.InsertNextPoint(p1)
-            points.InsertNextPoint(p2)
-            points.InsertNextPoint(p3)
-            points.InsertNextPoint(p4)
-            points.InsertNextPoint(p5)
+            points.SetNumberOfPoints(len(X))
+            for i, p in enumerate(pts_glob):
+                points.SetPoint(i, p[0], p[1], p[2])
+
             lines = vtk.vtkCellArray()
-            lines.InsertNextCell(6)
-            lines.InsertCellPoint(0)
-            lines.InsertCellPoint(1)
-            lines.InsertCellPoint(2)
-            lines.InsertCellPoint(3)
-            lines.InsertCellPoint(4)
-            lines.InsertCellPoint(5)
+            lines.InsertNextCell(len(X))
+            for i in range(len(X)):
+                lines.InsertCellPoint(i)
+
             profile = vtk.vtkPolyData()
             profile.SetPoints(points)
             profile.SetLines(lines)
+
+            # pontos já estão em coordenadas globais -> transformação identidade
             transform = vtk.vtkTransform()
-            transform.Translate(translate)
-            transform.RotateWXYZ(ang3, rotate3)
             transform_filter = vtk.vtkTransformPolyDataFilter()
             transform_filter.SetTransform(transform)
             transform_filter.SetInputData(profile)
             transform_filter.Update()
+            # --- helper: pinta um polydata com uma cor RGB (0-255) ---
+            def _paint(polydata, rgb):
+                out = vtk.vtkPolyData()
+                out.ShallowCopy(polydata)
+                colors = vtk.vtkUnsignedCharArray()
+                colors.SetNumberOfComponents(3)
+                colors.SetName("Colors")
+                for _ in range(out.GetNumberOfPoints()):
+                    colors.InsertNextTuple3(*rgb)
+                out.GetPointData().SetScalars(colors)
+                return out
+
+            spring_color = (0, 0, 255)         #  cor da mola
+            mass_color = (255, 0, 255)          #  cor da massa
+
+            # --- bloco da massa (cubo) centrado no nó 2 ---
+            a = 0.2 * L
+            center = p2.copy()
+
+            cube = vtk.vtkCubeSource()
+            cube.SetXLength(a)
+            cube.SetYLength(a)
+            cube.SetZLength(a)
+            cube.Update()
+
+            M = vtk.vtkMatrix4x4()
+            for i in range(3):
+                M.SetElement(i, 0, ex[i])
+                M.SetElement(i, 1, ey[i])
+                M.SetElement(i, 2, ez[i])
+                M.SetElement(i, 3, center[i])
+
+            cube_transform = vtk.vtkTransform()
+            cube_transform.SetMatrix(M)
+            cube_filter = vtk.vtkTransformPolyDataFilter()
+            cube_filter.SetTransform(cube_transform)
+            cube_filter.SetInputConnection(cube.GetOutputPort())
+            cube_filter.Update()
+
+            # --- aplica as cores e junta mola + massa ---
+            spring_poly = _paint(transform_filter.GetOutput(), spring_color)
+            mass_poly = _paint(cube_filter.GetOutput(), mass_color)
+
+            append = vtk.vtkAppendPolyData()
+            append.AddInputData(spring_poly)
+            append.AddInputData(mass_poly)
+            append.Update()
+            transform_filter = append    
+        
         elif typSection == 99:  # User Defined
             profile = vtk.vtkDiskSource()
             profile.SetCircumferentialResolution(32)
@@ -668,7 +845,7 @@ if VTK_AVAILABLE:
         beam_extrude_actor = vtk.vtkActor()
         beam_extrude_actor.GetProperty().SetRepresentationToWireframe()
         beam_extrude_actor.SetMapper(beam_extrude)
-        beam_extrude_actor.GetProperty().SetLineWidth(1.0)
-        beam_extrude_actor.GetProperty().SetColor(1.0, 1.0, 1.0)  # (R,G,B)
+        beam_extrude_actor.GetProperty().SetLineWidth(2.0)
+        beam_extrude_actor.GetProperty().SetColor(0.0, 0.0, 0.0)  # (R,G,B)
 
         return beam_extrude_actor

@@ -118,7 +118,6 @@ class SetModel:
 
     def __tabmat(self, matlist):
         """get material table"""
-        # matlist["PROPMAT"] = [{'NAME': name} for name in dict.fromkeys(d['NAME'] for d in matlist["PROPMAT"])]
         vistos = set()
         new_matlist_propmat = []
         for item in matlist["PROPMAT"]:
@@ -146,8 +145,10 @@ class SetModel:
             "KZZ": "KZZ",
             "CTE": "CTE",
             "VIS": "VIS",
-            "STIF": "STIF",
-            "DAMP": "DAMP",
+            "STIFK": "STIFK",
+            "STIFR": "STIFR",
+            "STIFT": "STIFT",
+            "MASS": "MASS",
         }
         tabmat = [{}] * nmat
         for mm in range(nmat):
@@ -174,8 +175,10 @@ class SetModel:
                 "KZZ": mat_prop["KZZ"],
                 "CTE": mat_prop["CTE"],
                 "VIS": mat_prop["VIS"],
-                "STIF": mat_prop["STIF"],
-                "DAMP": mat_prop["DAMP"],
+                "STIFK": mat_prop["STIFK"],
+                "STIFR": mat_prop["STIFR"],
+                "STIFT": mat_prop["STIFT"],
+                "MASS": mat_prop["MASS"],
             }
         return tabmat, mat_lib
 

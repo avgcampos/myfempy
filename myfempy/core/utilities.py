@@ -561,6 +561,13 @@ def nodes_from_regions(regionlist):
 
 
 # integracao numerica
+_SPRING_GAUSS = {
+    2: (
+        array([-1.0, 1.0], dtype=FLT64),
+        array([1.0, 1.0], dtype=FLT64),
+    ),
+}
+
 
 _LINE_GAUSS = {
     1: (
@@ -714,6 +721,7 @@ _TETR_GAUSS = {
 _ELEMENT_GAUSS_MAP = {
     "line2": _LINE_GAUSS,
     "line3": _LINE_GAUSS,
+    "spring2": _SPRING_GAUSS,
     "tria3": _TRIA_GAUSS,
     "tria6": _TRIA_GAUSS,
     "quad4": _QUAD_GAUSS,

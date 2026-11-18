@@ -134,7 +134,7 @@ if VEDO_AVAILABLE:
 
         mesh.cmap("jet")
         if render.get("lines", True):
-            mesh.lw(1.0).linecolor("black")
+            mesh.lw(2.0).linecolor("black")
         else:
             mesh.lw(0)
 

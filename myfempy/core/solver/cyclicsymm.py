@@ -41,9 +41,9 @@ event caused by the use of the program.
 """
 
 
-class StaticLinearCyclicSymmPlane(Solver):
+class StaticLinearCyclicSymm(Solver):
     """
-    Static Linear Cyclic Symmetry Plane Solver Class <ConcreteClassService>
+    Static Linear Cyclic Symmetry Solver Class <ConcreteClassService>
     """
 
     def getMatrixAssembler(
@@ -124,6 +124,13 @@ class StaticLinearCyclicSymmPlane(Solver):
 
     def runSolve(Model, Physic, assembly, constrainsdof, solverset):
         nsteps = setSteps(solverset["STEPSET"])
+        try:
+            stol = solverset["STOL"]
+            mite = solverset["MAXITE"]
+        except:
+            stol = 1E-30
+            mite = 1000
+
         leftdof, rightdof, fixeddof = constrainsdof["fixedof"]
         interdof = constrainsdof["freedof"]
         ni, nl = len(interdof), len(leftdof)
@@ -145,13 +152,13 @@ class StaticLinearCyclicSymmPlane(Solver):
         freedof = flatnonzero(~isin(order[: ni + nl], fixeddof))
         K = (Rcs.T @ assembly["stiffness"][order, :][:, order] @ Rcs).tocsr()
         F = Rcs.T @ assembly["loads"][order, :]  # esparsa @ densa -> ndarray
-        Kff = K[freedof][:, freedof]
-        Fff = F[freedof]
+        sK = K[freedof][:, freedof]
+        sF = F[freedof]
 
         u = zeros(ni + nl)
         U = zeros((Model.modelinfo["fulldofs"], nsteps))
         for step in range(nsteps):
-            du, info = minres(Kff, Fff[:, step], rtol=1e-10, maxiter=1000)
+            du, info = minres(sK, sF[:, step], rtol=stol, maxiter=mite)
             if info != 0:
                 raise RuntimeError(f"minres não convergiu no passo {step} (info={info})")
             u[freedof] += du  # deslocamento acumulado entre passos

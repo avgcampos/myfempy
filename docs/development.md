@@ -7,7 +7,7 @@
 
 Users are free to contribute to the project. If using MyFempy, please cite or contact the main author (see homepage). If you have suggestions, please open an [issue](https://github.com/avgcampos/myfempy/issues) on the project's main GitHub page; the author appreciates any feedback.
 
-## Development Current Stages  
+## Roadmap
 
 The main goal of this repository is to develop tests and configure a new version of the **myfempy** project (new version) based entirely on object-oriented programming (OOP).
 
@@ -33,7 +33,7 @@ This new version allows the inclusion of modules and code written in C/Cython, a
 
 7. [ADDED] Develop the output of results using .vtk files
 
-8. [ ] Test the program to solve the multi-physics problem
+8. [ ] Implementation to solve the multi-physics problem
 
 9. [ADDED] Implementation of higher-order (quadritic) elements
 
@@ -53,7 +53,7 @@ Implement the following analysis solutions:
 		- [ADDED] Iterative
 		- [ADDED] Eigen (Modal)
 		- [ADDED] Harmonic (FRF)
-		- [ ] Harmonic (Modal)
+		- [ADDED] Harmonic (Modal)
 
 	2. Transient Response
 
@@ -101,7 +101,7 @@ Implement the following analysis solutions:
 		- [DEPRECATED] hexa20 - hexaedro 20 nós
 
 	2. Elements:
-		- [ADDED] block - Spring + Mass 1D-space 1-node_dofs
+		- [ADDED] springMass - Spring + Mass 3D-space 1-node_dofs
 		- [ADDED] structbeam - Beam Structural Element 1D-space 6-node_dofs
 		- [ADDED] structplane - Plane Structural Element 2D-space 2-node_dofs
 		- [ADDED] structsolid - Solid Structural Element 3D-space 3-node_dofs

@@ -161,11 +161,11 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
             lines.append("LIST OF SOLUTIONS")
             model_dict = list(Model.modelinfo["dofs"]["d"].keys())
             dof_header = str(model_dict)[1:-1]
-            for row in range(len(solstatus['computer']["SOLUTION"])):
+            for row in range(len(solstatus['compute']["SOLUTION"])):
                 lines.append("------------------------")
                 lines.append("{0:<7}{1:<4}".format("STEP", row + 1))
                 lines.append(f"dof, {dof_header}")
-                array_sol = solstatus['computer']["SOLUTION"][row][Model.element.setTitleDeformation()][
+                array_sol = solstatus['compute']["SOLUTION"][row][Model.element.setTitleDeformation()][
                     :, : len(model_dict)
                 ]
                 for line_dof, line in enumerate(array_sol):
@@ -214,12 +214,14 @@ def write2log(Model, Physic, log_data, solstatus, log_file):
     with open(log_file, "w") as file_object:
         file_object.write("\n".join(lines) + "\n")
 
-
 def writer2csv(csv2write_file, csv2write_data, label):
     with open(csv2write_file, "w", newline="") as file_object:
         writer = csv.writer(file_object)
-        writer.writerow([label[0], label[1]])
-        writer.writerows(zip(csv2write_data[0], csv2write_data[1]))
+        num_colunas = len(csv2write_data[1][0])
+        cabecalho_dinamico = [f"{label[1]}--{i+1}" for i in range(num_colunas)]
+        writer.writerow([label[0]] + cabecalho_dinamico)
+        coluna_1 = [item[0] if isinstance(item, list) else item for item in csv2write_data[0]]
+        writer.writerows(zip(coluna_1, *zip(*csv2write_data[1])))
 
 
 def gen_usrlog(

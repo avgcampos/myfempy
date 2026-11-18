@@ -119,7 +119,7 @@ class SteadyStateLinear(Solver):
                     stiffness[:, freedof][freedof, :], forcelist[freedof, step]
                 )
             except:
-                pass
+                raise RuntimeError(f"spsolve não convergiu no passo {step})")
             U1[constdof] = Uc[constdof, step]
             U1[:] += U0[:]
             U[:, step] = U1

@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from numpy import empty, float64, linspace, pi, unique, zeros
-from scipy.sparse.linalg import minres, spsolve
+from numpy import empty, float64, linspace, pi, unique, zeros, array
+from numpy.linalg import solve
+from scipy.sparse.linalg import spsolve
 
 from myfempy.core.solver.assemblerSR import AssemblerSR
 from myfempy.core.solver.assemblerMP import AssemblerMP
@@ -125,25 +126,36 @@ class DynamicHarmonicResponseLinear(Solver):
         freedof = constrainsdof["freedof"]
 
         twopi = 2 * pi
+        img = 1j
         freqStart = twopi * solverset["STEPSET"]["start"]
         freqEnd = twopi * solverset["STEPSET"]["end"]
         freqStep = setSteps(solverset["STEPSET"])
         w_range = linspace(freqStart, freqEnd, freqStep)
+        
+        try:
+            fdam = solverset["DAMP"]
+        except:
+            fdam = 1E-30
 
         U = zeros((fulldofs, freqStep), dtype=float64)
-        U0 = U[freedof, 0]
 
-        sA = stiffness[:, freedof][freedof, :]
+        alpha, beta = DynamicHarmonicResponseLinear.__rayleigh_from_zeta(freqStart, freqEnd, fdam, fdam)
+
+        sK = stiffness[:, freedof][freedof, :]
         sM = mass[:, freedof][freedof, :]
+        sC = alpha * sM + beta * sK
+        sF = forcelist[freedof, 0]
         for ww in range(freqStep):
-            Wn = w_range[ww]
-            Dw = sA - (Wn**2) * sM
+            Zw = sK - (w_range[ww]**2) * sM + (img * w_range[ww]) * sC
             try:
-                U[freedof, ww], info = minres(
-                    A=Dw, b=forcelist[freedof, 0], x0=U0, tol=1e-10, maxiter=1000
-                )
+                U[freedof, ww] = spsolve(A=Zw, b=sF)
             except:
-                raise info
+                raise RuntimeError(f"spsolve não convergiu no passo {ww})")
         solution["U"] = U
-        solution["FREQ"] = w_range / (twopi)
+        solution["FREQ"] = (w_range / (twopi)).reshape(-1, 1)
         return solution
+
+    def __rayleigh_from_zeta(w1, w2, z1, z2):
+        """alpha, beta para zeta = z1 em w1 e z2 em w2 (resolve o sistema 2x2)."""
+        A = 0.5*array([[1/(w1+1E-30), w1], [1/w2, w2]])
+        return solve(A, [z1, z2])

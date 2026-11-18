@@ -124,8 +124,8 @@ def convert_to_vtk(plotdata):
                 modes_str = "\n".join(" ".join(row) for row in val.astype(str))
                 file_object.write(modes_str + "\n")
 
-        if "frf_POINT_DATA" in plotdata:
-            for frf_data in plotdata["frf_POINT_DATA"]:
+        if "freq_POINT_DATA" in plotdata:
+            for frf_data in plotdata["freq_POINT_DATA"]:
                 val = frf_data["val"]
                 file_object.write("\nFIELD FieldData 1\n")
                 file_object.write(f"{frf_data['title']} 3 {len(val)} float\n")

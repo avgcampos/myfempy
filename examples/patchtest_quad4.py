@@ -197,4 +197,4 @@ postprocset = {"SOLVERDATA": solverdata,
             }}
 postprocdata = fea.PostProcess(postprocset)
 
-print('STRESS_XX: ',postprocdata['STRESS_XX'])
+print('STRESS_XX STEP 1: ', postprocdata['compute']['STRESS']['STRESS_XX'][0]['ELEMVAL'])

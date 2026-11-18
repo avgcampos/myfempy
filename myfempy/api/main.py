@@ -414,16 +414,14 @@ class newAnalysis:
         postprocdata = dict()
         postprocdata["solverstatus"] = postprocset["SOLVERDATA"]["solverstatus"]
         try:
-            if "COMPUTER" in postprocset:
-                postprocdata["computer"] = []
+            if "COMPUTE" in postprocset:
+                postprocdata["compute"] = {}
                 computer_file = setPostProcess.getCompute(self, postprocset)
-                postprocdata["computer"].append(computer_file)
+                postprocdata["compute"] = computer_file
             if "PLOT" in postprocset:
                 setPostProcess.getPlotCSV(self, postprocset, postprocdata)
             if "REPORT" in postprocset:
-                postprocdata["log"] = []
-                log_file = setPostProcess.getLog(self, postprocset, postprocdata)
-                postprocdata["log"].append(log_file)
+                setPostProcess.getLog(self, postprocset, postprocdata)
             logging.info("TRY GET POST PROCESS -- SUCCESS")
         except Exception as e:
             logging.error(f"TRY GET POST PROCESS -- FAULT: {e}")

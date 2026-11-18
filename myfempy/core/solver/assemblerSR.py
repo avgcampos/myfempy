@@ -10,7 +10,7 @@ FLT64 = float64
 FLT32 = float32
 
 from myfempy.core.solver.assembler import Assembler
-from myfempy.core.solver.utils_numpy import getConstrains, getDirichletNH, getLoadAssembler, getRotationMatrix
+from myfempy.core.solver.utils_numpy import getConstrains, getDirichletNH, getLoadAssembler, getRotationMatrix2D
 from myfempy.core.solver.utils_cython import getVectorization
 from myfempy.core.utilities import gauss_points
 
@@ -126,4 +126,4 @@ class AssemblerSR(Assembler):
         return getDirichletNH(constrains, nodetot, nodedof)
 
     def getRotationMatrix(node_list, coord, ndof):
-        return getRotationMatrix(node_list, coord, ndof)
+        return getRotationMatrix2D(node_list, coord, ndof)
