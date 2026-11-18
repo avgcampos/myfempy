@@ -947,17 +947,16 @@ fea.PreviewAnalysis(previewset)
 # ==============================================================================
 solverset = {
     "STEPSET": {
-        'type': str(),
-        # Options:
-        #    'table',               # Tabulated values, e.g. [step0, step1, ..., stepN]
-        #    'mode',                # Vibration modes 
-        #    'freq',                # Frequency scale, np.linspace
-        #    'time',                # Time scale, np.linspace
-        'start': int(),   
-        'end': int(),
-        'step': int(),
+        'start': int(),             # value start step
+        'end': int(),               # value end step
+        'step': int(),              # number of steps 
+        'modeEnd': int(),           # number of vibration modes
     },
 
+    'DAMP': float()                 # damping ratio of analysis
+
+    "RFSC": True,                   # residual factor and static compensation. Only to DynamicModeSuperposition Solver
+    
     # [adv]
     'IBZ': np.array([               # Brillouin zone
         [0.0, 0.0],                 # O 
@@ -975,12 +974,6 @@ solverset = {
     #        /     |
     #      </      |
     #      (O)--->(A)    
-
-    # [dev]
-    'MP': bool(),                   # Multi processing 
-    # Options:
-    #    True
-    #    False
 }
 solverdata = fea.Solve(solverset)
 ```
@@ -995,19 +988,21 @@ solverdata = fea.Solve(solverset)
 # ==============================================================================
 postprocset = {
     "SOLVERDATA": solverdata,
-    "COMPUTER": {
+    "COMPUTE": {
         'structural': {
             'displ': True,          # / False
-            'stress': True          # / False
+            'stress': True,         # / False
+            'modes': True,          # / False
         },
         'thermal': {
             'temp': True,           # / False
             'heatflux': True        # / False
         },
+
         # [dev]
         'fluid',
     },
-    "PLOTSET": {
+    "POSTSET": {
         'show': True,               # / False
         'filename': str(), 
         'savepng': True             # / False
@@ -1216,7 +1211,9 @@ See the API documentation for a more modern version.
 | SteadyStateLinear                |       | Steady State Linear Solver Class (Static Linear)                        | Model, Assembly: [stiffness, loads], ConstrainsDof: [freedof, constdof]                                    | Assembly: [bcdirnh], Solverset: [nsteps]                |
 | SteadyStateLinearIterative       |       | Steady State Linear Iterative Solver Class (Static Linear)              | Model, Assembly: [stiffness, loads], ConstrainsDof: [freedof, constdof]                                    | Assembly: [bcdirnh], Solverset: [nsteps, tol, maxiter]  |
 | DynamicEigenLinear               |       | Dynamic Eigen (modal problem) Linear Solver Class                       | Model, Assembly: [stiffness, mass], ConstrainsDof: [freedof]                                               | Solverset: [modeEnd:nsteps]                             |
+| DynamicEigenLinearSimpleSys      |       | Dynamic Eigen (modal problem) Linear Simple Sys Solver Class            | Model, Assembly: [stiffness, mass], ConstrainsDof: [freedof]                                               | Solverset: [modeEnd:nsteps]                             |
 | DynamicHarmonicResponseLinear    |       | Dynamic Harmonic Response Forced System Steady State Linear Solver Class| Model, Assembly: [stiffness, mass, loads], ConstrainsDof: [freedof]                                        | Solverset: [freqStart:start, freqEnd:end, freqStep:nsteps]|
+| DynamicModeSuperposition         |       | Dynamic Mode Superposition Response System Steady State Solver Class    | Model, Assembly: [stiffness, mass, loads], ConstrainsDof: [freedof]                                        | Solverset: [freqStart:start, freqEnd:end, freqStep:nsteps]|
 | [dev] TransientLinear            |       | Dynamic Timing Response Linear Solver Class                             | Model, Assembly: [stiffness, mass, loads], ConstrainsDof: [freedof]                                        | Solverset: [freqStart:start, freqEnd:end, freqStep:nsteps]|
 | [adv] StaticLinearCyclicSymmPlane|       | Static Linear Cyclic Symmetry Plane Solver Class                        | Model, Physic, Assembly: [stiffness, loads], ConstrainsDof: [freedof, fixedof(leftdof, rightdof, interdof)*]| Solverset: [nsteps]                                     |
 | [adv] HomogenizationPlane        |       | Homogenization Plane Solver Class                                       | Model, Assembly: [stiffness, loads], ConstrainsDof: [freedof, fixedof(strain)*]                            |                                                         |
